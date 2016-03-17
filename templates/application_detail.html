@@ -42,7 +42,7 @@
 <td>Names through which other properties owned</td><td>{{application.other_properties_names_owned}}</td>
 </tr>
 <tr>
-<td>Prior Tax Foreclosures</td><td>{{application.prior_tax_foreclosure}}</td>
+<td>Prior Tax Foreclosures</td><td>{{application.prior_tax_foreclosure|yesno}}</td>
 </tr>
 <tr>
 <td>Application Type</td><td>{{application.get_application_type_display}}</td>
@@ -50,12 +50,12 @@
 
 {% if application.application_type == 3 %}
 <tr>
-  <td>Applicant attests sidelot eligibile</td><td>{{application.sidelot_eligible}}</td>
+  <td>Applicant attests sidelot eligibile</td><td>{{application.sidelot_eligible|yesno}}</td>
 </tr>
 {% endif %}
 {% if application.application_type == 2 %}
 <tr>
-  <td>Property will be a rental</td><td>{{application.is_rental}}</td>
+  <td>Property will be a rental</td><td>{{application.is_rental|yesno}}</td>
 </tr>
   {% if application.Property.nsp == True %}
     <tr>
