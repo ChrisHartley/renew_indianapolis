@@ -52,7 +52,8 @@
 <tr>
   <td>Applicant attests sidelot eligibile</td><td>{{application.sidelot_eligible}}</td>
 </tr>
-{% elif application.application_type == 2 %}
+{% endif %}
+{% if application.application_type == 2 %}
 <tr>
   <td>Property will be a rental</td><td>{{application.is_rental}}</td>
 </tr>
@@ -64,7 +65,8 @@
     <tr>
     <td>Long Term Ownership</td><td>{{application.long_term_ownership}}</td>
     </tr>
-{% else %}
+{% endif %}
+{% if application.application_type != 3 %}
   <tr>
   <td>Planned improvements</td><td>{{application.planned_improvements}}</td>
   </tr>
