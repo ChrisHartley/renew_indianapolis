@@ -46,7 +46,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         }),
         ('Staff fields', {
             'classes': ('collapse',),
-            'fields': ('staff_summary','staff_pof_total',('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen'))
+            'fields': ('staff_summary',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen'))
 
         })
 
