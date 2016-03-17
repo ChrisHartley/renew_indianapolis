@@ -27,13 +27,13 @@
 <td>Status</td><td>{{application.get_status_display}}</td>
 </tr>
 <tr>
-<td></td><td>{{application.conflict_board_rc}}</td>
+<td></td><td>{{application.conflict_board_rc|yesno}}</td>
 </tr>
 <tr>
 <td></td><td>{{application.conflict_board_rc_name}}</td>
 </tr>
 <tr>
-<td>Active Citations</td><td>{{application.active_citations}}</td>
+<td>Active Citations</td><td>{{application.active_citations|yesno}}</td>
 </tr>
 <tr>
 <td>Tax Status</td><td>{{application.get_tax_status_of_properties_owned_display}}</td>
