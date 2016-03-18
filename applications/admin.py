@@ -95,7 +95,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     user_link.short_description = 'user'
 
     def n_notification(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
+        return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
             reverse("application_neighborhood_notification", kwargs={'pk':obj.id}),
                 "Neighborhood Notification"
             ))
