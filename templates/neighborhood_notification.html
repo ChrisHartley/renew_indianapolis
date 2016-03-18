@@ -21,7 +21,7 @@ Parcel: {{application.Property.parcel}}</br>
 NSP income restrictions: {{application.Property.nsp|yesno:"Yes,No,N/A"}}</br>
 </p>
 <p>
-{{application.user.first_name}} {{application.user.last_name}} intends to
+{{application.user.first_name}} {{application.user.last_name}} {% if application.organization %} ({{application.organization}}) {% endif %} intends to
 {% if application.application_type == 1 %}
 rehab the home to live in themselves. They intend to invest ${{application.estimated_cost|intcomma}} to rehab the home. A copy of the scope of work is attached to this email.
 {% endif %}
