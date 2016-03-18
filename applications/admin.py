@@ -100,7 +100,7 @@ class ApplicationAdmin(admin.ModelAdmin):
                 "Neighborhood Notification"
             ))
         #pass
-    notification.short_description = 'Neighborhood Notification'
+    n_notification.short_description = 'Neighborhood Notification'
 
 class MeetingAdmin(admin.ModelAdmin):
     model = Meeting
