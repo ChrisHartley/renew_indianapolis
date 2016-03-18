@@ -1,0 +1,53 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{% block center%}
+<p>
+Neighborhood Notification - {{application.Property}}
+</p>
+<p>
+Hello,
+</p>
+<p>
+Renew Indianapolis has received the following applications for property within the bounds of your organization. We are asking for your feedback as we consider this application.
+</p>
+<p>
+Application:</br>
+Applicant: {{application.user.first_name}} {{application.user.last_name}}</br>
+{% if application.organization %}
+Organization: {{application.organization}}</br>
+{% endif %}
+Property: {{application.Property.streetAddress}}</br>
+Parcel: {{application.Property.parcel}}</br>
+NSP income restrictions: {{application.Property.nsp|yesno:"Yes,No,N/A"}}</br>
+</p>
+<p>
+{{application.user.first_name}} {{application.user.last_name}} intends to
+{% if application.application_type == 1 %}
+rehab the home to live in themselves. They intend to invest ${{application.estimated_cost|intcomma}} to rehab the home. A copy of the scope of work is attached to this email.
+{% endif %}
+{% if application.application_type == 2 %}
+rehab the home{%if application.is_rental == True %} as a rental.{% else %} for sale.{% endif %} They intend to invest {{application.estimated_cost}} to rehab the home.
+A copy of the scope of work is attached to this email.
+{% endif %}
+{% if application.application_type == 3 %}
+use property as a sidelot.
+{% endif %}
+</p>
+<p>
+If you have any questions for the applicant you can contact them directly at {{application.user.email}} or reply to this email and I will ask for you.
+</p>
+<p>
+As you may know Renew Indianapolis sells city owned “landbank” properties through an application process.
+As part of that process we solicit feedback from the neighborhood organizations that work in the area where
+each property is located. If you have any feedback for our Review Committee or Board of Directors as they
+consider these applications please do let us know. Feedback from neighborhood groups is very important in
+the decision making process.
+</p>
+<p>
+These applications will be considered at the Review Committee meeting on {{application.meeting.meeting_date}}. If they recommend approval the applications
+ will be considered at the next Board of Directors meeting and finally if they approve at the following Metropolitan Development Commission meeting, where the final decision will be made.
+</p>
+<p>
+Your feedback is welcome at any stage and can be emailed to me to be passed along.
+</p>
+{% endblock center%}

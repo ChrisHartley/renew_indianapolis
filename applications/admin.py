@@ -24,14 +24,13 @@ class MeetingLinkInline(admin.TabularInline):
 
 class NeighborhoodNotificationAdmin(admin.TabularInline):
     model = NeighborhoodNotification
-    #admin_order_field = 'book__author'
     extra = 1
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('modified','Property', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
-    readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_nsp','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page')
+    readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_nsp','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification')
     fieldsets = (
         (None, {
             'fields': ( ('user','user_readable','organization'), ('created', 'modified'), ('Property', 'property_type','property_status','property_nsp','property_sidelot'), 'status', ('application_summary_page','application_detail_page'))
@@ -46,7 +45,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         }),
         ('Staff fields', {
             'classes': ('collapse',),
-            'fields': ('staff_summary',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen'))
+            'fields': ('staff_summary',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen','n_notification'))
 
         })
 
@@ -95,6 +94,13 @@ class ApplicationAdmin(admin.ModelAdmin):
             ))
     user_link.short_description = 'user'
 
+    def n_notification(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("application_neighborhood_notification", kwargs={'pk':obj.id}),
+                "Neighborhood Notification"
+            ))
+        #pass
+    notification.short_description = 'Neighborhood Notification'
 
 class MeetingAdmin(admin.ModelAdmin):
     model = Meeting

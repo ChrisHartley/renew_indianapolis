@@ -233,8 +233,6 @@ class Application(models.Model):
 class NeighborhoodNotification(models.Model):
     application = models.ForeignKey(Application, related_name="notification")
     neighborhood = models.ForeignKey(Neighborhood_Association, blank=True)
-    #neighborhood = models.CharField(blank=True, max_length=1024)
-    #neighborhood = models.IntegerField(blank=True)
     feedback = models.CharField(blank=True, max_length=1024)
 
 class Meeting(models.Model):

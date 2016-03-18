@@ -1,0 +1,11 @@
+Required db changes:
+alter table auth_user alter column username drop not null;
+alter table auth_user drop constraint auth_user_username_key;
+
+DB Dump:
+python manage.py dumpdata --exclude=contenttypes
+
+python manage.py makemigrations
+python manage.py migrate sites
+python manage.py migrate auth
+python manage.py loaddata dump.json
