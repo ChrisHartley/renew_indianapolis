@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 class ApplicationForm(forms.ModelForm):
     Property = forms.ModelChoiceField(
         queryset=Property.objects.exclude(status__contains='Sale approved by MDC').exclude(is_active__exact=False).exclude(
-            status__contains='Sold').exclude(status__contains='Sale approved by Board of Directors', renew_owned=True).order_by('streetAddress'),
+            status__contains='Sold').exclude(status__contains='BEP').exclude(status__contains='Sale approved by Board of Directors', renew_owned=True).order_by('streetAddress'),
         help_text='Select the property you are applying for. One property per application.',
         required=False
     )
