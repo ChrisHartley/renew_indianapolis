@@ -48,8 +48,7 @@ class ChoiceMethodFilter(django_filters.MethodFilter):
 class PropertySearchFilter(django_filters.FilterSet):
     streetAddress = django_filters.CharFilter(
         lookup_type='icontains', label="Street address")
-    parcel = django_filters.CharFilter(
-        lookup_type='icontains', label="Parcel number")
+    parcel = django_filters.CharFilter(lookup_type='icontains', label="Parcel number")
     st = Property.objects.order_by('structureType').distinct(
         'structureType').values_list('structureType', flat=True).order_by('structureType')
     structure_types = zip(st, st)
@@ -57,7 +56,7 @@ class PropertySearchFilter(django_filters.FilterSet):
         choices=structure_types, name='structureType', label='Structure Type')
 
     status_choices = [('available', 'Available'), ('review', 'Application under review'),
-                      ('approved', 'Approved for Sale'), ('sold', 'Sold')]
+                      ('approved', 'Approved for Sale'), ('sold', 'Sold'), ('bep', 'BEP Demolition Slated')]
     #status = django_filters.MultipleChoiceFilter(choices=status_choices, required=False, lookup_type='icontains')
     status = ChoiceMethodFilter(
         label='Status', widget=forms.Select, action='filter_status', choices=status_choices)
@@ -99,6 +98,9 @@ class PropertySearchFilter(django_filters.FilterSet):
             )
         if value == 'sold':
             return queryset.filter(status__contains='Sold')
+
+        if value == 'bep':
+            return queryset.filter(status__contains='BEP')
 
         return queryset
 
