@@ -13,9 +13,10 @@
 {{application.organization}}
 {% endif %}</small></h1>
 <dl>
+<div class='col-md-6 col-xs-6'>
 <dt>Property</dt><dd>{{application.Property.streetAddress}}</dd>
-<dt>Parcel</dt><dd>{{application.Property.parcel}}</dd>
 
+<dt>Parcel</dt><dd>{{application.Property.parcel}}</dd>
 <dt>Application Type</dt><dd>{{application.get_application_type_display}}</dd>
 <dt>Applicant</dt><dd>{{application.user.first_name}} {{application.user.last_name}}</dd>
 {% if application.organization %}
@@ -41,6 +42,13 @@
 <dt></dt><dd></dd>
 
 </dl>
-<img src="https://maps.googleapis.com/maps/api/streetview?size=400x400&location={{application.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
-<img src="https://www.renewindianapolis.org/inventory_maps/parcel_{{application.Property.parcel}}.jpg" class="img-thumbnail" width="300"/>
+</div>
+<div class='col-md-4 col-xs-4'>
+<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&location={{application.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
+&nbsp;<br />
+<img src="https://www.renewindianapolis.org/inventory_maps/parcel_{{application.Property.parcel}}.jpg" class="img-thumbnail" width="200"/>
+
+</div>
+
+
 {% endblock center %}
