@@ -46,7 +46,7 @@ INSTALLED_APPS = (
     'applications',
     'applicants',
     'user_files',
-    'import_export',
+    #'import_export',
     #'accella_records',
     #'debug_toolbar',
 )
