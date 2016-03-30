@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'applications',
     'applicants',
     'user_files',
+    'import_export',
     #'accella_records',
     #'debug_toolbar',
 )
@@ -123,7 +124,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 "django.core.context_processors.request",
-                'allauth.account.context_processors.account',
+                #'allauth.account.context_processors.account',
                 #				'allauth.socialaccount.context_processors.socialaccount',
             ],
         },
