@@ -7,7 +7,7 @@ class propertyInquiryAdmin(admin.ModelAdmin):
     list_display = ('Property', 'user_name', 'user_phone', 'showing_scheduled', 'timestamp')
     fields = ('Property', 'user_name', 'user_phone','showing_scheduled', 'timestamp')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
-    readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone')
+    readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property')
 
     def user_name(self, obj):
         email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
