@@ -215,7 +215,7 @@ class Application(models.Model):
     nsp_income_qualifier = models.CharField(
         max_length='255',
         verbose_name="Which entity will conduct the income qualification process for new tenants for this property?",
-        help_text="Federal policies require that during the affordability period (5 years from your purchase), tenants must be at or below 80% of the Area Median Income. Verifying tenant income is a complicated process that must be completed by a qualified entity with experience in this field.  If your organization will do this itself, enter 'self'.",
+        help_text="Federal policies require that during the affordability period (5 years from your purchase), tenants must be at or below 120% of the Area Median Income. Verifying tenant income is a complicated process that must be completed by a qualified entity with experience in this field.  If your organization will do this itself, enter 'self'.",
         blank=True
     )
 
@@ -234,6 +234,11 @@ class NeighborhoodNotification(models.Model):
     application = models.ForeignKey(Application, related_name="notification")
     neighborhood = models.ForeignKey(Neighborhood_Association, blank=True)
     feedback = models.CharField(blank=True, max_length=1024)
+    def __unicode__(self):
+        if self.feedback is not '':
+            return '%s - feedback received' % (self.neighborhood,)
+        else:
+            return '%s - no feedback received' % (self.neighborhood,)
 
 class Meeting(models.Model):
     REVIEW_COMMITTEE = 1
