@@ -38,7 +38,7 @@ def process_application(request, action, id=None):
     if action == 'edit':
         app = get_object_or_404(Application, id=id, user=request.user)
         if app.frozen == True:
-            return HttpResponse("This application has been submitted and can not be editted. To unfreeze this application email chris.hartley@renewindianapolis.org.", status=403)
+            return HttpResponse("This application has been submitted and can not be editted. To unfreeze this application email lconover@renewindianapolis.org.", status=403)
         form = ApplicationForm(instance=app, user=request.user, id=app.pk)
     if action == 'new':
         # see if they already have an application with initial status, if so use that one again, if not create one.
