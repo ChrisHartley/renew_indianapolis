@@ -1,9 +1,13 @@
 from django.contrib import admin
 from .models import Application, Meeting, MeetingLink, NeighborhoodNotification
+from neighborhood_associations.models import Neighborhood_Association
 from user_files.models import UploadedFile
 
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
+from import_export.admin import ExportMixin
+from functools import partial
+
 
 class UploadedFileInline(admin.TabularInline):
     model = UploadedFile
@@ -16,7 +20,6 @@ class UploadedFileInline(admin.TabularInline):
             reverse("download_file", kwargs={'id':obj.id}),
                 "Download"
             ))
-        #return mark_safe("<a href='download link'>download link</a>")
 
 class MeetingLinkInline(admin.TabularInline):
     model = MeetingLink
@@ -26,7 +29,20 @@ class NeighborhoodNotificationAdmin(admin.TabularInline):
     model = NeighborhoodNotification
     extra = 1
 
-class ApplicationAdmin(admin.ModelAdmin):
+    # I am very proud of this. Source: http://stackoverflow.com/questions/14950193/how-to-get-the-current-model-instance-from-inlineadmin-in-django
+    # This limits the neighborhood associations shown in the dropdown to only the ones that contain the property.
+    def get_formset(self, request, obj=None, **kwargs):
+        kwargs['formfield_callback'] = partial(self.formfield_for_dbfield, request=request, obj=obj)
+        return super(NeighborhoodNotificationAdmin, self).get_formset(request, obj, **kwargs)
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        app = kwargs.pop('obj', None)
+        formfield = super(NeighborhoodNotificationAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == "neighborhood" and app:
+            formfield.queryset = Neighborhood_Association.objects.filter(receive_notifications__exact=True).filter(geometry__contains=app.Property.geometry)
+        return formfield
+
+class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     list_display = ('modified','Property', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
@@ -107,6 +123,8 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline]
+
+
 
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(Meeting, MeetingAdmin)

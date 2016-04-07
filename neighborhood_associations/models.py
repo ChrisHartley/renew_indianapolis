@@ -25,5 +25,8 @@ class Neighborhood_Association(Overlay):
     contact_email_address = models.CharField(max_length=255)
     last_updated = models.DateField()
     area2 = models.FloatField()
+    receive_notifications = models.BooleanField(default=True, help_text="""
+        Should this neighborhood association receive notifications? Defaults to yes. County wide organizations, eg political parties, don't need to be notified"""
+    )
     class Meta:
         ordering = ['name']

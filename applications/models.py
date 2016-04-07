@@ -232,7 +232,7 @@ class Application(models.Model):
 
 class NeighborhoodNotification(models.Model):
     application = models.ForeignKey(Application, related_name="notification")
-    neighborhood = models.ForeignKey(Neighborhood_Association, blank=True)
+    neighborhood = models.ForeignKey(Neighborhood_Association, null=False)
     feedback = models.CharField(blank=True, max_length=1024)
     def __unicode__(self):
         if self.feedback is not '':

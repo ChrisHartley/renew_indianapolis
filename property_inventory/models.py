@@ -33,14 +33,17 @@ class CDC(Overlay):
 class Zoning(Overlay):
     pass
 
+class Neighborhood(Overlay):
+    pass
+
 
 class Property(models.Model):
 
     PROPERTY_TYPES = (('lb', 'Landbank'), ('sp', 'County Owned Surplus'))
 
     geometry = models.MultiPolygonField(srid=4326)
-    objects = models.GeoManager()
 
+    objects = models.GeoManager()
     propertyType = models.CharField(
         choices=PROPERTY_TYPES, max_length=2, verbose_name='property type')
 
