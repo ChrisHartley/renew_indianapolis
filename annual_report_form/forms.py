@@ -7,10 +7,14 @@ from crispy_forms.bootstrap import PrependedText, AppendedText, FormActions
 
 
 from annual_report_form.models import annual_report
-
+from property_inventory.models import Property
 
 class annualReportForm(ModelForm):
-
+    Property = forms.ModelChoiceField(
+        queryset=Property.objects.filter(status__contains='Sold').exclude(project_agreement_released__exact=True).order_by('streetAddress'),
+        help_text='Select the property you are submitting this report for. One property per report.',
+        required=False
+    )
     def __init__(self, *args, **kwargs):
         super(annualReportForm, self).__init__(*args, **kwargs)
         #self.fields.keyOrder = ['applicant_name','applicant_email_address','applicant_phone','parcel']
@@ -23,8 +27,8 @@ class annualReportForm(ModelForm):
         self.helper.form_action = ''
         self.helper.layout = Layout(
             Fieldset("Property Details",
-                     'parcel',
-                     Div(HTML('<label class="control-label col-lg-3" for="result">Street Address</label><div id="result" class="controls col-lg-4"></div>'), css_class="form-group")
+                     'Property',
+                    # Div(HTML('<label class="control-label col-lg-3" for="result">Street Address</label><div id="result" class="controls col-lg-4"></div>'), css_class="form-group")
 
                      ),
             Fieldset("Your Information",

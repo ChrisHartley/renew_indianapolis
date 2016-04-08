@@ -22,16 +22,10 @@ def showAnnualReportForm(request):
     success = False
     if request.method == 'POST':
         form = annualReportForm(request.POST, request.FILES)
-        try:
-            selected_property = Property.objects.get(
-                parcel__exact=request.POST['parcel'])
-        except Property.DoesNotExist:
-            selected_property = None
         if form.is_valid():
             # this is necessary so we can set the Property based on the parcel
             # number inputed
             form_saved = form.save(commit=False)
-            form_saved.Property = selected_property
             form_saved.save()
             success = True
         else:
