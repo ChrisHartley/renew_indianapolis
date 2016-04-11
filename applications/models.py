@@ -149,6 +149,13 @@ class Application(models.Model):
         blank=True
     )
 
+    staff_sow_total = models.DecimalField(max_digits=10, decimal_places=2,
+        help_text="Total scope of work, as verified by staff.",
+        verbose_name='Staff determined scope of work total',
+        null=True,
+        blank=True
+    )
+
     staff_pof_total = models.DecimalField(max_digits=10, decimal_places=2,
         help_text="Total funds demonstrated",
         verbose_name='Staff determined PoF',
