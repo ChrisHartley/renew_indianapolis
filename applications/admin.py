@@ -28,7 +28,11 @@ class MeetingLinkInline(admin.TabularInline):
 class NeighborhoodNotificationAdmin(admin.TabularInline):
     model = NeighborhoodNotification
     extra = 1
+    fields = ('neighborhood','neighborhood_contact','feedback')
+    readonly_fields = ('neighborhood_contact',)
 
+    def neighborhood_contact(self, obj):
+        return obj.neighborhood.contact_email_address
     # I am very proud of this. Source: http://stackoverflow.com/questions/14950193/how-to-get-the-current-model-instance-from-inlineadmin-in-django
     # This limits the neighborhood associations shown in the dropdown to only the ones that contain the property.
     def get_formset(self, request, obj=None, **kwargs):
