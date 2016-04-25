@@ -22,7 +22,7 @@
 {% if application.organization %}
   <dt>Organization</dt><dd>{{application.organization}}</dd>
 {% endif %}
-<dt>NSP</dt><dd>{{applicant.Property.nsp|yesno:"Yes,No,Error"}}</dd>
+<dt>NSP</dt><dd>{{application.Property.nsp|yesno:"Yes,No,Error"}}</dd>
 <dt>Neighborhood</dt><dd>{{application.Property.neighborhood}}</dd>
 <dt>Staff Summary</dt>
 <dd>
