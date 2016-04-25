@@ -23,12 +23,13 @@
   <dt>Organization</dt><dd>{{application.organization}}</dd>
 {% endif %}
 <dt>NSP</dt><dd>{{applicant.Property.nsp|yesno:"Yes,No,Error"}}</dd>
+<dt>Neighborhood</dt><dd>{{application.Property.neighborhood}}</dd>
 <dt>Staff Summary</dt>
 <dd>
-  {{application.staff_summary}}
+   {{application.staff_summary}}
 </dd>
 
-<dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.estimated_cost|intcomma}}</dd>
+<dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.staff_sow_total|intcomma}}</dd>
 <h3>Neighborhood Notifications</h3>
   {% for notification in application.notification.all %}
     <dt>{{notification.neighborhood}}</dt>

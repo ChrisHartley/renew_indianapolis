@@ -62,6 +62,8 @@ class Property(models.Model):
                             help_text="The Community Development Corporation boundries the property falls within.", verbose_name='CDC')
     zone = models.ForeignKey(
         Zoning, blank=True, null=True, help_text="The zoning of the property")
+    neighborhood = models.ForeignKey(
+        Neighborhood, blank=True, null=True, help_text="The neighborhood the property is in")
     zipcode = models.ForeignKey(
         Zipcode, blank=True, null=True, help_text="The zipcode of the property")
     urban_garden = models.BooleanField(
