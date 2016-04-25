@@ -1,6 +1,8 @@
 {% extends 'base-simple.html' %}
 {% load humanize %}
 {% block center%}
+{{application.user.first_name}} {{application.user.last_name}} - {{application.organization}} - {{application.Property}}
+
 <table id="table" class="table-striped">
     <thead>
     <tr>
