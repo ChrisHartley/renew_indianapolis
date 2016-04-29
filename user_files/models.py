@@ -6,6 +6,7 @@ from django.dispatch import receiver
 
 import os
 from django.conf import settings
+from django.core.mail import send_mail
 
 from django.contrib.auth.models import User
 
@@ -28,6 +29,8 @@ def virus_scan(input_file):
     scan_results = cd.scan_file(input_file)
     if scan_results is not None:
         print 'Virus found:', scan_results[0]
+        send_mail('Django Virus Found', 'Virus found in file uploaded', 'info@renewindianapolis.org',
+    ['chris.hartley@renewindianapolis.org'], fail_silently=False)
         return True
     else:
         return False

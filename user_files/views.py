@@ -5,6 +5,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 import os, tempfile, zipfile
 from django.http import HttpResponse, JsonResponse
 from django.core.servers.basehttp import FileWrapper
+from django.conf import settings
+
 import mimetypes
 from .models import UploadedFile
 
@@ -18,6 +20,8 @@ def send_file(request, id):
     """
     requested_file = get_object_or_404(UploadedFile, id=id)
     filename = str(requested_file.supporting_document.name)
+    if filename.startswith('/') != True:
+        filename = settings.MEDIA_ROOT+filename
     wrapper = FileWrapper(open(filename,'rb'))
     content_type = mimetypes.MimeTypes().guess_type(filename)[0]
     response = HttpResponse(wrapper, content_type=content_type)
