@@ -47,6 +47,7 @@ class UploadedFile(models.Model):
     PURPOSE_SOS_ENTITY_REPORT = 9
     PURPOSE_IRS_DETERMINATION_LETTER = 10
     PURPOSE_MOST_RECENT_FINANCIAL_STATEMENT = 11
+    PURPOSE_3RD_PARTY_AUTHORIZATION_FORM = 12
 
     FILE_PURPOSE_CHOICES = (
         (PURPOSE_SOW, 'Scope of Work'),
@@ -59,7 +60,8 @@ class UploadedFile(models.Model):
         (PURPOSE_IRS_DETERMINATION_LETTER, 'IRS Determination Letter'),
         (PURPOSE_MOST_RECENT_FINANCIAL_STATEMENT,
             "Organization's Most Recent Financial Statement"),
-         (PURPOSE_OTHER, 'Other')
+         (PURPOSE_OTHER, 'Other'),
+         (PURPOSE_3RD_PARTY_AUTHORIZATION_FORM, 'Third Party Authorization Form'),
 
     )
     user = models.ForeignKey(User)
