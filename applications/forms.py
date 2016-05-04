@@ -67,6 +67,12 @@ class ApplicationForm(forms.ModelForm):
                 Field('other_properties_names_owned'),
                 Field('prior_tax_foreclosure'),
                 Field('organization'),
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Third Party Authorziation Form</div><div id="3rd-party-authorization-file-uploader" class="form-control-static col-lg-6">Drop your third party authorization form file here to upload</div>'),
+                HTML("""<div class="help-block col-lg-6 col-lg-offset-4">
+                            If someone is completing this application on your behalf, such as a Realtor&trade;, a translator, a family member, or a friend then you and they will need to complete
+                            a <a href="https://www.renewindianapolis.org/wp-content/uploads/Third-Party-Authorization.pdf" target="_blank">Third Party Authorization Form (pdf)</a> and upload the completed, signed form here.
+                            </div>
+                        """),
 
                 css_class='well'
             ),
@@ -115,18 +121,22 @@ class ApplicationForm(forms.ModelForm):
                 'Uploaded Files',
                 HTML('<p>Before your application can be submitted for review you must attach both a scope of work and proof of funds, as referenced earlier. You can upload those files here.</p>'),
 
-                HTML('''<p>Previously uploaded files:<ul>
+                HTML("""<p>Previously uploaded files:<ul>
                         {% for file in uploaded_files_all %}
                             <li>{{ file }} <img src="{{STATIC_URL}}admin/img/icon_deletelink.gif" id='uploadedfile_{{ file.id }}' class='uploaded_file_delete' alt='[X]'></img></li>
                             {% empty %}
                                 <li>No files are associated with this application.</li>
                         {% endfor%}
                         </ul>
-                    </p>'''),
+                    </p>"""),
+
+
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Scope of Work</div><div id="sow-file-uploader" class="form-control-static col-lg-6">Drop your scope of work file here to upload</div>'),
                 HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://www.renewindianapolis.org/wp-content/uploads/Example-Scope-of-Work-updated.xls">spreadsheet</a> or <a href="http://www.renewindianapolis.org/wp-content/uploads/Example-Scope-of-Work-updated-printable.pdf">printable template</a> as a starting point.</div></div>'),
+
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Elevation View</div><div id="elevation-file-uploader" class="form-control-static col-lg-6">Drop your elevation view file here to upload</div>'),
                 HTML('<div class="help-block col-lg-6 col-lg-offset-4">If you are proposing new construction on a vacant lot you must upload an elevation view of your proposed construction.</div></div>'),
+
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Proof of Funds</div><div id="pof-file-uploader" class="form-control-static col-lg-6">Drop your proof of funds file here to upload</div>'),
                 HTML("""<div class="help-block col-lg-6 col-lg-offset-4">
                             Upload documents demonstrating your plan to pay for your proposed improvements as outlined
@@ -137,14 +147,16 @@ class ApplicationForm(forms.ModelForm):
                                 show acceptable proof of funds for 75-100% of the total project costs less any
                                 materials on hand.  An <a href="http://www.renewindianapolis.org/wp-content/uploads/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
                                 project costs.</li>
+                            <li>Homestead (owner occupied) rehabilitation projects may demonstrate 100% of funds through an
+                                <a href="http://www.renewindianapolis.org/wp-content/uploads/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF).</li>
+
                             <li>All proposed new construction projects require proof of funds for 75% of the
                                 total project costs.  An <a href="http://www.renewindianapolis.org/wp-content/uploads/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
                                 project costs.</li>
                             </ol></div></div>"""
                      ),
                 HTML('<p>To delete an uploaded file, click "Save Incomplete Application", then scroll down and click the red "X" after the file name.</p>'),
-                css_class='standard-app homestead-app well'
-            ),
+                css_class='standard-app homestead-app well'),
             FormActions(
                 #Button('cancel', 'Cancel'),
                 Submit('save_for_later', 'Save Application'),
