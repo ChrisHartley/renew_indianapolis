@@ -42,7 +42,7 @@ class NeighborhoodNotificationAdmin(admin.TabularInline):
     def formfield_for_dbfield(self, db_field, **kwargs):
         app = kwargs.pop('obj', None)
         formfield = super(NeighborhoodNotificationAdmin, self).formfield_for_dbfield(db_field, **kwargs)
-        if db_field.name == "neighborhood" and app:
+        if db_field.name == "neighborhood" and app.Property:
             formfield.queryset = Neighborhood_Association.objects.filter(receive_notifications__exact=True).filter(geometry__contains=app.Property.geometry)
         return formfield
 
