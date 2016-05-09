@@ -35,6 +35,7 @@ urlpatterns = patterns('',
                        url(r'application_status/$',
                            'property_inventory.views.showApplications'),
                        url(r'show/search/$', 'property_inventory.views.get_inventory_csv', name='inventory_download'),
+                      url(r'show/mdc_download/$', 'property_inventory.views.get_mdc_csv', name='mdc_download'),
 
                        url(r'search_property/$',
                            'property_inventory.views.searchProperties'),
