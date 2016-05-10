@@ -108,6 +108,7 @@ class SignupForm(forms.Form):
     def signup(self, request, user):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
+        user.username = user.email
         user.save()
         profile = ApplicantProfile()
         profile.phone_number = self.cleaned_data['phone_number']
