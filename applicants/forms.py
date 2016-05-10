@@ -108,7 +108,7 @@ class SignupForm(forms.Form):
     def signup(self, request, user):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
-        user.username = user.email
+        #user.username = user.email # username is 30 characters, email is 254. Switching to 254 or 150 or something in Django 1.9
         user.save()
         profile = ApplicantProfile()
         profile.phone_number = self.cleaned_data['phone_number']
