@@ -24,7 +24,7 @@
 {% load staticfiles %}
 
 <!-- OpenLayers with Stamen and Google tilesets -->
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.debug.js"></script>
 <script type="text/javascript" src="{% static 'tile.stamen.js' %}"></script>
 <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0"></script>
 
@@ -73,6 +73,7 @@
 				<th>Zipcode</th>
 				<th>Zoning</th>
 				<th data-priority="100001">CDC</th>
+        <th data-priority="100">Neighborhood</th>
 				<th>NSP</th>
         <th>Quiet Title Complete</th>
         <th>Sidelot Eligible</th>

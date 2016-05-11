@@ -32,33 +32,40 @@ from property_inventory.tables import PropertySearchTable
 from property_inventory.forms import PropertySearchForm
 from property_inventory.filters import PropertySearchFilter
 
+from django.db import connection
+
 def get_mdc_csv(request):
+    #with connection.cursor() as c:
+    #    c.execute('select id, parcel, "streetAddress" as street_address, "structureType" as structure_type, case when nsp = False then \'No\' else \'Yes\' end as nsp, case when quiet_title_complete = False then 'No' else 'Yes' end as quiet_title_complete, counter_book.legal_description, applicant from property_inventory_property r left join counter_book on r.parcel = counter_book.parcel_number limit 10')
+    #    print c.fetchone()
+    return False
+
 #    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
-    qs = Property.objects.raw('''
-        select id, parcel, "streetAddress" as street_address, "structureType" as structure_type,
-            case when nsp = False then 'No' else 'Yes' end as nsp,
-            case when quiet_title_complete = False then 'No' else 'Yes' end as quiet_title_complete,
-            counter_book.legal_description,
-            applicant
-            from property_inventory_property r left join counter_book on r.parcel = counter_book.parcel_number where status ilike '%board of directors%'
-        ''')
+    # qs = Property.objects.raw('''
+    #     select id, parcel, "streetAddress" as street_address, "structureType" as structure_type,
+    #         case when nsp = False then 'No' else 'Yes' end as nsp,
+    #         case when quiet_title_complete = False then 'No' else 'Yes' end as quiet_title_complete,
+    #         counter_book.legal_description,
+    #         applicant
+    #         from property_inventory_property r left join counter_book on r.parcel = counter_book.parcel_number where status ilike '%board of directors%'
+    #     ''')
 
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="mdc.csv"'
-    #print qs[0]
-    writer = csv.writer(response)
-    writer.writerow(['Parcel', 'Street Address', 'Structure Type', 'NSP', 'Quiet title complete', 'legal description', 'applicant'])
-    for obj in qs:
-        writer.writerow(
-            [obj.parcel, obj.street_address, obj.structure_type, obj.nsp, obj.quiet_title_complete, obj.legal_description, obj.applicant]
+#        response = HttpResponse(content_type='text/csv')
+#        response['Content-Disposition'] = 'attachment; filename="mdc.csv"'
+        #print qs[0]
+#        writer = csv.writer(response)
+#        writer.writerow(['Parcel', 'Street Address', 'Structure Type', 'NSP', 'Quiet title complete', 'legal description', 'applicant'])
+#        for obj in c.fetchall():
+#            writer.writerow(
+#                [obj[0], obj[1], obj[2], obj[3], obj[4], obj[5], obj[6]]
+#
+#            )
 
-        )
-
-    return response
+#    return response
 
 def get_inventory_csv(request):
-    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
+    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
 
@@ -66,7 +73,7 @@ def get_inventory_csv(request):
 def show_all_properties(request):
     #all_prop_select = Property.objects.all().select_related('cdc', 'zone', 'zipcode')
     all_prop_select = None
-    all_prop_prefetch = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
+    all_prop_prefetch = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode', 'neighborhood')
 
     return render(request, 'testing.html', {'all_properties_select': all_prop_select, 'all_properties_prefetch': all_prop_prefetch})
 
@@ -76,7 +83,7 @@ def getAddressFromParcel(request):
         parcelNumber = request.GET.__getitem__('parcel')
         SearchResult = Property.objects.filter(parcel__exact=parcelNumber)
         response_data = serializers.serialize('json', SearchResult,
-                                              fields=('streetAddress', 'zipcode', 'status', 'structureType',
+                                              fields=('streetAddress', 'zipcode', 'neighborhood','status', 'structureType',
                                                       'sidelot_eligible', 'homestead_only', 'price', 'nsp')
                                               )
         return HttpResponse(response_data, content_type="application/json")
@@ -144,7 +151,7 @@ def searchProperties(request):
                                       f,
                                       geometry_field='geometry',
                                       fields=('id', 'parcel', 'streetAddress', 'zipcode', 'zone', 'status', 'structureType',
-                                              'sidelot_eligible', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
+                                              'sidelot_eligible', 'neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
                                               'urban_garden','price', 'nsp', 'renew_owned', 'area','price_obo', 'cdc', 'geometry'),
                                       use_natural_foreign_keys=True
                                       )

@@ -45,7 +45,7 @@ var table = jQuery('#search_results').DataTable({
             {"data": "properties.zipcode"},
             {"data": "properties.zone"},
             {"data": "properties.cdc"},
-
+            {"data": "properties.neighborhood"},
 						{"data": "properties.nsp",
                          "render": function(data){ return boolean_to_yesno(data); }
                         },
