@@ -116,7 +116,7 @@ class edit_organization(View):
             request.POST, request.FILES, instance=organization)
         if form.is_valid():
             pending = form.save(commit=False)
-            pending.user = request.user
+            pending.user = request.user.id
             pending.save()
             if '_popup' in request.GET:
                 return HttpResponse('<html><body><script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script></body></html>' % (escape(pending.pk), escapejs(pending)))
