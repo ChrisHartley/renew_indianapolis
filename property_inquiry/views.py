@@ -29,7 +29,7 @@ def submitPropertyInquiry(request):
         if form.is_valid():
             form_saved = form.save(commit=False)
             form_saved.applicant_ip_address = get_real_ip(request)
-            form_saved.user = request.user
+            form_saved.user = request.user.id
             form_saved.save()
             message_body = 'Applicant: ' + form_saved.user.first_name + ' ' + form_saved.user.last_name + '\n' + 'Parcel: ' + \
                 form_saved.Property.parcel + '\nAddress: ' + \

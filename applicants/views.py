@@ -67,7 +67,7 @@ def showApplicantProfileForm(request):
             request.POST, request.FILES, instance=profile)
         if ProfileForm.is_valid():
             pending = ProfileForm.save(commit=False)
-            pending.user = request.user
+            pending.user = request.user.id
             pending.save()
             success = True
     else:
