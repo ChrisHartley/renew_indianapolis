@@ -67,7 +67,7 @@ def showApplicantProfileForm(request):
             request.POST, request.FILES, instance=profile)
         if ProfileForm.is_valid():
             pending = ProfileForm.save(commit=False)
-            pending.user = request.user.id
+            pending.user = request.user
             pending.save()
             success = True
     else:
@@ -116,7 +116,7 @@ class edit_organization(View):
             request.POST, request.FILES, instance=organization)
         if form.is_valid():
             pending = form.save(commit=False)
-            pending.user = request.user.id
+            pending.user = request.user
             pending.save()
             if '_popup' in request.GET:
                 return HttpResponse('<html><body><script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script></body></html>' % (escape(pending.pk), escapejs(pending)))
