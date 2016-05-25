@@ -1,7 +1,7 @@
 from django.db import models
 from localflavor.us.models import PhoneNumberField, USStateField, USZipCodeField
 from applications.models import Application
-
+from property_inventory.models import Property
 
 class location(models.Model):
     name = models.CharField(max_length=254)
@@ -55,7 +55,8 @@ def save_location(instance, filename):
     return 'closings/{0}/{1}'.format(instance.application.Property, filename)
 
 class closing(models.Model):
-    application = models.ForeignKey(Application)
+    application = models.ForeignKey(Application, help_text="Select the application if it is in the system", null=True, blank=True)
+    prop = models.ForeignKey(Property, verbose_name="Property", help_text="Select the property only if this is a legacy application that is not listed under Application", null=True, blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
     location = models.ForeignKey('location', blank=True, null=True)
     title_company = models.ForeignKey(title_company)
@@ -66,4 +67,9 @@ class closing(models.Model):
     assignment_and_assumption_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
 #    scope_of_work = models.FileField(upload_to=save_location)
     def __unicode__(self):
-            return '{0} - {1} {2}'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name)
+            if self.application:
+                if self.application.organization:
+                        return '{0} - {1} {2} ({3})'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name, self.application.orgnization)
+                return '{0} - {1} {2}'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name)
+            else:
+                return '{0} - {1}'.format(self.prop, "Legacy Application")
