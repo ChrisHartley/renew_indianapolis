@@ -40,7 +40,7 @@ class Application(models.Model):
     APPLICATION_TYPES = (
         (HOMESTEAD, 'Homestead - this will be your primary residence'),
         (STANDARD, 'Standard - property will be sold or rented, or is non-residential'),
-        (SIDELOT, 'Sidelot - vacant lot adjacent to your primary residence')
+        (SIDELOT, 'Sidelot')
     )
 
     WITHDRAWN_STATUS = 1
