@@ -81,7 +81,7 @@ class Application(models.Model):
         verbose_name='Application Type',
         null=True,
         blank=True,
-        help_text="If you will live in this property as your primary residence chose Homestead, if you will rent or sell chose Standard. If this is a side lot adjacent to your primary residence chose Sidelot."
+        help_text="If you will live in this property as your primary residence chose Homestead, if you will rent or sell chose Standard. If you are applying through our sidelot program chose Sidelot."
     )
 
     status = models.IntegerField(
