@@ -53,6 +53,21 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function check_homestead_only_property(){
+	if ($('#id_application_type').val() != '1'){
+			if ( $('#homestead_only').text() == 'Yes'){
+				$('#homestead_only_warning').show();
+			}
+			else{
+				$('#homestead_only_warning').hide();
+			}
+	}
+	else{
+		$('#homestead_only_warning').hide();
+	}
+}
+
+
 function get_property_attributions(){
 	var term = $("#id_Property option:selected").text().match(/[0-9]{7}$/),
 		url = "{% url 'get_address_from_parcel' %}"
@@ -68,6 +83,8 @@ function get_property_attributions(){
 			$( "#homestead_only" ).text(boolean_to_yesno(data[0].fields.homestead_only));
 			$( "#price" ).text('$'+numberWithCommas(data[0].fields.price));
 			$( "#nsp_boolean" ).text(boolean_to_yesno(data[0].fields.nsp));
+			check_homestead_only_property();
+
 			if (data[0].fields.nsp == true) {
 				$( "#nsp" ).show();
 				if ($('#id_is_rental').val() == 'True'){
@@ -131,14 +148,19 @@ $(function(){
 	showAppropriateSections($('#id_application_type').val());
 	$('#div_id_nsp_income_qualifier').hide();
 	get_property_attributions();
+//	check_homestead_only_property();
 });
+
 
 $('#id_application_type').change(function() {
 	showAppropriateSections($(this).val());
+	check_homestead_only_property();
 });
 
 $('#id_Property').change(function(){
 	get_property_attributions();
+	//check_homestead_only_property();
+
 });
 // If a property is a rental and NSP then we need to show income qualification question.
 $('#id_is_rental').change(function(){

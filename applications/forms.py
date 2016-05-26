@@ -91,6 +91,7 @@ class ApplicationForm(forms.ModelForm):
             Fieldset(
                 'Application Type',
                 Div('application_type'),
+                HTML('<div id="homestead_only_warning" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">Homesead Only</h3></div><div class="panel-body">The property you selected is only available for homestead (owner occupant) applications.</div></div>'),
                 css_class='well'
             ),
             Fieldset(
