@@ -5,7 +5,10 @@ from property_inventory.models import Property
 
 
 def content_file_name(instance, filename):
-    return '/'.join(['annual_reports', instance.Property.streetAddress, filename])
+    if instance.Property is None:
+        return '/'.join(['annual_reports', 'no_address', filename])
+    else:
+        return '/'.join(['annual_reports', instance.Property.streetAddress, filename])
 
 
 class annual_report(models.Model):
@@ -17,6 +20,8 @@ class annual_report(models.Model):
     organization = models.CharField(max_length=254, blank=True, null=True)
     email = models.EmailField(max_length=254, blank=False, null=False)
     phone = models.CharField(max_length=12, blank=False, null=False)
+
+    created = models.DateTimeField(auto_now_add=True)
 
     percent_completed = models.PositiveIntegerField(
         help_text="Roughly speaking, what percentage complete is this project?")

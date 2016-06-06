@@ -250,7 +250,7 @@ class ApplicationForm(forms.ModelForm):
                     self.add_error('long_term_ownership', ValidationError(msg))
                 if is_rental is None:  # boolean value
                     self.add_error('is_rental', ValidationError(msg))
-                if not nsp_income_qualifier and property_selected.nsp and nsp_income_qualifier == "":
+                if is_rental and property_selected.nsp and nsp_income_qualifier == "":
                     self.add_error('nsp_income_qualifier', ValidationError(
                         "Since this is a rental NSP property you must list who will be conducting tenant income qualification."))
                 if property_selected is not None and property_selected.homestead_only:
