@@ -44,7 +44,7 @@ consider these applications please do let us know. Feedback from neighborhood gr
 the decision making process.
 </p>
 <p>
-These applications will be considered at the Review Committee meeting on {{application.meeting.meeting_date}}. If they recommend approval the applications
+These applications will be considered at the Review Committee meeting on {% for meeting in application.meeting %} {{meeting.meeting_date}} {% endfor %}. If they recommend approval the applications
  will be considered at the next Board of Directors meeting and finally if they approve at the following Metropolitan Development Commission meeting, where the final decision will be made.
 </p>
 <p>
