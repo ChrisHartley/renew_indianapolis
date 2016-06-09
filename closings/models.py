@@ -52,7 +52,9 @@ class title_company(models.Model):
         return self.name
 
 def save_location(instance, filename):
-    return 'closings/{0}/{1}'.format(instance.application.Property, filename)
+    if instance.application:
+        return 'closings/{0}/{1}'.format(instance.application.Property, filename)
+    return 'closings/{0}/{1}'.format(instance.prop, filename)
 
 class closing(models.Model):
     application = models.ForeignKey(Application, help_text="Select the application if it is in the system", null=True, blank=True)
