@@ -292,5 +292,16 @@ class MeetingLink(models.Model):
     def __unicode__(self):
         return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
+    def save(self, *args, **kwargs):
+        if self.meeting_outcome == self.APPROVED_STATUS:
+            prop = self.application.Property
+            body = self.meeting.get_meeting_type_display()
+            if body == 'Metropolitan Development Commission':
+                body = 'MDC'
+            date = self.meeting.meeting_date
+            prop.status = 'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
+            prop.save()
+        super(MeetingLink, self).save(*args, **kwargs)
+
     class Meta:
         get_latest_by = 'meeting_date'
