@@ -35,7 +35,7 @@ def submitPropertyInquiry(request):
                 form_saved.Property.parcel + '\nAddress: ' + \
                 form_saved.Property.streetAddress + '\nStatus: ' + form_saved.Property.status
             send_mail('New Property Inquiry', message_body, 'chris.hartley@renewindianapolis.org',
-                      ['chris.hartley@renewindianapolis.org',  'lconover@renewindianapolis.org'], fail_silently=False)
+                      ['chris.hartley@renewindianapolis.org',], fail_silently=False)
             return HttpResponseRedirect(reverse('property_inquiry_confirmation', args=(form_saved.id,)))
     form = PropertyInquiryForm()
     return render_to_response('property_inquiry.html', {

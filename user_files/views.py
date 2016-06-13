@@ -44,7 +44,7 @@ def delete_uploaded_file(request):
     if selected_file.application is not None:
         if selected_file.application.frozen == True:
             protected = True
-            message = 'The application this file is linked to is frozen for editing and so the file can not be deleted. Email Lindi Conover, lconover@renewindianapolis.org for help.'
+            message = 'The application this file is linked to is frozen for editing and so the file can not be deleted. Email Chris Hartley, chris.hartley@renewindianapolis.org for help.'
 
     data = {
         "name": selected_file.supporting_document.name,
