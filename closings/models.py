@@ -15,7 +15,7 @@ class company_contact(models.Model):
     last_name = models.CharField(blank=False, max_length=255)
     phone_number = PhoneNumberField()
     email_address = models.CharField(max_length=254)
-    address = models.ForeignKey('mailing_address', blank=True)
+    address = models.ForeignKey('mailing_address', blank=True, null=True)
 
     class Meta:
         verbose_name = "company contacts"
