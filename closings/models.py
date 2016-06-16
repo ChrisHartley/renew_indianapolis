@@ -71,7 +71,7 @@ class closing(models.Model):
     def __unicode__(self):
             if self.application:
                 if self.application.organization:
-                        return '{0} - {1} {2} ({3})'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name, self.application.orgnization)
+                        return '{0} - {1} {2} ({3})'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name, self.application.organization)
                 return '{0} - {1} {2}'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name)
             else:
                 return '{0} - {1}'.format(self.prop, "Legacy Application")

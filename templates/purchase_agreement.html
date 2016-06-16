@@ -1,0 +1,62 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{% load closings_extras %}
+{% block center %}
+<h1>AGREEMENT TO PURCHASE REAL ESTATE</h1>
+
+The undersigned (herein “Purchaser”) hereby offers to purchase from the owner (herein “Seller”) the real estate located at:
+<h3>{{application.Property.streetAddress}}</h3>
+Parcel Number: {{application.Property.parcel}}</br>
+in the city of Indianapolis, County of Marion, State of  Indiana upon the following terms and conditions:
+<ol>
+<li><h4>Purchase Price and Conditions of Payment</h4></li>
+The purchase price shall be {{application.Property.price|num2words|title}} Dollars (${{application.Property.price|floatformat:2|intcomma}}).
+<ul class="list-unstyled">
+    <li><strong>A: Cash.</strong></li> The purchase price shall be paid in its entirety in cash at the time of closing the sale.
+    <li><strong>B: Cash With Assumption of Existing Project Agreement as outlines in the Assignment/Assumption Agreement</strong></li>
+</ul>
+
+<h4>Other Considerations</h4>
+<ol>
+  <strong><li>Real Estate Taxes, Assessments, and Adjustments</li></strong>
+Real Estate Taxes accrued against the property shall be prorated through the date of closing the sale and Seller shall pay all taxes allocated to the property through that date of acceptance of this offer to purchase. Existing casualty insurance shall be canceled/prorated through the date of closing.
+
+  <strong><li>Title to the Property</li></strong>
+Seller shall provide purchaser prior to the closing and promptly after the acceptance of this offer, at Purchaser’s expense and at Purchaser’s option an abstract of title to the property brought down to date or an owner’s policy of title insurance in an amount equal to the purchase price, said abstract of policy to show marketable or insurable title to the real estate in the name of Seller.
+  <strong><li>Possession of the Property</li></strong>
+Purchaser shall be given possession of the property on closing date.  A failure on the part of Seller to transfer possession as specified will not make Seller a tenant of Purchaser, but in such event Seller shall pay to Purchaser $0 per day as damages for breach of contract and not as rent. All other remedies, which Purchaser may have under law, are reserved to Purchaser.
+  <strong><li>General Conditions</li></strong>
+It is expressly agreed that this agreement to purchase real estate includes the entire agreement of Purchaser and Seller. This agreement shall be binding upon the heirs, personal representatives, successors and assigns of both Purchaser and Seller. This agreement shall be interpreted and enforced in accordance with the laws of the State of Indiana.
+  <strong><li>Special Conditions</li></strong>
+None.
+  <strong><li>Time for Closing</li></strong>
+  {% with closing_date=now %}
+
+  {% endwith %}
+Closing of the sale shall take place on or before {{application|plus_30_days}} showing marketable title in Seller or title insurance binder showing insurable title in Seller.
+</ol>
+</ol>
+<p>
+This offer is made at The Platform, 202 E Market St, City of Indianapolis, State of Indiana this {% now "jS" %} of {% now "F, Y" %}.
+</p>
+<p>
+ ____________________________</br>
+(PURCHASER)</br>
+ ___________________________</br>
+(PURCHASER)</br>
+</p>
+<p>&nbsp;</p>
+<p>
+<h5>Acceptance by Seller</h5>
+The foregoing offer to purchase real estate is hereby accepted in accordance with the terms and conditions specified above.
+</p>
+<p>
+Dated {% now "jS" %} of {% now "F, Y" %}.
+</p>
+<p>
+____________________________</br>
+(SELLER)</br>
+ ____________________________</br>
+(SELLER)</br>
+</p>
+{% endblock center %}

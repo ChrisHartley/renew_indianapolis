@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.db.models import Q
+from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
+
 from .models import location, company_contact, mailing_address, title_company, closing
 from .forms import ClosingAdminForm
 from applications.models import Application
@@ -11,7 +14,7 @@ class ClosingAdmin(admin.ModelAdmin):
     list_display = ['__unicode__','title_company','date_time', 'documents_in_place']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company',)
-
+    readonly_fields = ('purchase_agreement',)
 
     def get_formset(self, request, obj=None, **kwargs):
         kwargs['formfield_callback'] = partial(self.formfield_for_dbfield, request=request, obj=obj)
@@ -42,6 +45,14 @@ class ClosingAdmin(admin.ModelAdmin):
             return True
         else:
             return False
+
+    def purchase_agreement(self, obj):
+        return mark_safe('<a target="_blank" href="/application/view/purchase_agreement/{}">{}</a>'.format(
+            obj.application.id, "Purchase Agreement"
+            ))
+        #pass
+    purchase_agreement.short_description = 'Purchase Agreement'
+
 
     def file_download(self, obj):
         return mark_safe('<a href="{}">{}</a>'.format(

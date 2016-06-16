@@ -145,5 +145,11 @@ class ApplicationNeighborhoodNotification(DetailView):
     context_object_name = 'application'
     template_name = 'neighborhood_notification.html'
 
+class ApplicationPurchaseAgreement(DetailView):
+    model = Application
+    context_object_name = 'application'
+    template_name = 'purchase_agreement.html'
+
+
 #    def neighborhood(self):
 #        return self.neighborhood.
