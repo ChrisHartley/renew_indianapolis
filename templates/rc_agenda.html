@@ -1,0 +1,23 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{% block center %}
+
+{% regroup meeting.meeting_link.all|dictsort:"application.application_type" by application.get_application_type_display as meeting_links  %}
+<h1>{{meeting.get_meeting_type_display}} Agenda</br><small>{{meeting.meeting_date}}</small></h1>
+<ul>
+{% for meeting_link in meeting_links %}
+<li><h3>{{ meeting_link.grouper }}</h3>
+  <dl>
+    {% for application in meeting_link.list %}
+      <dt> <b>{{ application.application.user.first_name }} {{ application.application.user.last_name }}</br>
+        {% if application.application.organization %} {{ application.application.organization }} </br> {% endif %}
+        {{ application.application.Property }}</b>
+      </dt>
+      <dd>Discussion:&nbsp;</br>&nbsp;</br></dd>
+    {% endfor %}
+  </dl>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock center %}

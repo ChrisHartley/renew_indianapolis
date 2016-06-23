@@ -1,0 +1,89 @@
+{% extends 'base-simple-container.html' %}
+{% load humanize %}
+{% block center%}
+
+
+{% regroup meeting.meeting_link.all|dictsort:"application.application_type" by application.get_application_type_display as meeting_links  %}
+{% for meeting_link in meeting_links %}
+    {% for application in meeting_link.list %}
+<div class="row">
+  <div class=".col-md-10 .col-xs-10 .col-sm-10 .col-lg-10">
+    <p class="text-right">
+      Renew Indianapolis<br/>
+      Application and Staff Summary<br/>
+      {% for meeting in application.application.meeting.all %}
+        {{meeting}}<br/>
+      {% endfor %}
+    </p>
+    <h1>{{application.application.Property.streetAddress}} <small>{{application.application.user.first_name}} {{application.application.user.last_name}}
+      {% if application.application.organization %}
+    {{application.application.organization}}
+    {% endif %}</small></h1>
+    <dl>
+  </div>
+  <div class='col-md-6 col-xs-6'>
+    <dt>Property</dt><dd>{{application.application.Property.streetAddress}}</dd>
+
+    <dt>Parcel</dt><dd>{{application.application.Property.parcel}}</dd>
+    <dt>Application Type</dt><dd>{{application.application.get_application_type_display}}</dd>
+    <dt>Applicant</dt><dd>{{application.application.user.first_name}} {{application.application.user.last_name}}</dd>
+    {% if application.application.organization %}
+      <dt>Organization</dt><dd>{{application.application.organization}}</dd>
+    {% endif %}
+    <dt>NSP</dt><dd>{{application.application.Property.nsp|yesno:"Yes,No,Error"}}</dd>
+    <dt>Neighborhood</dt><dd>{{application.application.Property.neighborhood}}</dd>
+    <dt>Staff Summary</dt>
+    <dd>
+       {{application.application.staff_summary}}
+    </dd>
+
+    <dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.application.staff_sow_total|intcomma}}</dd>
+    <h3>Neighborhood Notifications</h3>
+      {% for notification in application.application.notification.all %}
+        <dt>{{notification.neighborhood}}</dt>
+          <dd>{% if notification.feedback|length != 0 %} {{notification.feedback}} {% else %} No feedback received {% endif %}</dd>
+      {% endfor %}
+    </p>
+    <dt>Points to consider</dt><dd>{{application.application.staff_points_to_consider}}</dd>
+    <dt>Staff Recommendation</dt><dd>{{application.application.staff_recommendation|yesno:"Yes,No,None"}}
+      {% if application.application.staff_recommendation_notes %} ({{application.application.staff_recommendation_notes}}) {% endif %}
+    </dd>
+    <dt></dt><dd></dd>
+
+    </dl>
+  </div>
+
+  <div class='col-md-4 col-xs-4'>
+    <img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{application.application.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
+    &nbsp;<br/>
+    <img src="https://www.renewindianapolis.org/inventory_maps/parcel_{{application.application.Property.parcel}}.jpg" class="img-thumbnail" width="200"/>
+
+  </div>
+</div>
+<div class="row">
+  <div class=".col-md-10 .col-xs-10 .col-sm-10 .col-lg-10">
+      {{application.Property.streetAddress}} {{application.user.first_name}} {{application.user.last_name}}
+        {% if application.organization %}
+      {{application.organization}}
+      {% endif %}
+      <div class="page-break"></div>
+  </div>
+</div>
+
+
+    {% endfor %}
+{% endfor %}
+
+
+
+
+<style>
+@media all {
+	.page-break	{ display: none; }
+}
+
+@media print {
+	.page-break	{ display: block; page-break-before: always; }
+}
+</style>
+{% endblock center %}

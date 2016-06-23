@@ -17,7 +17,7 @@ from django.forms import inlineformset_factory
 
 from .forms import ApplicationForm
 #from user_files.forms import UploadedFileForm
-from .models import Application
+from .models import Application, Meeting
 from property_inventory.models import Property
 from applicants.models import ApplicantProfile
 from user_files.models import UploadedFile
@@ -150,6 +150,15 @@ class ApplicationPurchaseAgreement(DetailView):
     context_object_name = 'application'
     template_name = 'purchase_agreement.html'
 
+class ReviewCommitteeAgenda(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'rc_agenda.html'
+
+class ReviewCommitteeStaffSummary(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'application_display_all.html'
 
 #    def neighborhood(self):
 #        return self.neighborhood.
