@@ -301,7 +301,7 @@ class MeetingLink(models.Model):
             date = self.meeting.meeting_date
             prop.status = 'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
             if self.application.organization:
-                prop.applicant = '{0} {1} - {2}'.format(self.application.user__first_name, self.application.user__last_name, self.application.organization)
+                prop.applicant = '{0} {1} - {2}'.format(self.application.user.first_name, self.application.user.last_name, self.application.organization)
             else:
                 prop.applicant = '{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
             prop.save()
