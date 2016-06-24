@@ -145,7 +145,7 @@ class MeetingAdmin(admin.ModelAdmin):
 
     def create_packet_support_documents(self, obj):
         return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
-            reverse("CreateMeetingSupportArchive", kwargs={'pk':obj.id}),
+            reverse("staff_packet_attachements", kwargs={'pk':obj.id}),
                 "Generate Supporting Documents Archive"
             ))
     create_packet_support_documents.short_description = 'Supporting Documents'
