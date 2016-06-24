@@ -178,9 +178,8 @@ class CreateMeetingSupportArchive(View):
     #                    myzip.write(filename, slugify(uploaded_file.get_file_purpose_display())+'.txt')
                         myzip.write(filename)
             tmp.seek(0)
-            response = HttpResponse(my_data, content_type='application/x-zip-compressed')
+            response = HttpResponse(tmp.read(), content_type='application/x-zip-compressed')
             response['Content-Disposition'] = 'attachment; filename="foo.zip"'
-            response.write(tmp.read())
             return response
 
 
