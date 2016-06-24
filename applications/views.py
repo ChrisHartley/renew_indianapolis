@@ -175,12 +175,11 @@ class CreateMeetingSupportArchive(View):
                         filename = str(uploaded_file.supporting_document.name)
                         if filename.startswith('/') != True:
                             filename = settings.MEDIA_ROOT+filename
-    #                    myzip.write(filename, slugify(uploaded_file.get_file_purpose_display())+'.txt')
                         archive_filename = '{0}_{1}/{2}'.format(slugify(application.Property), slugify(application.user.first_name+' '+application.user.last_name), os.path.basename(filename))
                         myzip.write(filename, archive_filename)
             tmp.seek(0)
             response = HttpResponse(tmp.read(), content_type='application/x-zip-compressed')
-            response['Content-Disposition'] = 'attachment; filename="foo.zip"'
+            response['Content-Disposition'] = 'attachment; filename="{0}.zip"'.format(meeting,)
             return response
 
 
