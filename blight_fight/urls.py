@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
-from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary
+from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive
 from applicants.views import edit_organization
 # from applications.views import
 
@@ -99,6 +99,9 @@ urlpatterns = patterns('',
                        url(r'meeting/view_packet/(?P<pk>[0-9]+)/$',
                             staff_member_required(ReviewCommitteeStaffSummary.as_view()),
                             name='staff_packet'),
+                        url(r'meeting/view_packet_attachement/(?P<pk>[0-9]+)/$',
+                             staff_member_required(CreateMeetingSupportArchive.as_view()),
+                             name='staff_packet_attachements'),
 
 
 

@@ -29,9 +29,11 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 from pprint import pprint
+import zipfile
+import tempfile
+from django.utils.text import slugify
 
-
-from django.views.generic import DetailView
+from django.views.generic import DetailView, View
 
 @login_required
 def process_application(request, action, id=None):
@@ -159,6 +161,29 @@ class ReviewCommitteeStaffSummary(DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'application_display_all.html'
+
+class CreateMeetingSupportArchive(View):
+    def get(self, request, *args, **kwargs):
+        meeting_id = self.kwargs['pk']
+        meeting = get_object_or_404(Meeting, id=meeting_id)
+        with tempfile.SpooledTemporaryFile() as tmp:
+            with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as myzip:
+                for meeting_link in meeting.meeting_link.all():
+                    application = meeting_link.application
+                    uploaded_files = UploadedFile.objects.filter(application=application).exclude(file_purpose=UploadedFile.PURPOSE_POF)
+                    for uploaded_file in uploaded_files:
+                        filename = str(uploaded_file.supporting_document.name)
+                        if filename.startswith('/') != True:
+                            filename = settings.MEDIA_ROOT+filename
+    #                    myzip.write(filename, slugify(uploaded_file.get_file_purpose_display())+'.txt')
+                        myzip.write(filename)
+            tmp.seek(0)
+            response = HttpResponse(my_data, content_type='application/x-zip-compressed')
+            response['Content-Disposition'] = 'attachment; filename="foo.zip"'
+            response.write(tmp.read())
+            return response
+
+
 
 #    def neighborhood(self):
 #        return self.neighborhood.
