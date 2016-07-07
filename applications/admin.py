@@ -130,6 +130,8 @@ class MeetingAdmin(admin.ModelAdmin):
     readonly_fields = ('agenda', 'create_packet', 'create_packet_support_documents')
 
     def agenda(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
         return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
             reverse("rc_agenda", kwargs={'pk':obj.id}),
                 "Generate Agenda"
@@ -137,6 +139,8 @@ class MeetingAdmin(admin.ModelAdmin):
     agenda.short_description = 'Agenda'
 
     def create_packet(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
         return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
             reverse("staff_packet", kwargs={'pk':obj.id}),
                 "Generate Staff Recommendations and Summary Packet"
@@ -144,6 +148,8 @@ class MeetingAdmin(admin.ModelAdmin):
     create_packet.short_description = 'Packet'
 
     def create_packet_support_documents(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
         return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
             reverse("staff_packet_attachements", kwargs={'pk':obj.id}),
                 "Generate Supporting Documents Archive"
