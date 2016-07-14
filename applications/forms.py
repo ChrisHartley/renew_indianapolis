@@ -253,8 +253,8 @@ class ApplicationForm(forms.ModelForm):
                 if is_rental and property_selected.nsp and nsp_income_qualifier == "":
                     self.add_error('nsp_income_qualifier', ValidationError(
                         "Since this is a rental NSP property you must list who will be conducting tenant income qualification."))
-                if property_selected is not None and property_selected.homestead_only:
-                    self.add_error('application_type', ValidationError(
-                        'The property you have selected is marked "homestead only" but you indicated a Standard application.'))
+                #if property_selected is not None and property_selected.homestead_only:
+                #    self.add_error('application_type', ValidationError(
+                #        'The property you have selected is marked "homestead only" but you indicated a Standard application.'))
 
         return len(self.errors) == 0
