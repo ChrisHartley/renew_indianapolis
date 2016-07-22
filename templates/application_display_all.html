@@ -38,11 +38,9 @@
     </dd>
 
     <dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.application.staff_sow_total|intcomma}}</dd>
-    <h3>Neighborhood Notifications</h3>
-      {% for notification in application.application.notification.all %}
-        <dt>{{notification.neighborhood}}</dt>
-          <dd>{% if notification.feedback|length != 0 %} {{notification.feedback}} {% else %} No feedback received {% endif %}</dd>
-      {% endfor %}
+    <h4>Neighborhood Notifications</h4>
+    <p>
+    {{application.neighborhood_notification_details}}
     </p>
     <dt>Points to consider</dt><dd>{{application.application.staff_points_to_consider}}</dd>
     <dt>Staff Recommendation</dt><dd>{{application.application.staff_recommendation|yesno:"Yes,No,None"}}
