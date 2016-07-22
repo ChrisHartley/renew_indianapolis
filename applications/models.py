@@ -232,6 +232,9 @@ class Application(models.Model):
         help_text="Frozen applications are ready for review and can not be edited by the applicant"
     )
 
+    staff_notes = models.CharField(blank=True, max_length=1024)
+    neighborhood_notification_details = models.CharField(blank=True, max_length=1024)
+
     def __unicode__(self):
         if self.organization:
             return '%s - %s - %s' % (self.user.email, self.organization.name, self.Property)
