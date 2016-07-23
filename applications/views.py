@@ -162,6 +162,12 @@ class ReviewCommitteeStaffSummary(DetailView):
     context_object_name = 'meeting'
     template_name = 'application_display_all.html'
 
+class ReviewCommitteeApplications(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'application_detail_all.html'
+
+
 class CreateMeetingSupportArchive(View):
     def get(self, request, *args, **kwargs):
         meeting_id = self.kwargs['pk']

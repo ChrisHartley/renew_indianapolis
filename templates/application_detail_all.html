@@ -1,0 +1,105 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{% block center%}
+{% regroup meeting.meeting_link.all|dictsort:"application.application_type" by application.get_application_type_display as meeting_links  %}
+{% for meeting_link in meeting_links %}
+    {% for application in meeting_link.list %}
+
+
+<table id="table" class="table-striped">
+    <thead>
+    <tr>
+        <th data-field="key" class="key">Question</th>
+        <th data-field="value">Response</th>
+    </tr>
+    </thead>
+    <tbody>
+<tr><td>Property</td><td>{{application.application.Property}}</td>
+</tr>
+<tr>
+<td>Applicant</td><td>{{application.application.user.first_name}} {{application.application.user.last_name}}</td>
+</tr>
+<tr>
+<td>Organization</td><td>{{application.application.organization}}</td>
+</tr>
+<tr>
+<td>Date Created</td><td>{{application.application.created}}</td>
+</tr>
+<tr>
+<td>Date Modified</td><td>{{application.application.modified}}</td>
+</tr>
+<tr>
+<td>Status</td><td>{{application.application.get_status_display}}</td>
+</tr>
+<tr>
+<td>Conflict of interest</td><td>{{application.application.conflict_board_rc|yesno}}</td>
+</tr>
+<tr>
+<td>Conflicting individual(s)</td><td>{{application.application.conflict_board_rc_name}}</td>
+</tr>
+<tr>
+<td>Active Citations</td><td>{{application.application.active_citations|yesno}}</td>
+</tr>
+<tr>
+<td>Tax Status</td><td>{{application.application.get_tax_status_of_properties_owned_display}}</td>
+</tr>
+<tr>
+<td>Names through which other properties owned</td><td>{{application.application.other_properties_names_owned}}</td>
+</tr>
+<tr>
+<td>Prior Tax Foreclosures</td><td>{{application.application.prior_tax_foreclosure|yesno}}</td>
+</tr>
+<tr>
+<td>Application Type</td><td>{{application.application.get_application_type_display}}</td>
+</tr>
+
+{% if application.application.application_type == 3 %}
+<tr>
+  <td>Applicant attests sidelot eligibile</td><td>{{application.application.sidelot_eligible|yesno}}</td>
+</tr>
+{% endif %}
+{% if application.application.application_type == 2 %}
+<tr>
+  <td>Property will be a rental</td><td>{{application.application.is_rental|yesno}}</td>
+</tr>
+  {% if application.application.Property.nsp == True %}
+    <tr>
+    <td>NSP Income Qualifier</td><td>{{application.application.nsp_income_qualifier}}</td>
+    </tr>
+  {% endif %}
+    <tr>
+    <td>Long Term Ownership</td><td>{{application.application.long_term_ownership}}</td>
+    </tr>
+{% endif %}
+{% if application.application.application_type != 3 %}
+  <tr>
+  <td>Planned improvements</td><td>{{application.application.planned_improvements}}</td>
+  </tr>
+  <tr>
+  <td>Timeline</td><td>{{application.application.timeline}}</td>
+  </tr>
+  <tr>
+  <td>Estimated Cost</td><td>${{application.application.estimated_cost|intcomma}}</td>
+  </tr>
+  <tr>
+  <td>Source of Financing</td><td>{{application.application.source_of_financing}}</td>
+  </tr>
+{% endif %}
+  </tbody>
+</table>
+</br><div class="page-break"></div>
+
+{% endfor %}
+{% endfor %}
+
+<style>
+@media all {
+	.page-break	{ display: none; }
+}
+
+@media print {
+	.page-break	{ display: block; page-break-before: always; }
+}
+</style>
+
+{% endblock center %}
