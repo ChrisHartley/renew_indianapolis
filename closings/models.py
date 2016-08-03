@@ -57,7 +57,7 @@ def save_location(instance, filename):
     return 'closings/{0}/{1}'.format(instance.prop, filename)
 
 class closing(models.Model):
-    application = models.ForeignKey(Application, help_text="Select the application if it is in the system", null=True, blank=True)
+    application = models.ForeignKey(Application, help_text="Select the application if it is in the system", null=True, blank=True, related_name='closing_set')
     prop = models.ForeignKey(Property, verbose_name="Property", help_text="Select the property only if this is a legacy application that is not listed under Application", null=True, blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
     location = models.ForeignKey('location', blank=True, null=True)
@@ -67,6 +67,8 @@ class closing(models.Model):
     nsp_convenants = models.FileField(upload_to=save_location, blank=True, null=True)
     project_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     assignment_and_assumption_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
+    closed = models.BooleanField(default=False, help_text="Has this transaction been completed?")
+
 #    scope_of_work = models.FileField(upload_to=save_location)
     def __unicode__(self):
             if self.application:
