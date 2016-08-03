@@ -57,13 +57,11 @@ class ClosingAdmin(admin.ModelAdmin):
         else:
             return False
 
-
-
     def purchase_agreement(self, obj):
-        return mark_safe('<a target="_blank" href="/application/view/purchase_agreement/{}">{}</a>'.format(
-            obj.application.id, "Purchase Agreement"
-            ))
-        #pass
+        pa_link = '<a target="_blank" href="{}">{}</a>'.format(
+            reverse("application_purchase_agreement", args=(obj.application.id,)), "Purchase Agreement")
+        return mark_safe(pa_link)
+
     purchase_agreement.short_description = 'Purchase Agreement'
 
 
