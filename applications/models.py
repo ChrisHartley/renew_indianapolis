@@ -235,6 +235,8 @@ class Application(models.Model):
     staff_notes = models.CharField(blank=True, max_length=1024)
     neighborhood_notification_details = models.CharField(blank=True, max_length=1024)
 
+    #meeting is MeetingLink accessor
+
     def __unicode__(self):
         if self.organization:
             return '%s - %s - %s' % (self.user.email, self.organization.name, self.Property)
