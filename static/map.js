@@ -1,6 +1,6 @@
 var lon = -9590863.695045754313469;
 var lat = 4835547.198063937388361;
-var zoom = 12;
+var zoom = 14;
 var map, OSMlayer, gmap, gypb, statemLayer, stamenTerrainLayer, drawControls, polyfeature, polygonLayer, searchResultsLayer, searchResults, surplusLayer;
 var selectControl, selectedFeature, selectedFill, selectedLayer;
 var lbStyle, lbStyleMap;
@@ -64,7 +64,9 @@ var table = jQuery('#search_results').DataTable({
           {"data": "properties.bep_demolition",
                        "render": function(data){ return boolean_to_yesno(data); }
                      },
-
+          {"data": "properties.hhf_demolition",
+                      "render": function(data){ return boolean_to_yesno(data); }
+                    },
             {"data": "properties.area",
                       "render": function ( data ) { return numberWithCommas(data); }
                     },

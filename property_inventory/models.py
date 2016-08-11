@@ -90,6 +90,15 @@ class Property(models.Model):
         default=False, help_text="Price is Or Best Offer", verbose_name="Price is 'Or Best Offer'")
     renew_owned = models.BooleanField(
         default=False, help_text="Property is owned directly by Renew Indianapolis or a wholly owned subsidiary.", verbose_name="Owned by Renew Indianapolis directly")
+    hhf_demolition = models.BooleanField(default=False, help_text="Property was demolished through Hardest Hit Funds/Blight Elimination Program, and may have restrictions on end use.", 
+        verbose_name="Property was demolished through Hardest Hit Funds/Blight Elimination Program")
+
+
+#    def property_photo_location(instance, filename):
+#        return 'pictometry/{0}/{1}'.format(instance.parcel, filename)
+
+#    photo = models.ImageField(upload_to=property_photo_location, null=True, blank=True, help_text="Photo of the property")
+
 
     class Meta:
         verbose_name_plural = "properties"

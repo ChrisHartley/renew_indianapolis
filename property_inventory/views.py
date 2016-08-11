@@ -96,9 +96,7 @@ def getAddressFromParcel(request):
     # 	except Property.DoesNotExist:
     return HttpResponse("Please submit a search term")
 
-# Show a table with property statuses by sold and approved (in-progress).
-
-
+# Show a table with property statuses broken down by sold, sale-approved and in-progress.
 def showApplications(request):
     config = RequestConfig(request)
 
@@ -152,7 +150,7 @@ def searchProperties(request):
                                       geometry_field='geometry',
                                       fields=('id', 'parcel', 'streetAddress', 'zipcode', 'zone', 'status', 'structureType',
                                               'sidelot_eligible', 'neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
-                                              'urban_garden','price', 'nsp', 'renew_owned', 'area','price_obo', 'cdc', 'geometry'),
+                                              'urban_garden','price', 'nsp', 'renew_owned', 'area','price_obo', 'cdc', 'hhf_demolition', 'geometry'),
                                       use_natural_foreign_keys=True
                                       )
             return HttpResponse(s, content_type='application/json')
@@ -180,3 +178,6 @@ def propertyPopup(request):
         object_list.structureType) + "<br>Side lot Eligible: " + str(object_list.sidelot_eligible) + "<br>Homestead only: " + str(object_list.homestead_only) + "</div>"
     return HttpResponse(content, content_type='text/plain; charset=utf8')
 #	return HttpResponse(json, content_type='application/json')
+
+def get_property_photo(request):
+    return false
