@@ -19,13 +19,21 @@ from property_inquiry.filters import PropertyInquiryFilters
 from property_inquiry.tables import PropertyInquiryTable
 from property_inquiry.forms import PropertyInquiryForm
 
+import datetime
+
 
 # Displays form template for property inquiry submissions, and saves those
 # submissions
 @login_required
 def submitPropertyInquiry(request):
+    form = PropertyInquiryForm()
     if request.method == 'POST':
+        previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=datetime.datetime.now()-datetime.timedelta(hours=48)).count()
+        #print "Previous PI count:", previousPIcount
         form = PropertyInquiryForm(request.POST)
+        if previousPIcount > 3: # limit number of requests per time period
+            #print "adding error message"
+            form.add_error(None, "You can not submit more than 3 property inquiries every 48 hours. Please try again later.")
         if form.is_valid():
             form_saved = form.save(commit=False)
             form_saved.applicant_ip_address = get_real_ip(request)
@@ -37,7 +45,6 @@ def submitPropertyInquiry(request):
             send_mail('New Property Inquiry', message_body, 'chris.hartley@renewindianapolis.org',
                       ['chris.hartley@renewindianapolis.org',], fail_silently=False)
             return HttpResponseRedirect(reverse('property_inquiry_confirmation', args=(form_saved.id,)))
-    form = PropertyInquiryForm()
     return render_to_response('property_inquiry.html', {
         'form': form,
         'title': 'property visit'
