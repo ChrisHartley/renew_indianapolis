@@ -127,7 +127,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline]
-    readonly_fields = ('agenda', 'create_packet', 'create_packet_support_documents')
+    readonly_fields = ('agenda', 'applications', 'create_packet', 'create_packet_support_documents')
 
     def agenda(self, obj):
         if obj.id is None:
@@ -137,6 +137,15 @@ class MeetingAdmin(admin.ModelAdmin):
                 "Generate Agenda"
             ))
     agenda.short_description = 'Agenda'
+
+    def applications(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
+        return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
+            reverse("application_packet", kwargs={'pk':obj.id}),
+                "Generate Applications"
+            ))
+    agenda.short_description = 'Applications'
 
     def create_packet(self, obj):
         if obj.id is None:
