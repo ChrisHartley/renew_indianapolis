@@ -23,8 +23,15 @@ class ClosingAdmin(admin.ModelAdmin):
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(ClosingAdmin, self).formfield_for_dbfield(db_field, **kwargs)
 
+        # terrible? way to get object id if we are editting an existing object
+        try:
+            # http://stackoverflow.com/a/18318866/2731298
+            obj_id = int([i for i in str(kwargs['request'].path).split('/') if i][-1])
+        except ValueError:
+            obj_id = None
+
         # If we are edding an existing closing, don't restrict application choices
-        if kwargs.pop('obj', None) != None:
+        if obj_id != None:
             return formfield
         # If we are adding a new closing, restrict choices to only approved unsold applications/properties
         else:
