@@ -62,6 +62,7 @@ class closing(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     location = models.ForeignKey('location', blank=True, null=True)
     title_company = models.ForeignKey(title_company)
+    title_commitment = models.FileField(upload_to=save_location, blank=True, null=True)
     closing_statement = models.FileField(upload_to=save_location, blank=True, null=True)
     deed = models.FileField(upload_to=save_location, blank=True, null=True)
     nsp_convenants = models.FileField(upload_to=save_location, blank=True, null=True)
