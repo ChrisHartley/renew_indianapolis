@@ -68,6 +68,7 @@ class closing(models.Model):
     project_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     assignment_and_assumption_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     closed = models.BooleanField(default=False, help_text="Has this transaction been completed?")
+    notes = models.CharField(max_length=2048, blank=True, help_text="Internal notes")
 
 #    scope_of_work = models.FileField(upload_to=save_location)
     def __unicode__(self):
