@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
+from django import forms
 
 from .models import location, company_contact, mailing_address, title_company, closing
 from .forms import ClosingAdminForm
@@ -22,6 +23,9 @@ class ClosingAdmin(admin.ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(ClosingAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+
+        if db_field.name == 'notes':
+            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
 
         # terrible? way to get object id if we are editting an existing object
         try:
