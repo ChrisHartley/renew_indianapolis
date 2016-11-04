@@ -65,6 +65,7 @@ class closing(models.Model):
     title_commitment = models.FileField(upload_to=save_location, blank=True, null=True)
     closing_statement = models.FileField(upload_to=save_location, blank=True, null=True)
     deed = models.FileField(upload_to=save_location, blank=True, null=True)
+    ri_deed = models.FileField(upload_to=save_location, blank=True, null=True)
     nsp_convenants = models.FileField(upload_to=save_location, blank=True, null=True)
     project_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     assignment_and_assumption_agreement = models.FileField(upload_to=save_location, blank=True, null=True)

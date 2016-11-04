@@ -12,7 +12,7 @@ from property_inventory.models import Property
 class ClosingAdmin(admin.ModelAdmin):
 
     form = ClosingAdminForm
-    list_display = ['__unicode__','title_company','date_time', 'city_documents_in_place', 'title_company_documents_in_place']
+    list_display = ['__unicode__','title_company','date_time', 'title_commitment_in_place', 'city_documents_in_place', 'ri_documents_in_place', 'title_company_documents_in_place']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed')
     readonly_fields = ('purchase_agreement',)
@@ -54,12 +54,30 @@ class ClosingAdmin(admin.ModelAdmin):
 
         return formfield
 
-    def title_company_documents_in_place(self, obj):
-        file_fields_to_check = [obj.closing_statement, obj.assignment_and_assumption_agreement]
+    def title_commitment_in_place(self, obj):
+        file_fields_to_check = [obj.title_commitment]
         if all(file_fields_to_check):
             return True
         else:
             return False
+    title_commitment_in_place.boolean = True
+
+    def ri_documents_in_place(self, obj):
+        file_fields_to_check = [obj.assignment_and_assumption_agreement, obj.ri_deed]
+        if all(file_fields_to_check):
+            return True
+        else:
+            return False
+    ri_documents_in_place.boolean = True
+
+    def title_company_documents_in_place(self, obj):
+        file_fields_to_check = [obj.closing_statement, obj.title_commitment]
+        if all(file_fields_to_check):
+            return True
+        else:
+            return False
+    title_company_documents_in_place.boolean = True
+
 
     def city_documents_in_place(self, obj):
         file_fields_to_check = [obj.deed, obj.project_agreement]
@@ -67,6 +85,7 @@ class ClosingAdmin(admin.ModelAdmin):
             return True
         else:
             return False
+    city_documents_in_place.boolean = True
 
     def purchase_agreement(self, obj):
         pa_link = '<a target="_blank" href="{}">{}</a>'.format(
