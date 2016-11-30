@@ -38,7 +38,7 @@ class mailing_address(models.Model):
         verbose_name_plural = "mailing addresses"
 
     def __unicode__(self):
-        return '{0} {1} {2} {3} {4} {5}'.format(mailing_address_line1, self.mailing_address_line2, self.mailing_address_line3, self.mailing_address_city, self.mailing_address_state, self.mailing_address_zip)
+        return '{0} {1} {2} {3} {4} {5}'.format(self.mailing_address_line1, self.mailing_address_line2, self.mailing_address_line3, self.mailing_address_city, self.mailing_address_state, self.mailing_address_zip)
 
 class title_company(models.Model):
     name = models.CharField(max_length=254)
