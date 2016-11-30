@@ -1,5 +1,5 @@
 from django.contrib.gis import admin
-from .models import Property, CDC
+from .models import Property, CDC, Neighborhood
 
 class PropertyAdmin(admin.OSMGeoAdmin):
     search_fields = ('parcel', 'streetAddress')
@@ -9,3 +9,4 @@ class PropertyAdmin(admin.OSMGeoAdmin):
 
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
+admin.site.register(Neighborhood)
