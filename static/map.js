@@ -76,6 +76,9 @@ var table = jQuery('#search_results').DataTable({
             {"data": "properties.price_obo",
              "render": function(data){ return boolean_to_yesno(data); }
             },
+            {"data": "properties.parcel",
+              "render": function(data){ return "<a href='http://maps.indy.gov/AssessorPropertyCards.Reports.Service/ReportPage.aspx?ParcelNumber="+data+"' target='_blank'>Link</a>";}
+            },
 
 
 					]

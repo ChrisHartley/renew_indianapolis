@@ -175,7 +175,7 @@ def propertyPopup(request):
     object_list = Property.objects.get(parcel__exact=request.GET['parcel'])
 #	json = serializers.serialize('json', object_list)
     content = "<div style='font-size:.8em'>Parcel: " + str(object_list.parcel) + "<br>Address: " + str(object_list.streetAddress) + "<br>Status: " + str(object_list.status) + "<br>Structure Type: " + str(
-        object_list.structureType) + "<br>Side lot Eligible: " + str(object_list.sidelot_eligible) + "<br>Homestead only: " + str(object_list.homestead_only) + "</div>"
+        object_list.structureType) + "<br>Side lot Eligible: " + str(object_list.sidelot_eligible) + "<br>Homestead only: " + str(object_list.homestead_only) + "<br><a href='http://maps.indy.gov/AssessorPropertyCards.Reports.Service/ReportPage.aspx?ParcelNumber="+str(object_list.parcel)+"' target='_blank'>Assessor's Property Report Card</a></div>"
     return HttpResponse(content, content_type='text/plain; charset=utf8')
 #	return HttpResponse(json, content_type='application/json')
 
