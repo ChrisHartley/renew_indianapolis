@@ -233,8 +233,8 @@ class Application(models.Model):
     )
 
     staff_notes = models.CharField(blank=True, max_length=1024)
-    neighborhood_notification_details = models.CharField(blank=True, max_length=2048)
-    neighborhood_notification_feedback = models.CharField(blank=True, max_length=2048)
+    neighborhood_notification_details = models.CharField(blank=True, max_length=10240)
+    neighborhood_notification_feedback = models.CharField(blank=True, max_length=10240)
 
 
     #meeting is MeetingLink accessor
