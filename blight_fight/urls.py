@@ -2,11 +2,11 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
 from django.views.generic.base import TemplateView
-from django.contrib.admin.views.decorators import staff_member_required
-
+from django.contrib.admin.views.decorators import staff_member_required, login_required
 
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications
+#from property_inventory.views import BetaMapView
 from applicants.views import edit_organization
 # from applications.views import
 
@@ -41,6 +41,9 @@ urlpatterns = patterns('',
                            'property_inventory.views.searchProperties'),
                        url(r'search-map/$',
                            'property_inventory.views.searchProperties'),
+#                       url(r'map_beta/$',
+#                            BetaMapView.as_view()),
+
 
                        #url(r'propertiesJSON/$', 'property_inventory.views.propertiesAsJSON',  name='properties_ajax_url'),
                        url(r'propertyPopup/$',
@@ -63,10 +66,10 @@ urlpatterns = patterns('',
                            name='applicants_home'),
                        url(r'accounts/profile/edit$',
                            'applicants.views.showApplicantProfileForm', name='applicants_profile'),
-                       url(r'accounts/organization/new/$', edit_organization.as_view(),
+                       url(r'accounts/organization/new/$', login_required(edit_organization.as_view()),
                            name='applicants_organization_add'),
                        url(r'accounts/organization/edit/(?P<id>\w+)/$',
-                           edit_organization.as_view(), name='applicants_organization_edit'),
+                           login_required(edit_organization.as_view()), name='applicants_organization_edit'),
                        url(r'accounts/organization$', 'applicants.views.show_organizations',
                            name='applicants_organization'),
 
