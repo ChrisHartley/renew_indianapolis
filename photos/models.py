@@ -27,9 +27,9 @@ class photo(models.Model):
         return '%s' % (self.prop, )
 
     def save(self, *args, **kwargs):
-        super(photo, self).save(*args, **kwargs)
-        #print self.image.path
+        super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
         im = Image.open(self.image.path)
+        # image rotation code from http://stackoverflow.com/a/11543365/2731298
         if hasattr(im, '_getexif'): # only present in JPEGs
             for orientation in ExifTags.TAGS.keys():
                 if ExifTags.TAGS[orientation]=='Orientation':
@@ -44,4 +44,3 @@ class photo(models.Model):
             elif orientation == 8: im = im.transpose(Image.ROTATE_90)
         im.thumbnail((1024,1024))
         im.save(self.image.path)
-        #print "in save"
