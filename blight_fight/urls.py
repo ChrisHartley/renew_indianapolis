@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications
+from photos.views import DumpPhotosView
 #from property_inventory.views import BetaMapView
 from applicants.views import edit_organization
 # from applications.views import
@@ -61,7 +62,7 @@ urlpatterns = patterns('',
                            'annual_report_form.views.showAnnualReportData', name='view_annual_report'),
                        url(r'admin_annual_report/$',
                            'annual_report_form.views.showAnnualReportIndex'),
-
+                       url(r'admin_add_photos/$', staff_member_required(DumpPhotosView.as_view()), name="admin_add_photos"),
 
                        url(r'accounts/profile$', 'applicants.views.profile_home',
                            name='applicants_home'),
