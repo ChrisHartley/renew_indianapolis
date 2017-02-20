@@ -44,7 +44,7 @@ class ClosingAdmin(admin.ModelAdmin):
                     ( Q(meeting__meeting_outcome__exact=MeetingLink.APPROVED_STATUS) & Q(meeting__meeting__meeting_type__exact=Meeting.MDC) ) |
                         ( Q(meeting__meeting_outcome__exact=MeetingLink.APPROVED_STATUS) & Q(meeting__meeting__meeting_type__exact=Meeting.BOARD_OF_DIRECTORS) & Q(Property__renew_owned__exact=True) )
 
-                ).exclude(Property__status__icontains='Sold').filter(closing_set__isnull=True)
+                ).exclude(Property__status__icontains='Sold').filter(closing_set__isnull=True).filter(status=Application.COMPLETE_STATUS)
             if db_field.name == "prop":
                 formfield.queryset = Property.objects.filter(
                     (Q(renew_owned__exact=True) & Q(
