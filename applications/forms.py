@@ -220,6 +220,10 @@ class ApplicationForm(forms.ModelForm):
             self.add_error('Property', ValidationError(
                 "You must select a property"))
 
+        if application_type is None or application_type == "":
+            self.add_error('application_type', ValidationError(
+                "You must select an application type"))
+
         if Application.SIDELOT == application_type:
             msg = "This is a required question."
             if not sidelot_eligible:
