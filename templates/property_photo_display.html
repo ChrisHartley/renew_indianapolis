@@ -5,7 +5,7 @@
 <h1>photos</h1>
 {% for photo in photos %}
 <img src="/media/{{ photo.image }}" class="img-thumbnail"/>
-
+<div class="caption">{{photo.created}}</div>
 {% endfor %}
 
 {% endblock center%}
