@@ -51,7 +51,7 @@ urlpatterns = patterns('',
                        url(r'propertyPopup/$',
                            'property_inventory.views.propertyPopup'),
                        url(r'property/(?P<parcel>[0-9]{7})/photos/$',
-                            PropertyPhotosView.as_view()),
+                            PropertyPhotosView.as_view(), name='property_photos'),
 
                        url(r'admin-condition-report/$',
                            'property_condition.views.condition_report_list'),
