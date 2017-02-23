@@ -52,6 +52,11 @@
   </div>
 
   <div class='col-md-4 col-xs-4'>
+    {% for ph in application.application.Property.photo_set.all %}
+      {% if ph.main_photo %}
+        <img src={{ ph.url }}/>
+      {% endif %}
+    {% endfor %}
     <img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{application.application.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
     &nbsp;<br/>
     <img src="https://www.renewindianapolis.org/inventory_maps/parcel_{{application.application.Property.parcel}}.jpg" class="img-thumbnail" width="200"/>
