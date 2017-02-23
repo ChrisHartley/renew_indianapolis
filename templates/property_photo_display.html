@@ -1,0 +1,11 @@
+{% extends 'base-simple-container.html' %}
+{% load humanize %}
+{% load custom_tags %}
+{% block center%}
+<h1>photos</h1>
+{% for photo in photos %}
+<img src="/media/{{ photo.image }}" class="img-thumbnail"/>
+
+{% endfor %}
+
+{% endblock center%}

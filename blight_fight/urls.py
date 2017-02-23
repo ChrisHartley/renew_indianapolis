@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications
-from photos.views import DumpPhotosView
+from photos.views import DumpPhotosView, PropertyPhotosView
 #from property_inventory.views import BetaMapView
 from applicants.views import edit_organization
 # from applications.views import
@@ -50,6 +50,8 @@ urlpatterns = patterns('',
                        #url(r'propertiesJSON/$', 'property_inventory.views.propertiesAsJSON',  name='properties_ajax_url'),
                        url(r'propertyPopup/$',
                            'property_inventory.views.propertyPopup'),
+                       url(r'property/(?P<parcel>[0-9]{7})/photos/$',
+                            PropertyPhotosView.as_view()),
 
                        url(r'admin-condition-report/$',
                            'property_condition.views.condition_report_list'),
