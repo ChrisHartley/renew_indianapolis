@@ -1,9 +1,10 @@
 Django==1.8.1
-Pillow==2.9.0
+Pillow==4.0.0
 ajaxuploader==0.3.8
 argparse==1.2.1
 diff-match-patch==20121119
 django-allauth==0.25.2
+django-autoslug==1.9.3
 django-crispy-forms==1.6.0
 django-debug-toolbar==1.4
 django-endless-pagination==2.0
@@ -19,6 +20,7 @@ django-tables2-reports==0.0.10
 num2words==0.5.3
 numpy==1.9.2
 oauthlib==0.7.2
+olefile==0.44
 psycopg2==2.6
 pyClamd==0.3.16
 python-openid==2.2.5
