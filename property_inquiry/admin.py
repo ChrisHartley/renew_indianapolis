@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 
 class propertyInquiryAdmin(admin.ModelAdmin):
     list_display = ('Property', 'user_name', 'user_phone', 'showing_scheduled', 'timestamp')
-    fields = ('Property', 'user_name', 'user_phone','showing_scheduled', 'timestamp')
+    fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
     readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property')
 
