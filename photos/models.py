@@ -37,7 +37,7 @@ class photo(models.Model):
         e = im._getexif()       # returns None if no EXIF data
         if e is not None:
             exif=dict(e.items())
-            orientation = exif[orientation]
+            orientation = exif.get(orientation, None)
 
             if orientation == 3:   im = im.transpose(Image.ROTATE_180)
             elif orientation == 6: im = im.transpose(Image.ROTATE_270)
