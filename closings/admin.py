@@ -15,7 +15,7 @@ class ClosingAdmin(admin.ModelAdmin):
     list_display = ['__unicode__','title_company','date_time', 'title_commitment_in_place', 'city_documents_in_place', 'ri_documents_in_place', 'title_company_documents_in_place']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed')
-    readonly_fields = ('purchase_agreement',)
+    readonly_fields = ('purchase_agreement', 'nsp')
 
     def get_formset(self, request, obj=None, **kwargs):
         kwargs['formfield_callback'] = partial(self.formfield_for_dbfield, request=request, obj=obj)
@@ -78,6 +78,12 @@ class ClosingAdmin(admin.ModelAdmin):
             return False
     title_company_documents_in_place.boolean = True
 
+    def nsp(self, obj):
+        if obj.application:
+            return obj.application.Property.nsp
+        if obj.prop:
+            return obj.prop.nsp
+        return None
 
     def city_documents_in_place(self, obj):
         file_fields_to_check = [obj.deed, obj.project_agreement]
