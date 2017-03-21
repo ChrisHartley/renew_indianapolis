@@ -8,10 +8,11 @@ from django.contrib.auth.decorators import login_required
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications
 from photos.views import DumpPhotosView, PropertyPhotosView
-#from property_inventory.views import BetaMapView
+#from property_inventory.views import PropertyDetailView #BetaMapView
 from applicants.views import edit_organization
 # from applications.views import
 
+admin.site.site_header = 'Blight Fight administration'
 
 urlpatterns = patterns('',
                        url(r'admin/', include(admin.site.urls)),
@@ -52,6 +53,9 @@ urlpatterns = patterns('',
                            'property_inventory.views.propertyPopup'),
                        url(r'property/(?P<parcel>[0-9]{7})/photos/$',
                             PropertyPhotosView.as_view(), name='property_photos'),
+#                       url(r'property/(?P<parcel>[0-9]{7})/$',
+#                          PropertyDetailView.as_view(), name='property_detail'),
+
 
                        url(r'admin-condition-report/$',
                            'property_condition.views.condition_report_list'),
