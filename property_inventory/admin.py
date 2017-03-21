@@ -1,12 +1,54 @@
 from django.contrib.gis import admin
+from django.contrib.admin import SimpleListFilter
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+from django.db.models import Q
 
 
 from .models import Property, CDC, Neighborhood
 
+class PropertyStatusYearListFilter(SimpleListFilter):
+    title = 'Property Status Year'
+    parameter_name = 'status-year'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('2014','2014'),
+            ('2015','2015'),
+            ('2016','2016'),
+            ('2017','2017'),
+            ('2018','2018'),
+        )
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(status__contains=self.value())
+
+class PropertyStatusListFilter(SimpleListFilter):
+    title = 'Property Status'
+    parameter_name = 'status'
+    def lookups(self, request, model_admin):
+        return (
+            ('sold', 'Sold'),
+            ('approved', 'Received Final Approval'),
+            ('consideration', 'Application under consideration')
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'sold':
+            return queryset.filter(status__contains='Sold')
+        if self.value() == 'approved':
+            return queryset.filter( ( Q(status__contains='Sale approved by MDC') & Q(renew_owned__exact=False) ) | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=True)) )
+        if self.value() == 'consideration':
+            return queryset.filter( Q(status__contains='Sale approved by Review Committee') | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=False)))
+        return queryset
+
+
+
 class PropertyAdmin(admin.OSMGeoAdmin):
-    search_fields = ('parcel', 'streetAddress')
+    search_fields = ('parcel', 'streetAddress', 'zipcode__name')
+    list_display = ('parcel', 'streetAddress', 'structureType','status')
+    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter )
+
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
     readonly_fields = ('applications_search','view_photos')
