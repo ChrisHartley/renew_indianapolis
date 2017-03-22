@@ -34,7 +34,7 @@ class photo(models.Model):
             for orientation in ExifTags.TAGS.keys():
                 if ExifTags.TAGS[orientation]=='Orientation':
                     break
-        e = im._getexif()       # returns None if no EXIF data
+            e = im._getexif()       # returns None if no EXIF data
         if e is not None:
             exif=dict(e.items())
             orientation = exif.get(orientation, None)
