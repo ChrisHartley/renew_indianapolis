@@ -30,6 +30,7 @@ class photo(models.Model):
         super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
         im = Image.open(self.image.path)
         # image rotation code from http://stackoverflow.com/a/11543365/2731298
+        e = None
         if hasattr(im, '_getexif'): # only present in JPEGs
             for orientation in ExifTags.TAGS.keys():
                 if ExifTags.TAGS[orientation]=='Orientation':
