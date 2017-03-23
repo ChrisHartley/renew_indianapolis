@@ -1,11 +1,13 @@
 from django.shortcuts import render
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 from django.template import RequestContext
 import json  # not used anymore, right?
 from django.core import serializers
 from django_tables2_reports.config import RequestConfigReport as RequestConfig
 from django.views.generic import View  # for class based views
+from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 
 # used for geojson display of search results
 from vectorformats.Formats import Django, GeoJSON
@@ -145,12 +147,20 @@ def searchProperties(request):
     if 'returnType' in request.GET and request.GET['returnType']:
         if request.GET['returnType'] == "geojson":
             json_serializer = DisplayNameJsonSerializer()
+            if 'centroids' in request.GET and request.GET['centroids']:
+                if request.GET['centroids'] == "true":
+                    print "using centroid_geometry"
+                    geom = 'centroid_geometry'
+                else:
+                    geom = 'geometry'
+            else:
+                geom = 'geometry'
             s = serializers.serialize('geojson',
                                       f,
-                                      geometry_field='geometry',
+                                      geometry_field=geom,
                                       fields=('id', 'parcel', 'streetAddress', 'zipcode', 'zone', 'status', 'structureType',
                                               'sidelot_eligible', 'neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
-                                              'urban_garden','price', 'nsp', 'renew_owned', 'area','price_obo', 'cdc', 'hhf_demolition', 'geometry'),
+                                              'urban_garden','price', 'nsp', 'renew_owned', 'area','price_obo', 'cdc', 'hhf_demolition', geom),
                                       use_natural_foreign_keys=True
                                       )
             return HttpResponse(s, content_type='application/json')
@@ -164,20 +174,28 @@ def searchProperties(request):
         })
 
 
-# used by dataTables -- not used anymore?
-# def propertiesAsJSON(request):
-# 	object_list = Property.objects.filter(is_active__exact=True)
-# 	json = serializers.serialize('json', object_list, use_natural_foreign_keys=True)
-# 	return HttpResponse(json, content_type='application/json')
-
 # populate property popup on map via ajax
 def propertyPopup(request):
     object_list = Property.objects.get(parcel__exact=request.GET['parcel'])
 #	json = serializers.serialize('json', object_list)
-    content = "<div style='font-size:.8em'>Parcel: " + str(object_list.parcel) + "<br>Address: " + str(object_list.streetAddress) + "<br>Status: " + str(object_list.status) + "<br>Structure Type: " + str(
-        object_list.structureType) + "<br>Side lot Eligible: " + str(object_list.sidelot_eligible) + "<br>Homestead only: " + str(object_list.homestead_only) + "<br><a href='http://maps.indy.gov/AssessorPropertyCards.Reports.Service/ReportPage.aspx?ParcelNumber="+str(object_list.parcel)+"' target='_blank'>Assessor's Property Report Card</a></div>"
+    content = "<div style='font-size:.8em'>Parcel: " + str(object_list.parcel) + "<br/>Address: " + str(object_list.streetAddress) + "<br/>Status: " + str(object_list.status) + "<br/>Structure Type: " + str(
+        object_list.structureType) + "<br/>Side lot Eligible: " + str(object_list.sidelot_eligible) + "<br/>Homestead only: " + str(object_list.homestead_only) + "<br/><a href='http://maps.indy.gov/AssessorPropertyCards.Reports.Service/ReportPage.aspx?ParcelNumber="+str(object_list.parcel)+"' target='_blank'>Assessor's Property Report Card</a></br><a target='_blank' href='https://www.renewindianapolis.org/map/property/"+str(object_list.parcel)+"/photos/'>View Photos</a></div>"
     return HttpResponse(content, content_type='text/plain; charset=utf8')
 #	return HttpResponse(json, content_type='application/json')
 
-def get_property_photo(request):
-    return false
+class BetaMapView(TemplateView):
+    template_name = 'new_map_test.html'
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(BetaMapView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['form_filter'] = PropertySearchFilter(self.request.GET, queryset=Property.objects.filter(
+                propertyType__exact='lb', is_active__exact=True).prefetch_related('cdc', 'zone', 'zipcode')).form
+
+        return context
+
+class PropertyDetailView(DetailView):
+    model = Property
+    template = 'property_detail.html'
+    def get_object(self):
+        return get_object_or_404(Property, parcel=self.parcel)
