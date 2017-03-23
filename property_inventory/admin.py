@@ -22,12 +22,14 @@ class PropertyStatusYearListFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(status__contains=self.value())
+        return queryset
 
 class PropertyStatusListFilter(SimpleListFilter):
     title = 'Property Status'
     parameter_name = 'status'
     def lookups(self, request, model_admin):
         return (
+            ('available','Available'),
             ('sold', 'Sold'),
             ('approved', 'Received Final Approval'),
             ('consideration', 'Application under consideration')
