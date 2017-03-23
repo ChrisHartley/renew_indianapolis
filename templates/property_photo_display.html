@@ -4,7 +4,8 @@
 {% block wpwrap-content%}
 <h1>photos</h1>
 <h2>{{photos.first.prop}}</h2>
-{% for photo in photos %}
+{% regroup photos by main_photo as sorted_photos%}
+{% for photo in sorted_photos %}
 <img src="/media/{{ photo.image }}" class="img-thumbnail"/>
 <div class="caption">{{photo.created}}</div>
 {% empty %}
