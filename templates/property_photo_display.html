@@ -6,12 +6,10 @@
 <h2>{{photos.first.prop}}</h2>
 {% regroup photos by main_photo as sorted_photos %}
 {% for photo_list in sorted_photos %}
-  {% if photo_list.grouper %}
     {% for photo in photo_list.list %}
       <img src="/media/{{ photo.image }}" class="img-thumbnail"/>
       <div class="caption">{{photo.created}}</div>
     {% endfor %}
-  {% endif %}
   {% empty %}
     <h3>Sorry, no photos yet of this property.</h3>
 {% endfor %}
