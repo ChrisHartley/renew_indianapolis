@@ -12,12 +12,12 @@ class DumpPhotosForm(forms.Form):
     image5 = forms.ImageField(label="image 5", required=False)
 
     IMAGE_CHOICES = (
+        ('0','None'),
         ('1','1'),
         ('2','2'),
         ('3','3'),
         ('4','4'),
         ('5','5'),
-        ('0','None'),
     )
     primary_image = forms.ChoiceField(choices=IMAGE_CHOICES)
 
