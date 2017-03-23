@@ -1,7 +1,7 @@
-{% extends 'base-simple-container.html' %}
+{% extends 'wp-template-header.html' %}
 {% load humanize %}
 {% load custom_tags %}
-{% block center%}
+{% block wpwrap-content%}
 <h1>photos</h1>
 <h2>{{photos.first.prop}}</h2>
 {% for photo in photos %}
@@ -11,4 +11,4 @@
 <h3>Sorry, no photos yet of this property.</h3>
 {% endfor %}
 
-{% endblock center%}
+{% endblock wpwrap-content%}
