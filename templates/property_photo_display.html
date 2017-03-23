@@ -7,6 +7,8 @@
 {% for photo in photos %}
 <img src="/media/{{ photo.image }}" class="img-thumbnail"/>
 <div class="caption">{{photo.created}}</div>
+{% empty %}
+<h3>Sorry, no photos yet of this property.</h3>
 {% endfor %}
 
 {% endblock center%}
