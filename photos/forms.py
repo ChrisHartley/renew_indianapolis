@@ -10,6 +10,14 @@ class DumpPhotosForm(forms.Form):
     image3 = forms.ImageField(label="image 3", required=False)
     image4 = forms.ImageField(label="image 4", required=False)
     image5 = forms.ImageField(label="image 5", required=False)
+    image6 = forms.ImageField(label="image 6", required=False)
+    image7 = forms.ImageField(label="image 7", required=False)
+    image8 = forms.ImageField(label="image 8", required=False)
+    image9 = forms.ImageField(label="image 9", required=False)
+    image10 = forms.ImageField(label="image 10", required=False)
+
+
+
 
     IMAGE_CHOICES = (
         ('0','None'),
@@ -18,11 +26,16 @@ class DumpPhotosForm(forms.Form):
         ('3','3'),
         ('4','4'),
         ('5','5'),
+        ('6','6'),
+        ('7','7'),
+        ('8','8'),
+        ('9','9'),
+        ('10','10'),
     )
     primary_image = forms.ChoiceField(choices=IMAGE_CHOICES)
 
     def save_photos(self):
-        for image, number in ( (self.cleaned_data.get('image1'), 1), (self.cleaned_data.get('image2'), 2), (self.cleaned_data.get('image3'), 3), (self.cleaned_data.get('image4'), 4), (self.cleaned_data.get('image5'), 5) ):
+        for image, number in ( (self.cleaned_data.get('image1'), 1), (self.cleaned_data.get('image2'), 2), (self.cleaned_data.get('image3'), 3), (self.cleaned_data.get('image4'), 4), (self.cleaned_data.get('image5'), 5), (self.cleaned_data.get('image6'), 6), (self.cleaned_data.get('image7'), 7), (self.cleaned_data.get('image8'), 8), (self.cleaned_data.get('image9'), 9), (self.cleaned_data.get('image10'), 10) ):
             print image, number
             if number == int(self.cleaned_data.get('primary_image')):
                 prime = True
