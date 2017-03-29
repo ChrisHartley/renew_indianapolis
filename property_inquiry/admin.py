@@ -21,5 +21,4 @@ class propertyInquiryAdmin(admin.ModelAdmin):
     def user_phone(self, obj):
         return obj.user.profile.phone_number
 
-
 admin.site.register(propertyInquiry, propertyInquiryAdmin)

@@ -31,7 +31,7 @@ def submitPropertyInquiry(request):
         previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=datetime.datetime.now()-datetime.timedelta(hours=48)).count()
         #print "Previous PI count:", previousPIcount
         form = PropertyInquiryForm(request.POST)
-        if previousPIcount > 3: # limit number of requests per time period
+        if previousPIcount >= 3: # limit number of requests per time period
             #print "adding error message"
             form.add_error(None, "You can not submit more than 3 property inquiries every 48 hours. Please try again later.")
         if form.is_valid():
