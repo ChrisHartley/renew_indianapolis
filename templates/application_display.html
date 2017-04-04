@@ -43,9 +43,18 @@
 </dl>
 </div>
 <div class='col-md-4 col-xs-4'>
-<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{application.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
-&nbsp;<br/>
-<img src="https://www.renewindianapolis.org/inventory_maps/parcel_{{application.Property.parcel}}.jpg" class="img-thumbnail" width="200"/>
+  {% regroup application.Property.photo_set.all by main_photo as sorted_photos %}
+  {% for photo_list in sorted_photos %}
+    {% if photo_list.grouper %}
+      {% for photo in photo_list.list %}
+        <img src="/media/{{ photo.image }}" class="img-thumbnail"/>
+        <div class="caption">{{photo.created}}</div>
+      {% endfor %}
+    {% endif %}
+    {% empty %}
+      <img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{application.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
+    &nbsp;<br/>
+  {% endfor %}<img src="https://www.renewindianapolis.org/inventory_maps/parcel_{{application.Property.parcel}}.jpg" class="img-thumbnail" width="200"/>
 
 </div>
 
