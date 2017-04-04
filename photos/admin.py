@@ -5,5 +5,6 @@ class PhotoAdmin(admin.ModelAdmin):
     fields = ( 'prop', 'main_photo', 'image', 'image_tag', 'created')
     readonly_fields = ('image_tag', 'created')
     search_fields = ( 'prop__streetAddress', 'prop__parcel' )
+    list_display = ('prop', 'image', 'main_photo')
 
 admin.site.register(photo, PhotoAdmin)
