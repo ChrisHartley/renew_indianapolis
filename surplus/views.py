@@ -115,7 +115,7 @@ def searchSurplusProperties(request):
         print "using centroid_geometry"
         geom = 'centroid_geometry'
     s = serializers.serialize('geojson',
-        Parcel.objects.all(),
+        Parcel.objects.exclude(area__lte=500),
         geometry_field=geom,
         srid='2965',
         #fields=('parcel_number', 'street_address', geom),
@@ -129,12 +129,7 @@ def searchSurplusProperties(request):
 
 @csrf_exempt
 def searchSurplusProperties2(request):
-    #	config = RequestConfig(request)
-    #q = request.GET.get("query", None)
-    #qs = Parcel.objects.filter(street_address__icontains=q)
-
-
-    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.all())
+    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500))
     s = serializers.serialize('geojson',
         f,
         geometry_field='centroid_geometry',

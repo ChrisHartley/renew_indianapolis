@@ -14,7 +14,7 @@ class SurplusSearchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
-        #self.fields['street_address'].widget = HiddenInput()
+        self.fields['street_address'].widget = HiddenInput()
         self.helper = FormHelper()
         self.helper.form_id = 'SurplusSearchForm'
         self.helper.form_class = 'form-inline'
@@ -25,9 +25,8 @@ class SurplusSearchForm(forms.ModelForm):
         self.helper.form_method = 'get'
         self.helper.form_action = ''
         self.helper.layout = Layout(
-            Fieldset(
-                'Filter',
-                HTML('Filter'),
+            #Fieldset(
+            #    'Filter',
                 Field('street_address', css_class='input-sm'),
                 Field('parcel_number', css_class='input-sm'),
                 Field('interesting', css_class='input-sm'),
@@ -37,5 +36,5 @@ class SurplusSearchForm(forms.ModelForm):
                 Field('land_value', css_class='input-sm'),
                 Field('improved_value', css_class='input-sm'),
                 Field('notes', css_class='input-sm'),
-            ),
+            #),
         )
