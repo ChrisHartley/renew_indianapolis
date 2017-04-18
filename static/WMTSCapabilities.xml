@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+
+
+
+
+
+
+
+
+
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:gml="http://www.opengis.net/gml"
+	xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd"
+	version="1.0.0">
+  <!-- Service Identification --> 
+ <ows:ServiceIdentification>
+	<ows:Title>2016Photography_Labels</ows:Title>
+	<ows:ServiceType>OGC WMTS</ows:ServiceType>
+	<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+</ows:ServiceIdentification> <!-- Operations Metadata --> <ows:OperationsMetadata>
+	<ows:Operation name="GetCapabilities">
+		<ows:DCP>
+			<ows:HTTP>
+				<ows:Get xlink:href="http://imaps.indy.gov/arcgis/rest/services/2016Photography_Labels/MapServer/WMTS/1.0.0/WMTSCapabilities.xml">
+					<ows:Constraint name="GetEncoding">
+						<ows:AllowedValues>
+							<ows:Value>RESTful</ows:Value>
+						</ows:AllowedValues>
+					</ows:Constraint>
+				</ows:Get>
+                <!-- add KVP binding in 10.1 -->
+                <ows:Get xlink:href="http://imaps.indy.gov/arcgis/rest/services/2016Photography_Labels/MapServer/WMTS?">
+                  <ows:Constraint name="GetEncoding">
+                    <ows:AllowedValues>
+                      <ows:Value>KVP</ows:Value>
+                    </ows:AllowedValues>
+                  </ows:Constraint>
+                </ows:Get>
+    		</ows:HTTP>
+    </ows:DCP>
+	</ows:Operation>
+	<ows:Operation name="GetTile">
+		<ows:DCP>
+			<ows:HTTP>
+				<ows:Get xlink:href="http://imaps.indy.gov/arcgis/rest/services/2016Photography_Labels/MapServer/WMTS/tile/1.0.0/">
+					<ows:Constraint name="GetEncoding">
+						<ows:AllowedValues>
+							<ows:Value>RESTful</ows:Value>
+						</ows:AllowedValues>
+					</ows:Constraint>
+				</ows:Get>
+                <ows:Get xlink:href="http://imaps.indy.gov/arcgis/rest/services/2016Photography_Labels/MapServer/WMTS?">
+                  <ows:Constraint name="GetEncoding">
+                    <ows:AllowedValues>
+                      <ows:Value>KVP</ows:Value>
+                    </ows:AllowedValues>
+                  </ows:Constraint>
+                </ows:Get>
+            </ows:HTTP>
+		</ows:DCP>
+	</ows:Operation>
+</ows:OperationsMetadata> 
+<Contents>
+  <!--Layer-->  
+  <Layer>
+    <ows:Title>2016Photography_Labels</ows:Title> 
+    <ows:Identifier>2016Photography_Labels</ows:Identifier>
+    
+      <ows:BoundingBox crs="urn:ogc:def:crs:EPSG::2965">
+	  
+			<ows:LowerCorner>135032.01068197034 1592000.0389509</ows:LowerCorner>
+			<ows:UpperCorner>258560.017397799 1713023.7126228716</ows:UpperCorner>
+		
+      </ows:BoundingBox>  
+      
+    <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+      <ows:LowerCorner>-86.35524691977184 39.61721613546676</ows:LowerCorner>
+      <ows:UpperCorner>-85.91346164682068 39.95121688054026</ows:UpperCorner>
+    </ows:WGS84BoundingBox>
+    <Style isDefault="true">
+      <ows:Title>Default Style</ows:Title>
+      <ows:Identifier>default</ows:Identifier>
+    </Style>
+    <Format>image/jpg</Format>
+    <TileMatrixSetLink>
+      <TileMatrixSet>default028mm</TileMatrixSet>
+    </TileMatrixSetLink>
+
+        
+    <ResourceURL format="image/jpg" resourceType="tile" template="http://imaps.indy.gov/arcgis/rest/services/2016Photography_Labels/MapServer/WMTS/tile/1.0.0/2016Photography_Labels/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpg" />
+  </Layer> 
+   <!--TileMatrixSet-->
+   <TileMatrixSet>
+     <ows:Title>TileMatrix using 0.28mm</ows:Title>
+     <ows:Abstract>The tile matrix set that has scale values calculated based on the dpi defined by OGC specification (dpi assumes 0.28mm as the physical distance of a pixel).</ows:Abstract> 
+     <ows:Identifier>default028mm</ows:Identifier>
+     <ows:SupportedCRS>urn:ogc:def:crs:EPSG::2965</ows:SupportedCRS>
+      
+          <TileMatrix>
+          <ows:Identifier>0</ows:Identifier>
+          
+          <ScaleDenominator>944942.3660750896</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>83</MatrixWidth> 
+            <MatrixHeight>83</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>1</ows:Identifier>
+          
+          <ScaleDenominator>708706.7745563171</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>111</MatrixWidth> 
+            <MatrixHeight>111</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>2</ows:Identifier>
+          
+          <ScaleDenominator>472471.1830375448</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>166</MatrixWidth> 
+            <MatrixHeight>166</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>3</ows:Identifier>
+          
+          <ScaleDenominator>283482.70982252684</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>276</MatrixWidth> 
+            <MatrixHeight>277</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>4</ows:Identifier>
+          
+          <ScaleDenominator>236235.5915187724</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>331</MatrixWidth> 
+            <MatrixHeight>332</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>5</ows:Identifier>
+          
+          <ScaleDenominator>118117.7957593862</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>662</MatrixWidth> 
+            <MatrixHeight>664</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>6</ows:Identifier>
+          
+          <ScaleDenominator>60476.311428805726</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>1293</MatrixWidth> 
+            <MatrixHeight>1296</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>7</ows:Identifier>
+          
+          <ScaleDenominator>30238.155714402863</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>2585</MatrixWidth> 
+            <MatrixHeight>2591</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>8</ows:Identifier>
+          
+          <ScaleDenominator>15119.077857201431</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>5169</MatrixWidth> 
+            <MatrixHeight>5181</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>9</ows:Identifier>
+          
+          <ScaleDenominator>7559.538928600716</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>10338</MatrixWidth> 
+            <MatrixHeight>10362</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>10</ows:Identifier>
+          
+          <ScaleDenominator>3779.769464300358</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>20676</MatrixWidth> 
+            <MatrixHeight>20724</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>11</ows:Identifier>
+          
+          <ScaleDenominator>1889.884732150179</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>41352</MatrixWidth> 
+            <MatrixHeight>41447</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>12</ows:Identifier>
+          
+          <ScaleDenominator>944.9423660750895</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>82703</MatrixWidth> 
+            <MatrixHeight>82894</MatrixHeight>
+          
+          </TileMatrix>
+          
+          <TileMatrix>
+          <ows:Identifier>13</ows:Identifier>
+          
+          <ScaleDenominator>472.47118303754473</ScaleDenominator>
+          
+          <TopLeftCorner>-1.81198E7 2.00127E7</TopLeftCorner>  
+          <TileWidth>256</TileWidth> 
+          <TileHeight>256</TileHeight>
+            
+            <MatrixWidth>165406</MatrixWidth> 
+            <MatrixHeight>165787</MatrixHeight>
+          
+          </TileMatrix>
+          
+   </TileMatrixSet>
+   
+</Contents>
+<ServiceMetadataURL xlink:href="http://imaps.indy.gov/arcgis/rest/services/2016Photography_Labels/MapServer/WMTS/1.0.0/WMTSCapabilities.xml" /> 
+</Capabilities>
