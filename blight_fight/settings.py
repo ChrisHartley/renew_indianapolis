@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'user_files',
     'closings',
     'photos',
+    'surplus',
     #'import_export',
     #'accella_records',
     #'debug_toolbar',
