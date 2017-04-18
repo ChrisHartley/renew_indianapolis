@@ -26,7 +26,7 @@ NSP income restrictions: {{application.Property.nsp|yesno:"Yes,No,N/A"}}</br>
 rehab the home to live in themselves. They intend to invest ${{application.staff_sow_total|intcomma}} to rehab the home. A copy of the scope of work is attached to this email.
 {% endif %}
 {% if application.application_type == 2 %}
-rehab the home{%if application.is_rental == True %} as a rental.{% else %} for sale.{% endif %} They intend to invest {{application.estimated_cost|intcomma}} to rehab the home.
+rehab the home{%if application.is_rental == True %} as a rental.{% else %} for sale.{% endif %} They intend to invest {{application.staff_sow_total|intcomma}} to rehab the home.
 A copy of the scope of work is attached to this email.
 {% endif %}
 {% if application.application_type == 3 %}
