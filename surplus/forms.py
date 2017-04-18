@@ -14,7 +14,7 @@ class SurplusSearchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
-        self.fields['street_address'].widget = HiddenInput()
+        self.fields['street_address'].widget = HiddenInput() # because we want the search box up top, so we copy the value from that box to this hidden one prior to submission
         self.helper = FormHelper()
         self.helper.form_id = 'SurplusSearchForm'
         self.helper.form_class = 'form-inline'

@@ -290,7 +290,6 @@
       var styleCache = {};
 
       var styleFunction = function(feature) {
-        //console.log(feature.get('parcel_number'));
         var parcel = feature.get('parcel_number');
         var style = styleCache[parcel];
         if (!style) {
@@ -319,9 +318,7 @@
               color: 'black',
               width: 1.25
             });
-
             color = 'black';
-
           }
 
           style = new ol.style.Style({
@@ -445,7 +442,7 @@
                 '<input type="hidden" name="parcel_number" value="'+feature.get('parcel_number')+'"/>'+
                 '<input type="submit" id="submit" value="Save"/>';
               html = '<ul class="list-unstyled">'+
-                '<li>Parcel: '+feature.get('parcel_number')+' Street Address: '+feature.get('street_address')+'</li>'+
+                '<li>Parcel: <a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+feature.get('parcel_number')+'">'+feature.get('parcel_number')+'</a> Street Address: '+feature.get('street_address')+'</li>'+
                 '<li>Area: '+feature.get('area')+' Township: '+feature.get('township')+'</li>'+
                 '<li>Residential: '+feature.get('assessor_classification')+' Source: '+feature.get('classification')+'</li>'+
                 '<li>Has building: '+feature.get('has_building')+' Zoning: '+feature.get('zoning')+'</li>'+
