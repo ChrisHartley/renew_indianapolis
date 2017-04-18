@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block center %}
 
-{% regroup meeting.meeting_link.all|dictsort:"application.application_type" by application.get_application_type_display as meeting_links  %}
+{% regroup meeting.meeting_link.all|dictsort:"application.application_type"|dictsort:"application.Property__streetAddress" by application.get_application_type_display as meeting_links  %}
 <h1>{{meeting.get_meeting_type_display}} Agenda</br><small>{{meeting.meeting_date}}</small></h1>
 <ul>
 {% for meeting_link in meeting_links %}
