@@ -23,10 +23,20 @@ NSP income restrictions: {{application.Property.nsp|yesno:"Yes,No,N/A"}}</br>
 <p>
 {{application.user.first_name}} {{application.user.last_name}} {% if application.organization %} ({{application.organization}}) {% endif %} intends to
 {% if application.application_type == 1 %}
-rehab the home to live in themselves. They intend to invest ${{application.staff_sow_total|intcomma}} to rehab the home. A copy of the scope of work is attached to this email.
+  {% if application.Property.structureType == 'Vacant Lot' %}
+  build a new home for themselves.
+  {% else %}
+  rehab the home to live in themselves.
+  {% endif %}
+  They intend to invest ${{application.staff_sow_total|intcomma}} in the home. A copy of the scope of work is attached to this email.
 {% endif %}
 {% if application.application_type == 2 %}
-rehab the home{%if application.is_rental == True %} as a rental.{% else %} for sale.{% endif %} They intend to invest {{application.staff_sow_total|intcomma}} to rehab the home.
+{% if application.Property.structureType == 'Vacant Lot' %}
+build a new home
+{% else %}
+rehab the home
+{% endif %}
+{%if application.is_rental == True %} as a rental.{% else %} for sale.{% endif %} They intend to invest ${{application.staff_sow_total|intcomma}} in the home.
 A copy of the scope of work is attached to this email.
 {% endif %}
 {% if application.application_type == 3 %}
