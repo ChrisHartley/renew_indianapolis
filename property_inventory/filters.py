@@ -1,7 +1,9 @@
 import django_filters
-from django_filters import MethodFilter
+#from django_filters import MethodFilter
 from django.db.models import Count, Q
 from django import forms
+from django.contrib.gis.db import models
+
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -41,8 +43,8 @@ class ApplicationStatusFilters(django_filters.FilterSet):
         fields = ['all_applicants', 'streetAddress']
 
 
-class ChoiceMethodFilter(django_filters.MethodFilter):
-    field_class = forms.ChoiceField
+#class ChoiceMethodFilter(django_filters.MethodFilter):
+#    field_class = forms.ChoiceField
 
 
 class PropertySearchFilter(django_filters.FilterSet):
@@ -60,7 +62,7 @@ class PropertySearchFilter(django_filters.FilterSet):
     status_choices = [('available', 'Available'), ('review', 'Application under review'),
                       ('approved', 'Approved for Sale'), ('sold', 'Sold'), ('bep', 'BEP Demolition Slated')]
     #status = django_filters.MultipleChoiceFilter(choices=status_choices, required=False, lookup_type='icontains')
-    status = ChoiceMethodFilter(
+    status = django_filters.CharFilter(
         label='Status', widget=forms.Select, action='filter_status', choices=status_choices)
 
     # structureType = django_filters.ModelMultipleChoiceFilter(
@@ -76,12 +78,28 @@ class PropertySearchFilter(django_filters.FilterSet):
     #zipcode = forms.ModelMultipleChoiceField(queryset=Zipcode.objects.all().order_by('name'), required=False)
     #cdc = forms.ModelMultipleChoiceField(queryset=CDC.objects.all().order_by('name'), required=False)
 
-    searchArea = MethodFilter(action="filter_searchArea")
+    searchArea = django_filters.CharFilter(method="filter_searchArea")
 
     class Meta:
         model = Property
+        exclude = []
         #fields = ['parcel', 'streetAddress', 'nsp', 'structureType', 'cdc', 'zone', 'sidelot_eligible', 'homestead_only', 'bep_demolition']
         form = PropertySearchForm
+
+        filter_overrides = {
+            models.MultiPolygonField: {
+                'filter_class': django_filters.CharFilter,
+                'extra': lambda f: {
+                    'lookup_expr': 'exact',
+                }
+            },
+            models.PointField: {
+                'filter_class': django_filters.CharFilter,
+                'extra': lambda f: {
+                    'lookup_expr': 'exact',
+                }
+            }
+        }
 
     def filter_status(self, queryset, value):
         if value == 'available':

@@ -4,6 +4,7 @@ from django.views.generic.base import TemplateView
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.gis.serializers.geojson import Serializer as GeoJSONSerializer
+from djqscsv import render_to_csv_response
 
 from .models import Parcel
 from .filters import SurplusParcelFilter
@@ -107,18 +108,17 @@ class DisplayNameJsonSerializer(GeoJSONSerializer):
 @ensure_csrf_cookie
 def searchSurplusProperties(request):
     #	config = RequestConfig(request)
-    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.all())
+    #f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.all())
     geom = 'geometry'
-    json_serializer = DisplayNameJsonSerializer()
+    #json_serializer = DisplayNameJsonSerializer()
 
     if request.GET.get("geometry") == "centroid":
-        print "using centroid_geometry"
+    #    print "using centroid_geometry"
         geom = 'centroid_geometry'
     s = serializers.serialize('geojson',
         Parcel.objects.exclude(area__lte=500),
         geometry_field=geom,
         srid='2965',
-        #fields=('parcel_number', 'street_address', geom),
         fields=('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
             'area', 'assessor_classification', 'classification',
@@ -129,12 +129,11 @@ def searchSurplusProperties(request):
 
 @csrf_exempt
 def searchSurplusProperties2(request):
-    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500))
+    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.all())
     s = serializers.serialize('geojson',
-        f,
+        f.qs,
         geometry_field='centroid_geometry',
         srid='2965',
-        #fields=('parcel_number', 'street_address', geom),
         fields=('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
             'area', 'assessor_classification', 'classification',
@@ -160,3 +159,8 @@ def surplusUpdateFieldsFromMap(request):
         return JsonResponse({'status': 'OK'})
     except:
         return JsonResponse({'status':'Not OK'})
+
+def get_inventory_csv(request):
+    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','interesting','notes') #.values('parcel', 'street_address')
+    #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
+    return render_to_csv_response(qs)

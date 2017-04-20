@@ -1,7 +1,13 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
+#from autoslug import AutoSlugField
 
 
+### This is the parent model inherited by various overlay models, collections of geometries
+### such as zip codes, census tracts, CDC focus areas, etc that a Property (below) could fall within.
+### These are calculated when the Property is first created. I believe I tried not having a ForeignKey in the
+### Property definition but it was crazy slow to compute st_within for all the properties 3-4 times. It would be
+### more elegant though.
 class Overlay(models.Model):
     name = models.CharField(max_length=255)
     geometry = models.MultiPolygonField(srid=4326)
@@ -36,12 +42,17 @@ class Zoning(Overlay):
 class Neighborhood(Overlay):
     pass
 
-
+### The Property model is the heart of blight_fight. A Property is a parcel of land with a unique identifier, the
+### parcel number. It has various attributes, including geometry, and can fall within a Overlay geometry (above).
+###
+###
 class Property(models.Model):
 
     PROPERTY_TYPES = (('lb', 'Landbank'), ('sp', 'County Owned Surplus'))
 
     geometry = models.MultiPolygonField(srid=4326)
+
+#    centroid_geometry = models.PointField(srid=4326, default='POINT(39.7684 86.1581)')
 
     objects = models.GeoManager()
     propertyType = models.CharField(
@@ -55,6 +66,7 @@ class Property(models.Model):
         default=False, help_text="If a property comes with requirements related to the Neighborhood Stabilization Program.", verbose_name='NSP')
     quiet_title_complete = models.BooleanField(
         default=False, help_text="If quiet title process has been completed.", verbose_name='Quiet Title Complete')
+    # should restrict this with choices using valid strings as options to catch mis-spellings.
     structureType = models.CharField(max_length=255, null=True, blank=True,
                                      help_text="As classified by the Assessor", verbose_name='Structure Type')
 
@@ -90,15 +102,9 @@ class Property(models.Model):
         default=False, help_text="Price is Or Best Offer", verbose_name="Price is 'Or Best Offer'")
     renew_owned = models.BooleanField(
         default=False, help_text="Property is owned directly by Renew Indianapolis or a wholly owned subsidiary.", verbose_name="Owned by Renew Indianapolis directly")
-    hhf_demolition = models.BooleanField(default=False, help_text="Property was demolished through Hardest Hit Funds/Blight Elimination Program, and may have restrictions on end use.", 
+    hhf_demolition = models.BooleanField(default=False, help_text="Property was demolished through Hardest Hit Funds/Blight Elimination Program, and may have restrictions on end use.",
         verbose_name="Property was demolished through Hardest Hit Funds/Blight Elimination Program")
-
-
-#    def property_photo_location(instance, filename):
-#        return 'pictometry/{0}/{1}'.format(instance.parcel, filename)
-
-#    photo = models.ImageField(upload_to=property_photo_location, null=True, blank=True, help_text="Photo of the property")
-
+    #slug = AutoSlugField(always_update=True, unique=True, populate_from=lambda instance: instance.streetAddress + instance.parcel)
 
     class Meta:
         verbose_name_plural = "properties"
@@ -108,3 +114,8 @@ class Property(models.Model):
 
     def __unicode__(self):
         return '%s - %s' % (self.streetAddress, self.parcel)
+
+    ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
+    # def save(self, *args, **kwargs):
+    #     self.centroid_geometry = self.geometry.centroid
+    #     super(Property, self).save(*args, **kwargs)

@@ -50,10 +50,11 @@ urlpatterns = patterns('',
 
         url(r'surplus/$', SurplusMapTemplateView.as_view(), name='surplus_map'),
         url(r'surplus/search/$', 'surplus.views.searchSurplusProperties', name='surplus_search'),
-        url(r'surplus/search2/$', 'surplus.views.searchSurplusProperties2', name='surplus_property_search2'),        
+        url(r'surplus/search2/$', 'surplus.views.searchSurplusProperties2', name='surplus_property_search2'),
         url(r'surplus/property/(?P<parcel>[0-9]{7})/$', ParcelDetailView.as_view(), name='surplus_property'),
         url(r'surplus/property/update/$', 'surplus.views.surplusUpdateFieldsFromMap', name='surplus_property_update'),
         url(r'surplus/property/update/(?P<parcel>[0-9]{7})/$', ParcelUpdateView.as_view(), name='surplus_property_update_parcel'),
+        url(r'surplus/download/$', 'surplus.views.get_inventory_csv', name='surplus_download_csv'),
 
 
 
