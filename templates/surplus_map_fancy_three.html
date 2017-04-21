@@ -356,8 +356,6 @@
       }
 
 
-
-
       var surplusPolygons = new ol.layer.Vector({
           title: 'Surplus Inventory',
           projection: 'EPSG:2965',
@@ -390,52 +388,48 @@
           style: styleFunction,
         });
 
-      fetch('/static/WMTSCapabilities.xml').then(function(response) {
-        return response.text();
-      }).then(function(text) {
-        var result = parser.read(text);
-        var options = ol.source.WMTS.optionsFromCapabilities(result,
-            {layer: '2016Photography_Labels', matrixSet: 'default028mm'});
+      $(document).ready(function(){
+        $.get('/static/WMTSCapabilities.xml', function(text){
+          var result = parser.read(text);
+          var options = ol.source.WMTS.optionsFromCapabilities(result, {
+            layer: '2016Photography_Labels', matrixSet: 'default028mm'
+          });
 
-        map = new ol.Map({
-          layers: [
-            // new ol.layer.Tile({
-            //   source: new ol.source.OSM(),
-            //   opacity: 0.7
-            // }),
-            new ol.layer.Tile({
-              opacity: 1,
-              source: new ol.source.WMTS(options)
-            }),
-            surplusPolygons,
-            surplusCentroids,
-            searchPolygons,
-          ],
-        //  overlays: [overlay],
-          target: 'map',
-          view: new ol.View({
-            center: [188266, 1649330],
-            zoom: 15,
-            maxZoom: 21,
-            //maxZoom: 3, //doesn't work?
-            projection: 'EPSG:2965'
-          })
-        });
-        map.on('singleclick', function(evt) {
-          var latlon = ol.proj.transform(evt.coordinate, 'EPSG:2965', 'EPSG:4326');
-          lat = latlon[0]
-          lon = latlon[1]
+          map = new ol.Map({
+            layers: [
+              // new ol.layer.Tile({
+              //   source: new ol.source.OSM(),
+              //   opacity: 0.7
+              // }),
+              new ol.layer.Tile({
+                opacity: 1,
+                source: new ol.source.WMTS(options)
+              }),
+              surplusPolygons,
+              surplusCentroids,
+              searchPolygons,
+            ],
+          //  overlays: [overlay],
+            target: 'map',
+            view: new ol.View({
+              center: [188266, 1649330],
+              zoom: 15,
+              maxZoom: 21,
+              //maxZoom: 3, //doesn't work?
+              projection: 'EPSG:2965'
+            })
+          });
+          map.on('singleclick', function(evt) {
+            var latlon = ol.proj.transform(evt.coordinate, 'EPSG:2965', 'EPSG:4326');
+            lat = latlon[0]
+            lon = latlon[1]
 
-          var feature = map.forEachFeatureAtPixel(evt.pixel,
-            function(feature, layer) {
-              return feature;
-            });
+            var feature = map.forEachFeatureAtPixel(evt.pixel,
+              function(feature, layer) {
+                return feature;
+              });
 
             if (feature) {
-              //centerOfFeature = ol.extent.getCenter(feature.getGeometry().getExtent())
-              //var latlon = ol.proj.transform(centerOfFeature, 'EPSG:2965', 'EPSG:4326');
-              ///lat = latlon[0]
-              //lon = latlon[1]
               image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+feature.get("streetAddress")+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
               iframe = '<iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="300" width="300">';
               checked = ''
@@ -451,13 +445,13 @@
                 '<li>Has building: '+feature.get('has_building')+' Zoning: '+feature.get('zoning')+'</li>'+
                 '<li>Notes: '+feature.get('notes')+'</li>'+
                 '<li>Interesting: '+feature.get('interesting')+'</li></ul>'+
-                iframe
-              //content.innerHTML = html;
+                iframe;
               $('#properties').html(html);
               $('#filter').html(filter);
-       }});
-
+            }
+        });
       });
+    });
 
 
 
@@ -476,7 +470,7 @@
               console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
           }
         });
-    };
+    }
 
     // Submit changes on submit - have to attach this way since form doesn't exist at first
     $(document).on('submit', '#updateForm', function(event){
@@ -490,23 +484,13 @@
       event.preventDefault();
       searchPolygons.getSource().clear();
       $('#id_general_search').val($('#query').val());
-      console.log(  $('#SurplusSearchForm').serialize());
       $.ajax({
         url: '{% url "surplus_property_search2" %}',
         type: "GET",
-        data:
-          $('#SurplusSearchForm').serialize(),
-/*          query: $('#query').val(),
-         area_min: $('#id_area_0').val(),
-          area_max: $('#id_area_1').val(),
-          has_building: $('#id_has_building').val(),
-          interesting: $('#id_interesting').val(),
-*/
-
+        data: $('#SurplusSearchForm').serialize(),
         success: function(json){
           searchPolygons.getSource().addFeatures(geojson_format.readFeatures(json));
           var extent = searchPolygons.getSource().getExtent();
-          console.log(extent);
           if(extent[0]!='Infinity'){
             map.getView().fit(extent, map.getSize())
           }
