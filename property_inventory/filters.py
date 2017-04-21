@@ -28,7 +28,7 @@ class AllValuesNoneFilter(django_filters.ChoiceFilter):
 
 
 class ApplicationStatusFilters(django_filters.FilterSet):
-    streetAddress = django_filters.CharFilter(lookup_type='icontains')
+    streetAddress = django_filters.CharFilter()
     all_applicants = AllValuesNoneFilter(name='applicant', label="Applicant")
 
     def __init__(self, *args, **kwargs):
@@ -48,9 +48,8 @@ class ApplicationStatusFilters(django_filters.FilterSet):
 
 
 class PropertySearchFilter(django_filters.FilterSet):
-    streetAddress = django_filters.CharFilter(
-        lookup_type='icontains', label="Street address")
-    parcel = django_filters.CharFilter(lookup_type='icontains', label="Parcel number")
+    streetAddress = django_filters.CharFilter(label="Street address")
+    parcel = django_filters.CharFilter(label="Parcel number")
 
     # lord I don't remember how this works
     st = Property.objects.order_by('structureType').distinct(
@@ -61,22 +60,8 @@ class PropertySearchFilter(django_filters.FilterSet):
 
     status_choices = [('available', 'Available'), ('review', 'Application under review'),
                       ('approved', 'Approved for Sale'), ('sold', 'Sold'), ('bep', 'BEP Demolition Slated')]
-    #status = django_filters.MultipleChoiceFilter(choices=status_choices, required=False, lookup_type='icontains')
     status = django_filters.CharFilter(
-        label='Status', widget=forms.Select, action='filter_status', choices=status_choices)
-
-    # structureType = django_filters.ModelMultipleChoiceFilter(
-    # 	queryset=Property.objects.order_by('structureType').distinct('structureType').values('structureType'),
-    # 	to_field_name="structureType",
-    # 	label="Structure Type",
-    # )
-
-    #structureType = django_filters.ModelMultipleChoiceFilter(queryset=Property.objects.values_list('structureType', flat=True).distinct('structureType').order_by('structureType'), to_field_name="structureType", label="Structure Type")
-    #zoning = django_filters.ModelMultipleChoiceFilter(queryset=Zoning.objects.values_list('name', flat=True).distinct('name').order_by('name'), to_field_name="name", label="Zoning")
-
-    #zoning = forms.ModelMultipleChoiceField(queryset=Zoning.objects.all().order_by('name'), required=False)
-    #zipcode = forms.ModelMultipleChoiceField(queryset=Zipcode.objects.all().order_by('name'), required=False)
-    #cdc = forms.ModelMultipleChoiceField(queryset=CDC.objects.all().order_by('name'), required=False)
+        label='Status', widget=forms.Select(choices=status_choices), method='filter_status')
 
     searchArea = django_filters.CharFilter(method="filter_searchArea")
 
@@ -98,7 +83,14 @@ class PropertySearchFilter(django_filters.FilterSet):
                 'extra': lambda f: {
                     'lookup_expr': 'exact',
                 }
-            }
+            },
+            models.CharField: {
+                'filter_class': django_filters.CharFilter,
+                'extra': lambda f: {
+                    'lookup_expr': 'icontains',
+                }
+
+            },
         }
 
     def filter_status(self, queryset, value):

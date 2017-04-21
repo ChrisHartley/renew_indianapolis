@@ -160,7 +160,7 @@ def surplusUpdateFieldsFromMap(request):
     except:
         return JsonResponse({'status':'Not OK'})
 
-def get_inventory_csv(request):
+def get_surplus_inventory_csv(request):
     qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','interesting','notes') #.values('parcel', 'street_address')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)

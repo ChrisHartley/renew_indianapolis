@@ -202,7 +202,7 @@ class Application(models.Model):
     )
 
     other_properties_names_owned = models.CharField(
-        max_length='255',
+        max_length=255,
         verbose_name="If you own properties under other names or are a partner/member of an entity that owns properties, please list the names of those entities here",
         blank=True
     )
@@ -220,7 +220,7 @@ class Application(models.Model):
     )
 
     nsp_income_qualifier = models.CharField(
-        max_length='255',
+        max_length=255,
         verbose_name="Which entity will conduct the income qualification process for new tenants for this property?",
         help_text="Federal policies require that during the affordability period (5 years from your purchase), tenants must be at or below 120% of the Area Median Income. Verifying tenant income is a complicated process that must be completed by a qualified entity with experience in this field.  If your organization will do this itself, enter 'self'.",
         blank=True

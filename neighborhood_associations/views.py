@@ -38,9 +38,9 @@ class get_relevant_neighborhood_assocations(View):
         naTable = NeighborhoodAssociationTable(na, prefix="na-")
         config.configure(naTable)
 
-        return render_to_response('neighborhood_associations.html', {
+        return render(request, 'neighborhood_associations.html', {
             'form': form,
             'title': parcelNumber,
             'table': naTable,
             'parcelDoesNotExist': parcelDoesNotExist
-        }, context_instance=RequestContext(request))
+        })

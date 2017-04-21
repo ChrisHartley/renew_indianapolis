@@ -30,11 +30,11 @@ def showAnnualReportForm(request):
             success = True
         else:
             print form.errors
-    return render_to_response('annual_report_form.html', {
+    return render(request, 'annual_report_form.html', {
         'form': form,
         'success': success,
         'title': "annual report"
-    }, context_instance=RequestContext(request))
+    })
 
 
 @staff_member_required
@@ -55,12 +55,12 @@ def showAnnualReportData(request, id):
 
     title = selected_report.Property.streetAddress + " - annual report"
 
-    return render_to_response('annual_report_viewer.html', {
+    return render(request, 'annual_report_viewer.html', {
         'record': selected_report,
         'title': title,
         'next': next,
         'pre': pre,
-    }, context_instance=RequestContext(request))
+    })
 
 
 @staff_member_required
@@ -70,8 +70,8 @@ def showAnnualReportIndex(request):
         request.GET, queryset=annual_report.objects.all().order_by('id'))
     table = AnnualReportTable(f)
     config.configure(table)
-    return render_to_response('admin-with-filter-table.html', {
+    return render(request, 'admin-with-filter-table.html', {
         'filter': f,
         'title': 'Annual Report Admin',
         'table': table
-    }, context_instance=RequestContext(request))
+    })

@@ -112,8 +112,8 @@ def showApplications(request):
     approvedFilter = ApplicationStatusFilters(
         request.GET, queryset=approvedProperties, prefix="approved-")
 
-    soldTable = PropertyStatusTable(soldFilter, prefix="sold-")
-    approvedTable = PropertyStatusTable(approvedFilter, prefix="approved-")
+    soldTable = PropertyStatusTable(soldFilter.qs, prefix="sold-")
+    approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
 
     config.configure(soldTable)
     config.configure(approvedTable)
@@ -156,7 +156,7 @@ def searchProperties(request):
             else:
                 geom = 'geometry'
             s = serializers.serialize('geojson',
-                                      f,
+                                      f.qs,
                                       geometry_field=geom,
                                       fields=('id', 'parcel', 'streetAddress', 'zipcode', 'zone', 'status', 'structureType',
                                               'sidelot_eligible', 'neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',

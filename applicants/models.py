@@ -12,17 +12,17 @@ class ApplicantProfile(models.Model):
     phone_number = PhoneNumberField()
 
     mailing_address_line1 = models.CharField(
-        max_length='100', blank=False, verbose_name='Line 1')
+        max_length=100, blank=False, verbose_name='Line 1')
     mailing_address_line2 = models.CharField(
-        max_length='100', blank=True, verbose_name='Line 2')
+        max_length=100, blank=True, verbose_name='Line 2')
     mailing_address_line3 = models.CharField(
-        max_length='100', blank=True, verbose_name='Line 3')
+        max_length=100, blank=True, verbose_name='Line 3')
     mailing_address_city = models.CharField(
-        max_length='100', blank=False, verbose_name='City')
+        max_length=100, blank=False, verbose_name='City')
     mailing_address_state = models.CharField(
-        max_length='100', blank=False, verbose_name='State')
+        max_length=100, blank=False, verbose_name='State')
     mailing_address_zip = models.CharField(
-        max_length='100', blank=False, verbose_name='Zipcode')
+        max_length=100, blank=False, verbose_name='Zipcode')
 
     def __unicode__(self):
         return self.user.first_name
@@ -68,17 +68,17 @@ class Organization(models.Model):
     email = models.EmailField(blank=True, default='')
 
     mailing_address_line1 = models.CharField(
-        max_length='100', blank=False, verbose_name='Line 1')
+        max_length=100, blank=False, verbose_name='Line 1')
     mailing_address_line2 = models.CharField(
-        max_length='100', blank=True, verbose_name='Line 2')
+        max_length=100, blank=True, verbose_name='Line 2')
     mailing_address_line3 = models.CharField(
-        max_length='100', blank=True, verbose_name='Line 3')
+        max_length=100, blank=True, verbose_name='Line 3')
     mailing_address_city = models.CharField(
-        max_length='100', blank=False, verbose_name='City')
+        max_length=100, blank=False, verbose_name='City')
     mailing_address_state = models.CharField(
-        max_length='100', blank=False, verbose_name='State')
+        max_length=100, blank=False, verbose_name='State')
     mailing_address_zip = models.CharField(
-        max_length='100', blank=False, verbose_name='Zipcode')
+        max_length=100, blank=False, verbose_name='Zipcode')
 
     date_created = models.DateTimeField(auto_now_add=True)
     sos_business_entity_report = models.FileField(verbose_name='Secretary of State Business Entity Report',

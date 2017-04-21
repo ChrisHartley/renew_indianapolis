@@ -11,9 +11,9 @@ class PropertySearchForm(forms.ModelForm):
     #zipcode1 = forms.ModelChoiceField(queryset=Zipcode.objects.all().order_by('name'), required=False)
     #cdc = forms.ModelMultipleChoiceField(queryset=CDC.objects.all().order_by('name'), required=False)
     searchArea = forms.CharField(required=False, widget=HiddenInput())
-    status_choices = [('Available', 'Available'), ('Sale', 'Application under review'),
-                      ('MDC', 'Approved for Sale'), ('Sold', 'Sold')]
-    status = forms.MultipleChoiceField(choices=status_choices, required=False)
+    status_choices = (('Available', 'Available'), ('Sale', 'Application under review'),
+                      ('MDC', 'Approved for Sale'), ('Sold', 'Sold'))
+    status = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(choices=status_choices), required=False)
 
     class Meta:
         model = Property

@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.forms.formsets import formset_factory
@@ -45,13 +45,13 @@ def profile_home(request):
     except Organization.DoesNotExist:
         organizations_table = None
 
-    return render_to_response('profile_home.html', {
+    return render(request, 'profile_home.html', {
         'property_inquiries': property_inquiries_table,
         'applications': applications_table,
         'organizations': organizations_table,
         'profile': profile,
         'title': "my account"
-    }, context_instance=RequestContext(request))
+    })
 
 
 @login_required
@@ -72,11 +72,11 @@ def showApplicantProfileForm(request):
             success = True
     else:
         ProfileForm = ApplicantProfileForm(instance=profile)
-    return render_to_response('create_profile.html', {
+    return render(request, 'create_profile.html', {
         'profileForm': ProfileForm,
         'title': "edit profile",
         'success': success
-    }, context_instance=RequestContext(request))
+    })
 
 class edit_organization(View):
 
@@ -130,8 +130,8 @@ def show_organizations(request):
     organizations = Organization.objects.filter(
         user=request.user).order_by('name')
     organizations_table = OrganizationTable(organizations)
-    return render_to_response('organizations.html', {
+    return render(request, 'organizations.html', {
         'organizations': organizations,
         'table': organizations_table,
         'title': "organizations"
-    }, context_instance=RequestContext(request))
+    })

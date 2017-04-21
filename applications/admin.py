@@ -71,6 +71,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
 
     )
     inlines = [ UploadedFileInline, NeighborhoodNotificationAdmin, MeetingLinkInline ]
+    list_select_related = True
 
     def application_summary_page(self, obj):
         summary_link = '<a target="_blank" href="{}">{}</a>'.format(
@@ -128,6 +129,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline]
     readonly_fields = ('agenda', 'applications', 'create_packet', 'create_packet_support_documents')
+#    list_select_related = True
 
     def agenda(self, obj):
         if obj.id is None:

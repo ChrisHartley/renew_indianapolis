@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, get_object_or_404, render
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotAllowed, JsonResponse
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -99,14 +99,14 @@ def process_application(request, action, id=None):
     uploaded_files_all = UploadedFile.objects.filter(
         user=request.user, application=app.id)
 
-    return render_to_response('application.html', {
+    return render(request, 'application.html', {
         'form': form,
         'app_id': app.id,
         'uploaded_files_sow': uploaded_files_sow,
         'uploaded_files_pof': uploaded_files_pof,
         'uploaded_files_all': uploaded_files_all,
         'title': 'application',
-    }, context_instance=RequestContext(request))
+    })
 
 
 
