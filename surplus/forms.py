@@ -13,7 +13,7 @@ class SurplusSearchForm(forms.ModelForm):
     class Meta:
         model = Parcel
         exclude = []
-        fields = ['general_search','area', 'has_building', 'township', 'land_value', 'improved_value', 'notes', 'interesting', 'classification', 'demolition_order', 'repair_order']
+        fields = ['general_search','has_building', 'township', 'notes', 'interesting', 'classification', 'demolition_order', 'repair_order']
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
