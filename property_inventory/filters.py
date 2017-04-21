@@ -120,7 +120,7 @@ class PropertySearchFilter(django_filters.FilterSet):
 
         return queryset
 
-    def filter_searchArea(self, queryset, value):
+    def filter_searchArea(self, queryset, field, value):
         try:
             searchGeometry = GEOSGeometry(value, srid=900913)
         except Exception:
