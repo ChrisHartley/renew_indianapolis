@@ -93,7 +93,11 @@ class PropertySearchFilter(django_filters.FilterSet):
             },
         }
 
-    def filter_status(self, queryset, value):
+    def filter_status(self, queryset, field, value):
+        print '!!! self', self
+        print '!!! queryset', queryset
+        print '!!! field', field
+        print '!!! value', value
         if value == 'available':
             return queryset.filter(status__icontains='Available')
         if value == 'review':
