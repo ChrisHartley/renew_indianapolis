@@ -23,7 +23,17 @@ class UploadedFileInline(admin.TabularInline):
 
 class MeetingLinkInline(admin.TabularInline):
     model = MeetingLink
+    fields = ('meeting', 'meeting_outcome', 'application_link', 'notes', )
+    readonly_fields=('application','application_link')
     extra = 1
+
+    def application_link(self, obj):
+       return mark_safe('<a href="{}" target="_blank">{}</a>'.format(
+            reverse("admin:applications_application_change", args=(obj.application.id,)),
+                obj.application
+            ))
+    application_link.short_description = 'application'
+
 
 class NeighborhoodNotificationAdmin(admin.TabularInline):
     model = NeighborhoodNotification
