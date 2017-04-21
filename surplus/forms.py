@@ -13,7 +13,7 @@ class SurplusSearchForm(forms.ModelForm):
     class Meta:
         model = Parcel
         exclude = []
-        fields = ['general_search','area', 'has_building', 'township', 'land_value', 'improved_value', 'notes', 'interesting', 'classification']
+        fields = ['general_search','area', 'has_building', 'township', 'land_value', 'improved_value', 'notes', 'interesting', 'classification', 'demolition_order', 'repair_order']
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
@@ -31,11 +31,13 @@ class SurplusSearchForm(forms.ModelForm):
             #Field('street_address', css_class='input-sm'),
             #Field('parcel_number', css_class='input-sm'),
             Field('interesting', css_class='input-sm'),
-            Field('area', css_class='input-sm'),
+        #    Field('area', css_class='input-sm'),
             Field('has_building', css_class='input-sm'),
             Field('township', css_class='input-sm'),
-            Field('land_value', css_class='input-sm'),
-            Field('improved_value', css_class='input-sm'),
+        #    Field('land_value', css_class='input-sm'),
+        #    Field('improved_value', css_class='input-sm'),
             Field('classification', css_class='input-sm'),
+            Field('demolition_order', css_class='input-sm'),
+            Field('repair_order', css_class='input-sm'),
             Field('notes', css_class='input-sm'),
         )
