@@ -18,6 +18,7 @@ class SurplusParcelFilter(django_filters.FilterSet):
     land_value = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder': '$'}))
     improved_value = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder': '$'}))
     interesting = django_filters.BooleanFilter()
+    classification = django_filters.ChoiceFilter(choices=Parcel.CLASSIFICATION_CHOICES)
     #parcel_number = django_filters.CharFilter(lookup_type='startswith')
 
     def general_search_filter(self, queryset, name, value):

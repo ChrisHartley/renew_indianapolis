@@ -59,6 +59,9 @@ class Parcel(models.Model):
     CLASSIFICATION_CHOICES = ( (TAX_SALE_UNSOLD,'Tax Sale Unsold'),(SURPLUS, 'County Surplus'))
     classification = models.IntegerField(choices=CLASSIFICATION_CHOICES, default=SURPLUS)
 
+    demolition_order = models.BooleanField(default=False)
+    repair_order = models.BooleanField(default=False)
+
     interesting = models.NullBooleanField(default=None)
     notes = models.CharField(max_length=2048, blank=True)
 
