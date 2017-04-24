@@ -48,7 +48,7 @@ class ApplicationStatusFilters(django_filters.FilterSet):
 
 
 class PropertySearchFilter(django_filters.FilterSet):
-    streetAddress = django_filters.CharFilter(label="Street address")
+    streetAddress = django_filters.CharFilter(label="Street address", lookup_expr='icontains')
     parcel = django_filters.CharFilter(label="Parcel number")
 
     # lord I don't remember how this works
