@@ -13,7 +13,7 @@ class UploadedFileInline(admin.TabularInline):
     model = UploadedFile
     fields = ('file_purpose', 'file_purpose_other_explanation', 'supporting_document', 'file_download','user','application')
     readonly_fields = ('file_download',)
-    extra = 0
+    extra = 1
 
     def file_download(self, obj):
         return mark_safe('<a href="{}">{}</a>'.format(
