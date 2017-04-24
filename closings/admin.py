@@ -29,8 +29,8 @@ class ClosingAdmin(admin.ModelAdmin):
 
         # terrible? way to get object id if we are editting an existing object
         try:
-            # http://stackoverflow.com/a/18318866/2731298
-            obj_id = int([i for i in str(kwargs['request'].path).split('/') if i][-1])
+            # http://stackoverflow.com/a/18318866/2731298 -- changed -1 to -2 to grab second to last argument in url since changed in django 1.11 I think
+            obj_id = int([i for i in str(kwargs['request'].path).split('/') if i][-2])
         except ValueError:
             obj_id = None
 
@@ -43,7 +43,6 @@ class ClosingAdmin(admin.ModelAdmin):
                 formfield.queryset = Application.objects.filter(
                     ( Q(meeting__meeting_outcome__exact=MeetingLink.APPROVED_STATUS) & Q(meeting__meeting__meeting_type__exact=Meeting.MDC) ) |
                         ( Q(meeting__meeting_outcome__exact=MeetingLink.APPROVED_STATUS) & Q(meeting__meeting__meeting_type__exact=Meeting.BOARD_OF_DIRECTORS) & Q(Property__renew_owned__exact=True) )
-
                 ).exclude(Property__status__icontains='Sold').filter(closing_set__isnull=True).filter(status=Application.COMPLETE_STATUS)
             if db_field.name == "prop":
                 formfield.queryset = Property.objects.filter(
