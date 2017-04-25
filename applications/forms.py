@@ -85,7 +85,7 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Price: </div><div id="price" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">NSP: </div><div id="nsp_boolean" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Homestead Only: </div><div id="homestead_only" class="form-control-static col-lg-6"></div></div>'),
-                HTML('<div id="nsp" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">NSP</h3></div><div class="panel-body">This property is a Neighborhood Stabilization Program (NSP) property. NSP properties were originally purchased by the City using special federal funds and thus development of these properties carry additional requirements. You can find out more about these requirements, and how and when to submit the required documents <a href="//www.renewindianapolis.org/nsp-requirements/" target="_blank">here</a>.</div></div>'),
+                HTML('<div id="nsp" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">NSP</h3></div><div class="panel-body">This property is a Neighborhood Stabilization Program (NSP) property. NSP properties were originally purchased by the City using special federal funds and thus development of these properties carry additional requirements. You can find out more about these requirements, and how and when to submit the required documents <a href="//www.renewindianapolis.org/nsp-requirements/" target="_blank">here</a>. Additionally, per City of Indianapolis policy, NSP properties may not be used for rental.</div></div>'),
                 css_class='well'
             ),
             Fieldset(
@@ -226,11 +226,12 @@ class ApplicationForm(forms.ModelForm):
 
         if Application.SIDELOT == application_type:
             msg = "This is a required question."
-            if not sidelot_eligible:
+            if sidelot_eligible is None:
                 self.add_error('sidelot_eligible', ValidationError(msg))
             if property_selected is not None and property_selected.structureType != "Vacant Lot":
                 self.add_error('application_type', ValidationError(
                     'The property you have selected is not a vacant lot and hence is ineligible for our sidelot program.'))
+
 
         if Application.HOMESTEAD == application_type or Application.STANDARD == application_type:
             msg = "This is a required field."
@@ -254,9 +255,12 @@ class ApplicationForm(forms.ModelForm):
                     self.add_error('long_term_ownership', ValidationError(msg))
                 if is_rental is None:  # boolean value
                     self.add_error('is_rental', ValidationError(msg))
-                if is_rental and property_selected and property_selected.nsp and nsp_income_qualifier == "":
-                    self.add_error('nsp_income_qualifier', ValidationError(
-                        "Since this is a rental NSP property you must list who will be conducting tenant income qualification."))
+                #if is_rental and property_selected and property_selected.nsp and nsp_income_qualifier == "":
+                #    self.add_error('nsp_income_qualifier', ValidationError(
+                #        "Since this is a rental NSP property you must list who will be conducting tenant income qualification."))
+                if is_rental and property_selected and property_selected.nsp:
+                    self.add_error('is_rental', ValidationError(
+                        "Per City of Indianapolis policy, NSP properties may not be used as rental properties."))
                 #if property_selected is not None and property_selected.homestead_only:
                 #    self.add_error('application_type', ValidationError(
                 #        'The property you have selected is marked "homestead only" but you indicated a Standard application.'))

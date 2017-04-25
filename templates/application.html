@@ -88,7 +88,7 @@ function get_property_attributions(){
 			if (data[0].fields.nsp == true) {
 				$( "#nsp" ).show();
 				if ($('#id_is_rental').val() == 'True'){
-					$('#div_id_nsp_income_qualifier').show(400);
+					//$('#div_id_nsp_income_qualifier').show(400);
 				}
 			}
 			else {
@@ -166,7 +166,7 @@ $('#id_Property').change(function(){
 $('#id_is_rental').change(function(){
 	if ($('#id_is_rental').val() == 'True'){
 		if ( $( "#nsp" ).is(":visible") ){
-			$('#div_id_nsp_income_qualifier').show(400);
+		//	$('#div_id_nsp_income_qualifier').show(400);
 		}
 	}
 	else{
