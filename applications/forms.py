@@ -66,6 +66,8 @@ class ApplicationForm(forms.ModelForm):
                 Field('tax_status_of_properties_owned'),
                 Field('other_properties_names_owned'),
                 Field('prior_tax_foreclosure'),
+                Field('landlord_in_marion_county'),
+                Field('landlord_registry'),
                 Field('organization'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Third Party Authorziation Form</div><div id="3rd-party-authorization-file-uploader" class="form-control-static col-lg-6">Drop your third party authorization form file here to upload</div>'),
                 HTML("""<div class="help-block col-lg-6 col-lg-offset-4">
@@ -179,6 +181,8 @@ class ApplicationForm(forms.ModelForm):
             'tax_status_of_properties_owned', None)
         prior_tax_foreclosure = cleaned_data.get('prior_tax_foreclosure', None)
         active_citations = cleaned_data.get('active_citations', None)
+        landlord_in_marion_county = cleaned_data.get('landlord_in_marion_county', None)
+        landlord_registry = cleaned_data.get('landlord_registry', None)
 
         planned_improvements = cleaned_data.get('planned_improvements')
         timeline = cleaned_data.get('timeline')
@@ -215,6 +219,14 @@ class ApplicationForm(forms.ModelForm):
         if prior_tax_foreclosure is None or prior_tax_foreclosure is True:
             self.add_error('prior_tax_foreclosure', ValidationError(
                 "If you have previously lost a property in a tax foreclosure in Marion County you are not eligible to purchase properties from Renew Indianapolis."))
+
+        if landlord_in_marion_county is True and (landlord_registry is None or landlord_registry == Application.NA_YNNA_CHOICE):
+            self.add_error('landlord_registry', ValidationError(
+                "You answered Yes above, please answer Yes or No to this question."))
+
+        if landlord_in_marion_county is False and landlord_registry != Application.NA_YNNA_CHOICE:
+            self.add_error('landlord_registry', ValidationError(
+                "You answered that you do not own any rental properties above so your answer should be Not Applicable"))
 
         if property_selected is None or property_selected == "":
             self.add_error('Property', ValidationError(

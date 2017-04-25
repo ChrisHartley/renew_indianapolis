@@ -64,6 +64,16 @@ class Application(models.Model):
         (NO_CHOICE, 'No')
     )
 
+    YES_YNNA_CHOICE = 1
+    NO_YNNA_CHOICE = 2
+    NA_YNNA_CHOICE = 3
+    YESNONA_TYPES = (
+        (YES_YNNA_CHOICE, 'Yes'),
+        (NO_YNNA_CHOICE, 'No'),
+        (NA_YNNA_CHOICE, 'Not applicable'),
+    )
+
+
     CURRENT_STATUS = 3
     DELINQUENT_STATUS = 2
     UNKNOWN_STATUS = 1
@@ -191,6 +201,21 @@ class Application(models.Model):
         verbose_name="Do you own any property that is subject to any un-remediated citation of violation of the state and local codes and ordinances?",
         help_text="The unsafe building code and building code history of properties owned by the prospective buyer, or by individuals or entities related to the prospective buyer, will be a factor in determining eligibility.  Repeat violations, unmitigated violations, and unpaid civil penalties may cause a buyer to be ineligible",
         blank=True
+    )
+
+    landlord_in_marion_county = models.NullBooleanField(
+        choices=YESNO_TYPES,
+        verbose_name="Do you own any rental properties in Marion County?",
+        help_text="For the purposes of this question, refer to definitions in <a href='https://www.municode.com/library/in/indianapolis_-_marion_county/codes/code_of_ordinances?nodeId=TITIVBUCORELI_CH851INLAREPR_S851-103DE&showChanges=true' target='_blank'>Chapter 851-103</a> of the Marion County Code of Ordinances",
+        blank=True
+    )
+
+    landlord_registry = models.IntegerField(
+        choices=YESNONA_TYPES,
+        verbose_name="Are your rental properties registered in the Landlord Registry?",
+        help_text="<a href='https://www.municode.com/library/in/indianapolis_-_marion_county/codes/code_of_ordinances?nodeId=TITIVBUCORELI_CH851INLAREPR&showChanges=true' target='_blank'>Chapter 851</a> of the Marion County Code of Ordinances requires that landlords register rental properties in the <a href='http://www.indy.gov/eGov/City/DCE/Licenses/Pages/Home.aspx' target='_blank'>Landlord Registry</a>",
+        blank=True,
+        null=True,
     )
 
     tax_status_of_properties_owned = models.IntegerField(
