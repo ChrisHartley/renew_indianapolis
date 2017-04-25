@@ -220,6 +220,14 @@ class ApplicationForm(forms.ModelForm):
             self.add_error('prior_tax_foreclosure', ValidationError(
                 "If you have previously lost a property in a tax foreclosure in Marion County you are not eligible to purchase properties from Renew Indianapolis."))
 
+        if landlord_in_marion_county is None:
+            self.add_error('landlord_in_marion_county', ValidationError(
+                "This is a required question."))
+
+        if landlord_registry is None:
+            self.add_error('landlord_registry', ValidationError(
+                "This is a required question. Select Not Applicable if you do not own any rental properties."))
+
         if landlord_in_marion_county is True and (landlord_registry is None or landlord_registry == Application.NA_YNNA_CHOICE):
             self.add_error('landlord_registry', ValidationError(
                 "You answered Yes above, please answer Yes or No to this question."))
