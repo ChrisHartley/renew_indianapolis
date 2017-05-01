@@ -382,7 +382,7 @@
           projection: 'EPSG:2965',
           minResolution: '3',
           source: new ol.source.Vector({
-            url: '/map/surplus/search/?geometry=centroid',
+            url: '/map/surplus/search/?geometry_type=centroid',
             format: new ol.format.GeoJSON()
           }),
           style: styleFunction,
@@ -484,8 +484,9 @@
       event.preventDefault();
       searchPolygons.getSource().clear();
       $('#id_general_search').val($('#query').val());
+      $('#id_geometry_type').val('centroid');
       $.ajax({
-        url: '{% url "surplus_property_search2" %}',
+        url: '{% url "surplus_search" %}',
         type: "GET",
         data: $('#SurplusSearchForm').serialize(),
         success: function(json){
