@@ -9,15 +9,18 @@ from .models import Parcel
 class SurplusSearchForm(forms.ModelForm):
 
     general_search = forms.CharField(max_length=30, label='Address, zipcode, parcel number')
+    geometry_type = forms.CharField()
 
     class Meta:
         model = Parcel
         exclude = []
-        fields = ['general_search','has_building', 'township', 'notes', 'interesting', 'classification', 'demolition_order', 'repair_order']
+        fields = ['geometry_type','general_search','has_building', 'township', 'notes', 'interesting', 'classification', 'demolition_order', 'repair_order']
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
         self.fields['general_search'].widget = HiddenInput() # because we want the search box up top, so we copy the value from that box to this hidden one prior to submission
+        self.fields['geometry_type'].widget = HiddenInput() # because we need to indicate we are looking for centroid points
+
         self.helper = FormHelper()
         self.helper.form_id = 'SurplusSearchForm'
         self.helper.form_class = 'form-inline'

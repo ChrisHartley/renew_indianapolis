@@ -4,6 +4,7 @@ from django.views.generic.base import TemplateView
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.gis.serializers.geojson import Serializer as GeoJSONSerializer
+from django.forms.models import model_to_dict
 from djqscsv import render_to_csv_response
 
 from .models import Parcel
@@ -37,33 +38,36 @@ class AjaxableResponseMixin(object):
         else:
             return response
 
-#
-# class JSONResponseMixin(object):
-#     """
-#     A mixin that can be used to render a JSON response.
-#     """
-#     def render_to_json_response(self, context, **response_kwargs):
-#         """
-#         Returns a JSON response, transforming 'context' to make the payload.
-#         """
-#         return JsonResponse(
-#             self.get_data(context),
-#             encoder =
-#             **response_kwargs
-#         )
-#
-#     def get_data(self, context):
-#         """
-#         Returns an object that will be serialized as JSON by json.dumps().
-#         """
-#         # Note: This is *EXTREMELY* naive; in reality, you'll need
-#         # to do much more complex handling to ensure that arbitrary
-#         # objects -- such as Django model instances or querysets
-#         # -- can be serialized as JSON.
-#         return context
 
-class ParcelDetailView(DetailView):
+class JSONResponseMixin(object):
+    """
+    A mixin that can be used to render a JSON response.
+    """
+    def render_to_json_response(self, context, **response_kwargs):
+        """
+        Returns a JSON response, transforming 'context' to make the payload.
+        """
+        return JsonResponse(
+            self.get_data(context),
+            **response_kwargs
+        )
+
+    def get_data(self, context):
+        """
+        Returns an object that will be serialized as JSON by json.dumps().
+        """
+        # Note: This is *EXTREMELY* naive; in reality, you'll need
+        # to do much more complex handling to ensure that arbitrary
+        # objects -- such as Django model instances or querysets
+        # -- can be serialized as JSON.
+        return model_to_dict(context)
+
+class ParcelDetailView(JSONResponseMixin, DetailView):
     model = Parcel
+    slug_field = 'parcel_number'
+    slug_url_kwarg = 'parcel'
+    def render_to_response(self, context, **response_kwargs):
+        return self.render_to_json_response(context, **response_kwargs)
 
 class ParcelListView(ListView):
     model = Parcel
@@ -105,18 +109,21 @@ class DisplayNameJsonSerializer(GeoJSONSerializer):
 
 
 
+
+
 @ensure_csrf_cookie
 def searchSurplusProperties(request):
     #	config = RequestConfig(request)
-    #f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.all())
+    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500))
     geom = 'geometry'
+    #serializers.register_serializer('geojson_display', DisplayNameJsonSerializer)
     #json_serializer = DisplayNameJsonSerializer()
 
-    if request.GET.get("geometry") == "centroid":
-    #    print "using centroid_geometry"
+    if request.GET.get("geometry_type") == "centroid":
         geom = 'centroid_geometry'
-    s = serializers.serialize('geojson',
-        Parcel.objects.exclude(area__lte=500),
+    #s = serializers.serialize('geojson_display',
+    s = json_serializer.seralize('geojson',
+        f.qs,
         geometry_field=geom,
         srid=2965,
         fields=('parcel_number','street_address', 'zipcode', 'zoning',
@@ -127,23 +134,6 @@ def searchSurplusProperties(request):
     )
     return HttpResponse(s, content_type='application/json')
 
-@csrf_exempt
-def searchSurplusProperties2(request):
-    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.all())
-    s = serializers.serialize('geojson',
-        f.qs,
-        geometry_field='centroid_geometry',
-        srid=2965,
-        fields=('parcel_number','street_address', 'zipcode', 'zoning',
-            'township', 'has_building', 'land_value', 'improved_value',
-            'area', 'assessor_classification', 'classification',
-            'interesting', 'notes','centroid_geometry'),
-        use_natural_foreign_keys=True
-    )
-    return HttpResponse(s, content_type='application/json')
-
-
-#@ensure_csrf_cookie
 @csrf_exempt
 def surplusUpdateFieldsFromMap(request):
     prop = Parcel.objects.get(parcel_number=request.POST.get('parcel_number', None))
@@ -160,7 +150,8 @@ def surplusUpdateFieldsFromMap(request):
     except:
         return JsonResponse({'status':'Not OK'})
 
+
 def get_surplus_inventory_csv(request):
-    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','interesting','notes') #.values('parcel', 'street_address')
+    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','notes') #.values('parcel', 'street_address')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
