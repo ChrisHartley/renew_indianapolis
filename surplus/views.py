@@ -121,8 +121,8 @@ def searchSurplusProperties(request):
 
     if request.GET.get("geometry_type") == "centroid":
         geom = 'centroid_geometry'
-    #s = serializers.serialize('geojson_display',
-    s = json_serializer.seralize('geojson',
+    s = serializers.serialize('geojson',
+    #s = json_serializer.seralize('geojson',
         f.qs,
         geometry_field=geom,
         srid=2965,
