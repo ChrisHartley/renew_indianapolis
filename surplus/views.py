@@ -113,22 +113,17 @@ class DisplayNameJsonSerializer(GeoJSONSerializer):
 
 @ensure_csrf_cookie
 def searchSurplusProperties(request):
-    #	config = RequestConfig(request)
     f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500))
     geom = 'geometry'
-    #serializers.register_serializer('geojson_display', DisplayNameJsonSerializer)
-    #json_serializer = DisplayNameJsonSerializer()
-
     if request.GET.get("geometry_type") == "centroid":
         geom = 'centroid_geometry'
     s = serializers.serialize('geojson',
-    #s = json_serializer.seralize('geojson',
         f.qs,
         geometry_field=geom,
         srid=2965,
         fields=('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
-            'area', 'assessor_classification', 'classification',
+            'area', 'assessor_classification', 'classification', 'demolition_order', 'repair_order'
             'interesting', 'notes', geom),
         use_natural_foreign_keys=True
     )
