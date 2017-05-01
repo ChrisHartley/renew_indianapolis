@@ -24,7 +24,6 @@ class SurplusParcelFilter(django_filters.FilterSet):
     #parcel_number = django_filters.CharFilter(lookup_type='startswith')
 
     def general_search_filter(self, queryset, name, value):
-        print "in general_search_filter"
         return queryset.filter(
              Q(street_address__icontains=value) |
             Q(zipcode__exact=value) |
