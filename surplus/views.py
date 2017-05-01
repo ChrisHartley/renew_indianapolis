@@ -123,8 +123,8 @@ def searchSurplusProperties(request):
         srid=2965,
         fields=('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
-            'area', 'assessor_classification', 'classification', 'demolition_order', 'repair_order'
-            'interesting', 'notes', geom),
+            'area', 'assessor_classification', 'classification',
+            'demolition_order', 'repair_order', 'interesting', 'notes', geom),
         use_natural_foreign_keys=True
     )
     return HttpResponse(s, content_type='application/json')
