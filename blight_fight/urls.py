@@ -12,7 +12,7 @@ from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, BetaMapView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup
 from property_inquiry.views import inquiry_list, property_inquiry_confirmation, submitPropertyInquiry
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
-from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, searchSurplusProperties2, get_surplus_inventory_csv
+from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
 from user_files.views import delete_uploaded_file, import_uploader, send_file
 # from applications.views import
@@ -56,7 +56,6 @@ urlpatterns = [
 
         url(r'surplus/$', SurplusMapTemplateView.as_view(), name='surplus_map'),
         url(r'surplus/search/$', searchSurplusProperties, name='surplus_search'),
-        url(r'surplus/search2/$', searchSurplusProperties2, name='surplus_property_search2'),
         url(r'surplus/property/(?P<parcel>[0-9]{7})/$', ParcelDetailView.as_view(), name='surplus_property'),
         url(r'surplus/property/update/$', surplusUpdateFieldsFromMap, name='surplus_property_update'),
         url(r'surplus/property/update/(?P<parcel>[0-9]{7})/$', ParcelUpdateView.as_view(), name='surplus_property_update_parcel'),
