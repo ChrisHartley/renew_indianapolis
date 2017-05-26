@@ -65,6 +65,8 @@ class Parcel(models.Model):
     interesting = models.NullBooleanField(default=None)
     notes = models.CharField(max_length=2048, blank=True)
 
+    requested_from_commissioners = models.DateField(blank=True, null=True)
+
     geometry = models.MultiPolygonField(srid=2965)
     centroid_geometry = models.PointField(srid=2965) # compuated from geometry on save
 
