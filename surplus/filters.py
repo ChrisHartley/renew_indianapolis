@@ -21,6 +21,7 @@ class SurplusParcelFilter(django_filters.FilterSet):
     classification = django_filters.ChoiceFilter(choices=Parcel.CLASSIFICATION_CHOICES)
     demolition_order = django_filters.BooleanFilter()
     repair_order = django_filters.BooleanFilter()
+    requested_from_commissioners = django_filters.DateFilter()
     #parcel_number = django_filters.CharFilter(lookup_type='startswith')
 
     def general_search_filter(self, queryset, name, value):

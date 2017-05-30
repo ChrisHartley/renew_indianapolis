@@ -8,11 +8,13 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://openlayers.org/en/v4.1.0/css/ol.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/r-2.1.1/datatables.min.css"/>
 
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://openlayers.org/en/v4.1.0/build/ol.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.15/proj4-src.js"></script>
+
 
     <title>Map Viewer :: Surplus :: Renew Indianapolis</title>
     <style type="text/css">
@@ -68,9 +70,24 @@
         cursor: pointer;
       }
 
+      #search_results_pan {
+        margin: .5em;
+        padding: .25em;
+        margin-right: 1em;
+        background-color: rgba(255, 255, 255, 1);
+        z-index: 40;
+
+      }
+
+      #search_results {
+        background-color: white;
+
+      }
+
     </style>
     <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/r-2.1.1/datatables.min.js"></script>
     <script type="text/javascript">
 
       function applyMargins() {
@@ -206,11 +223,16 @@
                 </ul>
               </li>
             </ul>
+<!--            <span id="search_results_pan"><table id="search_results" class="table table-striped table-bordered" cellspacing="0" width="100%"></table></span> -->
+
             </div><!-- /.navbar-collapse -->
+
             </div><!-- /.container-fluid -->
+
           </nav>
+
         </div>
-      </nav>
+
       <div class="navbar-offset"></div>
       <div id="map">
       </div>
@@ -279,7 +301,12 @@
       <div class="mini-submenu mini-submenu-right pull-right">
         <i class="fa fa-tasks"></i>
       </div>
-    </div>
+      <div class="container">
+        <div class="navbar-fixed-bottom">
+          <div class="pull-right fa fa-chevron-down slide-submenu clicky"></div>
+          <span id="search_results_pan well well-lg"><table id="search_results" class="table table-responsive table-condensed table-bordered" cellspacing="0" width="100%"></table></span>
+        </div>
+      </div>
     <script>
 
 
@@ -353,6 +380,15 @@
             //angle: Math.PI / 4
           })
         }),
+        'polygon': new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: [255, 255, 255, .1]
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#3399CC',
+            width: 1.25
+          }),
+        }),
       }
 
 
@@ -360,7 +396,8 @@
           title: 'Surplus Inventory',
           projection: 'EPSG:2965',
           maxResolution: '3',
-          minResolution: '.25',
+          //minResolution: '.25',
+          style: styles['polygon'],
           source: new ol.source.Vector({
             url: '/map/surplus/search/?geometry_type=polgyon',
             format: new ol.format.GeoJSON()
@@ -430,24 +467,29 @@
               });
 
             if (feature) {
-              image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+feature.get("streetAddress")+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
+              $.get('surplus/property/'+feature.get("parcel_number")+'/', function(data){
+                parcel = data.features[0].properties;
+              image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.street_address+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
               iframe = '<iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="300" width="300">';
               checked = ''
-              if (feature.get('interesting', false)){ checked = 'checked=checked'; }
+              if (parcel.interesting){ checked = 'checked=checked'; }
               filter = 'Interesting? <input type="checkbox" name="interesting" '+checked+'/><br/>'+
-                'Notes: <input type="text" name="notes" value="'+feature.get('notes', '')+'"/></br>'+
-                '<input type="hidden" name="parcel_number" value="'+feature.get('parcel_number')+'"/>'+
+                'Notes: <input type="text" name="notes" value="'+parcel.notes+'"/></br>'+
+                '<input type="hidden" name="parcel_number" value="'+parcel.parcel_number+'"/>'+
                 '<input type="submit" id="submit" value="Save"/>';
               html = '<ul class="list-unstyled">'+
-                '<li>'+feature.get('street_address')+' (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+feature.get('parcel_number')+'">'+feature.get('parcel_number')+'</a>)</li>'+
-                '<li>Area: '+feature.get('area')+' Township: '+feature.get('township')+'</li>'+
-                '<li>Residential: '+feature.get('assessor_classification')+' Source: '+feature.get('classification')+'</li>'+
-                '<li>Has building: '+feature.get('has_building')+' Zoning: '+feature.get('zoning')+'</li>'+
-                '<li>Notes: '+feature.get('notes')+'</li>'+
-                '<li>Interesting: '+feature.get('interesting')+'</li></ul>'+
+                '<li>'+parcel.street_address+' (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel_number+'">'+parcel.parcel_number+'</a>)</li>'+
+                '<li>Area: '+parcel.area+' Township: '+parcel.township+'</li>'+
+                '<li>Residential: '+parcel.assessor_classification+' Source: '+parcel.classification+'</li>'+
+                '<li>Has building: '+parcel.has_building+' Zoning: '+parcel.zoning+'</li>'+
+                '<li>Demo order: '+parcel.demolition_order+' Repair Order: '+parcel.repair_order+'</li>'+
+                '<li>Requested From Commissioners: '+parcel.requested_from_commissioners+' Notes: '+parcel.notes+'</li>'+
+                '<li>Interesting: '+parcel.interesting+'</li></ul>'+
                 iframe;
               $('#properties').html(html);
               $('#filter').html(filter);
+            });
+
             }
         });
       });
@@ -478,13 +520,44 @@
       update_form();
     });
 
+    $(document).on('click', '.clicky', function(event){
+      $('#search_results_pan').collapse("toggle");
+    });
+
+
     var geojson_format = new ol.format.GeoJSON()
+
+    $('#search_results').DataTable( {
+            //data: json.features,
+            dom: 'Brtip',
+            buttons: [
+              'copy', 'excel', 'pdf'
+            ],
+            "columns": [
+                { "title": 'Parcel Number',
+                  "data": "properties.parcel_number" },
+                { "title": 'Street Address',
+                  "data": "properties.street_address" },
+                { "title": 'Has Building',
+                  "data": "properties.has_building" },
+                { "title": 'Interesting',
+                  "data": "properties.interesting" },
+                { "title": 'Demolition Order',
+                  "data": "properties.demolition_order" },
+                { "title": 'Repair Order',
+                  "data": "properties.repair_order" },
+                { "title": 'Notes',
+                  "data": "properties.notes" },
+            ]
+        } );
+
+
 
     $('#top-search-box').submit(function(event){
       event.preventDefault();
       searchPolygons.getSource().clear();
-      $('#id_general_search').val($('#query').val());
-      $('#id_geometry_type').val('centroid');
+      $('#id_general_search').val($('#query').val()); //copy search value from top box to hidden element on form
+      $('#id_geometry_type').val('centroid'); // search results return centroids
       $.ajax({
         url: '{% url "surplus_search" %}',
         type: "GET",
@@ -494,6 +567,14 @@
           var extent = searchPolygons.getSource().getExtent();
           if(extent[0]!='Infinity'){
             map.getView().fit(extent, map.getSize())
+            console.log(json.features);
+            //$('#search_results').DataTable().destory(remove=False);
+            $('#search_results').DataTable().clear();
+            $('#search_results').DataTable().rows.add(json.features);
+            $('#search_results_pan').collapse('show');
+            /*$('#search_results').DataTable( {
+                    data: json.features,
+              } ); */
           }
           else{
             alert("No search results");
