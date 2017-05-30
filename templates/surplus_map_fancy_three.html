@@ -79,7 +79,7 @@
 
       }
 
-      #search_results {
+      #search_results_wrapper {
         background-color: white;
 
       }
@@ -570,7 +570,7 @@
             console.log(json.features);
             //$('#search_results').DataTable().destory(remove=False);
             $('#search_results').DataTable().clear();
-            $('#search_results').DataTable().rows.add(json.features);
+            $('#search_results').DataTable().rows.add(json.features).draw();
             $('#search_results_pan').collapse('show');
             /*$('#search_results').DataTable( {
                     data: json.features,
