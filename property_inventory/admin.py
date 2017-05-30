@@ -51,7 +51,7 @@ class PropertyStatusListFilter(SimpleListFilter):
 class PropertyAdmin(admin.OSMGeoAdmin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name')
     list_display = ('parcel', 'streetAddress', 'structureType','status')
-    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter )
+    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned' )
 
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
