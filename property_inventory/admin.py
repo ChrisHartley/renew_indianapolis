@@ -38,6 +38,8 @@ class PropertyStatusListFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value() == 'sold':
             return queryset.filter(status__contains='Sold')
+        if self.value() == 'available':
+            return queryset.filter(status__contains='Available')
         if self.value() == 'approved':
             return queryset.filter( ( Q(status__contains='Sale approved by MDC') & Q(renew_owned__exact=False) ) | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=True)) )
         if self.value() == 'consideration':
@@ -63,8 +65,6 @@ class PropertyAdmin(admin.OSMGeoAdmin):
     def view_photos(self, obj):
         photo_page_link = '<a href="{}">{}</a>'.format(
                     reverse("property_photos", kwargs={'parcel': obj.parcel}), "View Photos")
-
-#https://www.renewindianapolis.org/map/property/1062924/photos/
         return mark_safe(photo_page_link)
 
 
