@@ -11,7 +11,6 @@ from django.forms.models import inlineformset_factory
 from applicants.widgets import AddAnotherWidgetWrapper
 from django.core.exceptions import ValidationError
 
-
 class ApplicationForm(forms.ModelForm):
     Property = forms.ModelChoiceField(
         queryset=Property.objects.exclude(status__contains='Sale approved by MDC').exclude(is_active__exact=False).exclude(
@@ -41,14 +40,6 @@ class ApplicationForm(forms.ModelForm):
         user = kwargs.pop('user')
         app_id = kwargs.pop('id')
         super(ApplicationForm, self).__init__(*args, **kwargs)
-        #self.fields['conflict_board_rc'].required = True
-        #self.fields['active_citations'].required = True
-        #self.fields['tax_status_of_properties_owned'].required = True
-        #self.fields['prior_tax_foreclosure'].required = True
-        #self.fields['scope_of_work'].required = False
-        #self.fields['proof_of_funds'].required = False
-        #self.fields['prior_tax_foreclosure'].required = True
-        #self.fields['status'].value = 3
         self.fields['organization'].queryset = Organization.objects.filter(
             user=user).order_by('name')
         self.helper = FormHelper()
@@ -87,6 +78,7 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Price: </div><div id="price" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">NSP: </div><div id="nsp_boolean" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Homestead Only: </div><div id="homestead_only" class="form-control-static col-lg-6"></div></div>'),
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Blight Elimination Program (demolition): </div><div id="bep_property" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div id="nsp" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">NSP</h3></div><div class="panel-body">This property is a Neighborhood Stabilization Program (NSP) property. NSP properties were originally purchased by the City using special federal funds and thus development of these properties carry additional requirements. You can find out more about these requirements, and how and when to submit the required documents <a href="//www.renewindianapolis.org/nsp-requirements/" target="_blank">here</a>. Additionally, per City of Indianapolis policy, NSP properties may not be used for rental.</div></div>'),
                 css_class='well'
             ),
@@ -94,6 +86,7 @@ class ApplicationForm(forms.ModelForm):
                 'Application Type',
                 Div('application_type'),
                 HTML('<div id="homestead_only_warning" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">Homesead Only</h3></div><div class="panel-body">The property you selected is only available for homestead (owner occupant) applications.</div></div>'),
+                HTML('<div id="bep_explanation" class="panel panel-warning" style="display:none"><div class="panel-heading"><h3 class="panel-title">Blight Elimination Program Sidelot Closing Delay</h3></div><div class="panel-body">This property is owned by Renew Indianapolis through the Blight Elimination Program. Per the terms of the program we will not be able to sell this property as a sidelot until January 1st, 2018. Applications are welcome and will be proccessed with a closing date after January 1st, 2018.</div></div>'),
                 css_class='well'
             ),
             Fieldset(
@@ -251,7 +244,6 @@ class ApplicationForm(forms.ModelForm):
             if property_selected is not None and property_selected.structureType != "Vacant Lot":
                 self.add_error('application_type', ValidationError(
                     'The property you have selected is not a vacant lot and hence is ineligible for our sidelot program.'))
-
 
         if Application.HOMESTEAD == application_type or Application.STANDARD == application_type:
             msg = "This is a required field."

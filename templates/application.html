@@ -67,6 +67,21 @@ function check_homestead_only_property(){
 	}
 }
 
+function check_bep_sidelot(){
+	console.log("Here we are"+$('#id_application_type').val()+' '+$('#bep_property').text() )
+	if ($('#id_application_type').val() == '3'){
+			if ( $('#bep_property').text() == 'Yes'){
+				$('#bep_explanation').show();
+			}
+			else{
+				$('#bep_explanation').hide();
+			}
+	}
+	else{
+		$('#bep_explanation').hide();
+	}
+}
+
 
 function get_property_attributions(){
 	var term = $("#id_Property option:selected").text().match(/[0-9]{7}$/),
@@ -83,7 +98,10 @@ function get_property_attributions(){
 			$( "#homestead_only" ).text(boolean_to_yesno(data[0].fields.homestead_only));
 			$( "#price" ).text('$'+numberWithCommas(data[0].fields.price));
 			$( "#nsp_boolean" ).text(boolean_to_yesno(data[0].fields.nsp));
+			$( "#bep_property" ).text(boolean_to_yesno(data[0].fields.hhf_demolition));
 			check_homestead_only_property();
+			check_bep_sidelot();
+
 
 			if (data[0].fields.nsp == true) {
 				$( "#nsp" ).show();
@@ -94,7 +112,6 @@ function get_property_attributions(){
 			else {
 				$( "#nsp" ).hide();
 				$('#div_id_nsp_income_qualifier').hide();
-
 			}
 		});
 	}
@@ -155,10 +172,12 @@ $(function(){
 $('#id_application_type').change(function() {
 	showAppropriateSections($(this).val());
 	check_homestead_only_property();
+	check_bep_sidelot();
 });
 
 $('#id_Property').change(function(){
 	get_property_attributions();
+	//check_bep_property();
 	//check_homestead_only_property();
 
 });

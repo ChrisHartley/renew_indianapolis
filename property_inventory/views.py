@@ -86,7 +86,7 @@ def getAddressFromParcel(request):
         SearchResult = Property.objects.filter(parcel__exact=parcelNumber)
         response_data = serializers.serialize('json', SearchResult,
                                               fields=('streetAddress', 'zipcode', 'neighborhood','status', 'structureType',
-                                                      'sidelot_eligible', 'homestead_only', 'price', 'nsp')
+                                                      'sidelot_eligible', 'homestead_only', 'price', 'nsp','hhf_demolition')
                                               )
         return HttpResponse(response_data, content_type="application/json")
     # when is this used? who knows. I broke it, when I find out where it is used I'll fix it.
