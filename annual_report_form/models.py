@@ -59,3 +59,8 @@ class annual_report(models.Model):
         upload_to=content_file_name, blank=False)
     other_picture = models.ImageField(
         upload_to=content_file_name, blank=True, help_text='Project photo of your choice (optional)')
+
+#    def image_tag(self):
+#        return mark_safe('<img src="/media/%s" width="150" height="150" />' % (self.image))
+
+#      image_tag.short_description = 'Image'

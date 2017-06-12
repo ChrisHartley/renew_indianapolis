@@ -8,7 +8,7 @@ class AnnualReportAdmin(admin.ModelAdmin):
         readonly_fields = ('Property',)
         fieldset = (
             (None, {
-                'fields': ('Property',)
+                'fields': ('Property','Property__status')
             }),
         )
 
