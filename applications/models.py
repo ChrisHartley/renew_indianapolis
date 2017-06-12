@@ -1,15 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.apps import apps
 from property_inventory.models import Property
 from applicants.models import Organization
 from neighborhood_associations.models import Neighborhood_Association
 from django.utils.deconstruct import deconstructible
-
-
-
 from django.conf import settings
 
+#from closings.models import closing
 
 
 @deconstructible
@@ -337,6 +335,17 @@ class MeetingLink(models.Model):
             else:
                 prop.applicant = '{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
             prop.save()
+            if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
+                # Final approval received
+#                print "final approval received"
+                closing = apps.get_model('closings', 'closing')
+                if closing.objects.filter(application=self.application).count()==0:
+#                    print "need to make a closing"
+                    new_closing = closing(application=self.application)
+                    new_closing.save()
+                    # email applicant with congratulatory email and URL to pay processing fee
+
+
         super(MeetingLink, self).save(*args, **kwargs)
 
     class Meta:

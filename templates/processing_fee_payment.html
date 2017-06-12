@@ -1,0 +1,93 @@
+{% extends 'allauth-base.html' %}
+{% block head_title %}Processing Fee :: Renew Indianapolis{% endblock %}
+{% block extra_head %}
+<!-- Bootstrap -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+{% endblock extra_head %}
+
+{% block content %}
+
+{% if processing_fee.paid %}
+<h1>Paid in full</h1>
+<p>
+The processing fee for {{processing_fee.closing.application.Property}} is
+marked as paid on {{processing_fee.date_paid}}.
+
+Our records show that you have selected
+{{processing_fee.closing.title_company|default_if_none:processing_fee.closing.title_company_freeform}}
+to handle the closing. For standard purchases we will send a purchase agreement to the title company and they will
+conduct a title search and prepare the closing documents. Once we receive the title commitment from the title company we will contact you
+to schedule the closing.
+</p>
+<p>
+If you need to change title companies or have any questions, please contact
+{{COMPANY_SETTINGS.APPLICATION_CONTACT_NAME}} via email at
+{{COMPANY_SETTINGS.APPLICATION_CONTACT_EMAIL}} or phone at
+{{COMPANY_SETTINGS.APPLICATION_CONTACT_PHONE}}.
+</p>
+{% else %}
+
+<h1>Congratulations</h1>
+<p>
+Your application for {{processing_fee.closing.application.Property}} has
+received final approval and we are ready to move towards closing.
+</p>
+<p>
+First, you need to chose a title company to conduct the closing.
+{% if processing_fee.closing.application.application_type == 3 %}
+Since this is a sidelot application you have the option of closing
+without a title company or title insurance. This is a less expensive
+option ($100 recording fee vs $700-$1,000 in closing costs typically
+charged by a title company) but does not provide the certainty that
+comes with a title search and title insurance provided by closing with
+a title company.
+{% else %}
+A title company will conduct a title search and issue title insurance
+to guarantee that you are receiving a clean title without any liens or other
+encumberances.
+{% endif %}
+</p>
+<p>
+Second, you will need to pay the ${{processing_fee.amount_due}} processing fee. This fee helps cover our
+costs of administering the program and gives you some "skin in the game" before
+we invest the additional time and resources to prepare for closing. Once this
+is paid we will send a purchase agreement to the title company of your chosing.
+</p>
+<p>
+You can pay this fee on this page with a credit or debit card. If you would like
+to pay by check you should not complete this form but instead
+mail a check for ${{processing_fee.amount_due}} payable to:
+<address>
+<strong>Renew Indianapolis, Inc</strong><br>
+202 E Market St<br>
+Indianapolis, IN 46204<br>
+</address>
+Please include your title company preference and the parcel number of the property
+on your check.
+</p>
+<p class="text-center">
+<form action={% url 'application_paid_processing_fee' slug=processing_fee.slug id=processing_fee.id %} method="POST">{% csrf_token %}
+	{{form.as_p}}
+	<input type='hidden' id='amountForStripe' name='amountForStripe' value='{{amountForStripe}}'/>
+  <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+    data-key="{{STRIPE_API_KEY}}"
+    data-amount="{{amountForStripe}}"
+    data-name="Renew Indianapolis Inc"
+    data-description="Fee - {{processing_fee.closing.application.Property}}"
+		data-zip-code="true"
+    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+    data-locale="auto">
+  </script>
+</form>
+</p>
+
+{% endif %}
+
+{% endblock content%}

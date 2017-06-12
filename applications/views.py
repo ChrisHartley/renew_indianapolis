@@ -106,6 +106,7 @@ def process_application(request, action, id=None):
         'uploaded_files_pof': uploaded_files_pof,
         'uploaded_files_all': uploaded_files_all,
         'title': 'application',
+        'COMPANY_SETTINGS': settings.COMPANY_SETTINGS,
     })
 
 

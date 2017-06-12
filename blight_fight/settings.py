@@ -196,8 +196,29 @@ MEDIA_URL = '/media/'
 # for django-tables2-reports
 EXCEL_SUPPORT = 'xlwt'
 
+# stripe settings
+# These key values are really set in settings_testing.py or settings_production.py
+STRIPE_PUBLIC_API_KEY = ""
+STRIPE_SECRET_API_KEY = ""
+
+#
+COMPANY_SETTINGS = {
+    'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
+    'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindianapolis.org',
+    'APPLICATION_CONTACT_PHONE': '317-454-8521',
+    'SIDELOT_PROCESSING_FEE': 100,
+    'STANDARD_PROCESSING_FEE': 200,
+    'CREDIT_CARD_PERCENTAGE_FEE': 2.9,
+    'CREDIT_CARD_FLAT_FEE': 0.30,
+}
+
 # Production settings are kept in a separate file, settings_production.py
 # which overrides db, email, secret key, etc with production values
+# Testing values are kept in settings_testing.py, for example stripe test api keys
+try:
+    from settings_testing import *
+except ImportError:
+    pass
 try:
     from settings_production import *
 except ImportError:
