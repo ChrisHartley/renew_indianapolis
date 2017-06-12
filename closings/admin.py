@@ -3,19 +3,29 @@ from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django import forms
+from django.utils.text import slugify
 
-from .models import location, company_contact, mailing_address, title_company, closing
+from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option
 from .forms import ClosingAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property
 
+class PurchaseOptionInline(admin.TabularInline):
+    model = purchase_option
+    fields = ('date_purchased', 'date_expiring', 'amount_paid', )
+    readonly_fields=('closing',)
+    extra = 1
+
 class ClosingAdmin(admin.ModelAdmin):
 
     form = ClosingAdminForm
-    list_display = ['__unicode__','title_company','date_time', 'nsp', 'title_commitment_in_place', 'city_documents_in_place', 'ri_documents_in_place', 'title_company_documents_in_place']
+    list_display = ['__unicode__','title_company','date_time', 'processing_fee_paid','nsp', 'title_commitment_in_place', 'city_documents_in_place', 'ri_documents_in_place', 'title_company_documents_in_place']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed')
-    readonly_fields = ('purchase_agreement', 'nsp')
+    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid')
+
+    inlines = [PurchaseOptionInline,]
+
 
     def get_formset(self, request, obj=None, **kwargs):
         kwargs['formfield_callback'] = partial(self.formfield_for_dbfield, request=request, obj=obj)
@@ -85,6 +95,14 @@ class ClosingAdmin(admin.ModelAdmin):
         return None
     nsp.boolean = True
 
+    def processing_fee_paid(self, obj):
+        processing_fee = obj.processing_fee.first()
+        if processing_fee:
+            return processing_fee.paid
+        else:
+            return False
+    processing_fee_paid.boolean = True
+
     def city_documents_in_place(self, obj):
         file_fields_to_check = [obj.deed, obj.project_agreement]
         if all(file_fields_to_check):
@@ -100,6 +118,13 @@ class ClosingAdmin(admin.ModelAdmin):
 
     purchase_agreement.short_description = 'Purchase Agreement'
 
+    def processing_fee_url(self, obj):
+        pf = processing_fee.objects.filter(closing=obj).first()
+        if pf is None:
+            return '(none)'
+        pf_link = '<a target="_blank" href="{}">{}</a>'.format(
+            reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)), reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)))
+        return mark_safe(pf_link)
 
     def file_download(self, obj):
         return mark_safe('<a href="{}">{}</a>'.format(
@@ -107,9 +132,10 @@ class ClosingAdmin(admin.ModelAdmin):
                 "Download"
             ))
 
-
+admin.site.register(purchase_option)
 admin.site.register(location)
 admin.site.register(company_contact)
 admin.site.register(mailing_address)
 admin.site.register(title_company)
 admin.site.register(closing, ClosingAdmin)
+admin.site.register(processing_fee)

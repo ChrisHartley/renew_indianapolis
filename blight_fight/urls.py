@@ -15,6 +15,7 @@ from applicants.views import edit_organization, profile_home, profile_home, show
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
 from user_files.views import delete_uploaded_file, import_uploader, send_file
+from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage
 # from applications.views import
 
 
@@ -118,6 +119,15 @@ urlpatterns = [
         url(r'application/view/purchase_agreement/(?P<pk>[0-9]+)/$',
             staff_member_required(ApplicationPurchaseAgreement.as_view()),
             name='application_purchase_agreement'),
+        url(r'application/processing_fee/(?P<slug>[-\w\d]+),(?P<id>[-\w\d]+)/$',
+            login_required(ProcessingFeePaymentPage.as_view()),
+            name='application_pay_processing_fee'
+        ),
+        url(r'application/processing_fee/(?P<slug>[-\w\d]+),(?P<id>[-\w\d]+)/paid$',
+            login_required(ProcessingFeePaidPage.as_view()),
+            name='application_paid_processing_fee'
+        ),
+
         url(r'meeting/view_agenda/(?P<pk>[0-9]+)/$',
              staff_member_required(ReviewCommitteeAgenda.as_view()),
              name='rc_agenda'),
