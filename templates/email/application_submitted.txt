@@ -4,7 +4,7 @@ Thank you for submitting your application for {{ Property.streetAddress }}, parc
 within the next several days. If we need any additional information from you we will be in touch, otherwise your application will be reviewed by our
 Review Committee.
 
-If you have questions or would like to modify your application, please contact Chris Hartley, chris.hartley@renewindianapolis.org.
+If you have questions or would like to modify your application, please contact {{COMPANY_SETTINGS.APPLICATION_CONTACT_NAME}}, {{COMPANY_SETTINGS.APPLICATION_CONTACT_EMAIL}}.
 
 Our applications go through a multi-step approval process:
 1) Staff review for completeness, schedule for Review Committee (deadline is two Fridays before the last Thursday of the month)
