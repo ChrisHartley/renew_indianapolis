@@ -119,7 +119,7 @@ class ApplicationForm(forms.ModelForm):
 
                 HTML("""<p>Previously uploaded files:<ul>
                         {% for file in uploaded_files_all %}
-                            <li>{{ file }} <img src="{{STATIC_URL}}admin/img/icon_deletelink.gif" id='uploadedfile_{{ file.id }}' class='uploaded_file_delete' alt='[X]'></img></li>
+                            <li>{{ file }} <img src="{{STATIC_URL}}admin/img/icon-deletelink.svg" id='uploadedfile_{{ file.id }}' class='uploaded_file_delete' alt='[X]'></img></li>
                             {% empty %}
                                 <li>No files are associated with this application.</li>
                         {% endfor%}
@@ -151,7 +151,7 @@ class ApplicationForm(forms.ModelForm):
                                 project costs.</li>
                             </ol></div></div>"""
                      ),
-                HTML('<p>To delete an uploaded file, click "Save Incomplete Application", then scroll down and click the red "X" after the file name.</p>'),
+                HTML('<p>To delete an uploaded file, click "Save Application", then scroll down and click the red "X" after the file name.</p>'),
                 css_class='standard-app homestead-app well'),
             FormActions(
                 #Button('cancel', 'Cancel'),
