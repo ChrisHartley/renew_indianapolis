@@ -14,3 +14,10 @@ def num2words(value):
 def plus_30_days(value):
     """Returns now plus 30 days, an ugly hack"""
     return date.today() + timedelta(days=30)
+
+@register.filter
+def plus_n_days(value, arg):
+    """Returns now plus n days, an ugly hack"""
+    if arg is None:
+        return False
+    return date.today() + timedelta(days=int(arg))

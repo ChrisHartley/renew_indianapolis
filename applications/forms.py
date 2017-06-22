@@ -76,10 +76,10 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Structure Type: </div><div id="structureType" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Sidelot Eligible: </div><div id="sidelot_eligible" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Price: </div><div id="price" class="form-control-static col-lg-6"></div></div>'),
-                HTML('<div class="form-group"><div class="control-label col-lg-4">NSP: </div><div id="nsp_boolean" class="form-control-static col-lg-6"></div></div>'),
+                #HTML('<div class="form-group"><div class="control-label col-lg-4">NSP: </div><div id="nsp_boolean" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Homestead Only: </div><div id="homestead_only" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Blight Elimination Program (demolition): </div><div id="bep_property" class="form-control-static col-lg-6"></div></div>'),
-                HTML('<div id="nsp" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">NSP</h3></div><div class="panel-body">This property is a Neighborhood Stabilization Program (NSP) property. NSP properties were originally purchased by the City using special federal funds and thus development of these properties carry additional requirements. You can find out more about these requirements, and how and when to submit the required documents <a href="//www.renewindianapolis.org/nsp-requirements/" target="_blank">here</a>. Additionally, per City of Indianapolis policy, NSP properties may not be used for rental.</div></div>'),
+                #HTML('<div id="nsp" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">NSP</h3></div><div class="panel-body">This property is a Neighborhood Stabilization Program (NSP) property. NSP properties were originally purchased by the City using special federal funds and thus development of these properties carry additional requirements. You can find out more about these requirements, and how and when to submit the required documents <a href="//www.renewindianapolis.org/nsp-requirements/" target="_blank">here</a>. Additionally, per City of Indianapolis policy, NSP properties may not be used for rental.</div></div>'),
                 css_class='well'
             ),
             Fieldset(
@@ -93,7 +93,7 @@ class ApplicationForm(forms.ModelForm):
                 'Ownership and Use',
                 Field('long_term_ownership'),
                 Field('is_rental'),
-                Field('nsp_income_qualifier'),
+                #Field('nsp_income_qualifier'),
                 css_class='standard-app well'
             ),
             Fieldset(
@@ -184,7 +184,7 @@ class ApplicationForm(forms.ModelForm):
 
         long_term_ownership = cleaned_data.get('long_term_ownership')
         is_rental = cleaned_data.get('is_rental')
-        nsp_income_qualifier = cleaned_data.get('nsp_income_qualifier')
+        #nsp_income_qualifier = cleaned_data.get('nsp_income_qualifier')
         property_selected = cleaned_data.get('Property')
         proof_of_funds = cleaned_data.get('proof_of_funds')
         sidelot_eligible = cleaned_data.get('sidelot_eligible', None)
@@ -270,9 +270,9 @@ class ApplicationForm(forms.ModelForm):
                 #if is_rental and property_selected and property_selected.nsp and nsp_income_qualifier == "":
                 #    self.add_error('nsp_income_qualifier', ValidationError(
                 #        "Since this is a rental NSP property you must list who will be conducting tenant income qualification."))
-                if is_rental and property_selected and property_selected.nsp:
-                    self.add_error('is_rental', ValidationError(
-                        "Per City of Indianapolis policy, NSP properties may not be used as rental properties."))
+                #if is_rental and property_selected and property_selected.nsp:
+                #    self.add_error('is_rental', ValidationError(
+                #        "Per City of Indianapolis policy, NSP properties may not be used as rental properties."))
                 #if property_selected is not None and property_selected.homestead_only:
                 #    self.add_error('application_type', ValidationError(
                 #        'The property you have selected is marked "homestead only" but you indicated a Standard application.'))

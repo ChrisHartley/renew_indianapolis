@@ -8,11 +8,19 @@ from datetime import date
 from applications.models import Application
 from .models import processing_fee, title_company
 from .forms import TitleCompanyChooser
+from django.contrib import messages
 
 class ApplicationPurchaseAgreement(DetailView):
     model = Application
     context_object_name = 'application'
     template_name = 'purchase_agreement.html'
+    def get_context_data(self, **kwargs):
+        #print "hello", self
+        context = super(ApplicationPurchaseAgreement, self).get_context_data(**kwargs)
+        #print "hello", self
+        #self.object.meeting_set
+        context['approval_date'] = self.object.meeting
+        return context
 
 class ProcessingFeePaymentPage(DetailView):
     context_object_name = 'processing_fee'
@@ -33,7 +41,7 @@ class ProcessingFeePaymentPage(DetailView):
 
 class ProcessingFeePaidPage(View):
 
-    http_method_names = ['post',]
+    http_method_names = ['post','get']
 
     def post(self, request, *args, **kwargs):
         print request.POST
@@ -62,10 +70,12 @@ class ProcessingFeePaidPage(View):
             # param is '' in this case
             print "Param is: %s" % err['param']
             print "Message is: %s" % err['message']
+            messages.add_message(request, messages.ERROR, 'Our credit card processor reported a problem with your card.')
             return HttpResponse("Card error: {0}".format(err))
         except stripe.error.RateLimitError as e:
             # Too many requests made to the API too quickly
             print e
+            messages.add_message(request, messages.ERROR, 'Temporary error, your card has not been charged. Please try again in a few moments.')
             return HttpResponse("Rate Limit Error: {0}".format(e))
         except stripe.error.InvalidRequestError as e:
             print e
@@ -115,9 +125,3 @@ class ProcessingFeePaidPage(View):
             print "terrible error!!!"
             return HttpResponse("Error saving payment object: {0}".format(e))
         return HttpResponse("Everything worked for {0}".format(obj.closing.application.Property))
-
-
-
-    #model = processing_fee
-    #context_object_name = 'processing_fee'
-    #template_name = 'processing_fee_payment.html'

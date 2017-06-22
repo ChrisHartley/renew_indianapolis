@@ -44,7 +44,7 @@ class AddAnotherWidgetWrapper(forms.Widget):
                        'onclick="return showAddAnotherPopup(this);"> add new ')
                       % (related_url, name))
         output.append('<img src="%s" width="10" height="10" alt="%s"/></a>'
-                      % (static('admin/img/icon_addlink.gif'),
+                      % (static('admin/img/icon-addlink.svg'),
                          _('Add Another')))
         return mark_safe(''.join(output))
 

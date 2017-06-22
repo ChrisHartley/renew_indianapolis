@@ -7,6 +7,7 @@ from django.core import serializers
 from django_tables2_reports.config import RequestConfigReport as RequestConfig
 from django.views.generic import View  # for class based views
 from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
 # used for geojson display of search results
@@ -27,7 +28,11 @@ import operator
 from django.contrib.gis.geos import GEOSGeometry  # used for centroid calculation
 from djqscsv import render_to_csv_response
 
-from property_inventory.models import Property, Zipcode, CDC, Zoning
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+
+from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea
 from property_inventory.filters import ApplicationStatusFilters
 from property_inventory.tables import PropertyStatusTable
 from property_inventory.tables import PropertySearchTable
@@ -67,7 +72,8 @@ def get_mdc_csv(request):
 #    return response
 
 def get_inventory_csv(request):
-    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
+    #qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
+    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
 
@@ -86,7 +92,7 @@ def getAddressFromParcel(request):
         SearchResult = Property.objects.filter(parcel__exact=parcelNumber)
         response_data = serializers.serialize('json', SearchResult,
                                               fields=('streetAddress', 'zipcode', 'neighborhood','status', 'structureType',
-                                                      'sidelot_eligible', 'homestead_only', 'price', 'nsp','hhf_demolition')
+                                                      'sidelot_eligible', 'homestead_only', 'price','hhf_demolition')
                                               )
         return HttpResponse(response_data, content_type="application/json")
     # when is this used? who knows. I broke it, when I find out where it is used I'll fix it.
@@ -160,7 +166,7 @@ def searchProperties(request):
                                       geometry_field=geom,
                                       fields=('id', 'parcel', 'streetAddress', 'zipcode', 'zone', 'status', 'structureType',
                                               'sidelot_eligible', 'neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
-                                              'urban_garden','price', 'nsp', 'renew_owned', 'area','price_obo', 'cdc', 'hhf_demolition', geom),
+                                              'urban_garden','price', 'renew_owned', 'area','price_obo', 'cdc', 'hhf_demolition', geom),
                                       use_natural_foreign_keys=True
                                       )
             return HttpResponse(s, content_type='application/json')
@@ -183,19 +189,59 @@ def propertyPopup(request):
     return HttpResponse(content, content_type='text/plain; charset=utf8')
 #	return HttpResponse(json, content_type='application/json')
 
-class BetaMapView(TemplateView):
-    template_name = 'new_map_test.html'
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super(BetaMapView, self).get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['form_filter'] = PropertySearchFilter(self.request.GET, queryset=Property.objects.filter(
-                propertyType__exact='lb', is_active__exact=True).prefetch_related('cdc', 'zone', 'zipcode')).form
-
-        return context
-
 class PropertyDetailView(DetailView):
     model = Property
     template = 'property_detail.html'
     def get_object(self):
         return get_object_or_404(Property, parcel=self.parcel)
+
+class InventoryMapTemplateView(TemplateView):
+    template_name = "inventory_map.html"
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super(InventoryMapTemplateView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(InventoryMapTemplateView, self).get_context_data(**kwargs)
+        context['filter'] = PropertySearchFilter
+        return context
+
+class PropertyDetailJSONView(DetailView):
+    model = Property
+    slug_field = 'parcel'
+    slug_url_kwarg = 'parcel'
+    def render_to_response(self, context, **response_kwargs):
+        s = serializers.serialize('geojson',
+                              [context.get('property'),],
+                              geometry_field='geometry',
+                              use_natural_foreign_keys=True
+                              )
+        return HttpResponse(s, content_type='application/json')
+
+class PropertyListJSONView(ListView):
+    model = Property
+
+    def render_to_response(self, context, **response_kwargs):
+        geom = 'geometry'
+        geom_type = self.kwargs.get('geometry_type', None)
+        if geom_type == 'centroid':
+            geom = 'centroid_geometry'
+        #print context, response_kwargs
+        s = serializers.serialize('geojson',
+                              Property.objects.filter(status__exact='Available').filter(is_active__exact=True),
+                              geometry_field=geom,
+                              use_natural_foreign_keys=True
+                              )
+        return HttpResponse(s, content_type='application/json')
+
+
+class ContextAreaListJSONView(ListView):
+    model = ContextArea
+    def render_to_response(self, context, **response_kwargs):
+        s = serializers.serialize('geojson',
+                              ContextArea.objects.all(),
+                              geometry_field='geometry',
+                              use_natural_foreign_keys=True
+                              )
+        return HttpResponse(s, content_type='application/json')

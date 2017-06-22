@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application
 from photos.views import DumpPhotosView, PropertyPhotosView
-from property_inventory.views import PropertyDetailView, BetaMapView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup
+from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PropertyListJSONView
 from property_inquiry.views import inquiry_list, property_inquiry_confirmation, submitPropertyInquiry
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
@@ -52,8 +52,6 @@ urlpatterns = [
            searchProperties),
         url(r'search-map/$',
            searchProperties),
-#        url(r'map_beta/$',
-#            BetaMapView.as_view()),
 
         url(r'surplus/$', SurplusMapTemplateView.as_view(), name='surplus_map'),
         url(r'surplus/search/$', searchSurplusProperties, name='surplus_search'),
@@ -63,26 +61,21 @@ urlpatterns = [
         url(r'surplus/download/$', get_surplus_inventory_csv, name='surplus_download_csv'),
 
 
-
         url(r'propertyPopup/$',
            propertyPopup),
+
+        url(r'property/map/$', InventoryMapTemplateView.as_view(), name='property_map'),
         url(r'property/(?P<parcel>[0-9]{7})/photos/$',
             PropertyPhotosView.as_view(), name='property_photos'),
-        #                       url(r'property/(?P<parcel>[0-9]{7})/$',
-        #                          PropertyDetailView.as_view(), name='property_detail'),
-
-
-        #url(r'admin-condition-report/$',
-         #  'property_condition.views.condition_report_list'),
-        #url(r'condition_report/$',
-        #   'property_condition.views.submitConditionReport'),
+        url(r'property/(?P<parcel>[0-9]{7})/json$',
+            PropertyDetailJSONView.as_view(), name='property_detail_json'),
+        url(r'property/json/(?P<geometry_type>[a-z]*)$',
+            PropertyListJSONView.as_view(), name='property_list_json'),
+        url(r'overlay_area/context_areas/$', ContextAreaListJSONView.as_view(), name='overlay_area'),
 
         url(r'annual-report/$',
            showAnnualReportForm),
-        #url(r'view_annual_report/(?P<id>[0-9]+)/$',
-        #   'annual_report_form.views.showAnnualReportData', name='view_annual_report'),
-        #url(r'admin_annual_report/$',
-        #   'annual_report_form.views.showAnnualReportIndex'),
+
         url(r'admin_add_photos/$', staff_member_required(DumpPhotosView.as_view()), name="admin_add_photos"),
 
         url(r'accounts/profile$', profile_home,

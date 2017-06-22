@@ -42,6 +42,8 @@ class Zoning(Overlay):
 class Neighborhood(Overlay):
     pass
 
+class ContextArea(Overlay):
+    disposition_strategy = models.CharField(max_length=50)
 ### The Property model is the heart of blight_fight. A Property is a parcel of land with a unique identifier, the
 ### parcel number. It has various attributes, including geometry, and can fall within a Overlay geometry (above).
 ###
@@ -52,7 +54,7 @@ class Property(models.Model):
 
     geometry = models.MultiPolygonField(srid=4326)
 
-#    centroid_geometry = models.PointField(srid=4326, default='POINT(39.7684 86.1581)')
+    centroid_geometry = models.PointField(srid=4326, default='POINT(39.7684 86.1581)')
 
     objects = models.GeoManager()
     propertyType = models.CharField(
@@ -116,6 +118,6 @@ class Property(models.Model):
         return '%s - %s' % (self.streetAddress, self.parcel)
 
     ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
-    # def save(self, *args, **kwargs):
-    #     self.centroid_geometry = self.geometry.centroid
-    #     super(Property, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.centroid_geometry = self.geometry.centroid
+        super(Property, self).save(*args, **kwargs)

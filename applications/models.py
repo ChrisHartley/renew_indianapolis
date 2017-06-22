@@ -7,9 +7,6 @@ from neighborhood_associations.models import Neighborhood_Association
 from django.utils.deconstruct import deconstructible
 from django.conf import settings
 
-#from closings.models import closing
-
-
 @deconstructible
 class UploadToApplicationDir(object):
     path = "applicants/{0}/{1}{2}"
@@ -337,10 +334,9 @@ class MeetingLink(models.Model):
             prop.save()
             if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
                 # Final approval received
-#                print "final approval received"
                 closing = apps.get_model('closings', 'closing')
+                # No closing created yet
                 if closing.objects.filter(application=self.application).count()==0:
-#                    print "need to make a closing"
                     new_closing = closing(application=self.application)
                     new_closing.save()
                     # email applicant with congratulatory email and URL to pay processing fee

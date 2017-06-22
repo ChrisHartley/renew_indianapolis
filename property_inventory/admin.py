@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 from django.db.models import Q
 
 
-from .models import Property, CDC, Neighborhood
+from .models import Property, CDC, Neighborhood, ContextArea
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'
@@ -67,7 +67,12 @@ class PropertyAdmin(admin.OSMGeoAdmin):
                     reverse("property_photos", kwargs={'parcel': obj.parcel}), "View Photos")
         return mark_safe(photo_page_link)
 
+class ContextAreaAdmin(admin.OSMGeoAdmin):
+    openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
+    modifiable = False
+
 
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
+admin.site.register(ContextArea, ContextAreaAdmin)

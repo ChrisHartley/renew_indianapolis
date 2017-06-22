@@ -2,7 +2,7 @@
 {% block head_title %}Application :: Renew Indianapolis{% endblock %}
 {% block extra_head %}
 <!-- Bootstrap -->
-<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
@@ -12,9 +12,10 @@
 <script src="{{ STATIC_URL }}ajaxuploader/js/fileuploader.js" ></script>
 <link href="{{ STATIC_URL }}ajaxuploader/css/fileuploader.css" media="screen" rel="stylesheet" type="text/css" />
 
-<script src="{{ STATIC_URL }}admin/js/admin/RelatedObjectLookups.js"></script>
-<script src="{{ STATIC_URL }}admin/js/jquery.min.js"></script>
+<script src="{{ STATIC_URL }}admin/js/vendor/jquery/jquery.min.js"></script>
 <script src="{{ STATIC_URL }}admin/js/jquery.init.js"></script>
+<script src="{{ STATIC_URL }}admin/js/admin/RelatedObjectLookups.js"></script>
+
 {% endblock extra_head %}
 
 {% block content %}
@@ -98,12 +99,12 @@ function get_property_attributions(){
 			$( "#sidelot_eligible" ).text(boolean_to_yesno(data[0].fields.sidelot_eligible));
 			$( "#homestead_only" ).text(boolean_to_yesno(data[0].fields.homestead_only));
 			$( "#price" ).text('$'+numberWithCommas(data[0].fields.price));
-			$( "#nsp_boolean" ).text(boolean_to_yesno(data[0].fields.nsp));
+		//	$( "#nsp_boolean" ).text(boolean_to_yesno(data[0].fields.nsp));
 			$( "#bep_property" ).text(boolean_to_yesno(data[0].fields.hhf_demolition));
 			check_homestead_only_property();
 			check_bep_sidelot();
 
-
+/*
 			if (data[0].fields.nsp == true) {
 				$( "#nsp" ).show();
 				if ($('#id_is_rental').val() == 'True'){
@@ -114,6 +115,7 @@ function get_property_attributions(){
 				$( "#nsp" ).hide();
 				$('#div_id_nsp_income_qualifier').hide();
 			}
+			*/
 		});
 	}
 }
@@ -164,7 +166,7 @@ $(function() {
 
 $(function(){
 	showAppropriateSections($('#id_application_type').val());
-	$('#div_id_nsp_income_qualifier').hide();
+//	$('#div_id_nsp_income_qualifier').hide();
 	get_property_attributions();
 //	check_homestead_only_property();
 });
@@ -183,6 +185,7 @@ $('#id_Property').change(function(){
 
 });
 // If a property is a rental and NSP then we need to show income qualification question.
+/*
 $('#id_is_rental').change(function(){
 	if ($('#id_is_rental').val() == 'True'){
 		if ( $( "#nsp" ).is(":visible") ){
@@ -193,6 +196,7 @@ $('#id_is_rental').change(function(){
 		$('#div_id_nsp_income_qualifier').hide(400);
 	}
 });
+*/
 
 $('#id_Property').select2({
 	placeholder: "Enter address, street name, parcel number or select from dropdown"
