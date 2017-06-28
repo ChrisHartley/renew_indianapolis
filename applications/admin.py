@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Application, Meeting, MeetingLink, NeighborhoodNotification
+from .models import Application, Meeting, MeetingLink, NeighborhoodNotification, PriceChangeMeetingLink
 from neighborhood_associations.models import Neighborhood_Association
 from user_files.models import UploadedFile
 
@@ -33,6 +33,20 @@ class MeetingLinkInline(admin.TabularInline):
                 obj.application
             ))
     application_link.short_description = 'application'
+
+class PriceChangeMeetingLinkInline(admin.TabularInline):
+    model = PriceChangeMeetingLink
+    fields = ('meeting', 'meeting_outcome', 'price_change_link', 'notes', )
+    readonly_fields=('price_change','price_change_link')
+    extra = 1
+
+    def price_change_link(self, obj):
+       return mark_safe('<a href="{}" target="_blank">{}</a>'.format(
+            reverse("admin:property_inventory_price_change_change", args=(obj.price_change.id,)),
+                obj.application
+            ))
+    price_change_link.short_description = 'price change'
+
 
 
 class NeighborhoodNotificationAdmin(admin.TabularInline):
@@ -137,7 +151,7 @@ class MeetingAdmin(admin.ModelAdmin):
     model = Meeting
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
-    inlines = [MeetingLinkInline]
+    inlines = [MeetingLinkInline, PriceChangeMeetingLinkInline]
     readonly_fields = ('agenda', 'applications', 'create_packet', 'create_packet_support_documents')
 #    list_select_related = True
 
@@ -185,3 +199,4 @@ class MeetingAdmin(admin.ModelAdmin):
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(MeetingLink)
+admin.site.register(PriceChangeMeetingLink)

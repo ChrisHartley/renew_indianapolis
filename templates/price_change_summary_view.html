@@ -1,0 +1,40 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{% block center%}
+<p class="text-right">
+  Renew Indianapolis<br/>
+  Price Change Proposals<br/>
+</p>
+<div class='col-md-6 col-xs-6'>
+  <h2>{{price_change.Property}}</h2>
+  <ul class="list-group">
+    <li class="list-group-item"><strong>Proposed price change</strong>: ${{price_change.Property.price|intcomma}} <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> ${{price_change.proposed_price|intcomma}},</li>
+  </ul>
+  <ul class="list-unstyled">
+    <li>Applications started: {{price_change.Property.application_set.count}}</li>
+    <li>Applications started: {{price_change.Property.application_set.count}}</li>
+    {% for app in price_change.Property.application_set %}
+      {{app.meeting.meeting_outcome}}
+    {% endfor %}
+    <li>Property inquiries received: {{price_change.Property.propertyinquiry_set.count}}</li>
+  </ul>
+  <p>
+    {{price_change.notes}}
+  </p>
+
+{% regroup application.Property.photo_set.all by main_photo as sorted_photos %}
+{% for photo_list in sorted_photos %}
+  {% if photo_list.grouper %}
+    {% for photo in photo_list.list %}
+      <img src="/media/{{ photo.image }}" class="img-thumbnail"/>
+      <div class="caption">{{photo.created}}</div>
+    {% endfor %}
+  {% endif %}
+  {% empty %}
+    <img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{price_change.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
+  &nbsp;
+{% endfor %}<img src="https://www.renewindianapolis.org/inventory_maps/parcel_{{price_change.Property.parcel}}.jpg" class="img-thumbnail" width="200"/>
+
+</div>
+
+{% endblock center %}

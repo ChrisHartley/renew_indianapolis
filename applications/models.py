@@ -346,3 +346,49 @@ class MeetingLink(models.Model):
 
     class Meta:
         get_latest_by = 'meeting_date'
+
+
+"""
+Sure would be nice to just inherient from MeetingLink and override application but not allowed except on abstract models so we have a lot of code duplication.
+"""
+class PriceChangeMeetingLink(models.Model):
+    APPROVED_STATUS = 1
+    NOT_APPROVED_STATUS = 2
+    TABLED_STATUS = 3
+    SCHEDULED_STATUS = 4
+
+    STATUS_CHOICES = (
+        (APPROVED_STATUS, 'Approved'),
+        (NOT_APPROVED_STATUS, 'Not Approved'),
+        (TABLED_STATUS, 'Tabled'),
+        (SCHEDULED_STATUS, 'Scheduled'),
+    )
+    meeting = models.ForeignKey(Meeting, related_name='price_change_meeting_link')
+    meeting_outcome = models.IntegerField(choices=STATUS_CHOICES, null=False, default=SCHEDULED_STATUS)
+    price_change = models.ForeignKey('property_inventory.price_change')
+    notes = models.CharField(max_length=1024, blank=True, null=False)
+
+    @property
+    def meeting_date(self):
+        return self.meeting.meeting_date
+
+    def __unicode__(self):
+        return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
+
+    # When saving this intermediary linkage object we save it and update the price_change and property_object to reflect approval, if given.
+    def save(self, *args, **kwargs):
+        super(PriceChangeMeetingLink, self).save(*args, **kwargs)
+
+        chng = self.price_change
+        if chng.approved != True and self.meeting_outcome == self.APPROVED_STATUS:
+            print "Change wasn't already approved, meeting outcome was approval. Updating price_change status and property price"
+            chng.approved = True
+            chng.save()
+
+            prop = self.price_change.Property
+            prop.price = self.price_change.proposed_price
+            prop.save()
+
+
+    class Meta:
+        get_latest_by = 'meeting_date'

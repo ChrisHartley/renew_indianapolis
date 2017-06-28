@@ -32,7 +32,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 
-from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea
+from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea, price_change
 from property_inventory.filters import ApplicationStatusFilters
 from property_inventory.tables import PropertyStatusTable
 from property_inventory.tables import PropertySearchTable
@@ -245,3 +245,8 @@ class ContextAreaListJSONView(ListView):
                               use_natural_foreign_keys=True
                               )
         return HttpResponse(s, content_type='application/json')
+
+class PriceChangeSummaryView(DetailView):
+    model = price_change
+    template_name = 'price_change_summary_view.html'
+    context_object_name = 'price_change'

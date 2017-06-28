@@ -44,6 +44,7 @@ class Neighborhood(Overlay):
 
 class ContextArea(Overlay):
     disposition_strategy = models.CharField(max_length=50)
+
 ### The Property model is the heart of blight_fight. A Property is a parcel of land with a unique identifier, the
 ### parcel number. It has various attributes, including geometry, and can fall within a Overlay geometry (above).
 ###
@@ -110,7 +111,7 @@ class Property(models.Model):
 
     class Meta:
         verbose_name_plural = "properties"
-
+        ordering = ['streetAddress', 'parcel']
     def natural_key(self):
         return '%s - %s' % (self.streetAddress, self.parcel)
 
@@ -121,3 +122,17 @@ class Property(models.Model):
     def save(self, *args, **kwargs):
         self.centroid_geometry = self.geometry.centroid
         super(Property, self).save(*args, **kwargs)
+
+
+class price_change(models.Model):
+    Property = models.ForeignKey(Property)
+    proposed_price = models.DecimalField(max_digits=8, decimal_places=2,
+        help_text="The proposed new price for the property", null=False)
+    notes = models.CharField(max_length=1024, blank=True)
+    # meeting will be PriceChangeMeetingLink accessor
+    #meeting = models.ForeignKey('applications.Meeting', null=True, blank=True)
+    datestamp = models.DateField(auto_now_add=True)
+    approved = models.NullBooleanField()
+
+    def __unicode__(self):
+        return '{0} - {1} - {2}'.format(self.Property, self.datestamp, self.proposed_price)

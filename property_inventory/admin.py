@@ -3,9 +3,10 @@ from django.contrib.admin import SimpleListFilter
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import Q
-
-
-from .models import Property, CDC, Neighborhood, ContextArea
+from django.forms import Textarea
+from django.urls import NoReverseMatch
+from .models import Property, CDC, Neighborhood, ContextArea, price_change
+from applications.admin import PriceChangeMeetingLinkInline
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'
@@ -72,6 +73,40 @@ class ContextAreaAdmin(admin.OSMGeoAdmin):
     modifiable = False
 
 
+class price_changeAdmin(admin.OSMGeoAdmin):
+    search_fields = ('Property', 'proposed_price')
+    list_display = ('datestamp','Property', 'get_current_price', 'proposed_price')
+    readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view')
+    inlines = [ PriceChangeMeetingLinkInline ]
+
+
+    def summary_view(self, obj):
+        try:
+            link = reverse("price_change_summary_view", args=(obj.pk,))
+        except NoReverseMatch:
+            link = ''
+        summary_link = '<a href="{}">{}</a>'.format(
+            link,'View Summary Page')
+        return mark_safe(summary_link)
+
+    def applications_search(self, obj):
+        summary_link = '<a href="{}">{}</a>'.format(
+            reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.Property.parcel,), "View Applications")
+        return mark_safe(summary_link)
+
+    def get_current_price(self, obj):
+        return obj.Property.price
+
+    def get_current_property_status(self, obj):
+        return obj.Property.status
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super(price_changeAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == 'notes':
+            formfield.widget = Textarea(attrs=formfield.widget.attrs)
+        return formfield
+
+admin.site.register(price_change, price_changeAdmin)
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
