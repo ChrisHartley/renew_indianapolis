@@ -381,14 +381,12 @@ class PriceChangeMeetingLink(models.Model):
 
         chng = self.price_change
         if chng.approved != True and self.meeting_outcome == self.APPROVED_STATUS:
-            print "Change wasn't already approved, meeting outcome was approval. Updating price_change status and property price"
             chng.approved = True
             chng.save()
 
             prop = self.price_change.Property
             prop.price = self.price_change.proposed_price
             prop.save()
-
 
     class Meta:
         get_latest_by = 'meeting_date'
