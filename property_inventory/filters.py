@@ -51,7 +51,7 @@ class PropertySearchFilter(django_filters.FilterSet):
     streetAddress = django_filters.CharFilter(label="Street address", lookup_expr='icontains')
     parcel = django_filters.CharFilter(label="Parcel number")
 
-    # lord I don't remember how this works
+    # lord I don't remember how this works but it takes calculates all the structureTypes in the database and makes a list.
     st = Property.objects.order_by('structureType').distinct(
         'structureType').values_list('structureType', flat=True).order_by('structureType')
     structure_types = zip(st, st)
