@@ -38,8 +38,11 @@ from property_inventory.tables import PropertyStatusTable
 from property_inventory.tables import PropertySearchTable
 from property_inventory.forms import PropertySearchForm
 from property_inventory.filters import PropertySearchFilter
+from property_inquiry.models import propertyInquiry
 
 from django.db import connection
+
+import datetime # used for price_change summary view
 
 def get_mdc_csv(request):
     #with connection.cursor() as c:
@@ -250,3 +253,10 @@ class PriceChangeSummaryView(DetailView):
     model = price_change
     template_name = 'price_change_summary_view.html'
     context_object_name = 'price_change'
+    def get_context_data(self, **kwargs):
+        context = super(PriceChangeSummaryView, self).get_context_data(**kwargs)
+        for duration in (30,60,90,180):
+            end_day = datetime.date.today()
+            start_day = end_day - datetime.timedelta(duration)
+            context['{0}dayinquiries'.format(duration,)] = propertyInquiry.objects.filter(Property=self.object.Property).filter(timestamp__range=(start_day, end_day)).count()
+        return context
