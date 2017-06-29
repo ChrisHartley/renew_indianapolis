@@ -56,7 +56,8 @@ class Parcel(models.Model):
 
     TAX_SALE_UNSOLD = 1
     SURPLUS = 2
-    CLASSIFICATION_CHOICES = ( (TAX_SALE_UNSOLD,'Tax Sale Unsold'),(SURPLUS, 'County Surplus'))
+    FORMER_SURPLUS = 3
+    CLASSIFICATION_CHOICES = ( (TAX_SALE_UNSOLD,'Tax Sale Unsold'),(SURPLUS, 'County Surplus'), (FORMER_SURPLUS, 'Former Surplus'))
     classification = models.IntegerField(choices=CLASSIFICATION_CHOICES, default=SURPLUS)
 
     demolition_order = models.BooleanField(default=False)
