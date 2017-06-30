@@ -128,11 +128,15 @@ Added 20170630.
 """
 class note(models.Model):
     Property = models.ForeignKey(Property)
-    user = models.ForeignKey(User)
+#    user = models.ForeignKey(User)
     text = models.TextField(blank=False, null=False)
-    #text = models.CharField(max_length=5000, blank=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return '{0}...'.format(self.text[0:12],)
+
+
 
 class price_change(models.Model):
     Property = models.ForeignKey(Property)

@@ -51,9 +51,9 @@ class PropertyStatusListFilter(SimpleListFilter):
 
 class NoteInlineAdmin(regular_admin.TabularInline):
     model = note
-    fields = ('text', 'created', 'modified', 'user', 'Property')
-    readonly_fields=('created','modified', 'user', 'Property')
-    extra = 1
+    fields = ('text', 'created', 'modified', 'Property')
+    readonly_fields=('created','modified',  'Property')
+    extra = 0
 
 
 
