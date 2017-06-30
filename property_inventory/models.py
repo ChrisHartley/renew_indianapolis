@@ -143,10 +143,13 @@ class price_change(models.Model):
     proposed_price = models.DecimalField(max_digits=8, decimal_places=2,
         help_text="The proposed new price for the property", null=False)
     notes = models.CharField(max_length=1024, blank=True)
-    # meeting will be PriceChangeMeetingLink accessor
-    #meeting = models.ForeignKey('applications.Meeting', null=True, blank=True)
+    # meeting is the PriceChangeMeetingLink accessor
     datestamp = models.DateField(auto_now_add=True)
     approved = models.NullBooleanField()
+    acquisition_date = models.DateField(null=True)
+    assessed_land_value = models.IntegerField(null=True)
+    assessed_improvement_value = models.IntegerField(null=True)
+
 
     def __unicode__(self):
         return '{0} - {1} - {2}'.format(self.Property, self.datestamp, self.proposed_price)

@@ -43,6 +43,8 @@ from property_inquiry.models import propertyInquiry
 from django.db import connection
 
 import datetime # used for price_change summary view
+from decimal import * # used for price_change summary view
+
 
 def get_mdc_csv(request):
     #with connection.cursor() as c:
@@ -259,4 +261,6 @@ class PriceChangeSummaryView(DetailView):
             end_day = datetime.date.today()
             start_day = end_day - datetime.timedelta(duration)
             context['{0}dayinquiries'.format(duration,)] = propertyInquiry.objects.filter(Property=self.object.Property).filter(timestamp__range=(start_day, end_day)).count()
+        context['current_lot_price_per_square_foot'] = round(self.object.Property.price / Decimal(self.object.Property.area), 2)
+        context['proposed_lot_price_per_square_foot'] = round(self.object.proposed_price / Decimal(self.object.Property.area), 2)
         return context

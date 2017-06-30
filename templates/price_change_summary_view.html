@@ -21,12 +21,20 @@
       <li>Property inquiries received: {{price_change.Property.propertyinquiry_set.count}}</li>
       <li>Inquiries in the past 30, 60, 90, 180 days: {{30dayinquiries}}, {{60dayinquiries}}, {{90dayinquiries}}, {{180dayinquiries}}</li>
     {% endif %}
+    <li><a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/{{price_change.Property.parcel}}" target="_blank">Property Report Card</a></li>
     </ul>
   </ul>
   <p>
     {{price_change.notes}}
   </p>
-
+<p>
+  <ul>
+  <li>Lot Size: {{price_change.Property.area}} sqft</li>
+  <li>Land current cost per square foot:  ${{current_lot_price_per_square_foot|intcomma}}</li>
+  <li>Land proposed cost per square foot: ${{proposed_lot_price_per_square_foot|intcomma}}</li>
+  
+</ul>
+</p>
 {% regroup application.Property.photo_set.all by main_photo as sorted_photos %}
 {% for photo_list in sorted_photos %}
   {% if photo_list.grouper %}
