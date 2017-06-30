@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
-#from autoslug import AutoSlugField
+from django.contrib.auth.models import User
 
 
 ### This is the parent model inherited by various overlay models, collections of geometries
@@ -122,7 +122,17 @@ class Property(models.Model):
     def save(self, *args, **kwargs):
         self.centroid_geometry = self.geometry.centroid
         super(Property, self).save(*args, **kwargs)
-
+"""
+Add notes to properties, for staff use.
+Added 20170630.
+"""
+class note(models.Model):
+    Property = models.ForeignKey(Property)
+    user = models.ForeignKey(User)
+    text = models.TextField(blank=False, null=False)
+    #text = models.CharField(max_length=5000, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
 class price_change(models.Model):
     Property = models.ForeignKey(Property)

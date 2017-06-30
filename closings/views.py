@@ -1,6 +1,7 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render_to_response
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.views.generic import DetailView, View
 import stripe
 from decimal import *
@@ -9,6 +10,7 @@ from applications.models import Application
 from .models import processing_fee, title_company
 from .forms import TitleCompanyChooser
 from django.contrib import messages
+from django.utils.text import slugify
 
 class ApplicationPurchaseAgreement(DetailView):
     model = Application
@@ -79,24 +81,29 @@ class ProcessingFeePaidPage(View):
             return HttpResponse("Rate Limit Error: {0}".format(e))
         except stripe.error.InvalidRequestError as e:
             print e
+            messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Invalid Stripe API request: {0}".format(e))
             # Invalid parameters were supplied to Stripe's API
         except stripe.error.AuthenticationError as e:
             print e
+            messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Invalid AuthenticationError request: {0}".format(e))
             # Authentication with Stripe's API failed
             # (maybe you changed API keys recently)
         except stripe.error.APIConnectionError as e:
             print e
+            messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Stripe connection error request: {0}".format(e))
             # Network communication with Stripe failed
         except stripe.error.StripeError as e:
             print e
+            messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Stripe error: {0}".format(e))
             # Display a very generic error to the user, and maybe send
             # yourself an email
         except Exception as e:
             print e
+            messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Edge case error: {0}".format(e))
             # Something else happened, completely unrelated to Stripe
         print obj
@@ -104,6 +111,7 @@ class ProcessingFeePaidPage(View):
         obj.amount_received = int(request.POST.get('amountForStripe')) / 100
         print obj.amount_received
         if obj.amount_received < obj.amount_due:
+            messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
             return HttpResponse("Partial payments are not permitted")
         obj.stripeTokenType = request.POST.get('stripeTokenType')
         obj.stripeEmail = request.POST.get('stripeEmail')
@@ -117,11 +125,19 @@ class ProcessingFeePaidPage(View):
             try:
                 closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
             except title_company.DoesNotExist as e:
+                messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
                 return HttpResponse("Invalid title company selected: {0}".format(e))
         try:
             obj.save()
             closing.save()
         except Exception as e:
             print "terrible error!!!"
+            messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
             return HttpResponse("Error saving payment object: {0}".format(e))
-        return HttpResponse("Everything worked for {0}".format(obj.closing.application.Property))
+        messages.add_message(request, messages.SUCCESS, 'Your card has been charged and our staff have been notified to proceed with your closing.')
+        pf = processing_fee.objects.get(id=kwargs['id'])
+        closing = pf.closing
+        prop = closing.application.Property
+        slug = slugify(prop)
+        return HttpResponseRedirect(reverse('application_pay_processing_fee', kwargs={'id': kwargs['id'], 'slug': slug}))
+        #return HttpResponse("Everything worked for {0}".format(obj.closing.application.Property))

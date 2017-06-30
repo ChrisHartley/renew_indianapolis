@@ -1,11 +1,13 @@
 from django.contrib.gis import admin
+from django.contrib import admin as regular_admin
 from django.contrib.admin import SimpleListFilter
+
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
-from .models import Property, CDC, Neighborhood, ContextArea, price_change
+from .models import Property, CDC, Neighborhood, ContextArea, price_change, note
 from applications.admin import PriceChangeMeetingLinkInline
 
 class PropertyStatusYearListFilter(SimpleListFilter):
@@ -47,12 +49,19 @@ class PropertyStatusListFilter(SimpleListFilter):
             return queryset.filter( Q(status__contains='Sale approved by Review Committee') | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=False)))
         return queryset
 
+class NoteInlineAdmin(regular_admin.TabularInline):
+    model = note
+    fields = ('text', 'created', 'modified', 'user', 'Property')
+    readonly_fields=('created','modified', 'user', 'Property')
+    extra = 1
+
 
 
 class PropertyAdmin(admin.OSMGeoAdmin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name')
     list_display = ('parcel', 'streetAddress', 'structureType','status')
     list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned' )
+    inlines = [ NoteInlineAdmin,]
 
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
