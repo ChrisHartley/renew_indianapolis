@@ -3,6 +3,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.auth.models import User
 import datetime # used for price_change summary view
 from django.apps import apps
+from django.utils.text import slugify
 
 ### This is the parent model inherited by various overlay models, collections of geometries
 ### such as zip codes, census tracts, CDC focus areas, etc that a Property (below) could fall within.
