@@ -36,7 +36,7 @@ class MeetingLinkInline(admin.TabularInline):
 
 class PriceChangeMeetingLinkInline(admin.TabularInline):
     model = PriceChangeMeetingLink
-    fields = ('meeting_outcome', 'price_change', 'notes', )
+    fields = ('meeting','meeting_outcome', 'price_change', 'notes', )
     readonly_fields=('price_change','price_change_link',)
     extra = 1
 
