@@ -36,8 +36,8 @@ class MeetingLinkInline(admin.TabularInline):
 
 class PriceChangeMeetingLinkInline(admin.TabularInline):
     model = PriceChangeMeetingLink
-    fields = ('meeting', 'meeting_outcome', 'price_change_link', 'notes', )
-    readonly_fields=('price_change','price_change_link')
+    fields = ('meeting_outcome', 'price_change', 'notes', )
+    readonly_fields=('price_change','price_change_link',)
     extra = 1
 
     def price_change_link(self, obj):
@@ -152,7 +152,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline, PriceChangeMeetingLinkInline]
-    readonly_fields = ('agenda', 'applications', 'create_packet', 'create_packet_support_documents')
+    readonly_fields = ('agenda', 'applications', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page')
 #    list_select_related = True
 
     def agenda(self, obj):
@@ -171,7 +171,14 @@ class MeetingAdmin(admin.ModelAdmin):
             reverse("application_packet", kwargs={'pk':obj.id}),
                 "Generate Applications"
             ))
-    agenda.short_description = 'Applications'
+    applications.short_description = 'Applications'
+
+    def price_change_summary_page(self, obj):
+        summary_link = '<a target="_blank" href="{}">{}</a>'.format(
+            reverse("price_change_summary_view_all", args=(obj.id,)), "View Price Change Summary Page")
+        return mark_safe(summary_link)
+    price_change_summary_page.short_description = 'Price Changes'
+
 
     def create_packet(self, obj):
         if obj.id is None:

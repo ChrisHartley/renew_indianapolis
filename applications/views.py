@@ -189,7 +189,7 @@ class CreateMeetingSupportArchive(View):
             response['Content-Disposition'] = 'attachment; filename="{0}.zip"'.format(meeting,)
             return response
 
-
-
-#    def neighborhood(self):
-#        return self.neighborhood.
+class PriceChangeSummaryAll(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'price_change_summary_view_all.html'

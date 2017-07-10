@@ -1,7 +1,8 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.auth.models import User
-
+import datetime # used for price_change summary view
+from django.apps import apps
 
 ### This is the parent model inherited by various overlay models, collections of geometries
 ### such as zip codes, census tracts, CDC focus areas, etc that a Property (below) could fall within.
@@ -107,6 +108,7 @@ class Property(models.Model):
         default=False, help_text="Property is owned directly by Renew Indianapolis or a wholly owned subsidiary.", verbose_name="Owned by Renew Indianapolis directly")
     hhf_demolition = models.BooleanField(default=False, help_text="Property was demolished through Hardest Hit Funds/Blight Elimination Program, and may have restrictions on end use.",
         verbose_name="Property was demolished through Hardest Hit Funds/Blight Elimination Program")
+    vacant_lot_eligible = models.BooleanField(default=False, help_text="Property is eligible for sale through the vacant lot program.")
     #slug = AutoSlugField(always_update=True, unique=True, populate_from=lambda instance: instance.streetAddress + instance.parcel)
 
     class Meta:
@@ -136,6 +138,9 @@ class note(models.Model):
     def __unicode__(self):
         return '{0}...'.format(self.text[0:12],)
 
+def price_change_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'price_change/{0}/{1}/{2}'.format(slugify(instance.Property), instance.datestamp, filename)
 
 
 class price_change(models.Model):
@@ -149,7 +154,36 @@ class price_change(models.Model):
     acquisition_date = models.DateField(null=True)
     assessed_land_value = models.IntegerField(null=True)
     assessed_improvement_value = models.IntegerField(null=True)
+    cma = models.FileField(upload_to=price_change_directory_path, null=True)
+
+    @property
+    def inquiries_previous_30_days(self):
+        end_day = datetime.date.today()
+        start_day = end_day - datetime.timedelta(30)
+        return apps.get_model('property_inquiry', 'propertyInquiry').objects.filter(Property=self.Property).filter(timestamp__range=(start_day, end_day)).count()
+
+    @property
+    def inquiries_previous_60_days(self):
+        end_day = datetime.date.today()
+        start_day = end_day - datetime.timedelta(60)
+        return apps.get_model('property_inquiry', 'propertyInquiry').objects.filter(Property=self.Property).filter(timestamp__range=(start_day, end_day)).count()
+
+    @property
+    def inquiries_previous_90_days(self):
+        end_day = datetime.date.today()
+        start_day = end_day - datetime.timedelta(90)
+        return apps.get_model('property_inquiry', 'propertyInquiry').objects.filter(Property=self.Property).filter(timestamp__range=(start_day, end_day)).count()
+
+    @property
+    def inquiries_previous_180_days(self):
+        end_day = datetime.date.today()
+        start_day = end_day - datetime.timedelta(180)
+        return apps.get_model('property_inquiry', 'propertyInquiry').objects.filter(Property=self.Property).filter(timestamp__range=(start_day, end_day)).count()
 
 
     def __unicode__(self):
         return '{0} - {1} - {2}'.format(self.Property, self.datestamp, self.proposed_price)
+
+    class Meta:
+        verbose_name = 'price change'
+        verbose_name_plural = 'price changes'
