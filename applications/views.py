@@ -237,6 +237,8 @@ class CreateMeetingPriceChangeCMAArchive(View):
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as myzip:
                 for price_change_link in meeting.price_change_meeting_link.all():
                     filename = str(price_change_link.price_change.cma.name)
+                    if filename is None:
+                        pass
                     if filename.startswith('/') != True:
                         filename = settings.MEDIA_ROOT+filename
                     archive_filename = '{0}.pdf'.format(slugify(price_change_link.price_change),)
