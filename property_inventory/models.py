@@ -198,3 +198,6 @@ class featured_property(models.Model):
     class Meta:
         verbose_name = 'featured property'
         verbose_name_plural = 'featured properties'
+
+    def __unicode__(self):
+        return '{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])
