@@ -88,6 +88,7 @@ def get_featured_properties_csv(request):
     qs = Property.objects.filter(is_active=True).filter(featured_property__start_date__lte=today).filter(featured_property__end_date__gte=today).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned', 'featured_property__note')
     return render_to_csv_response(qs)
 
+
 def show_all_properties(request):
     #all_prop_select = Property.objects.all().select_related('cdc', 'zone', 'zipcode')
     all_prop_select = None

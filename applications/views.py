@@ -189,7 +189,42 @@ class CreateMeetingSupportArchive(View):
             response['Content-Disposition'] = 'attachment; filename="{0}.zip"'.format(meeting,)
             return response
 
-class PriceChangeSummaryAll(DetailView):
+
+import csv
+class PriceChangeCSVResponseMixin(object):
+    """
+    A mixin that constructs a CSV response from the context data if
+    the CSV export option was provided in the request.
+    """
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Creates a CSV response if requested, otherwise returns the default
+        template response.
+        """
+        # Sniff if we need to return a CSV export
+        if 'csv' in self.request.GET.get('export', ''):
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'price-changes.csv')
+            writer = csv.writer(response)
+
+            header = ['Property', 'Structure Type', 'Current Price', 'Proposed Price', 'Price Difference']
+            writer.writerow(header)
+            price_change_total = 0
+            # Write the data from the context somehow
+            for price_change_link in context['meeting'].price_change_meeting_link.all():
+                price_change = price_change_link.price_change.proposed_price - price_change_link.price_change.Property.price
+                price_change_total = price_change_total + price_change
+                row = [price_change_link.price_change.Property, price_change_link.price_change.Property.structureType, price_change_link.price_change.Property.price, price_change_link.price_change.proposed_price, price_change]
+                writer.writerow(row)
+            writer.writerow(['Total Change', price_change_total])
+            return response
+        # Business as usual otherwise
+        else:
+            return super(PriceChangeCSVResponseMixin, self).render_to_response(context, **response_kwargs)
+
+
+
+class PriceChangeSummaryAll(PriceChangeCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'

@@ -152,8 +152,14 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline, PriceChangeMeetingLinkInline]
-    readonly_fields = ('agenda', 'applications', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page')
+    readonly_fields = ('agenda', 'applications', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page','price_change_csv')
 #    list_select_related = True
+
+    def price_change_csv(self, obj):
+        summary_link = '<a target="_blank" href="{}?export=csv">{}</a>'.format(
+            reverse("price_change_summary_view_all", args=(obj.id,)), "View Price Change CSV Spreadsheet")
+        return mark_safe(summary_link)
+    price_change_csv.short_description = 'Price Changes CSV spreadsheet'
 
     def agenda(self, obj):
         if obj.id is None:
