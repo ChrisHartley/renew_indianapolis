@@ -17,7 +17,7 @@ class PropertySearchForm(forms.ModelForm):
 
     class Meta:
         model = Property
-        fields = ['streetAddress', 'nsp', 'zipcode', 'neighborhood', 'zone', 'sidelot_eligible',
+        fields = ['streetAddress', 'nsp', 'zipcode', 'neighborhood', 'zone', 'sidelot_eligible', 'vacant_lot_eligible',
                   'homestead_only', 'bep_demolition', 'renew_owned', 'price_obo', 'hhf_demolition', 'searchArea']
 
     def __init__(self, *args, **kwargs):
@@ -52,6 +52,7 @@ class PropertySearchForm(forms.ModelForm):
                 Field('zone'),
                 Field('zipcode'),
                 Field('sidelot_eligible'),
+                Field('vacant_lot_eligible'),
                 Field('homestead_only'),
                 Field('bep_demolition'),
                 Field('hhf_demolition'),

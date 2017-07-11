@@ -55,6 +55,9 @@ var table = jQuery('#search_results').DataTable({
 						{"data": "properties.sidelot_eligible",
                          "render": function(data){ return boolean_to_yesno(data); }
                         },
+            {"data": "properties.vacant_lot_eligible",
+                         "render": function(data){ return boolean_to_yesno(data); }
+                        },
 						{"data": "properties.homestead_only",
                          "render": function(data){ return boolean_to_yesno(data); }
                        },
