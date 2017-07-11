@@ -137,12 +137,10 @@ urlpatterns = [
              staff_member_required(CreateMeetingSupportArchive.as_view()),
              name='staff_packet_attachements'),
 
-
-
         url(r'meeting/price_change/view_packet/(?P<pk>[0-9]+)/$',
             staff_member_required(PriceChangeSummaryAll.as_view()),
             name='price_change_summary_view_all'),
-        url(r'meeting/view_packet_attachement/(?P<pk>[0-9]+)/$',
+        url(r'meeting/price_change/view_packet_attachement/(?P<pk>[0-9]+)/$',
              staff_member_required(CreateMeetingPriceChangeCMAArchive.as_view()),
              name='staff_packet_price_change_CMA_attachements'),
 
