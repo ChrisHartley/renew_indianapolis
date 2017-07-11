@@ -97,6 +97,7 @@ function get_property_attributions(){
 			$( "#structureType" ).text(data[0].fields.structureType);
 			$( "#status" ).text(data[0].fields.status);
 			$( "#sidelot_eligible" ).text(boolean_to_yesno(data[0].fields.sidelot_eligible));
+			$( "#vacant_lot_eligible" ).text(boolean_to_yesno(data[0].fields.vacant_lot_eligible));
 			$( "#homestead_only" ).text(boolean_to_yesno(data[0].fields.homestead_only));
 			$( "#price" ).text('$'+numberWithCommas(data[0].fields.price));
 		//	$( "#nsp_boolean" ).text(boolean_to_yesno(data[0].fields.nsp));
@@ -137,12 +138,17 @@ function showAppropriateSections(value){
 		$('.sidelot-app').hide(400);
 		$('.homestead-app').show(400);
 	}
+	if (value === '4') { // 4 = vacant lot app
+		$('.standard-app').hide();
+		$('.homestead-app').hide();
+		$('.sidelot-app').hide();
+	}
 	if (value === '') { // initial default
 		$('.standard-app').hide();
 		$('.homestead-app').hide();
 		$('.sidelot-app').hide();
+		}
 
-	}
 
 }
 

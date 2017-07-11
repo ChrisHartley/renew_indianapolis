@@ -31,11 +31,13 @@ class Application(models.Model):
     HOMESTEAD = 1
     STANDARD = 2
     SIDELOT = 3
+    VACANT_LOT = 4
 
     APPLICATION_TYPES = (
         (HOMESTEAD, 'Homestead - this will be your primary residence'),
-        (STANDARD, 'Standard - property will be sold or rented, or is non-residential'),
-        (SIDELOT, 'Sidelot')
+        (STANDARD, 'Standard - property will be rehabbed and sold or rented, or is non-residential'),
+        (SIDELOT, 'Sidelot - lot is adjacent to owner occupied property'),
+        (VACANT_LOT, 'Vacant Lot - no immediate plans for development')
     )
 
     WITHDRAWN_STATUS = 1
@@ -86,7 +88,7 @@ class Application(models.Model):
         verbose_name='Application Type',
         null=True,
         blank=True,
-        help_text="If you will live in this property as your primary residence chose Homestead, if you will rent or sell chose Standard. If you are applying through our sidelot program chose Sidelot."
+        help_text="If you will live in this property as your primary residence chose Homestead, if you will rent or sell chose Standard. If this is a vacant lot and you have no immediate plans for development then chose Vacant Lot. If you are applying through our sidelot program as an adjoining neighbor then chose Sidelot."
     )
 
     status = models.IntegerField(

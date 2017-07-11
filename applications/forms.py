@@ -24,7 +24,7 @@ class ApplicationForm(forms.ModelForm):
             forms.Select(),
             Organization,
         ),
-        help_text='If you are applying on behalf of an organization or another individual please add or select.',
+        help_text='If you are applying on behalf of an organization or another individual please add or select. The property can only be titled under either your name or the name of an organization/individual included on your application.',
         required=False
     )
     status = forms.IntegerField(
@@ -75,6 +75,7 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Status: </div><div id="status" class="col-lg-6 form-control-static"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Structure Type: </div><div id="structureType" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Sidelot Eligible: </div><div id="sidelot_eligible" class="form-control-static col-lg-6"></div></div>'),
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Vacant Lot Eligible: </div><div id="vacant_lot_eligible" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Price: </div><div id="price" class="form-control-static col-lg-6"></div></div>'),
                 #HTML('<div class="form-group"><div class="control-label col-lg-4">NSP: </div><div id="nsp_boolean" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Homestead Only: </div><div id="homestead_only" class="form-control-static col-lg-6"></div></div>'),
@@ -244,6 +245,20 @@ class ApplicationForm(forms.ModelForm):
             if property_selected is not None and property_selected.structureType != "Vacant Lot":
                 self.add_error('application_type', ValidationError(
                     'The property you have selected is not a vacant lot and hence is ineligible for our sidelot program.'))
+
+        if Application.VACANT_LOT == application_type:
+            if property_selected is not None and property_selected.structureType != "Vacant Lot":
+                self.add_error('application_type', ValidationError(
+                    'The property you have selected is not a vacant lot and hence is ineligible for our vacant lot program.'))
+            else:
+                if property_selected.vacant_lot_eligible != True:
+                    self.add_error('application_type', ValidationError(
+                        'The property you have selected is not eligible for the '+
+                        'vacant lot program. Properties in some locations are '+
+                        'not eligible for sale under the vacant lot program. '+
+                        'These properties are available for development under our '+
+                        'standard or homestead programs.'))
+
 
         if Application.HOMESTEAD == application_type or Application.STANDARD == application_type:
             msg = "This is a required field."

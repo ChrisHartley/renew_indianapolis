@@ -78,14 +78,14 @@ def get_mdc_csv(request):
 
 def get_inventory_csv(request):
     #qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
-    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
+    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
 
 def get_featured_properties_csv(request):
     from datetime import date
     today = date.today()
-    qs = Property.objects.filter(is_active=True).filter(featured_property__start_date__lte=today).filter(featured_property__end_date__gte=today).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned', 'featured_property__note')
+    qs = Property.objects.filter(is_active=True).filter(featured_property__start_date__lte=today).filter(featured_property__end_date__gte=today).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned', 'featured_property__note')
     return render_to_csv_response(qs)
 
 def show_all_properties(request):
@@ -102,7 +102,7 @@ def getAddressFromParcel(request):
         SearchResult = Property.objects.filter(parcel__exact=parcelNumber)
         response_data = serializers.serialize('json', SearchResult,
                                               fields=('streetAddress', 'zipcode', 'neighborhood','status', 'structureType',
-                                                      'sidelot_eligible', 'homestead_only', 'price','hhf_demolition')
+                                                      'sidelot_eligible', 'homestead_only', 'price','hhf_demolition', 'vacant_lot_eligible')
                                               )
         return HttpResponse(response_data, content_type="application/json")
     # when is this used? who knows. I broke it, when I find out where it is used I'll fix it.
@@ -175,7 +175,7 @@ def searchProperties(request):
                                       f.qs,
                                       geometry_field=geom,
                                       fields=('id', 'parcel', 'streetAddress', 'zipcode', 'zone', 'status', 'structureType',
-                                              'sidelot_eligible', 'neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
+                                              'sidelot_eligible', 'vacant_lot_eligible','neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
                                               'urban_garden','price', 'renew_owned', 'area','price_obo', 'cdc', 'hhf_demolition', geom),
                                       use_natural_foreign_keys=True
                                       )
