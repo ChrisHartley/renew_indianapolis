@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
-from .models import Property, CDC, Neighborhood, ContextArea, price_change, note
+from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property
 from applications.admin import PriceChangeMeetingLinkInline
 
 class PropertyStatusYearListFilter(SimpleListFilter):
@@ -120,3 +120,4 @@ admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
 admin.site.register(ContextArea, ContextAreaAdmin)
+admin.site.register(featured_property)

@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll
 from photos.views import DumpPhotosView, PropertyPhotosView
-from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PropertyListJSONView, PriceChangeSummaryView
+from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PropertyListJSONView, PriceChangeSummaryView, get_featured_properties_csv
 from property_inquiry.views import inquiry_list, property_inquiry_confirmation, submitPropertyInquiry
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
@@ -47,6 +47,8 @@ urlpatterns = [
            showApplications),
         url(r'show/search/$', get_inventory_csv, name='inventory_download'),
         #url(r'show/mdc_download/$', 'property_inventory.views.get_mdc_csv', name='mdc_download'),
+        url(r'show/search/featured/$', get_featured_properties_csv, name='featured_inventory_download' ),
+
 
         url(r'search_property/$',
            searchProperties),

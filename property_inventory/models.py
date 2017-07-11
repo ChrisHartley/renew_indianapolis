@@ -188,3 +188,13 @@ class price_change(models.Model):
     class Meta:
         verbose_name = 'price change'
         verbose_name_plural = 'price changes'
+
+class featured_property(models.Model):
+    Property = models.ForeignKey(Property, related_name='featured_property')
+    start_date = models.DateField()
+    end_date = models.DateField()
+    note = models.CharField(max_length=1024, blank=True)
+
+    class Meta:
+        verbose_name = 'featured property'
+        verbose_name_plural = 'featured properties'
