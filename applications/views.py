@@ -228,3 +228,21 @@ class PriceChangeSummaryAll(PriceChangeCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'
+
+class CreateMeetingPriceChangeCMAArchive(View):
+    def get(self, request, *args, **kwargs):
+        meeting_id = self.kwargs['pk']
+        meeting = get_object_or_404(Meeting, id=meeting_id)
+        with tempfile.SpooledTemporaryFile() as tmp:
+            with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as myzip:
+                for price_change in meeting.price_change_meeting_link.all():
+                    application = meeting_link.application
+                    filename = str(price_change.cma.name)
+                    if filename.startswith('/') != True:
+                        filename = settings.MEDIA_ROOT+filename
+                    archive_filename = '{0}.pdf'.format(slugify(price_change),)
+                    myzip.write(filename, archive_filename)
+            tmp.seek(0)
+            response = HttpResponse(tmp.read(), content_type='application/x-zip-compressed')
+            response['Content-Disposition'] = 'attachment; filename="{0}-CMAs.zip"'.format(meeting,)
+            return response

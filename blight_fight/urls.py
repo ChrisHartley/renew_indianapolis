@@ -7,7 +7,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
-from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll
+from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PropertyListJSONView, PriceChangeSummaryView, get_featured_properties_csv
 from property_inquiry.views import inquiry_list, property_inquiry_confirmation, submitPropertyInquiry
@@ -137,9 +137,15 @@ urlpatterns = [
              staff_member_required(CreateMeetingSupportArchive.as_view()),
              name='staff_packet_attachements'),
 
+
+
         url(r'meeting/price_change/view_packet/(?P<pk>[0-9]+)/$',
             staff_member_required(PriceChangeSummaryAll.as_view()),
             name='price_change_summary_view_all'),
+        url(r'meeting/view_packet_attachement/(?P<pk>[0-9]+)/$',
+             staff_member_required(CreateMeetingPriceChangeCMAArchive.as_view()),
+             name='staff_packet_price_change_CMA_attachements'),
+
 
         url(r'meeting/price_change/(?P<pk>[0-9]+)/$',
             staff_member_required(PriceChangeSummaryView.as_view()),
