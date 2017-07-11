@@ -239,7 +239,7 @@ class CreateMeetingPriceChangeCMAArchive(View):
                     filename = str(price_change_link.price_change.cma.name)
                     if filename.startswith('/') != True:
                         filename = settings.MEDIA_ROOT+filename
-                    archive_filename = '{0}.pdf'.format(slugify(price_change),)
+                    archive_filename = '{0}.pdf'.format(slugify(price_change_link.price_change),)
                     myzip.write(filename, archive_filename)
             tmp.seek(0)
             response = HttpResponse(tmp.read(), content_type='application/x-zip-compressed')
