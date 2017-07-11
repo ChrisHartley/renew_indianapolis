@@ -236,7 +236,6 @@ class CreateMeetingPriceChangeCMAArchive(View):
         with tempfile.SpooledTemporaryFile() as tmp:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as myzip:
                 for price_change in meeting.price_change_meeting_link.all():
-                    application = meeting_link.application
                     filename = str(price_change.cma.name)
                     if filename.startswith('/') != True:
                         filename = settings.MEDIA_ROOT+filename
