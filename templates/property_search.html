@@ -3,12 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block wpwrap-header %}
-  <meta charset="utf-8">
-<!-- jQuery UI used for dialog() -->
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
-
-
+<meta charset="utf-8">
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/s/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.10,b-1.1.0,b-flash-1.1.0,b-html5-1.1.0,b-print-1.1.0,r-2.0.0/datatables.min.css"/>
 
@@ -38,14 +33,29 @@
 {% endblock wpwrap-header %}
 
 {% block wpwrap-content %}
-<div id="intro" title="Helpful Hints">
-	<ul>
-		<li>Properties coded in <span style="color:#33A02C;">green</span> are available through Renew Indianapolis.</li>
-		<li>Sold or sale pending properties are shown in <span style="color:gray">gray</span>.</li>
-		<li>Search results are <span style="color:#1F78B4;">dark blue</span>.</li>
-		<li>Click on a parcel on the map to show the parcel number and address.</li>
-	</ul>
-</div>
+
+<div id="intro" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Helpful Hints</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          <ul>
+            <li>Properties coded in <span style="color:#33A02C;">green</span> are available through Renew Indianapolis.</li>
+            <li>Search results are <span style="color:#1F78B4;">dark blue</span>.</li>
+            <li>Click on a parcel on the map to show the parcel number and address.</li>
+            <li>Drawn search area remains across searches until you click the "New Search" button.</li>
+          </ul>
+        </p>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 <button type="button" onclick="jQuery('#map').toggle()">show/hide map</button>
 <div id="map" style="width: 100%; height: 700px; position:relative;"></div>
 
@@ -56,8 +66,7 @@
               <h3 class="panel-title">Search Criteria</h3>
             </div>
             <div class="panel-body">
-		{% crispy form_filter %}
-
+		            {% crispy form_filter %}
             </div>
           </div>
 <button type="button" onclick="jQuery('#search-results').toggle()">show/hide table</button>

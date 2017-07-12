@@ -303,9 +303,10 @@ function toggleSearchOptions(){
 //jquery ajax form
 jQuery(document).ready(function($){
 
-    $("#intro").dialog({
-        autoOpen: true
-    });
+$('#intro').modal('show')
+    //$("#intro").dialog({
+    //    autoOpen: true
+    //});
 
 	var options = {
 		beforeSerialize: function(){
