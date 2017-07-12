@@ -237,14 +237,19 @@ class CreateMeetingPriceChangeCMAArchive(View):
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as myzip:
                 for price_change_link in meeting.price_change_meeting_link.all():
                     filename = str(price_change_link.price_change.cma.name)
+                    #print price_change_link.price_change.cma
                     if price_change_link.price_change.cma.name == 'None':
                         pass
                     if filename.startswith('/') != True:
                         filename = settings.MEDIA_ROOT+filename
-                    print price_change_link.price_change
-                    print filename
+                    #print price_change_link.price_change
+                    #print filename
                     archive_filename = '{0}.pdf'.format(slugify(price_change_link.price_change),)
-                    myzip.write(filename, archive_filename)
+                    try:
+                        myzip.write(filename, archive_filename)
+                    # if the file can't be opened or doesn't exist, eg in testing environment, then skip it.
+                    except OSError:
+                        pass
             tmp.seek(0)
             response = HttpResponse(tmp.read(), content_type='application/x-zip-compressed')
             response['Content-Disposition'] = 'attachment; filename="{0}-CMAs.zip"'.format(meeting,)
