@@ -50,18 +50,23 @@ class PropertyStatusListFilter(SimpleListFilter):
         return queryset
 
 class NoteInlineAdmin(regular_admin.TabularInline):
+    model = featured_property
+    fields = ('Property', 'start_date', 'end_date', 'note')
+    #readonly_fields=('created','modified',  'Property')
+    extra = 0
+
+class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
     model = note
     fields = ('text', 'created', 'modified', 'Property')
     readonly_fields=('created','modified',  'Property')
     extra = 0
 
 
-
 class PropertyAdmin(admin.OSMGeoAdmin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name')
     list_display = ('parcel', 'streetAddress', 'structureType','status')
     list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned' )
-    inlines = [ NoteInlineAdmin,]
+    inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin]
 
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
