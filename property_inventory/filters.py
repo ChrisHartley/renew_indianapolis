@@ -43,13 +43,11 @@ class ApplicationStatusFilters(django_filters.FilterSet):
         fields = ['all_applicants', 'streetAddress']
 
 
-#class ChoiceMethodFilter(django_filters.MethodFilter):
-#    field_class = forms.ChoiceField
-
-
 class PropertySearchFilter(django_filters.FilterSet):
-    streetAddress = django_filters.CharFilter(label="Street address", lookup_expr='icontains')
-    parcel = django_filters.CharFilter(label="Parcel number")
+    #streetAddress = django_filters.CharFilter(label="Street address", lookup_expr='icontains')
+    #parcel = django_filters.CharFilter(label="Parcel number")
+
+    parcel_or_street_address = django_filters.CharFilter(method='filter_parcel_or_street_address', label="Address or parcel number")
 
     # lord I don't remember how this works but it takes calculates all the structureTypes in the database and makes a list.
     st = Property.objects.order_by('structureType').distinct(
@@ -92,6 +90,12 @@ class PropertySearchFilter(django_filters.FilterSet):
 
             },
         }
+
+    def filter_parcel_or_street_address(self, queryset, field, value):
+        return queryset.filter(
+            Q(streetAddress__icontains=value) |
+            Q(parcel__icontains=value)
+        )
 
     def filter_status(self, queryset, field, value):
         if value == 'available':

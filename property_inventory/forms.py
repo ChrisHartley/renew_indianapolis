@@ -14,10 +14,11 @@ class PropertySearchForm(forms.ModelForm):
     status_choices = (('Available', 'Available'), ('Sale', 'Application under review'),
                       ('MDC', 'Approved for Sale'), ('Sold', 'Sold'))
     status = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(choices=status_choices), required=False)
+    parcel_or_street_address = forms.CharField(required=False)
 
     class Meta:
         model = Property
-        fields = ['streetAddress', 'nsp', 'zipcode', 'neighborhood', 'zone', 'sidelot_eligible', 'vacant_lot_eligible',
+        fields = ['nsp', 'zipcode', 'neighborhood', 'zone', 'sidelot_eligible', 'vacant_lot_eligible',
                   'homestead_only', 'bep_demolition', 'renew_owned', 'price_obo', 'hhf_demolition', 'searchArea']
 
     def __init__(self, *args, **kwargs):
@@ -38,7 +39,8 @@ class PropertySearchForm(forms.ModelForm):
                 HTML(
                     '<input type="checkbox" onclick="toggleDraw(this);" name="searchPolygon" value="polygon">Draw search area on map</input>'),
                 #Field('parcel'),
-                Field('streetAddress'),
+                #Field('streetAddress'),
+                Field('parcel_or_street_address'),
                 Field('status'),
             ),
             Fieldset('', HTML(
