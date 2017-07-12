@@ -241,6 +241,7 @@ class CreateMeetingPriceChangeCMAArchive(View):
                         pass
                     if filename.startswith('/') != True:
                         filename = settings.MEDIA_ROOT+filename
+                    print price_change_link.price_change
                     print filename
                     archive_filename = '{0}.pdf'.format(slugify(price_change_link.price_change),)
                     myzip.write(filename, archive_filename)
