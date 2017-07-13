@@ -63,6 +63,10 @@ class PropertySearchFilter(django_filters.FilterSet):
 
     searchArea = django_filters.CharFilter(method="filter_searchArea")
 
+    yesno_choices = [('true', 'Yes'), ('false', 'No')]
+    #featured_properties_only = django_filters.BooleanFilter(method="filter_featured_properties", label='Search only featured properties')#, widget=forms.widgets.CheckboxInput())
+    featured_properties_only = django_filters.MultipleChoiceFilter(choices=yesno_choices, label='Search Featured Properties Only', method="filter_featured_properties")
+
     class Meta:
         model = Property
         exclude = []
@@ -90,6 +94,15 @@ class PropertySearchFilter(django_filters.FilterSet):
 
             },
         }
+
+    def filter_featured_properties(self, queryset, field, value):
+        #print "!!!! value: {0}".format(value,)
+        if value[0] == 'true':
+            from datetime import date
+            today = date.today()
+            return queryset.filter(featured_property__start_date__lte=today).filter(featured_property__end_date__gte=today)
+        else:
+            return queryset
 
     def filter_parcel_or_street_address(self, queryset, field, value):
         return queryset.filter(

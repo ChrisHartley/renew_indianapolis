@@ -1,7 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML, Div
-from crispy_forms.bootstrap import FormActions
+from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML, Div #, InlineRadios
+from crispy_forms.bootstrap import FormActions, InlineRadios
 from django.forms.widgets import HiddenInput, SelectMultiple
 from property_inventory.models import Property, Zipcode, CDC, Zoning
 
@@ -15,6 +15,9 @@ class PropertySearchForm(forms.ModelForm):
                       ('MDC', 'Approved for Sale'), ('Sold', 'Sold'))
     status = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(choices=status_choices), required=False)
     parcel_or_street_address = forms.CharField(required=False)
+    #featured_properties_only = forms.BooleanField(label='Boolean!!!!')
+    featured_properties_only = forms.MultipleChoiceField(label='Boolean!!!!')
+
 
     class Meta:
         model = Property
@@ -24,6 +27,7 @@ class PropertySearchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PropertySearchForm, self).__init__(*args, **kwargs)
         self.fields['searchArea'].widget = HiddenInput()
+        #self.fields['featured_properties_only']
         self.helper = FormHelper()
         self.helper.form_id = 'PropertySearchForm'
         self.helper.form_class = 'form-horizontal'
@@ -41,6 +45,7 @@ class PropertySearchForm(forms.ModelForm):
                 #Field('parcel'),
                 #Field('streetAddress'),
                 Field('parcel_or_street_address'),
+                InlineRadios('featured_properties_only'),
                 Field('status'),
             ),
             Fieldset('', HTML(
