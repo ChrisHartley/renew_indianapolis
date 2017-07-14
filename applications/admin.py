@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Application, Meeting, MeetingLink, NeighborhoodNotification, PriceChangeMeetingLink
+from .models import Application, Meeting, MeetingLink, NeighborhoodNotification, PriceChangeMeetingLink, ApplicationMeetingSummary
 from neighborhood_associations.models import Neighborhood_Association
 from user_files.models import UploadedFile
 
@@ -217,10 +217,70 @@ class MeetingAdmin(admin.ModelAdmin):
     create_packet_support_documents.short_description = 'Supporting Documents'
 
 
+from django.db.models import Count, Sum, Min, Max
+from django.db.models.functions import Trunc
+from django.db.models import DateField
+class ApplicationMeetingSummaryAdmin(admin.ModelAdmin):
+    change_list_template = 'app_summary_change_list.html'
+    date_hierarchy = 'meeting__meeting_date'
+    list_filter = ('meeting__meeting_type', 'meeting_outcome',)
+
+    def changelist_view(self, request, extra_context=None):
+        response = super(ApplicationMeetingSummaryAdmin, self).changelist_view(
+            request,
+            extra_context=extra_context,
+        )
+
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        metrics = {
+            'total': Count('id'),
+            'total_sales': Sum('application__Property__price'),
+        }
+
+        response.context_data['summary'] = list(
+            qs
+            .values('application__application_type')
+            .annotate(**metrics)
+            .order_by('-application__application_type')
+        )
+
+        response.context_data['summary_total'] = dict(
+            qs.aggregate(**metrics)
+
+        )
+
+        summary_over_time = qs.annotate(
+            period=Trunc(
+                'meeting__meeting_date',
+                'day',
+                output_field=DateField(),
+            ),
+        ).values('period').annotate(total=Sum('application__Property__price'), count=Count('application')).order_by('period')
+
+        summary_range = summary_over_time.aggregate(
+            low=Min('total'),
+            high=Max('total'),
+        )
+        high = summary_range.get('high', 0)
+        low = summary_range.get('low', 0)
+
+        response.context_data['summary_over_time'] = [{
+            'period': x['period'],
+            'total': x['total'] or 0,
+            'count': x['count'],
+            'pct': \
+               ((x['total'] or 0) - low) / (high - low) * 100
+               if high > low else 0,
+        } for x in summary_over_time]
+
+        return response
 
 
-
-
+admin.site.register(ApplicationMeetingSummary, ApplicationMeetingSummaryAdmin)
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(MeetingLink)

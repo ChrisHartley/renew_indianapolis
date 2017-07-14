@@ -350,6 +350,13 @@ class MeetingLink(models.Model):
         get_latest_by = 'meeting_date'
 
 
+class ApplicationMeetingSummary(MeetingLink):
+    class Meta:
+        proxy = True
+        verbose_name = 'Application Meeting Summary'
+        verbose_name_plural = 'Application Meeting Summaries'
+
+
 """
 Sure would be nice to just inherient from MeetingLink and override application but not allowed except on abstract models so we have a lot of code duplication.
 """
