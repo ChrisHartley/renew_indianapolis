@@ -88,7 +88,7 @@ class ContextAreaAdmin(admin.OSMGeoAdmin):
 
 
 class price_changeAdmin(admin.OSMGeoAdmin):
-    search_fields = ('Property', 'proposed_price')
+    search_fields = ('Property__streetAddress','Property__parcel')
     list_display = ('datestamp','Property', 'get_current_price', 'proposed_price')
     readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view')
     inlines = [ PriceChangeMeetingLinkInline ]
