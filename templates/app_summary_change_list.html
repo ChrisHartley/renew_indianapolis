@@ -1,0 +1,133 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    <h1> Application Review Summary </h1>
+{% endblock %}
+{% load humanize %}
+{% load custom_tags %}
+
+{% block result_list %}
+
+<div class="results">
+    <table>
+
+    <thead>
+      <tr>
+        <th>
+          <div class="text">
+            <a href="#">Application Type</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#"># applications</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Sum of sale price</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">
+              <strong>% Of Total Applications</strong>
+            </a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary %}
+      <tr class="{% cycle 'row1' 'row2' %}">
+        <td> {% if row.application__application_type == 1 %} Homestead {% endif %}
+          {% if row.application__application_type == 2 %} Standard {% endif %}
+          {% if row.application__application_type == 3 %} Sidelot {% endif %}
+          {% if row.application__application_type == 4 %} Vacant Lot {% endif %}</td>
+        <td>{{ row.total | intcomma }}</td>
+       <td>{% if row.application__application_type == 3 %} ${{row.total|default:0|multiply:750|intcomma}}
+        {% else %}
+          ${{ row.total_sales | default:0 | intcomma }}
+        {% endif %}
+      </td>
+        <td>
+          <strong>
+          {{ row.total_sales | default:0 | percentof:summary_total.total_sales }}
+          </strong>
+        </td>
+      </tr>
+
+      {% endfor %}
+      <tr style="font-weight:bold; border-top:2px solid #DDDDDD;">
+            <td> Total </td>
+            <td> {{ summary_total.total | intcomma }} </td>
+            <td> ${{ summary_total.total_sales | intcomma | default:0 }} </td>
+            <td> 100% </td>
+        </tr>
+    </tbody>
+
+  </table>
+</div>
+&nbsp;
+<div class='results'>
+  <h2> Applications reviewed over time </h2>
+
+      <div class="bar-chart">
+      {% for x in summary_over_time %}
+          <div class="bar" style="height:{{x.pct}}%">
+              <div class="bar-tooltip">
+                  {{x.period | date:"m/Y"}}<br>
+                  {{x.count | default:0}}, ${{x.total | default:0 | intcomma }}
+              </div>
+          </div>
+      {% endfor %}
+      </div>
+  </div>
+
+  <style>
+
+  .bar-chart {
+    display: flex;
+    justify-content: space-around;
+    height: 160px;
+    padding-top: 60px;
+    overflow: hidden;
+  }
+  .bar-chart .bar {
+      flex: 100%;
+      align-self: flex-end;
+      margin-right: 2px;
+      position: relative;
+      background-color: #79aec8;
+  }
+  .bar-chart .bar:last-child {
+      margin: 0;
+  }
+  .bar-chart .bar:hover {
+      background-color: #417690;
+      opacity: 100;
+  }
+
+  .bar-chart .bar:hover .bar-tooltip {
+      position: relative;
+      z-index: 999;
+      opacity: 1;
+  }
+
+  .bar-chart .bar .bar-tooltip {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-weight: bold;
+      opacity: .1;
+  }
+
+
+  </style>
+
+
+{% endblock %}
+
+{% block pagination %}{% endblock %}
