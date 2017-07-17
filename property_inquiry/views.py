@@ -17,6 +17,7 @@ from property_inquiry.filters import PropertyInquiryFilters
 from property_inquiry.tables import PropertyInquiryTable
 from property_inquiry.forms import PropertyInquiryForm
 
+from django.conf import settings
 import datetime
 
 
@@ -45,7 +46,8 @@ def submitPropertyInquiry(request):
             return HttpResponseRedirect(reverse('property_inquiry_confirmation', args=(form_saved.id,)))
     return render(request, 'property_inquiry.html', {
         'form': form,
-        'title': 'property visit'
+        'title': 'property visit',
+        'form_enabled': settings.PROPERTY_INQUIRIES_ENABLED
     })
 
 

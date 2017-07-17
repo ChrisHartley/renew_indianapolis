@@ -212,6 +212,8 @@ COMPANY_SETTINGS = {
     'CREDIT_CARD_FLAT_FEE': 0.30,
 }
 
+PROPERTY_INQUIRIES_ENABLED = True
+
 # Production settings are kept in a separate file, settings_production.py
 # which overrides db, email, secret key, etc with production values
 # Testing values are kept in settings_testing.py, for example stripe test api keys
