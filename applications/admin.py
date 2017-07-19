@@ -157,6 +157,8 @@ class MeetingAdmin(admin.ModelAdmin):
 
 
     def price_change_csv(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
         summary_link = '<a target="_blank" href="{}?export=csv">{}</a>'.format(
             reverse("price_change_summary_view_all", args=(obj.id,)), "View Price Change CSV Spreadsheet")
         return mark_safe(summary_link)
@@ -181,6 +183,8 @@ class MeetingAdmin(admin.ModelAdmin):
     applications.short_description = 'Applications'
 
     def price_change_summary_page(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
         summary_link = '<a target="_blank" href="{}">{}</a>'.format(
             reverse("price_change_summary_view_all", args=(obj.id,)), "View Price Change Summary Page")
         return mark_safe(summary_link)
