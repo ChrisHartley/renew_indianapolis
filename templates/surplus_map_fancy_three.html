@@ -429,7 +429,7 @@
         $.get('/static/WMTSCapabilities.xml', function(text){
           var result = parser.read(text);
           var options = ol.source.WMTS.optionsFromCapabilities(result, {
-            layer: '2016Photography_Labels', matrixSet: 'default028mm'
+            layer: '2017Photography_Labels', matrixSet: 'default028mm'
           });
 
           map = new ol.Map({
