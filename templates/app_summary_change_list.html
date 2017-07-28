@@ -40,12 +40,18 @@
     <tbody>
       {% for row in summary %}
       <tr class="{% cycle 'row1' 'row2' %}">
-        <td>{{ row }}</td>
-        <td>{{ row.zipcode | intcomma }}</td>
-       <td>{{ row.count | default:0 | intcomma }}</td>
+        <td>
+          {% if row.application__application_type == 3 %} Sidelot
+          {% elif row.application__application_type == 2 %} Standard
+          {% elif row.application__application_type == 1 %} Homestead
+          {% elif row.application__application_type == 4 %} Vacant Lot
+          {% endif %}
+        </td>
+        <td>{{ row.total | intcomma }}</td>
+       <td>{{ row.total_sales | default:0 | intcomma }}</td>
         <td>
           <strong>
-          {{ row.count | default:0 | percentof:summary_total.total_count }}
+          {{ row.total | percentof:summary_total.total }}
           </strong>
         </td>
       </tr>
@@ -53,8 +59,8 @@
       {% endfor %}
       <tr style="font-weight:bold; border-top:2px solid #DDDDDD;">
             <td> Total </td>
-            <td> {{ summary_total.count | intcomma }} </td>
-            <td> ${{ summary_total.count | intcomma | default:0 }} </td>
+            <td> {{ summary_total.total | intcomma }} </td>
+            <td> ${{ summary_total.total_sales | intcomma | default:0 }} </td>
             <td> 100% </td>
         </tr>
     </tbody>

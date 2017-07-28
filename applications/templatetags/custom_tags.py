@@ -19,6 +19,6 @@ def multiply(n1, n2):
 @register.filter()
 def percentof(amount, total):
     try:
-        return '{:.1f}%'.format(amount / total * 100)
+        return '{:.1f}%'.format(float(amount) / float(total) * 100)
     except ZeroDivisionError:
         return None
