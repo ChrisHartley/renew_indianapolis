@@ -374,7 +374,7 @@ class PriceChangeMeetingLink(models.Model):
     )
     meeting = models.ForeignKey(Meeting, related_name='price_change_meeting_link')
     meeting_outcome = models.IntegerField(choices=STATUS_CHOICES, null=False, default=SCHEDULED_STATUS)
-    price_change = models.ForeignKey('property_inventory.price_change')
+    price_change = models.ForeignKey('property_inventory.price_change', related_name='meeting')
     notes = models.CharField(max_length=1024, blank=True, null=False)
 
     @property
