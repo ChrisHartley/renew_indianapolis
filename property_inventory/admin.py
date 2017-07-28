@@ -89,7 +89,7 @@ class ContextAreaAdmin(admin.OSMGeoAdmin):
 
 class price_changeAdmin(admin.OSMGeoAdmin):
     search_fields = ('Property__streetAddress','Property__parcel')
-    list_display = ('datestamp','Property', 'get_current_price', 'proposed_price')
+    list_display = ('datestamp','Property', 'get_current_price', 'proposed_price', 'get_latest_approval_status')
     readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view')
     inlines = [ PriceChangeMeetingLinkInline ]
 
@@ -113,6 +113,12 @@ class price_changeAdmin(admin.OSMGeoAdmin):
 
     def get_current_property_status(self, obj):
         return obj.Property.status
+
+    def get_latest_approval_status(self, obj):
+        if obj.meeting.first():
+            return "{0}".format(obj.meeting.first())
+        else:
+            return '-'
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(price_changeAdmin, self).formfield_for_dbfield(db_field, **kwargs)
