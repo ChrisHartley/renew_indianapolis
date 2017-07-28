@@ -7,7 +7,10 @@
 {% block wpwrap-content %}
 {% load render_table from django_tables2 %}
 {% load crispy_forms_tags %}
-The following applications have been completed and are being reviewed by Renew Indianapolis and the Metropolitan Development Commission:<br/>
+The following applications will be reviewed at the {{meeting.meeting_date}} meeting of the Review Committee:<br/>
+{% render_table reviewPendingTable %}
+<br/><br/>
+The following applications have been reviewed Renew Indianapolis and/or the Metropolitan Development Commission:<br/>
 {% render_table approvedTable %}
 <br/><br/>
 The following sales have been completed:<br/>

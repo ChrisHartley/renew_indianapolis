@@ -34,8 +34,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea, price_change
 from property_inventory.filters import ApplicationStatusFilters
-from property_inventory.tables import PropertyStatusTable
-from property_inventory.tables import PropertySearchTable
+from property_inventory.tables import PropertySearchTable, PropertyStatusTable, reviewPendingStatusTable
 from property_inventory.forms import PropertySearchForm
 from property_inventory.filters import PropertySearchFilter
 from property_inquiry.models import propertyInquiry
@@ -44,37 +43,7 @@ from django.db import connection
 
 import datetime # used for price_change summary view
 from decimal import * # used for price_change summary view
-
-
-def get_mdc_csv(request):
-    #with connection.cursor() as c:
-    #    c.execute('select id, parcel, "streetAddress" as street_address, "structureType" as structure_type, case when nsp = False then \'No\' else \'Yes\' end as nsp, case when quiet_title_complete = False then 'No' else 'Yes' end as quiet_title_complete, counter_book.legal_description, applicant from property_inventory_property r left join counter_book on r.parcel = counter_book.parcel_number limit 10')
-    #    print c.fetchone()
-    return False
-
-#    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
-    #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
-    # qs = Property.objects.raw('''
-    #     select id, parcel, "streetAddress" as street_address, "structureType" as structure_type,
-    #         case when nsp = False then 'No' else 'Yes' end as nsp,
-    #         case when quiet_title_complete = False then 'No' else 'Yes' end as quiet_title_complete,
-    #         counter_book.legal_description,
-    #         applicant
-    #         from property_inventory_property r left join counter_book on r.parcel = counter_book.parcel_number where status ilike '%board of directors%'
-    #     ''')
-
-#        response = HttpResponse(content_type='text/csv')
-#        response['Content-Disposition'] = 'attachment; filename="mdc.csv"'
-        #print qs[0]
-#        writer = csv.writer(response)
-#        writer.writerow(['Parcel', 'Street Address', 'Structure Type', 'NSP', 'Quiet title complete', 'legal description', 'applicant'])
-#        for obj in c.fetchall():
-#            writer.writerow(
-#                [obj[0], obj[1], obj[2], obj[3], obj[4], obj[5], obj[6]]
-#
-#            )
-
-#    return response
+from applications.models import Meeting
 
 def get_inventory_csv(request):
     #qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
@@ -116,7 +85,9 @@ def getAddressFromParcel(request):
     return HttpResponse("Please submit a search term")
 
 # Show a table with property statuses broken down by sold, sale-approved and in-progress.
+
 def showApplications(request):
+    today = datetime.date.today()
     config = RequestConfig(request)
 
     soldProperties = Property.objects.all().filter(
@@ -124,17 +95,39 @@ def showApplications(request):
     approvedProperties = Property.objects.all().filter(
         status__istartswith='Sale').order_by('status', 'applicant')
 
+
+    reviewPendingProperties = Property.objects.filter(
+        Q(application__meeting__meeting__meeting_date__month=today.month) &
+        Q(application__meeting__meeting__meeting_date__year=today.year) &
+        Q(application__meeting__meeting__meeting_type=Meeting.REVIEW_COMMITTEE)
+        ).distinct().order_by('zipcode__name', 'streetAddress')
+
+    meeting = Meeting.objects.get(Q(meeting_date__month=today.month) & Q(meeting_date__year=today.year) & Q(meeting_type=Meeting.REVIEW_COMMITTEE) )
+
     soldFilter = ApplicationStatusFilters(
         request.GET, queryset=soldProperties, prefix="sold-")
     approvedFilter = ApplicationStatusFilters(
         request.GET, queryset=approvedProperties, prefix="approved-")
+    reviewPendingFilter = ApplicationStatusFilters(
+        request.GET, queryset=reviewPendingProperties, prefix="review_pending-")
 
     soldTable = PropertyStatusTable(soldFilter.qs, prefix="sold-")
     approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
+    reviewPendingTable = reviewPendingStatusTable(reviewPendingFilter.qs, prefix="review_pending-")
 
+    config.configure(reviewPendingTable)
     config.configure(soldTable)
     config.configure(approvedTable)
-    return render(request, 'app_status_template.html', {'soldTable': soldTable, 'approvedTable': approvedTable, 'title': 'applications & sale activity', 'soldFilter': soldFilter, 'approvedFilter': approvedFilter})
+    return render(request, 'app_status_template.html', {
+        'meeting': meeting,
+        'reviewPendingTable': reviewPendingTable,
+        'soldTable': soldTable,
+        'approvedTable': approvedTable,
+        'title': 'applications & sale activity',
+        'soldFilter': soldFilter,
+        'approvedFilter': approvedFilter,
+        'reviewPendingFilter': reviewPendingFilter,
+        })
 
 
 class DisplayNameJsonSerializer(GeoJSONSerializer):

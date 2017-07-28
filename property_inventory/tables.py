@@ -11,6 +11,15 @@ class PropertyStatusTable(TableReport):
         fields = ("parcel", "streetAddress", "zipcode",
                   "structureType", "applicant", "status", )
 
+class reviewPendingStatusTable(TableReport):
+
+    class Meta:
+        model = Property
+        attrs = {"class": "paleblue"}
+        fields = ("parcel", "streetAddress", "zipcode",
+                  "structureType",)
+
+
 
 class PropertySearchTable(TableReport):
 
