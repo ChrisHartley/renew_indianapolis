@@ -17,7 +17,7 @@ from django.forms import inlineformset_factory
 
 from .forms import ApplicationForm
 #from user_files.forms import UploadedFileForm
-from .models import Application, Meeting
+from .models import Application, Meeting, MeetingLink
 from property_inventory.models import Property
 from applicants.models import ApplicantProfile
 from user_files.models import UploadedFile
@@ -254,3 +254,52 @@ class CreateMeetingPriceChangeCMAArchive(View):
             response = HttpResponse(tmp.read(), content_type='application/x-zip-compressed')
             response['Content-Disposition'] = 'attachment; filename="{0}-CMAs.zip"'.format(meeting,)
             return response
+
+
+import csv
+from decimal import *
+class MDCCSVResponseMixin(object):
+    """
+    A mixin that constructs a CSV response from the context data if
+    the CSV export option was provided in the request.
+    """
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Creates a CSV response if requested, otherwise returns the default
+        template response.
+        """
+        # Sniff if we need to return a CSV export
+        if 'csv' in self.request.GET.get('export', ''):
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'MDC-for-resolution.csv')
+            writer = csv.writer(response)
+
+            header = ['Parcel','Street Address','Application Type','Structure Type','City\'s Sale Price','Renew\'s Sale Price','Total','Buyer Name']
+            writer.writerow(header)
+            # Write the data from the context somehow
+            #from applications.models import MeetingLink.APPROVED_STATUS
+            for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type').filter(application__Property__renew_owned__exact=False).filter(meeting_outcome=MeetingLink.APPROVED_STATUS):
+                application = meeting_link.application
+                if application.application_type == application.SIDELOT:
+                    price = 750 # hardcoded value for sidelots. Big trouble!
+                else:
+                    price = application.Property.price
+                city_split = round(price*Decimal('.55'))
+                renew_split = Decimal(price)-Decimal(city_split)
+                total = Decimal(city_split)+Decimal(renew_split)
+                if application.organization:
+                    buyer = '{0} {1}, {2}'.format(application.user.first_name, application.user.last_name, application.organization.name)
+                else:
+                    buyer = '{0} {1}'.format(application.user.first_name, application.user.last_name)
+                row = [application.Property.parcel, application.Property.streetAddress, application.get_application_type_display(), application.Property.structureType, city_split, renew_split, total, buyer]
+                writer.writerow(row)
+            return response
+        # Business as usual otherwise
+        else:
+            return super(MDCCSVResponseMixin, self).render_to_response(context, **response_kwargs)
+
+
+class MDCSpreadsheet(MDCCSVResponseMixin, DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'price_change_summary_view_all.html'
