@@ -91,6 +91,8 @@ class Parcel(models.Model):
     notes = models.CharField(max_length=2048, blank=True)
 
     requested_from_commissioners = models.DateField(blank=True, null=True)
+    previously_held_gateway_area = models.BooleanField(default=False)
+
 
     geometry = models.MultiPolygonField(srid=2965)
     centroid_geometry = models.PointField(srid=2965) # compuated from geometry on save
