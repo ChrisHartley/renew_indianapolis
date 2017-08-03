@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://openlayers.org/en/v4.1.0/css/ol.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/r-2.1.1/datatables.min.css"/>
-
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script src="https://openlayers.org/en/v4.1.0/build/ol.js"></script>
@@ -88,6 +86,8 @@
     <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-3.1.3/pdfmake-0.1.27/dt-1.10.15/b-1.3.1/b-html5-1.3.1/b-print-1.3.1/r-2.1.1/datatables.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.15/dataRender/ellipsis.js"></script>
+
     <script type="text/javascript">
 
       function applyMargins() {
@@ -304,7 +304,7 @@
       <div class="container">
         <div class="navbar-fixed-bottom">
           <div class="pull-right fa fa-chevron-down slide-submenu clicky"></div>
-          <span id="search_results_pan well well-lg"><table id="search_results" class="table table-responsive table-condensed table-bordered" cellspacing="0" width="100%"></table></span>
+          <span id="search_results_pan" class="well well-lg"><table id="search_results" class="table table-responsive table-condensed table-bordered" cellspacing="0" width="100%"></table></span>
         </div>
       </div>
     <script>
@@ -529,7 +529,7 @@
 
     $('#search_results').DataTable( {
             //data: json.features,
-            dom: 'Brtip',
+            dom: 'Brtlip',
             buttons: [
               'copy', 'excel', 'pdf'
             ],
@@ -548,7 +548,11 @@
                   "data": "properties.repair_order" },
                 { "title": 'Notes',
                   "data": "properties.notes" },
-            ]
+            ],
+            columnDefs: [ {
+              targets: 6,
+              render: $.fn.dataTable.render.ellipsis( 20 )
+            } ],
         } );
 
 
@@ -571,6 +575,7 @@
             //$('#search_results').DataTable().destory(remove=False);
             $('#search_results').DataTable().clear();
             $('#search_results').DataTable().rows.add(json.features).draw();
+
             $('#search_results_pan').collapse('show');
             /*$('#search_results').DataTable( {
                     data: json.features,
