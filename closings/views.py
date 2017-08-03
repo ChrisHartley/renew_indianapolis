@@ -66,43 +66,43 @@ class ProcessingFeePaidPage(View):
             body = e.json_body
             err  = body['error']
 
-            print "Status is: %s" % e.http_status
-            print "Type is: %s" % err['type']
-            print "Code is: %s" % err['code']
+            #print "Status is: %s" % e.http_status
+            #print "Type is: %s" % err['type']
+            #print "Code is: %s" % err['code']
             # param is '' in this case
-            print "Param is: %s" % err['param']
-            print "Message is: %s" % err['message']
+            #print "Param is: %s" % err['param']
+            #print "Message is: %s" % err['message']
             messages.add_message(request, messages.ERROR, 'Our credit card processor reported a problem with your card.')
             return HttpResponse("Card error: {0}".format(err))
         except stripe.error.RateLimitError as e:
             # Too many requests made to the API too quickly
-            print e
+            #print e
             messages.add_message(request, messages.ERROR, 'Temporary error, your card has not been charged. Please try again in a few moments.')
             return HttpResponse("Rate Limit Error: {0}".format(e))
         except stripe.error.InvalidRequestError as e:
-            print e
+            #print e
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Invalid Stripe API request: {0}".format(e))
             # Invalid parameters were supplied to Stripe's API
         except stripe.error.AuthenticationError as e:
-            print e
+            #print e
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Invalid AuthenticationError request: {0}".format(e))
             # Authentication with Stripe's API failed
             # (maybe you changed API keys recently)
         except stripe.error.APIConnectionError as e:
-            print e
+            #print e
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Stripe connection error request: {0}".format(e))
             # Network communication with Stripe failed
         except stripe.error.StripeError as e:
-            print e
+            #print e
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Stripe error: {0}".format(e))
             # Display a very generic error to the user, and maybe send
             # yourself an email
         except Exception as e:
-            print e
+            #print e
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Edge case error: {0}".format(e))
             # Something else happened, completely unrelated to Stripe
