@@ -278,7 +278,7 @@ class MDCCSVResponseMixin(object):
             writer.writerow(header)
             # Write the data from the context somehow
             #from applications.models import MeetingLink.APPROVED_STATUS
-            for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type').filter(application__Property__renew_owned__exact=False).filter(meeting_outcome=MeetingLink.APPROVED_STATUS):
+            for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type').filter(application__Property__renew_owned__exact=False).filter(meeting_outcome=MeetingLink.SCHEDULED_STATUS):
                 application = meeting_link.application
                 if application.application_type == application.SIDELOT:
                     price = 750 # hardcoded value for sidelots. Big trouble!

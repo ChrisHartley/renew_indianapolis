@@ -170,7 +170,7 @@ class MeetingAdmin(admin.ModelAdmin):
         summary_link = '<a target="_blank" href="{}?export=csv">{}</a>'.format(
             reverse("mdc_spreadsheet", args=(obj.id,)), "View CSV Spreadsheet for MDC Resolution")
         return mark_safe(summary_link)
-    price_change_csv.short_description = 'MDC Resolution CSV spreadsheet'
+    create_mdc_spreadsheet.short_description = 'MDC Resolution CSV spreadsheet'
 
 
     def agenda(self, obj):
