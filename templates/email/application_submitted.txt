@@ -7,16 +7,14 @@ Review Committee.
 If you have questions or would like to modify your application, please contact {{COMPANY_SETTINGS.APPLICATION_CONTACT_NAME}}, {{COMPANY_SETTINGS.APPLICATION_CONTACT_EMAIL}}.
 
 Our applications go through a multi-step approval process:
-1) Staff review for completeness, schedule for Review Committee (deadline is two Fridays before the last Thursday of the month)
-2) Review Committee (last Thursday of the month) where they can recommend for approval, not recommend for approval, or table for further information
-3) Board of Directors (first Thursday of the month) where they can approve, not approve, or table for further information
+1) Staff will review for the application for completeness and schedule it for the Review Committee (Review Committees occur on the fourth Thursday of each month)
+2) The Review Committee will recommend the application for approval, deny it, or table it for further information
+3) Then the Board of Directors (first Thursday of the month) will recommend the application for approval, deny it, or table it for further information
 4) The Indianapolis Department of Metropolitan Development can accept or deny the recommendations of the Board of Directors
-5) The Metropolitan Development Commission (second Wednesday of the month), appointed by the Mayor of Indianapolis and the City-County Council votes
-to give final approval.
-6) We send a purchase agreement to the title company of your choosing and they begin preparing the title work and removing any trash or weed liens on the title.
-This can take anywhere from one to several weeks, depending on the property and title company. Once the title company notifies us that they are ready to close we
-will contact you to schedule a day and time that works for everyone.
+5) The Metropolitan Development Commission (first and third Wednesdays of the month), appointed by the Mayor of Indianapolis and the City-County Council will vote to give final approval.
+6) We will send an email confirming final approval and requesting closing fee payment and title company selection (side lots do not require a title company), then we will send a purchase agreement to the title company and they begin preparing the title work and removing any trash or weed liens on the title.
 
+This can take anywhere from one to several weeks, depending on the property and title company. Once the title company notifies us that they are ready to close we will contact you to schedule a day and time that works for everyone.
 
 Thank you for your application,
 

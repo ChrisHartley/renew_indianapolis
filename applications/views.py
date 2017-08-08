@@ -77,6 +77,7 @@ def process_application(request, action, id=None):
                     msg_plain = render_to_string('email/application_submitted.txt', {
                         'user': request.user.first_name,
                         'Property': property_address,
+                        'COMPANY_SETTINGS': settings.COMPANY_SETTINGS,
                     }
                     )
                     send_mail(
@@ -131,6 +132,7 @@ def application_confirmation(request, id):
     return render(request, 'confirmation.html', {
         'title': 'thank you',
         'Property': app.Property,
+        'COMPANY_SETTINGS': settings.COMPANY_SETTINGS,
     })
 
 class ApplicationDetail(DetailView):
@@ -222,8 +224,6 @@ class PriceChangeCSVResponseMixin(object):
         else:
             return super(PriceChangeCSVResponseMixin, self).render_to_response(context, **response_kwargs)
 
-
-
 class PriceChangeSummaryAll(PriceChangeCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
@@ -303,3 +303,23 @@ class MDCSpreadsheet(MDCCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'
+
+
+# class ShowReviewCommitteeDates(View):
+#     def get(self,request, *args, **kwargs):
+#         today = datetime.date.today()
+#
+#     reviewPendingProperties = Property.objects.filter(
+#         Q(application__meeting__meeting__meeting_date__month=today.month) &
+#         Q(application__meeting__meeting__meeting_date__year=today.year) &
+#         Q(application__meeting__meeting__meeting_type=Meeting.REVIEW_COMMITTEE)
+#         ).distinct().order_by('zipcode__name', 'streetAddress')
+#
+#         meeting = Meeting.objects.get()
+#
+# deadline = meeting_date -
+#
+#         if 'json' in self.request.GET.get('format', ''):
+#             return JsonResponse()
+#         else:
+#             return HttpResponse('August 17, 2017')
