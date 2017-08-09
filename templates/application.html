@@ -36,7 +36,7 @@
 	</div>
 </div>
 {% endif %}
-
+<p class="text-center">Our next deadline is {{next_deadline}} for the {{next_meeting}} Review Committee meeting.</p>
 {% crispy form %}
 
 {% endblock content%}
@@ -56,6 +56,12 @@ function numberWithCommas(x) {
 }
 
 function check_homestead_only_property(){
+	if ($('#id_application_type').val() != '4'){
+		$('#vacant_lot_coming_soon').show();
+	}
+	else{
+		$('#vacant_lot_coming_soon').hide();
+	}
 	if ($('#id_application_type').val() != '1'){
 			if ( $('#homestead_only').text() == 'Yes'){
 				$('#homestead_only_warning').show();

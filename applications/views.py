@@ -35,6 +35,18 @@ from django.utils.text import slugify
 
 from django.views.generic import DetailView, View
 
+def determine_next_date():
+    next_deadline = datetime.date(2007, 1, 1)
+    next_meeting = datetime.date(2007, 1, 1)
+    i = 0
+    while (next_deadline <= datetime.date.today()):
+        start = datetime.date.today()+relativedelta(days=i)
+        next_meeting = rrule(MONTHLY, count=1, byweekday=TH(4), dtstart=start)[0].date()
+        next_deadline = next_meeting-relativedelta(weekday=FR(-3))
+        i=i+1
+    return [next_meeting, next_deadline]
+
+
 @login_required
 def process_application(request, action, id=None):
     if action == 'edit':
@@ -108,9 +120,9 @@ def process_application(request, action, id=None):
         'uploaded_files_all': uploaded_files_all,
         'title': 'application',
         'COMPANY_SETTINGS': settings.COMPANY_SETTINGS,
+        'next_deadline': determine_next_date()[1],
+        'next_meeting': determine_next_date()[0],
     })
-
-
 
 
 # no longer needed since switching to admin app instead of home rolled dataTables
@@ -305,21 +317,18 @@ class MDCSpreadsheet(MDCCSVResponseMixin, DetailView):
     template_name = 'price_change_summary_view_all.html'
 
 
-# class ShowReviewCommitteeDates(View):
-#     def get(self,request, *args, **kwargs):
-#         today = datetime.date.today()
-#
-#     reviewPendingProperties = Property.objects.filter(
-#         Q(application__meeting__meeting__meeting_date__month=today.month) &
-#         Q(application__meeting__meeting__meeting_date__year=today.year) &
-#         Q(application__meeting__meeting__meeting_type=Meeting.REVIEW_COMMITTEE)
-#         ).distinct().order_by('zipcode__name', 'streetAddress')
-#
-#         meeting = Meeting.objects.get()
-#
-# deadline = meeting_date -
-#
-#         if 'json' in self.request.GET.get('format', ''):
-#             return JsonResponse()
-#         else:
-#             return HttpResponse('August 17, 2017')
+
+
+
+from dateutil.rrule import *
+from dateutil.relativedelta import *
+import datetime
+class ShowReviewCommitteeDates(View):
+    def get(self,request, *args, **kwargs):
+        dates = determine_next_date()
+        next_meeting = dates[0]
+        next_deadline = dates[1]
+        if 'json' in self.request.GET.get('format', ''):
+            return JsonResponse({'next_deadline': next_deadline, 'next_meeting':next_meeting})
+        else:
+            return HttpResponse("Next meeting: {0}. Next deadline: {1}".format(next_meeting, next_deadline))
