@@ -23,8 +23,8 @@ class photo(models.Model):
 
     def __unicode__(self):
         if self.image:
-            return '%s - %s' % (self.prop, basename(self.image.path))
-        return '%s' % (self.prop, )
+            return u'%s - %s' % (self.prop, basename(self.image.path))
+        return u'%s' % (self.prop, )
 
     def save(self, *args, **kwargs):
         super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place

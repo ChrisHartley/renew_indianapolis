@@ -27,7 +27,7 @@ class company_contact(models.Model):
         verbose_name_plural = "company contacts"
 
     def __unicode__(self):
-        return '{0} {1} ({2})'.format(self.last_name, self.first_name, self.company)
+        return u'{0} {1} ({2})'.format(self.last_name, self.first_name, self.company)
 
 
 class mailing_address(models.Model):
@@ -43,7 +43,7 @@ class mailing_address(models.Model):
         verbose_name_plural = "mailing addresses"
 
     def __unicode__(self):
-        return '{0} {1} {2} {3} {4} {5}'.format(self.mailing_address_line1, self.mailing_address_line2, self.mailing_address_line3, self.mailing_address_city, self.mailing_address_state, self.mailing_address_zip)
+        return u'{0} {1} {2} {3} {4} {5}'.format(self.mailing_address_line1, self.mailing_address_line2, self.mailing_address_line3, self.mailing_address_city, self.mailing_address_state, self.mailing_address_zip)
 
 class title_company(models.Model):
     name = models.CharField(max_length=254)
@@ -55,12 +55,12 @@ class title_company(models.Model):
         verbose_name = "title company"
         verbose_name_plural = "title companies"
     def __unicode__(self):
-        return self.name
+        return u'{0}'.format(self.name,)
 
 def save_location(instance, filename):
     if instance.application:
-        return 'closings/{0}/{1}'.format(instance.application.Property, filename)
-    return 'closings/{0}/{1}'.format(instance.prop, filename)
+        return u'closings/{0}/{1}'.format(instance.application.Property, filename)
+    return u'closings/{0}/{1}'.format(instance.prop, filename)
 
 class processing_fee(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
@@ -79,7 +79,7 @@ class processing_fee(models.Model):
     stripeEmail = models.CharField(max_length=1024, blank=True, editable=False)
 
     def __unicode__(self):
-        return 'Processing Fee - {0}'.format(self.closing,)
+        return u'Processing Fee - {0}'.format(self.closing,)
 
     class Meta:
         verbose_name = "processing fee"
@@ -97,7 +97,7 @@ class purchase_option(models.Model):
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __unicode__(self):
-        return 'Purchase Option - {0} - exp {1}'.format(self.closing, self.date_expiring)
+        return u'Purchase Option - {0} - exp {1}'.format(self.closing, self.date_expiring)
 
     def save(self, *args, **kwargs):
         super(purchase_option, self).save(*args, **kwargs)
@@ -143,7 +143,7 @@ class closing(models.Model):
     def __unicode__(self):
             if self.application:
                 if self.application.organization:
-                        return '{0} - {1} {2} ({3})'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name, self.application.organization)
-                return '{0} - {1} {2}'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name)
+                        return u'{0} - {1} {2} ({3})'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name, self.application.organization)
+                return u'{0} - {1} {2}'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name)
             else:
-                return '{0} - {1}'.format(self.prop, "Legacy Application")
+                return u'{0} - {1}'.format(self.prop, "Legacy Application")

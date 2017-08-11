@@ -12,7 +12,7 @@ class Overlay(models.Model):
         return GEOSGeometry(self.geometry).area
 
     def __unicode__(self):
-        return '%s' % (self.name)
+        return u'%s' % (self.name)
 
     class Meta:
         abstract = True

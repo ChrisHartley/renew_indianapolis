@@ -263,8 +263,8 @@ class Application(models.Model):
 
     def __unicode__(self):
         if self.organization:
-            return '%s - %s - %s' % (self.user.email, self.organization.name, self.Property)
-        return '%s - %s' % (self.user.email, self.Property)
+            return u'%s - %s - %s' % (self.user.email, self.organization.name, self.Property)
+        return u'%s - %s' % (self.user.email, self.Property)
 
 class NeighborhoodNotification(models.Model):
     application = models.ForeignKey(Application, related_name="notification")
@@ -272,9 +272,9 @@ class NeighborhoodNotification(models.Model):
     feedback = models.CharField(blank=True, max_length=1024)
     def __unicode__(self):
         if self.feedback is not '':
-            return '%s - feedback received' % (self.neighborhood,)
+            return u'%s - feedback received' % (self.neighborhood,)
         else:
-            return '%s - no feedback received' % (self.neighborhood,)
+            return u'%s - no feedback received' % (self.neighborhood,)
 
 class Meeting(models.Model):
     REVIEW_COMMITTEE = 1
@@ -293,7 +293,7 @@ class Meeting(models.Model):
     meeting_type = models.IntegerField(choices=MEETING_TYPE_CHOICES)
 
     def __unicode__(self):
-        return '%s - %s' % (self.get_meeting_type_display(), self.meeting_date)
+        return u'%s - %s' % (self.get_meeting_type_display(), self.meeting_date)
 
 
 class MeetingLink(models.Model):
@@ -319,7 +319,7 @@ class MeetingLink(models.Model):
         return self.meeting.meeting_date
 
     def __unicode__(self):
-        return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
+        return u'%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     def save(self, *args, **kwargs):
         if self.meeting_outcome == self.APPROVED_STATUS:
@@ -382,7 +382,7 @@ class PriceChangeMeetingLink(models.Model):
         return self.meeting.meeting_date
 
     def __unicode__(self):
-        return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
+        return u'%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     # When saving this intermediary linkage object we save it and update the price_change and property_object to reflect approval, if given.
     def save(self, *args, **kwargs):

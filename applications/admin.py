@@ -135,7 +135,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     def user_link(self, obj):
        return mark_safe('<a href="{}">{}</a>'.format(
             reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
-                obj.user.first_name + ' ' + obj.user.last_name + ' - ' + obj.user.email
+                u'{0} {1} {2}'.format(obj.user.first_name, obj.user.last_name, obj.user.email).encode('utf-8').strip() 
             ))
     user_link.short_description = 'user'
 

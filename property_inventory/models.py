@@ -20,7 +20,7 @@ class Overlay(models.Model):
         return GEOSGeometry(self.geometry).area
 
     def __unicode__(self):
-        return '%s' % (self.name)
+        return u'%s' % (self.name)
 
     def natural_key(self):
         return self.name
@@ -116,10 +116,10 @@ class Property(models.Model):
         verbose_name_plural = "properties"
         ordering = ['streetAddress', 'parcel']
     def natural_key(self):
-        return '%s - %s' % (self.streetAddress, self.parcel)
+        return u'%s - %s' % (self.streetAddress, self.parcel)
 
     def __unicode__(self):
-        return '%s - %s' % (self.streetAddress, self.parcel)
+        return u'%s - %s' % (self.streetAddress, self.parcel)
 
     ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
     def save(self, *args, **kwargs):
@@ -137,7 +137,7 @@ class note(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return '{0}...'.format(self.text[0:12],)
+        return u'{0}...'.format(self.text[0:12],)
 
 def price_change_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
@@ -200,4 +200,4 @@ class featured_property(models.Model):
         verbose_name_plural = 'featured properties'
 
     def __unicode__(self):
-        return '{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])
+        return u'{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])

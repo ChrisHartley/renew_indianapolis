@@ -25,7 +25,7 @@ class ApplicantProfile(models.Model):
         max_length=100, blank=False, verbose_name='Zipcode')
 
     def __unicode__(self):
-        return self.user.first_name
+        return u'{0}'.format(self.user.first_name)
 
 class Organization(models.Model):
 
@@ -89,7 +89,7 @@ class Organization(models.Model):
     #     verbose_name='Most Recent Financial Statement', help_text='If available', blank=True, null=True)
 
     def __unicode__(self):
-        return self.name
+        return u'{0}'.format(self.name)
 
     class Meta:
         verbose_name = "Organization or Third Party"
