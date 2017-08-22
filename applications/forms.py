@@ -230,6 +230,11 @@ class ApplicationForm(forms.ModelForm):
             self.add_error('landlord_registry', ValidationError(
                 "You answered that you do not own any rental properties above so your answer should be Not Applicable"))
 
+        if landlord_in_marion_county is True and landlord_registry == Application.NO_YNNA_CHOICE:
+            self.add_error('landlord_registry', ValidationError(
+                "Rental properties in Marion County must be properly registered in the Landlord Registry before you can submit an application to Renew Indianapolis."))
+
+
         if property_selected is None or property_selected == "":
             self.add_error('Property', ValidationError(
                 "You must select a property"))
