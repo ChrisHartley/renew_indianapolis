@@ -25,7 +25,18 @@ import datetime
 # submissions
 @login_required
 def submitPropertyInquiry(request):
-    form = PropertyInquiryForm()
+    parcel = request.GET.get('parcel', None)
+    if parcel:
+        try:
+            prop = Property.objects.filter(status__contains='Available').exclude(
+                structureType__contains='Vacant Lot').exclude(structureType__contains='Detached Garage/Boat House').exclude(is_active__exact=False).filter(parcel__exact=parcel).first()
+        except Property.DoesNotExist:
+            raise Http404("Property does not exist or is not eligible for property inquiry")
+        #print prop
+        form = PropertyInquiryForm(initial = {'Property': prop})
+    else:
+        form = PropertyInquiryForm()
+
     if request.method == 'POST':
         previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=datetime.datetime.now()-datetime.timedelta(hours=48)).count()
         #print "Previous PI count:", previousPIcount
@@ -58,29 +69,3 @@ def property_inquiry_confirmation(request, id):
         'title': 'thank you',
         'Property': inquiry.Property,
     })
-
-# Displays submitted property inquiries
-
-
-@user_passes_test(lambda u: u.is_staff, login_url='/map/accounts/login/')
-@login_required
-def inquiry_list(request):
-    config = RequestConfig(request)
-    f = PropertyInquiryFilters(
-        request.GET, queryset=propertyInquiry.objects.all().order_by('-timestamp'))
-    table = PropertyInquiryTable(f)
-    config.configure(table)
-    return render(request, 'admin-with-filter-table.html', {
-        'filter': f,
-        'title': 'Property Inquiry Admin',
-        'table': table
-    })
-
-
-@user_passes_test(lambda u: u.is_staff, login_url='/map/accounts/login/')
-@login_required
-def inquiriesAsJSON(request):
-    object_list = propertyInquiry.objects.all()
-    json = serializers.serialize(
-        'json', object_list, use_natural_foreign_keys=True)
-    return HttpResponse(json, content_type='application/json')
