@@ -24,7 +24,7 @@ class ApplicationForm(forms.ModelForm):
             forms.Select(),
             Organization,
         ),
-        help_text='If you are applying on behalf of an organization or another individual please add or select. The property can only be titled under either your name or the name of an organization/individual included on your application.',
+        help_text='If you are applying on behalf of an organization or another individual please add or select. <b>The property can only be titled under either your name or the name of an organization/individual included here..</b>',
         required=False
     )
     status = forms.IntegerField(
