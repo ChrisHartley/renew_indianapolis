@@ -63,7 +63,20 @@ def process_application(request, action, id=None):
         # except model.DoesNotExist:
         # 	app = Application(user=request.user, status=Application.INITIAL_STATUS)
         # 	app.save()
-        app = Application(user=request.user, status=Application.INITIAL_STATUS)
+        parcel = request.GET.get('parcel', None)
+        if parcel:
+            try:
+                prop = Property.objects.filter(parcel=parcel).exclude(
+                    status__contains='Sale approved by MDC').exclude(
+                    is_active__exact=False).exclude(
+                    status__contains='Sold').exclude(
+                    status__contains='BEP').exclude(
+                    status__contains='Sale approved by Board of Directors', renew_owned=True).first()
+            except Property.DoesNotExist:
+                raise Http404("Property does not exist or is not eligible for application")
+            app = Application(user=request.user, status=Application.INITIAL_STATUS, Property=prop)
+        else:
+            app = Application(user=request.user, status=Application.INITIAL_STATUS)
         app.save()
         form = ApplicationForm(instance=app, user=request.user, id=app.pk)
     if action == 'save':
@@ -87,8 +100,9 @@ def process_application(request, action, id=None):
                     applicant_email = request.user.email
                     property_address = app.Property
                     msg_plain = render_to_string('email/application_submitted.txt', {
-                        'user': request.user.first_name,
+                        'user': request.user,
                         'Property': property_address,
+                        'application': application,
                         'COMPANY_SETTINGS': settings.COMPANY_SETTINGS,
                     }
                     )
@@ -315,9 +329,6 @@ class MDCSpreadsheet(MDCCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'
-
-
-
 
 
 from dateutil.rrule import *

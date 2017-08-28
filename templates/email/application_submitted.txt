@@ -1,8 +1,13 @@
-Hello {{ user }},
+Hello {{ user.first_name }},
 
 Thank you for submitting your application for {{ Property.streetAddress }}, parcel # {{ Property.parcel }}. Your application will be reviewed by our staff
 within the next several days. If we need any additional information from you we will be in touch, otherwise your application will be reviewed by our
-Review Committee.
+Review Committee. Notice that you have submitted this application under the name {{ user.first_name }} {{ user.last_name }}{% if application.organization %} for {{application.organization}}{% endif %}.
+If your application receives final approval the property will be titled under {% if application.organization %}{{application.organization}}{% else %}{{user.first_name}} {{user.last_name}}{% endif %} and
+may not be transferred without the consent of {% if Property.renew_owned %}Renew Indianapolis {% else %}the City of Indianapolis Department of Metropolitan Development {% endif %}
+until the project is complete and the Project Agreement is released from the title.
+
+Please let us as soon as possible if these names are not correct.
 
 If you have questions or would like to modify your application, please contact {{COMPANY_SETTINGS.APPLICATION_CONTACT_NAME}}, {{COMPANY_SETTINGS.APPLICATION_CONTACT_EMAIL}}.
 

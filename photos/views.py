@@ -1,5 +1,9 @@
 from django.shortcuts import render
+from django.forms.models import model_to_dict
+from django.http import JsonResponse, HttpResponse
 from django.core.urlresolvers  import reverse_lazy
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 # Create your views here.
 from .forms import DumpPhotosForm
 from .models import photo
@@ -20,10 +24,32 @@ class DumpPhotosView(SuccessMessageMixin, FormView):
         return super(DumpPhotosView, self).form_valid(form)
 
 
+
 class PropertyPhotosView(TemplateView):
     template_name = "property_photo_display.html"
     def get_context_data(self, **kwargs):
             context = super(PropertyPhotosView, self).get_context_data(**kwargs)
             parcel = self.kwargs['parcel']
-            context['photos'] = photo.objects.filter(prop__parcel__exact=parcel)
+            num = self.request.GET.get('number')
+            try:
+                number = int(num)
+            except:
+                number = None
+            if number:
+                context['photos'] = photo.objects.filter(prop__parcel__exact=parcel).order_by('-main_photo')[:number]
+            else:
+                context['photos'] = photo.objects.filter(prop__parcel__exact=parcel).order_by('-main_photo')
             return context
+
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Creates a JSON response if requested, otherwise returns the default
+        template response.
+        """
+        if 'json' in self.request.GET.get('format', ''):
+            s = serializers.serialize('json', context.get('photos'))
+            return HttpResponse(s, content_type="application/json")
+
+        # Business as usual otherwise
+        else:
+            return super(PropertyPhotosView, self).render_to_response(context, **response_kwargs)
