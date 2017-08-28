@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="/static/surplus_map_fancy.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.1.0/css/ol.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-3.1.3/dt-1.10.15/b-1.4.0/b-flash-1.4.0/b-html5-1.4.0/b-print-1.4.0/r-2.1.1/datatables.min.css"/>
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.1.0/build/ol-debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.15/proj4-src.js"></script>
+
+    <title>Map Viewer :: Renew Indianapolis</title>
+    <style type="text/css">
+      body { overflow: hidden; }
+
+      .navbar-offset { margin-top: 50px; }
+      #map { position: absolute; top: 50px; bottom: 0px; left: 0px; right: 0px; }
+      #map .ol-zoom { font-size: 1.2em; }
+
+      .zoom-top-opened-sidebar { margin-top: 5px; }
+      .zoom-top-collapsed { margin-top: 45px; }
+
+      .mini-submenu{
+        display:none;
+        background-color: rgba(255, 255, 255, 0.46);
+        border: 1px solid rgba(0, 0, 0, 0.9);
+        border-radius: 4px;
+        padding: 9px;
+        /*position: relative;*/
+        width: 42px;
+        text-align: center;
+      }
+
+      .mini-submenu-left {
+        position: absolute;
+        top: 60px;
+        left: .5em;
+        z-index: 40;
+      }
+      .mini-submenu-right {
+        position: absolute;
+        top: 60px;
+        right: .5em;
+        z-index: 40;
+      }
+
+      #map { z-index: 35; }
+
+      .sidebar { z-index: 45; }
+
+  /*    #layers {overflow-y: scroll;} */
+      .main-row { position: relative; top: 0; }
+
+      .mini-submenu:hover{
+        cursor: pointer;
+      }
+
+      .slide-submenu{
+        background: rgba(0, 0, 0, 0.45);
+        display: inline-block;
+        padding: 0 8px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+/*
+      #search_results_pan {
+        margin: .5em;
+        padding: .25em;
+        margin-right: 1em;
+        background-color: rgba(255, 255, 255, 1);
+        z-index: 40;
+
+      }
+
+      #search_results_wrapper {
+        background-color: white;
+
+      }
+*/
+
+      .modal {
+        position: fixed;
+        top: 50px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+      }
+
+      .modal-dialog {
+        position: fixed;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+      }
+
+      .modal-content {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border: 2px solid #3c7dcf;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .modal-header {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 50px;
+        padding: 10px;
+        background: #6598d9;
+        border: 0;
+      }
+
+      .modal-title {
+        font-weight: 300;
+        font-size: 2em;
+        color: #fff;
+        line-height: 30px;
+      }
+
+      .modal-body {
+        position: absolute;
+        top: 50px;
+        bottom: 60px;
+        width: 100%;
+        font-weight: 300;
+        overflow: auto;
+      }
+
+/*
+CSS loading animation.
+*/
+      .loader {
+        margin: 100px auto;
+        font-size: 25px;
+        width: 1em;
+        height: 1em;
+        border-radius: 50%;
+        position: relative;
+        text-indent: -9999em;
+        -webkit-animation: load5 1.1s infinite ease;
+        animation: load5 1.1s infinite ease;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        z-index: 100;
+      }
+      @-webkit-keyframes load5 {
+        0%,
+        100% {
+          box-shadow: 0em -2.6em 0em 0em #377eb8, 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.5), -1.8em -1.8em 0 0em rgba(55,126,184, 0.7);
+        }
+        12.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.7), 1.8em -1.8em 0 0em #377eb8, 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.5);
+        }
+        25% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.5), 1.8em -1.8em 0 0em rgba(55,126,184, 0.7), 2.5em 0em 0 0em #377eb8, 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        37.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.5), 2.5em 0em 0 0em rgba(55,126,184, 0.7), 1.75em 1.75em 0 0em #377eb8, 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        50% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.5), 1.75em 1.75em 0 0em rgba(55,126,184, 0.7), 0em 2.5em 0 0em #377eb8, -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        62.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.5), 0em 2.5em 0 0em rgba(55,126,184, 0.7), -1.8em 1.8em 0 0em #377eb8, -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        75% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.5), -1.8em 1.8em 0 0em rgba(55,126,184, 0.7), -2.6em 0em 0 0em #377eb8, -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        87.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.5), -2.6em 0em 0 0em rgba(55,126,184, 0.7), -1.8em -1.8em 0 0em #377eb8;
+        }
+      }
+      @keyframes load5 {
+        0%,
+        100% {
+          box-shadow: 0em -2.6em 0em 0em #377eb8, 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.5), -1.8em -1.8em 0 0em rgba(55,126,184, 0.7);
+        }
+        12.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.7), 1.8em -1.8em 0 0em #377eb8, 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.5);
+        }
+        25% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.5), 1.8em -1.8em 0 0em rgba(55,126,184, 0.7), 2.5em 0em 0 0em #377eb8, 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        37.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.5), 2.5em 0em 0 0em rgba(55,126,184, 0.7), 1.75em 1.75em 0 0em #377eb8, 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        50% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.5), 1.75em 1.75em 0 0em rgba(55,126,184, 0.7), 0em 2.5em 0 0em #377eb8, -1.8em 1.8em 0 0em rgba(55,126,184, 0.2), -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        62.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.5), 0em 2.5em 0 0em rgba(55,126,184, 0.7), -1.8em 1.8em 0 0em #377eb8, -2.6em 0em 0 0em rgba(55,126,184, 0.2), -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        75% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.5), -1.8em 1.8em 0 0em rgba(55,126,184, 0.7), -2.6em 0em 0 0em #377eb8, -1.8em -1.8em 0 0em rgba(55,126,184, 0.2);
+        }
+        87.5% {
+          box-shadow: 0em -2.6em 0em 0em rgba(55,126,184, 0.2), 1.8em -1.8em 0 0em rgba(55,126,184, 0.2), 2.5em 0em 0 0em rgba(55,126,184, 0.2), 1.75em 1.75em 0 0em rgba(55,126,184, 0.2), 0em 2.5em 0 0em rgba(55,126,184, 0.2), -1.8em 1.8em 0 0em rgba(55,126,184, 0.5), -2.6em 0em 0 0em rgba(55,126,184, 0.7), -1.8em -1.8em 0 0em #377eb8;
+        }
+      }
+
+
+
+
+
+
+    </style>
+    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/jszip-3.1.3/dt-1.10.15/b-1.4.0/b-flash-1.4.0/b-html5-1.4.0/b-print-1.4.0/r-2.1.1/datatables.min.js"></script>
+    <script type="text/javascript">
+
+      function applyMargins() {
+        var leftToggler = $(".mini-submenu-left");
+        if (leftToggler.is(":visible")) {
+          $("#map .ol-zoom")
+            .css("margin-left", 0)
+            .removeClass("zoom-top-opened-sidebar")
+            .addClass("zoom-top-collapsed");
+        } else {
+          $("#map .ol-zoom")
+            .css("margin-left", $(".sidebar-left").width())
+            .removeClass("zoom-top-opened-sidebar")
+            .removeClass("zoom-top-collapsed");
+        }
+      }
+
+      function isConstrained() {
+        return $("div.mid").width() == $(window).width();
+      }
+
+      function applyInitialUIState() {
+        if (isConstrained()) {
+          $(".sidebar-left .sidebar-body").fadeOut('slide');
+          $('.mini-submenu-left').fadeIn();
+        }
+        applyMargins();
+      }
+
+      $(function(){
+        $('.sidebar-left .slide-submenu').on('click',function() {
+          var thisEl = $(this);
+          thisEl.closest('.sidebar-body').fadeOut('slide',function(){
+            $('.mini-submenu-left').fadeIn();
+            applyMargins();
+          });
+        });
+
+        $('.mini-submenu-left').on('click',function() {
+          var thisEl = $(this);
+          $('.sidebar-left .sidebar-body').toggle('slide');
+          thisEl.hide();
+          applyMargins();
+        });
+
+        $(window).on("resize", applyMargins);
+
+        applyInitialUIState();
+        applyMargins();
+      });
+    </script>
+
+
+  </head>
+  <body>
+
+    <div class="container">
+
+      <nav class="navbar navbar-fixed-top navbar-default" role="navigation">
+        <div class="container-fluid">
+
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class='navbar-brand'><img alt='Renew Indianapolis logo' class="navbar-brand" src="https://www.renewindianapolis.org/wp-content/uploads/RenewIndpl4Cawd.png"></a>
+            <!-- <a class="navbar-brand" href="#">Renew Indianapolis</a> -->
+
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li><a href="https://www.renewindianapolis.org/application-and-buying-timelines/">About</a></li>
+              <li><a href="https://www.renewindianapolis.org/view-our-policies/">Policies</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications and Viewings <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="https://www.renewindianapolis.org/map/accounts/profile">Manage Applications</a></li>
+                  <li><a href="https://www.renewindianapolis.org/map/application/new/">Start a new application</a></li>
+                  <li class="divider"></li>
+                  <li><a href="https://www.renewindianapolis.org/map/property_inquiry/">Schedule a property viewing</a></li>
+                </ul>
+              </li>
+              <!-- <li><a href='#'>The next Review Committee meeting is {{next_meeting}}, the deadline is {{next_deadline}}</a></li> -->
+
+            </ul>
+            <!--
+            <form class="navbar-form navbar-left top-search-box" role="search" id="top-search-box">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Street address or parcel number" id="query"/>
+              </div>
+              <button class="btn btn-default" id="top-search-button">Search</button>
+            </form>
+          -->
+            <ul class="nav navbar-nav navbar-right">
+              {% if user.is_authenticated %}
+                <li><a href="/map/accounts/logout/?next={{request.path}}">Logout</a></li>
+              {%else%}
+                <li><a href="/map/accounts/login/?next={{request.path}}">Login</a></li>
+              {%endif%}
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Download <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'inventory_download' %}">Download full list as csv</a></li>
+                  <!-- <li><a href="#">Another action</a></li>
+                  <li><a href="#">Something else here</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#">Separated link</a></li> -->
+                </ul>
+              </li>
+            </ul>
+            </div><!-- /.navbar-collapse -->
+
+            </div><!-- /.container-fluid -->
+
+          </nav>
+
+        </div><!-- /.container -->
+
+      <div class="navbar-offset"></div>
+
+        <div id="fsModal"
+         class="modal animated bounceIn"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+         <div class="modal-dialog">
+             <!-- content -->
+             <div class="modal-content">
+               <!-- header -->
+               <div class="modal-header">
+                 <button class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+                 <h1 class="modal-title">
+                   Search Results
+                 </h1>
+               </div><!-- header -->
+               <!-- body -->
+               <div class="modal-body">
+                 <table id="search_results"
+                    class="table table-condensed table-responsive">
+                  </table>
+               </div>            <!-- body -->
+             </div>          <!-- content -->
+           </div>        <!-- dialog -->
+         </div>      <!-- modal -->
+
+
+      <div id="map"></div>
+      <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div><span id="popup-content-image"></span>
+      </div>
+      <div class="row main-row">
+        <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
+          <div class="panel-group sidebar-body" id="accordion-left">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" href="#layers">
+                    <i class="fa fa-search-minus"></i>
+                    Search
+                  </a>
+                  <span class="pull-right slide-submenu">
+                    <i class="fa fa-chevron-left"></i>
+                  </span>
+                </h4>
+              </div>
+              <div id="layers" class="panel-collapse collapse in">
+                <div class="panel-body list-group">
+                  {% load crispy_forms_tags %}
+                  {% crispy filter.form %}
+                  <button id="draw_clicky" class="btn" data-toggle="button" aria-pressed="false" autocomplete="off">Draw search area</button>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div id="loader" class="loader">Loading...</div>
+
+        <div class="col-sm-4 col-md-6 mid"></div>
+      </div>
+
+      <div class="mini-submenu mini-submenu-left pull-left">
+        <i class="fa fa-search-plus"></i>
+      </div>
+
+
+    <script>
+
+/*
+CSS loading animation
+*/
+
+  function boolean_to_yesno(boolean){
+  	if (boolean == true)
+  		return "Yes"
+  	return "No"
+  }
+    var $loading = $('#loader').hide();
+    $(document)
+      .ajaxStart(function () {
+        $loading.show();
+      })
+      .ajaxStop(function () {
+        $loading.hide();
+      });
+
+
+      var parser = new ol.format.WMTSCapabilities();
+      var map;
+      proj4.defs("EPSG:2965","+proj=tmerc +lat_0=37.5 +lon_0=-85.66666666666667 +k=0.999966667 +x_0=99999.99989839978 +y_0=249999.9998983998 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft +no_defs");
+
+      var styleCache = {};
+
+      var styleFunction = function(feature, resolution) {
+        var parcel = feature.get('parcel');
+        var key = parcel.concat('-', String(resolution).split('.')[0]);
+        //console.log(parcel.concat(key));
+        var style = styleCache[key];
+        if (!style) {
+          var structure_type;
+          structure_type = feature.get('structureType', false);
+          var status;
+          status = feature.get('status', false);
+          var icon;
+          var color;
+          var fill;
+          var stroke;
+          var fill_color;
+          //console.log(structure_type);
+          if (structure_type=='Residential Dwelling'){
+            fill_color = 'rgba(255,0,0,0.4)' //red
+            fill = new ol.style.Fill({
+              color: 'rgba(255,0,0,0.4)' //red
+            });
+            stroke = new ol.style.Stroke({
+              //color: '#3399CC',
+              color: 'black',
+              width: 1.25
+            });
+          }
+          else if (structure_type=='Mixed Use Commercial'){
+            fill_color = 'rgba(0,255,0,0.4)' //green
+            fill = new ol.style.Fill({
+              color: 'rgba(0,255,0,0.4)' //green
+            });
+            stroke = new ol.style.Stroke({
+              //color: '#3399CC',
+              color: 'black',
+              width: 1.25
+            });
+          }
+          else{
+            fill_color = 'rgba(0,0,255,0.4)' //blue
+            fill = new ol.style.Fill({
+              color: 'rgba(0,0,255,0.4)' //blue
+            });
+            stroke = new ol.style.Stroke({
+              color: 'black',
+              width: 1.25
+            });
+            color = 'black';
+          }
+
+          if (status != 'Available'){
+            //console.log(color);
+            fill_color = 'rgba(0,0,0,.1)' //clear
+            fill = new ol.style.Fill({
+              color: 'rgba(0,0,0,.1)' //clear
+            });
+          }
+
+          // If we are zoomed out then just show circle markers
+          if (resolution > 3){
+            style = new ol.style.Style({
+              geometry: function(feature) {
+
+                if (feature.getGeometry().getType() === 'MultiPolygon'){
+                  return feature.getGeometry().getPolygons()[0].getInteriorPoint();
+                }
+                else{
+                  console.log(feature.getGeometry().getType());
+                  return feature.getGeometry().getInteriorPoint();
+                }
+              },
+              image: new ol.style.Circle({
+                fill: new ol.style.Fill({
+                  color: fill_color,
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'black',
+                  width: 1.25
+                }),
+                radius: 5,
+                //imgSize: [10, 10]
+              }),
+              fill: new ol.style.Fill({
+                color: fill_color,
+              }),
+              stroke: new ol.style.Stroke({
+                color: 'black',
+                width: 1.25
+              }),
+            });
+        }
+        // if we are zoomed in then show the actual polygon
+        else{
+          fill_color =
+          style = new ol.style.Style({
+              fill: new ol.style.Fill({
+                color: fill_color,
+              }),
+              stroke: new ol.style.Stroke({
+                color: fill_color,
+                width: 1.25
+              }),
+          });
+
+
+        }
+          styleCache[key] = style;
+          return style;
+        };
+        return styleCache[key];
+      }
+
+
+      var surplusPolygons = new ol.layer.Vector({
+          title: 'Surplus Inventory',
+          projection: 'EPSG:4326',
+          //maxResolution: '3',
+          //minResolution: '.25',
+          style: styleFunction,
+          source: new ol.source.Vector({
+            //url: '/map/property/json/polgyon',
+            url: '{% url "property_search" %}',
+            format: new ol.format.GeoJSON()
+          }),
+        });
+
+      var searchPolygons = new ol.layer.Vector({
+        title: 'Search Results',
+        projection: 'EPSG:2965',
+        source: new ol.source.Vector(),
+        //style: styles['search'],
+        style: styleFunction
+        //minResolution: '.75',
+      });
+
+      var drawnSearchArea = new ol.layer.Vector({
+        title: 'Search Area',
+        projection: 'EPSG:4326',
+        source: new ol.source.Vector(),
+      });
+
+
+      $(document).ready(function(){
+        // In the event the city's server is unreliable we could switch to http://maps.indiana.edu/arcgis/rest/services/Basemaps/Best_Available_Imagery_Hybrid/MapServer/WMTS/1.0.0/WMTSCapabilities.xml
+        $.get('/static/WMTSCapabilities.xml', function(text){
+          var result = parser.read(text);
+          var options = ol.source.WMTS.optionsFromCapabilities(result, {
+            layer: '2017Photography_Labels', matrixSet: 'default028mm'
+          });
+
+          /**
+          * Elements that make up the popup.
+          */
+         var container = document.getElementById('popup');
+         var content = document.getElementById('popup-content');
+         var closer = document.getElementById('popup-closer');
+
+
+         /**
+          * Create an overlay to anchor the popup to the map.
+          */
+         var overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+           element: container,
+           autoPan: true,
+           autoPanAnimation: {
+             duration: 250
+           }
+         }));
+
+
+         /**
+          * Add a click handler to hide the popup.
+          * @return {boolean} Don't follow the href.
+          */
+         closer.onclick = function() {
+           overlay.setPosition(undefined);
+           closer.blur();
+           return false;
+         };
+
+
+
+
+          map = new ol.Map({
+            layers: [
+              // new ol.layer.Tile({
+              //   source: new ol.source.OSM(),
+              //   opacity: 0.7
+              // }),
+              new ol.layer.Tile({
+                opacity: 1,
+                source: new ol.source.WMTS(options)
+              }),
+              surplusPolygons,
+              searchPolygons,
+            ],
+          //  overlays: [overlay],
+            target: 'map',
+            overlays: [overlay],
+            view: new ol.View({
+              center: [188266, 1649330],
+              zoom: 15,
+              maxZoom: 21,
+              projection: 'EPSG:2965'
+            })
+          });
+
+          map.on('singleclick', function(evt) {
+            var latlon = ol.proj.transform(evt.coordinate, 'EPSG:2965', 'EPSG:4326');
+            lat = latlon[0]
+            lon = latlon[1]
+
+            var feature = map.forEachFeatureAtPixel(evt.pixel,
+              function(feature, layer) {
+                return feature;
+              });
+
+            if (feature) {
+              $('#popup-content').empty();
+              overlay.setPosition(evt.coordinate);
+              $.get('property/'+feature.get("parcel")+'/json', function(data){
+                parcel = data.features[0].properties;
+                image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
+
+                html = '<b>'+parcel.streetAddress+'</b> (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel+'">'+parcel.parcel+'</a>)<br/>'+
+                  '<b>Price</b>: $'+new Intl.NumberFormat().format(parcel.price)+'<br/>'+
+                  '<b>Lot Area</b>: '+new Intl.NumberFormat().format(parcel.area)+' square feet<br/><b>Parcel Type</b>: '+parcel.structureType+'<br/>'+
+                  '<b>Sidelot Program Eligible</b>: '+boolean_to_yesno(parcel.sidelot_eligible)+'<br/><b>Vacant Lot Program Eligible</b>: '+boolean_to_yesno(parcel.vacant_lot_eligible)+'<br/>'+
+                  '<b>Status</b>: '+parcel.status+'<br/>'
+                if (parcel.status.indexOf('Available')){
+                  html = html + '<b>Applicant</b>: '+parcel.applicant+'<br/>'
+                }
+                //$('#properties').html(html);
+                $('#popup-content').html(html);
+            });
+            $.get('property/'+feature.get("parcel")+'/photos/?format=json&number=1', function(data){
+              //console.log(data);
+              if (data.length > 0){
+                img_url = data[0].fields.image;
+              //console.log(img_url)
+                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'">'
+              }
+              else{
+                // or if we want a static google street view image:
+                //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
+
+                img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small> <iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="250">';
+              }
+              //console.log('!!Here'+feature.get("parcel"))
+              //$('#properties').append(img_object);
+              $('#popup-content-image').html(img_object);
+            });
+          }
+        });
+      });
+    });
+
+    $(document).ready(function(){
+      drawing = new ol.interaction.Draw({
+        source: drawnSearchArea,
+        type: 'Polygon',
+      });
+      $('#draw_clicky').on('click',function() {
+        map.addInteraction(drawing);
+
+      });
+    });
+
+
+    var geojson_format = new ol.format.GeoJSON()
+
+    $('#search_results').DataTable( {
+            //data: json.features,
+            dom: 'Brtlip',
+            buttons: [
+              'copy', 'csv', 'excel', 'print'
+            ],
+            responsive: {
+              display: $.fn.dataTable.Responsive.display.childRow
+
+            },
+            "scrollX": false,
+            "scrollY": false,
+            //scrollCollapse: true,
+
+            "columns": [
+                { "title": 'Parcel Number',
+                  "data": "properties.parcel" },
+                { "title": 'Street Address',
+                  "data": "properties.streetAddress" },
+                { "title": 'Property Type',
+                  "data": "properties.structureType" },
+                { "title": 'Price',
+                  "data": "properties.price" },
+                { "title": 'Zoning',
+                  "data": "properties.zone" },
+                { "title": 'Sidelot Program Eligible',
+                  "data": "properties.sidelot_eligible",
+                  "render": function ( data, type, row, meta ) {
+                        return data == true ? 'Yes' : 'No';
+                      },
+                },
+                { "title": 'Vacant Lot Program Eligible',
+                  "data": "properties.vacant_lot_eligible",
+                  "render": function ( data, type, row, meta ) {
+                        return data == true ? 'Yes' : 'No';
+                      },
+                },
+                { "title": 'Neighborhood',
+                  "data": "properties.neighborhood" },
+                { "title": 'Zipcode',
+                  "data": "properties.zipcode" },
+                { "title": 'Status',
+                  "data": "properties.status" },
+
+            ],
+/*            columnDefs: [ {
+              targets: 6,
+              render: $.fn.dataTable.render.ellipsis( 20 )
+            } ],
+*/
+        } );
+
+        $('#search_results_short').DataTable({
+          dom: 'tp',
+          responsive: true,
+          "columns": [
+            {
+              "data": "properties.streetAddress",
+            },
+            {
+              "data": "properties.parcel",
+            },
+            {
+              "targets": 0,
+              "data":  "properties.streetAddress",
+              "render": function ( data, type, full, meta ) {
+                return '<img src="https://maps.googleapis.com/maps/api/streetview?size=500x500&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+data+', Indianapolis, IN" class="img-responsive"/>'
+                }
+            },
+            {
+              "targets": 3,
+              "data": "properties.price"
+              //"render": function (data, type, full, meta) { return '$3,500'; }
+            },
+
+
+          ],
+          "paging": true,
+          "pagingType": "full",
+          "pageLength": 1,
+          "ordering": false,
+          "info": false,
+
+
+        });
+
+    $('#PropertySearchSlimForm').on('submit', function(event){
+      event.preventDefault();
+      searchPolygons.getSource().clear();
+    //  $('#id_parcel_or_street_address').val($('#query').val()); //copy search value from top box to hidden element on form
+      $('#id_geometry_type').val('centroid'); // search results return centroids
+      $('#id_returnType').val('geojson');
+      $('#id_searchArea').val('');
+      $.ajax({
+        url: '{% url "property_search" %}',
+        type: "GET",
+        data: $('#PropertySearchSlimForm').serialize(),
+        success: function(json){
+
+          searchPolygons.getSource().addFeatures(geojson_format.readFeatures(json));
+        //  var extent = ol.proj.transformExtent(searchPolygons.getSource().getExtent(), 'EPSG:4326', 'EPSG:2965');
+          var extent = searchPolygons.getSource().getExtent();
+          if(extent[0]!='Infinity'){
+            applyInitialUIState();
+            map.removeLayer(surplusPolygons);
+            map.getView().fit(extent, map.getSize())
+            $('#search_results').DataTable().clear();
+            $('#search_results').DataTable().rows.add(json.features).draw();
+            $('#search_results_short').DataTable().clear();
+            //$('#search_results_short').DataTable().rows.add(json.features).draw();
+
+          //  $('#search_results_pan').collapse('show');
+            /*$('#search_results').DataTable( {
+                    data: json.features,
+              } ); */
+          }
+          else{
+            alert("No search results");
+          }
+        },
+        error: function(xhr,errmsg,err){
+          console.log(xhr.status + ": " + xhr.responseText);
+        }
+
+      });
+    });
+
+
+    </script>
+  </body>
+</html>

@@ -1,9 +1,50 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML, Div #, InlineRadios
+from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML, Div, Reset #, InlineRadios
 from crispy_forms.bootstrap import FormActions, InlineRadios
 from django.forms.widgets import HiddenInput, SelectMultiple
 from property_inventory.models import Property, Zipcode, CDC, Zoning
+
+class PropertySearchSlimForm(forms.ModelForm):
+    searchArea = forms.CharField(required=False, widget=HiddenInput())
+    parcel_or_street_address = forms.CharField(required=False)
+    returnType = forms.CharField(required=False, widget=HiddenInput())
+
+    class Meta:
+        model = Property
+        fields = [ 'vacant_lot_eligible', 'searchArea', 'zipcode', 'neighborhood']
+
+    def __init__(self, *args, **kwargs):
+        super(PropertySearchSlimForm, self).__init__(*args, **kwargs)
+        self.fields['searchArea'].widget = HiddenInput()
+        self.fields['returnType'].widget = HiddenInput()
+    #    self.fields['parcel_or_street_address'].widget = HiddenInput()
+        #self.fields['featured_properties_only']
+        self.helper = FormHelper(self)
+        self.helper.form_id = 'PropertySearchSlimForm'
+        #self.helper.form_class = 'form-horizontal'
+        #self.helper.label_class = 'col-lg-3'
+        #self.helper.field_class = 'col-lg-8'
+        self.helper.render_unmentioned_fields = False
+
+        self.helper.form_method = 'get'
+        self.helper.form_action = ''
+        self.helper.layout = Layout(
+                Field('parcel_or_street_address'),
+                Field('structureType'),
+                Field('zoning'),
+                Field('neighborhood'),
+                Field('zipcode'),
+                Field('vacant_lot_eligible'),
+                Field('searchArea'),
+                Field('returnType'),
+                FormActions(
+                    Reset('cancel', 'Reset'),
+                    Submit('submit', 'Search', css_class='top-search-button'),
+                    HTML('<button id="modal_toggle" class="btn btn-info btn-modal" data-toggle="modal" data-target="#fsModal">Show Results Table</button>'),
+                )
+        )
+
 
 class PropertySearchForm(forms.ModelForm):
     #zoning = forms.ModelMultipleChoiceField(queryset=Zoning.objects.all().order_by('name'), required=False)

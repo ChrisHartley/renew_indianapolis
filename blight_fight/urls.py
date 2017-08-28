@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, RedirectView
 from django.views.static import serve
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet
 from photos.views import DumpPhotosView, PropertyPhotosView
-from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PropertyListJSONView, PriceChangeSummaryView, get_featured_properties_csv
-from property_inquiry.views import inquiry_list, property_inquiry_confirmation, submitPropertyInquiry
+from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
+from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
@@ -24,14 +24,12 @@ admin.site.site_header = 'Blight Fight administration'
 
 urlpatterns = [
         url(r'admin/', include(admin.site.urls)),
+        url(r'^favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico', permanent=True)),
         url(r'^$', profile_home,
            name='applicants_home'),
 
         url(r'lookup_street_address/$', getAddressFromParcel,
            name='get_address_from_parcel'),
-
-        url(r'admin-inquiry-list/$',
-           inquiry_list),
 
         url(r'property_inquiry/thanks/(?P<id>[0-9]+)$',
            property_inquiry_confirmation, name='property_inquiry_confirmation'),
@@ -51,9 +49,10 @@ urlpatterns = [
 
 
         url(r'search_property/$',
-           searchProperties),
+           searchProperties, name='search_property'),
         url(r'search-map/$',
            searchProperties),
+
 
         url(r'surplus/$', SurplusMapTemplateView.as_view(), name='surplus_map'),
         url(r'surplus/search/$', searchSurplusProperties, name='surplus_search'),
@@ -67,12 +66,14 @@ urlpatterns = [
            propertyPopup),
 
         url(r'property/map/$', InventoryMapTemplateView.as_view(), name='property_map'),
+        url(r'property/search/$', SlimPropertySearchView.as_view(), name='property_search'),
+        url(r'property/(?P<parcel>[0-9]{7})/$',
+            PropertyDetailView.as_view(), name='property_viw'),
         url(r'property/(?P<parcel>[0-9]{7})/photos/$',
             PropertyPhotosView.as_view(), name='property_photos'),
         url(r'property/(?P<parcel>[0-9]{7})/json$',
             PropertyDetailJSONView.as_view(), name='property_detail_json'),
-        url(r'property/json/(?P<geometry_type>[a-z]*)$',
-            PropertyListJSONView.as_view(), name='property_list_json'),
+
         url(r'overlay_area/context_areas/$', ContextAreaListJSONView.as_view(), name='overlay_area'),
 
         url(r'annual-report/$',

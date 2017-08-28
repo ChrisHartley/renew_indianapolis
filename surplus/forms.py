@@ -43,5 +43,6 @@ class SurplusSearchForm(forms.ModelForm):
             Field('demolition_order', css_class='input-sm'),
             Field('repair_order', css_class='input-sm'),
             Field('requested_from_commissioners', css_class='input-sm'),
+            Field('previously_held_gateway_area', css_class='input-sm'),
             Field('notes', css_class='input-sm'),
         )

@@ -35,9 +35,10 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea, price_change
 from property_inventory.filters import ApplicationStatusFilters
 from property_inventory.tables import PropertySearchTable, PropertyStatusTable, reviewPendingStatusTable
-from property_inventory.forms import PropertySearchForm
-from property_inventory.filters import PropertySearchFilter
+from property_inventory.forms import PropertySearchForm, PropertySearchSlimForm
+from property_inventory.filters import PropertySearchFilter, PropertySearchSlimFilter
 from property_inquiry.models import propertyInquiry
+from photos.models import photo
 
 from django.db import connection
 
@@ -47,7 +48,7 @@ from applications.models import Meeting
 
 def get_inventory_csv(request):
     #qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
-    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
+    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned').order_by('zipcode', 'status', 'streetAddress')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
 
@@ -56,14 +57,6 @@ def get_featured_properties_csv(request):
     today = date.today()
     qs = Property.objects.filter(is_active=True).filter(featured_property__start_date__lte=today).filter(featured_property__end_date__gte=today).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned', 'featured_property__note')
     return render_to_csv_response(qs)
-
-
-def show_all_properties(request):
-    #all_prop_select = Property.objects.all().select_related('cdc', 'zone', 'zipcode')
-    all_prop_select = None
-    all_prop_prefetch = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode', 'neighborhood')
-
-    return render(request, 'testing.html', {'all_properties_select': all_prop_select, 'all_properties_prefetch': all_prop_prefetch})
 
 # given a parcel number return a json with a number of fields
 def getAddressFromParcel(request):
@@ -148,6 +141,7 @@ class DisplayNameJsonSerializer(GeoJSONSerializer):
                 self._current[field.name] = field.value_to_string(obj)
 
 
+
 # search property inventory - new version
 def searchProperties(request):
     #	config = RequestConfig(request)
@@ -196,9 +190,19 @@ def propertyPopup(request):
 class PropertyDetailView(DetailView):
     model = Property
     template = 'property_detail.html'
-    def get_object(self):
-        return get_object_or_404(Property, parcel=self.parcel)
+    slug_field = 'parcel'
+    slug_url_kwarg = 'parcel'
 
+    def get_context_data(self, **kwargs):
+        context = super(PropertyDetailView, self).get_context_data(**kwargs)
+        print self.__dict__
+        context['photos'] = photo.objects.filter(prop__exact=self.object).order_by('-main_photo')
+        return context
+
+#    def get_object(self):
+#        return get_object_or_404(Property, parcel=self.parcel)
+
+from applications.views import determine_next_date
 class InventoryMapTemplateView(TemplateView):
     template_name = "inventory_map.html"
 
@@ -208,7 +212,9 @@ class InventoryMapTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(InventoryMapTemplateView, self).get_context_data(**kwargs)
-        context['filter'] = PropertySearchFilter
+        context['filter'] = PropertySearchSlimFilter
+        context['next_deadline'] = determine_next_date()[1]
+        context['next_meeting'] = determine_next_date()[0]
         return context
 
 class PropertyDetailJSONView(DetailView):
@@ -223,22 +229,44 @@ class PropertyDetailJSONView(DetailView):
                               )
         return HttpResponse(s, content_type='application/json')
 
-class PropertyListJSONView(ListView):
+# class PropertyListJSONView(ListView):
+#     model = Property
+#
+#     def render_to_response(self, context, **response_kwargs):
+#         geom = 'geometry'
+#         qs = Property.objects.filter(is_active__exact=True).filter(propertyType__exact='lb')
+#         if self.kwargs.get('geometry_type', None) == 'centroid':
+#             geom = 'centroid_geometry'
+#         #print context, response_kwargs
+#         s = serializers.serialize('geojson',
+#                               qs,
+#                               geometry_field=geom,
+#                               fields=('id', 'parcel', 'streetAddress', 'structureType', 'status'),
+#                               use_natural_foreign_keys=True
+#                               )
+#         return HttpResponse(s, content_type='application/json')
+
+# New property search for new map
+class SlimPropertySearchView(ListView):
     model = Property
+    def get_context_data(self, **kwargs):
+        context = super(SlimPropertySearchView, self).get_context_data(**kwargs)
+        context['filter'] = PropertySearchSlimFilter(self.request.GET, queryset=Property.objects.filter(
+            propertyType__exact='lb', is_active__exact=True).prefetch_related('cdc', 'zone', 'zipcode'))
+        return context
+#.order_by('status', 'zipcode', 'streetAddress')
 
     def render_to_response(self, context, **response_kwargs):
-        geom = 'geometry'
-        geom_type = self.kwargs.get('geometry_type', None)
-        if geom_type == 'centroid':
-            geom = 'centroid_geometry'
-        #print context, response_kwargs
         s = serializers.serialize('geojson',
-                              Property.objects.filter(status__exact='Available').filter(is_active__exact=True),
-                              geometry_field=geom,
-                              use_natural_foreign_keys=True
-                              )
+                                  context['filter'].qs,
+                                  geometry_field='geometry',
+                                  srid=2965,
+                                  fields=('id', 'parcel', 'streetAddress', 'zipcode', 'zone', 'status', 'structureType',
+                                          'sidelot_eligible', 'vacant_lot_eligible','neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
+                                          'urban_garden','price', 'renew_owned', 'area','price_obo', 'hhf_demolition', 'geometry'),
+                                  use_natural_foreign_keys=True
+                                  )
         return HttpResponse(s, content_type='application/json')
-
 
 class ContextAreaListJSONView(ListView):
     model = ContextArea

@@ -10,8 +10,8 @@ from crispy_forms.layout import Submit
 
 from django.contrib.gis.geos import GEOSGeometry  # used for centroid calculation
 
-from property_inventory.models import Property, Zoning
-from property_inventory.forms import PropertySearchForm
+from property_inventory.models import Property, Zoning, Zipcode, Neighborhood
+from property_inventory.forms import PropertySearchForm, PropertySearchSlimForm
 
 # this allows a None option with the AllValues dropdown.
 
@@ -41,6 +41,92 @@ class ApplicationStatusFilters(django_filters.FilterSet):
     class Meta:
         model = Property
         fields = ['all_applicants', 'streetAddress']
+
+class PropertySearchSlimFilter(django_filters.FilterSet):
+    parcel_or_street_address = django_filters.CharFilter(method='filter_parcel_or_street_address', label="Street address or parcel number")
+    st = Property.objects.order_by('structureType').distinct(
+        'structureType').values_list('structureType', flat=True).order_by('structureType')
+    structure_types = zip(st, st)
+    structureType = django_filters.MultipleChoiceFilter(
+        choices=structure_types, name='structureType', label='Structure Type')
+    zipcode = django_filters.ModelChoiceFilter(
+         label='Zipcode', name='zipcode__name', lookup_expr="icontains",
+        queryset=Zipcode.objects.all()
+    )
+    neighborhood = django_filters.ModelChoiceFilter(
+        label='Neighborhood', name='neighborhood__name', lookup_expr="icontains",
+        queryset=Neighborhood.objects.all()
+    )
+
+    ZONING_CHOICES = (
+        ('D', 'Dwelling'),
+        ('C', 'Commercial'),
+        ('I', 'Industrial'),
+        ('O', 'Other'),
+    )
+    zoning = django_filters.ChoiceFilter(
+        choices=ZONING_CHOICES,
+        method='filter_zoning',
+        label='Property Zoning',
+    )
+
+
+# new vs old inventory
+# duplex vs sfr vs other
+
+    class Meta:
+        model = Property
+        exclude = []
+        #fields = ['neighborhood__name', 'cdc__name']
+        #fields = ['parcel', 'streetAddress', 'nsp', 'structureType', 'cdc', 'zone', 'sidelot_eligible', 'homestead_only', 'bep_demolition']
+        form = PropertySearchSlimForm
+
+        filter_overrides = {
+            models.MultiPolygonField: {
+                'filter_class': django_filters.CharFilter,
+                'extra': lambda f: {
+                    'lookup_expr': 'exact',
+                }
+            },
+            models.PointField: {
+                'filter_class': django_filters.CharFilter,
+                'extra': lambda f: {
+                    'lookup_expr': 'exact',
+                }
+            },
+            models.CharField: {
+                'filter_class': django_filters.CharFilter,
+                'extra': lambda f: {
+                    'lookup_expr': 'icontains',
+                }
+
+            },
+        }
+
+    def filter_zoning(self, queryset, field, value):
+        print value
+        if value == 'O':
+            return queryset.exclude(zone__name__startswith='C').exclude(zone__name__startswith='I').exclude(zone__name__startswith='D')
+        else:
+            return queryset.filter(zone__name__startswith=value)
+
+    def filter_parcel_or_street_address(self, queryset, field, value):
+        return queryset.filter(
+            Q(streetAddress__icontains=value) |
+            Q(parcel__icontains=value)
+        )
+
+    def filter_searchArea(self, queryset, field, value):
+        try:
+            searchGeometry = GEOSGeometry(value, srid=900913)
+        except Exception:
+            return queryset
+
+        return queryset.filter(
+            geometry__within=searchGeometry
+        )
+
+
 
 
 class PropertySearchFilter(django_filters.FilterSet):
