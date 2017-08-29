@@ -192,10 +192,10 @@ class PropertyDetailView(DetailView):
     template = 'property_detail.html'
     slug_field = 'parcel'
     slug_url_kwarg = 'parcel'
+    context_object_name = 'property'
 
     def get_context_data(self, **kwargs):
         context = super(PropertyDetailView, self).get_context_data(**kwargs)
-        print self.__dict__
         context['photos'] = photo.objects.filter(prop__exact=self.object).order_by('-main_photo')
         return context
 
