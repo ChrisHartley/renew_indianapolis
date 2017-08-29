@@ -28,13 +28,15 @@
     <dt>Property</dt><dd>{{application.application.Property.streetAddress}}</dd>
 
     <dt>Parcel</dt><dd>{{application.application.Property.parcel}}</dd>
-    <dt>Price</dt><dd>{{application.application.Property.price}}</dd>
+    <dt>Price</dt><dd>${{application.application.Property.price}}</dd>
     <dt>Application Type</dt><dd>{{application.application.get_application_type_display}}</dd>
     <dt>Applicant</dt><dd>{{application.application.user.first_name}} {{application.application.user.last_name}}</dd>
     {% if application.application.organization %}
       <dt>Organization</dt><dd>{{application.application.organization}}</dd>
     {% endif %}
     <dt>BEP Property</dt><dd>{{application.application.Property.hhf_demolition|yesno:"Yes,No,Error"}}</dd>
+    <dt>Sidelot Eligible</dt><dd>{{application.application.Property.sidelot_eligible|yesno:"Yes,No,Error"}}</dd>
+    <dt>Vacant Log Eligible</dt><dd>{{application.application.Property.vacant_lot_eligible|yesno:"Yes,No,Error"}}</dd>
     <dt>Owned by Renew Indianapolis</dt><dd>{{application.application.Property.renew_owned|yesno:"Yes,No,Error"}}</dd>
     <dt>Neighborhood</dt><dd>{{application.application.Property.neighborhood}}</dd>
     <dt>Staff Summary</dt>
@@ -43,6 +45,7 @@
     </dd>
 
     <dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.application.staff_sow_total|intcomma}}</dd>
+    <dt>Previous Purchases from Renew Indianapolis</dt><dd>(not implemented)</dd>
     <dt>Neighborhood Organizations Notified<dt><dd>{{application.application.neighborhood_notification_details}}</dd>
     <dt>Neighborhood Organizations Feedback<dt><dd>{{application.application.neighborhood_notification_feedback}}</dd>
 
