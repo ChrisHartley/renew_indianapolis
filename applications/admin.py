@@ -74,10 +74,10 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     list_display = ('modified','Property', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
-    readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_nsp','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification')
+    readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_vacant_lot','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification')
     fieldsets = (
         (None, {
-            'fields': ( ('user','user_readable','organization'), ('created', 'modified'), ('Property', 'property_type','property_status','property_nsp','property_sidelot'), 'status', ('application_summary_page','application_detail_page'))
+            'fields': ( ('user','user_readable','organization'), ('created', 'modified'), ('Property', 'property_type','property_status','property_vacant_lot','property_sidelot'), 'status', ('application_summary_page','application_detail_page'))
 
         }),
         ('Qualifying Questions', {
@@ -123,8 +123,8 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
         return obj.meeting.latest('meeting')
     scheduled_meeting.admin_order_field = 'meeting'
 
-    def property_nsp(self, obj):
-        return obj.Property.nsp
+    def property_vacant_lot(self, obj):
+        return obj.Property.vacant_lot_eligible
 
     def property_sidelot(self, obj):
         return obj.Property.sidelot_eligible
@@ -135,7 +135,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     def user_link(self, obj):
        return mark_safe('<a href="{}">{}</a>'.format(
             reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
-                u'{0} {1} {2}'.format(obj.user.first_name, obj.user.last_name, obj.user.email).encode('utf-8').strip() 
+                u'{0} {1} {2}'.format(obj.user.first_name, obj.user.last_name, obj.user.email).encode('utf-8').strip()
             ))
     user_link.short_description = 'user'
 
