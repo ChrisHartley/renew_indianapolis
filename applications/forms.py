@@ -129,7 +129,7 @@ class ApplicationForm(forms.ModelForm):
 
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Scope of Work</div><div id="sow-file-uploader" class="form-control-static col-lg-6">Drop your scope of work file here to upload</div>'),
-                HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://www.renewindianapolis.org/wp-content/uploads/Example-Scope-of-Work-updated.xls" target="_blank">spreadsheet</a> or <a href="http://www.renewindianapolis.org/wp-content/uploads/Example-Scope-of-Work-updated-printable.pdf" target="_blank">printable template</a> as a starting point.</div></div>'),
+                HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://www.renewindianapolis.org/wp-content/uploads/Scope-of-Work-Template.xls" target="_blank">spreadsheet</a> or <a href="http://www.renewindianapolis.org/wp-content/uploads/Scope-of-Work-Template.pdf" target="_blank">printable template</a> as a starting point.</div></div>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Elevation View</div><div id="elevation-file-uploader" class="form-control-static col-lg-6">Drop your elevation view file here to upload</div>'),
                 HTML('<div class="help-block col-lg-6 col-lg-offset-4">If you are proposing new construction on a vacant lot you must upload an elevation view of your proposed construction.</div></div>'),
