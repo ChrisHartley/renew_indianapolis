@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/static/surplus_map_fancy.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://openlayers.org/en/v4.1.0/css/ol.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/jszip-3.1.3/dt-1.10.15/b-1.4.0/b-flash-1.4.0/b-html5-1.4.0/b-print-1.4.0/r-2.1.1/datatables.min.css"/>
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
@@ -19,7 +18,14 @@
       body { overflow: hidden; }
 
       .navbar-offset { margin-top: 50px; }
-      #map { position: absolute; top: 50px; bottom: 0px; left: 0px; right: 0px; }
+      #map {
+        position: absolute;
+        top: 50px;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        z-index: 35;
+      }
       #map .ol-zoom { font-size: 1.2em; }
 
       .zoom-top-opened-sidebar { margin-top: 5px; }
@@ -42,14 +48,7 @@
         left: .5em;
         z-index: 40;
       }
-      .mini-submenu-right {
-        position: absolute;
-        top: 60px;
-        right: .5em;
-        z-index: 40;
-      }
 
-      #map { z-index: 35; }
 
       .sidebar { z-index: 45; }
 
@@ -67,23 +66,8 @@
         border-radius: 4px;
         cursor: pointer;
       }
-/*
-      #search_results_pan {
-        margin: .5em;
-        padding: .25em;
-        margin-right: 1em;
-        background-color: rgba(255, 255, 255, 1);
-        z-index: 40;
 
-      }
-
-      #search_results_wrapper {
-        background-color: white;
-
-      }
-*/
-
-      .modal {
+      .modal-full {
         position: fixed;
         top: 50px;
         right: 0;
@@ -92,7 +76,7 @@
         overflow: hidden;
       }
 
-      .modal-dialog {
+      .modal-full-dialog {
         position: fixed;
         margin: 0;
         width: 100%;
@@ -100,7 +84,7 @@
         padding: 0;
       }
 
-      .modal-content {
+      .modal-full-content {
         position: absolute;
         top: 0;
         right: 0;
@@ -111,7 +95,7 @@
         box-shadow: none;
       }
 
-      .modal-header {
+      .modal-full-header {
         position: absolute;
         top: 0;
         right: 0;
@@ -122,14 +106,14 @@
         border: 0;
       }
 
-      .modal-title {
+      .modal-full-title {
         font-weight: 300;
         font-size: 2em;
         color: #fff;
         line-height: 30px;
       }
 
-      .modal-body {
+      .modal-full-body {
         position: absolute;
         top: 50px;
         bottom: 60px;
@@ -212,10 +196,6 @@ CSS loading animation.
       }
 
 
-
-
-
-
     </style>
     <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -275,6 +255,34 @@ CSS loading animation.
 
   </head>
   <body>
+    <div id="openingModal"
+      class="modal animated bounceIn"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="Introduction"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+            <h1 class="modal-title">
+              Welcome
+            </h1>
+          </div><!-- header -->
+          <div class="modal-body">
+
+            Legend
+            <ul class="list-unstyled">
+              <li><span class="badge" style="background-color:rgba(255,0,0,.7)">&nbsp;</span> Residential Dwelling (House)</li>
+              <li><span class="badge" style="background-color:rgba(0,255,0,.7)">&nbsp;</span> Commercial Building</li>
+              <li><span class="badge" style="background-color:rgba(0,0,255,.7)">&nbsp;</span> Vacant Lot or Detached Garage</li>
+              <li><span class="badge" style="background-color:rgba(0,0,0,.7)">&nbsp;</span> Sold or Approved for Sale Property</li>
+            </ul>
+
+          </div><!-- body -->
+        </div><!-- content -->
+      </div><!-- dialog -->
+    </div><!-- modal -->
 
     <div class="container">
 
@@ -346,23 +354,23 @@ CSS loading animation.
       <div class="navbar-offset"></div>
 
         <div id="fsModal"
-         class="modal animated bounceIn"
+         class="modal modal-full animated bounceIn"
          tabindex="-1"
          role="dialog"
-         aria-labelledby="myModalLabel"
+         aria-labelledby="Search Results"
          aria-hidden="true">
-         <div class="modal-dialog">
+         <div class="modal-dialog modal-full-dialog">
              <!-- content -->
-             <div class="modal-content">
+             <div class="modal-content modal-full-content">
                <!-- header -->
-               <div class="modal-header">
+               <div class="modal-header modal-full-header">
                  <button class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
-                 <h1 class="modal-title">
+                 <h1 class="modal-title modal-full-title">
                    Search Results
                  </h1>
                </div><!-- header -->
                <!-- body -->
-               <div class="modal-body">
+               <div class="modal-body modal-full-body">
                  <table id="search_results"
                     class="table table-condensed table-responsive">
                   </table>
@@ -373,10 +381,12 @@ CSS loading animation.
 
 
       <div id="map"></div>
+
       <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
         <div id="popup-content"></div><span id="popup-content-image"></span>
       </div>
+
       <div class="row main-row">
         <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
           <div class="panel-group sidebar-body" id="accordion-left">
@@ -384,11 +394,11 @@ CSS loading animation.
               <div class="panel-heading">
                 <h4 class="panel-title">
                   <a data-toggle="collapse" href="#layers">
-                    <i class="fa fa-search-minus"></i>
+                    <i class="glyphicon glyphicon-filter"></i>
                     Search
                   </a>
                   <span class="pull-right slide-submenu">
-                    <i class="fa fa-chevron-left"></i>
+                    <i class="glyphicon glyphicon-chevron-left"></i>
                   </span>
                 </h4>
               </div>
@@ -410,7 +420,7 @@ CSS loading animation.
       </div>
 
       <div class="mini-submenu mini-submenu-left pull-left">
-        <i class="fa fa-search-plus"></i>
+        <i class="glyphicon glyphicon-filter"></i>
       </div>
 
 
@@ -425,6 +435,17 @@ CSS loading animation
   		return "Yes"
   	return "No"
   }
+
+  function slugify(text) {
+    return text.toString().toLowerCase().trim()
+  	.normalize('NFD') 				 // separate accent from letter
+  	.replace(/[\u0300-\u036f]/g, '') // remove all separated accents
+  	.replace(/\s+/g, '-')            // replace spaces with -
+  	.replace(/&/g, '-and-')          // replace & with 'and'
+  	.replace(/[^\w\-]+/g, '')        // remove all non-word chars
+  	.replace(/\-\-+/g, '-')          // replace multiple '-' with single '-'
+  }
+
     var $loading = $('#loader').hide();
     $(document)
       .ajaxStart(function () {
@@ -444,7 +465,6 @@ CSS loading animation
       var styleFunction = function(feature, resolution) {
         var parcel = feature.get('parcel');
         var key = parcel.concat('-', String(resolution).split('.')[0]);
-        //console.log(parcel.concat(key));
         var style = styleCache[key];
         if (!style) {
           var structure_type;
@@ -456,7 +476,6 @@ CSS loading animation
           var fill;
           var stroke;
           var fill_color;
-          //console.log(structure_type);
           if (structure_type=='Residential Dwelling'){
             fill_color = 'rgba(255,0,0,0.4)' //red
             fill = new ol.style.Fill({
@@ -508,7 +527,6 @@ CSS loading animation
                   return feature.getGeometry().getPolygons()[0].getInteriorPoint();
                 }
                 else{
-                  console.log(feature.getGeometry().getType());
                   return feature.getGeometry().getInteriorPoint();
                 }
               },
@@ -557,11 +575,8 @@ CSS loading animation
       var surplusPolygons = new ol.layer.Vector({
           title: 'Surplus Inventory',
           projection: 'EPSG:4326',
-          //maxResolution: '3',
-          //minResolution: '.25',
           style: styleFunction,
           source: new ol.source.Vector({
-            //url: '/map/property/json/polgyon',
             url: '{% url "property_search" %}',
             format: new ol.format.GeoJSON()
           }),
@@ -571,9 +586,7 @@ CSS loading animation
         title: 'Search Results',
         projection: 'EPSG:2965',
         source: new ol.source.Vector(),
-        //style: styles['search'],
         style: styleFunction
-        //minResolution: '.75',
       });
 
       var drawnSearchArea = new ol.layer.Vector({
@@ -641,7 +654,7 @@ CSS loading animation
             target: 'map',
             overlays: [overlay],
             view: new ol.View({
-              center: [188266, 1649330],
+              center: [188266, 1659330],
               zoom: 15,
               maxZoom: 21,
               projection: 'EPSG:2965'
@@ -660,12 +673,11 @@ CSS loading animation
 
             if (feature) {
               $('#popup-content').empty();
+              $('#popup-content-image').empty();
               overlay.setPosition(evt.coordinate);
               $.get('property/'+feature.get("parcel")+'/json', function(data){
                 parcel = data.features[0].properties;
-                image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
-
-                html = '<b>'+parcel.streetAddress+'</b> (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel+'">'+parcel.parcel+'</a>)<br/>'+
+                html = '<b><a href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+'</a></b> (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel+'">'+parcel.parcel+'</a>)<br/>'+
                   '<b>Price</b>: $'+new Intl.NumberFormat().format(parcel.price)+'<br/>'+
                   '<b>Lot Area</b>: '+new Intl.NumberFormat().format(parcel.area)+' square feet<br/><b>Parcel Type</b>: '+parcel.structureType+'<br/>'+
                   '<b>Sidelot Program Eligible</b>: '+boolean_to_yesno(parcel.sidelot_eligible)+'<br/><b>Vacant Lot Program Eligible</b>: '+boolean_to_yesno(parcel.vacant_lot_eligible)+'<br/>'+
@@ -673,20 +685,16 @@ CSS loading animation
                 if (parcel.status.indexOf('Available')){
                   html = html + '<b>Applicant</b>: '+parcel.applicant+'<br/>'
                 }
-                //$('#properties').html(html);
                 $('#popup-content').html(html);
             });
             $.get('property/'+feature.get("parcel")+'/photos/?format=json&number=1', function(data){
-              //console.log(data);
               if (data.length > 0){
                 img_url = data[0].fields.image;
-              //console.log(img_url)
                 img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'">'
               }
               else{
                 // or if we want a static google street view image:
                 //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
-
                 img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small> <iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="250">';
               }
               //console.log('!!Here'+feature.get("parcel"))
@@ -709,6 +717,9 @@ CSS loading animation
       });
     });
 
+    $(window).on('load',function(){
+         $('#openingModal').modal('show');
+     });
 
     var geojson_format = new ol.format.GeoJSON()
 
@@ -757,46 +768,7 @@ CSS loading animation
                   "data": "properties.status" },
 
             ],
-/*            columnDefs: [ {
-              targets: 6,
-              render: $.fn.dataTable.render.ellipsis( 20 )
-            } ],
-*/
         } );
-
-        $('#search_results_short').DataTable({
-          dom: 'tp',
-          responsive: true,
-          "columns": [
-            {
-              "data": "properties.streetAddress",
-            },
-            {
-              "data": "properties.parcel",
-            },
-            {
-              "targets": 0,
-              "data":  "properties.streetAddress",
-              "render": function ( data, type, full, meta ) {
-                return '<img src="https://maps.googleapis.com/maps/api/streetview?size=500x500&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+data+', Indianapolis, IN" class="img-responsive"/>'
-                }
-            },
-            {
-              "targets": 3,
-              "data": "properties.price"
-              //"render": function (data, type, full, meta) { return '$3,500'; }
-            },
-
-
-          ],
-          "paging": true,
-          "pagingType": "full",
-          "pageLength": 1,
-          "ordering": false,
-          "info": false,
-
-
-        });
 
     $('#PropertySearchSlimForm').on('submit', function(event){
       event.preventDefault();
@@ -812,21 +784,14 @@ CSS loading animation
         success: function(json){
 
           searchPolygons.getSource().addFeatures(geojson_format.readFeatures(json));
-        //  var extent = ol.proj.transformExtent(searchPolygons.getSource().getExtent(), 'EPSG:4326', 'EPSG:2965');
           var extent = searchPolygons.getSource().getExtent();
           if(extent[0]!='Infinity'){
             applyInitialUIState();
+            $('#modal_toggle').show();
             map.removeLayer(surplusPolygons);
             map.getView().fit(extent, map.getSize())
             $('#search_results').DataTable().clear();
             $('#search_results').DataTable().rows.add(json.features).draw();
-            $('#search_results_short').DataTable().clear();
-            //$('#search_results_short').DataTable().rows.add(json.features).draw();
-
-          //  $('#search_results_pan').collapse('show');
-            /*$('#search_results').DataTable( {
-                    data: json.features,
-              } ); */
           }
           else{
             alert("No search results");

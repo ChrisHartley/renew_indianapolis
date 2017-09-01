@@ -195,12 +195,9 @@ class PropertyDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PropertyDetailView, self).get_context_data(**kwargs)
         context['photos'] = photo.objects.filter(prop__exact=self.object).order_by('-main_photo')
+        context['title'] = '{0} - {1}'.format(self.object.streetAddress, self.object.parcel)
         return context
 
-#    def get_object(self):
-#        return get_object_or_404(Property, parcel=self.parcel)
-
-from applications.views import determine_next_date
 class InventoryMapTemplateView(TemplateView):
     template_name = "inventory_map.html"
 
@@ -227,23 +224,6 @@ class PropertyDetailJSONView(DetailView):
                               )
         return HttpResponse(s, content_type='application/json')
 
-# class PropertyListJSONView(ListView):
-#     model = Property
-#
-#     def render_to_response(self, context, **response_kwargs):
-#         geom = 'geometry'
-#         qs = Property.objects.filter(is_active__exact=True).filter(propertyType__exact='lb')
-#         if self.kwargs.get('geometry_type', None) == 'centroid':
-#             geom = 'centroid_geometry'
-#         #print context, response_kwargs
-#         s = serializers.serialize('geojson',
-#                               qs,
-#                               geometry_field=geom,
-#                               fields=('id', 'parcel', 'streetAddress', 'structureType', 'status'),
-#                               use_natural_foreign_keys=True
-#                               )
-#         return HttpResponse(s, content_type='application/json')
-
 # New property search for new map
 class SlimPropertySearchView(ListView):
     model = Property
@@ -252,7 +232,6 @@ class SlimPropertySearchView(ListView):
         context['filter'] = PropertySearchSlimFilter(self.request.GET, queryset=Property.objects.filter(
             propertyType__exact='lb', is_active__exact=True).prefetch_related('cdc', 'zone', 'zipcode'))
         return context
-#.order_by('status', 'zipcode', 'streetAddress')
 
     def render_to_response(self, context, **response_kwargs):
         s = serializers.serialize('geojson',

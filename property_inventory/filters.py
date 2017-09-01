@@ -58,6 +58,19 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
         queryset=Neighborhood.objects.all()
     )
 
+    AVAILABLE_CHOICE = 'A'
+    SOLD_CHOICE = 'S'
+
+    STATUS_CHOICES = (
+        (AVAILABLE_CHOICE,'Available'),
+        (SOLD_CHOICE,'Sold or Approved For Sale'),
+    )
+
+    BOOL_CHOICES = ((True, 'Yes'), (False, 'No'))
+    #status = django_filters.ChoiceFilter(method='filter_status', label='Limit search to...', widget=forms.RadioSelect(attrs={'class': 'radio'}), empty_label=None)
+    status =  django_filters.ChoiceFilter(widget=forms.RadioSelect(attrs={'class': 'radio'}), empty_label=None)
+    #available_only = django_filters.BooleanFilter(method='filter_available_only', label='Show only available properties')
+
     ZONING_CHOICES = (
         ('D', 'Dwelling'),
         ('C', 'Commercial'),
@@ -115,6 +128,13 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
             Q(streetAddress__icontains=value) |
             Q(parcel__icontains=value)
         )
+
+    def filter_status(self, queryset, field, value):
+        if value == self.AVAILABLE_CHOICE:
+            return queryset.filter(status__contains='Available')
+        if value == self.SOLD_CHOICE:
+            return queryset
+
 
     def filter_searchArea(self, queryset, field, value):
         try:

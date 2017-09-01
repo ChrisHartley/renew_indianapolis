@@ -9,6 +9,9 @@ class PropertySearchSlimForm(forms.ModelForm):
     searchArea = forms.CharField(required=False, widget=HiddenInput())
     parcel_or_street_address = forms.CharField(required=False)
     returnType = forms.CharField(required=False, widget=HiddenInput())
+    BOOL_CHOICES = ((True, 'Yes'), (False, 'No'))
+
+    status = forms.BooleanField(required=False)
 
     class Meta:
         model = Property
@@ -36,6 +39,7 @@ class PropertySearchSlimForm(forms.ModelForm):
                 Field('neighborhood'),
                 Field('zipcode'),
                 Field('vacant_lot_eligible'),
+                Field('status'),
                 Field('searchArea'),
                 Field('returnType'),
                 FormActions(

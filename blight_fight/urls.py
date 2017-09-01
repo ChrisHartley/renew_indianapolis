@@ -68,7 +68,10 @@ urlpatterns = [
         url(r'property/map/$', InventoryMapTemplateView.as_view(), name='property_map'),
         url(r'property/search/$', SlimPropertySearchView.as_view(), name='property_search'),
         url(r'property/(?P<parcel>[0-9]{7})/$',
-            PropertyDetailView.as_view(), name='property_viw'),
+            PropertyDetailView.as_view(), name='property_view'),
+        url(r'property/(?P<parcel>[0-9]{7}),(?P<address>[-\w|\W|\d]+)/$',
+            PropertyDetailView.as_view(), name='property_view_slug'),
+
         url(r'property/(?P<parcel>[0-9]{7})/photos/$',
             PropertyPhotosView.as_view(), name='property_photos'),
         url(r'property/(?P<parcel>[0-9]{7})/json$',
