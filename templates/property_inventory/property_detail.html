@@ -1,0 +1,175 @@
+{% extends 'wp-template-header.html' %}
+{% load humanize %}
+{% block wpwrap-header %}
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/css/lightslider.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.js"></script>
+
+<style>
+
+      /* common https://codemyui.com/pure-css-corner-ribbons/ */
+      .ribbon {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        position: absolute;
+      }
+      .ribbon::before,
+      .ribbon::after {
+        position: absolute;
+        z-index: -1;
+        content: '';
+        display: block;
+        border: 5px solid #2980b9;
+      }
+      .ribbon span {
+        position: absolute;
+        display: block;
+        width: 225px;
+        padding: 15px 0;
+        background-color: #3498db;
+        box-shadow: 0 5px 10px rgba(0,0,0,.1);
+        color: #fff;
+        font: 700 18px/1 'Lato', sans-serif;
+        text-shadow: 0 1px 1px rgba(0,0,0,.2);
+        text-transform: uppercase;
+        text-align: center;
+      }
+
+      /* top left*/
+      .ribbon-top-left {
+        top: -10px;
+        left: -10px;
+      }
+      .ribbon-top-left::before,
+      .ribbon-top-left::after {
+        border-top-color: transparent;
+        border-left-color: transparent;
+      }
+      .ribbon-top-left::before {
+        top: 0;
+        right: 0;
+      }
+      .ribbon-top-left::after {
+        bottom: 0;
+        left: 0;
+      }
+      .ribbon-top-left span {
+        right: -25px;
+        top: 30px;
+        transform: rotate(-45deg);
+      }
+
+
+</style>
+{% endblock wpwrap-header %}
+
+{% block wpwrap-content %}
+<div class="container">
+
+<div class="row">
+  <div class="col-md-6 col-lg-6">
+    <p class="lead">
+      The property located at {{property.streetAddress}} (parcel number {{property.parcel}})
+      is a {{property.structureType|lower}} in the {{property.neighborhood}} neighborhood and the {{property.zipcode}} zipcode.
+      The lot is {{property.area|intcomma}} square feet and is zoned {{property.zone}}.
+    </p>
+    <p>
+  {% if property.status == 'Available' %}
+    This property is offered for sale for ${{property.price|intcomma}} through the Renew
+    Indianapolis application process.{% if property.price_obo %} The price for this property negotiable{% else %}
+    The price for this property is fixed{%endif%} but may change at the discretion of the Renew Indianapolis Board of Directors{%if not property.renew_owned%} and the Department of Metropolitan Development{%endif%}.
+  {% elif property.status == 'BEP demolition slated'%}
+    This property is currently slatted for demolition through the Hardest Hit Fund / Blight Elimination Program.
+    Once it is demolished the vacant lot will be offered for sale.
+  {% elif 'Board of Directors' in property.status %}
+    {% if property.renew_owned %}
+      This property has received final approval and sale is pending to {{property.applicant}}.
+    {% endif %}
+  {% elif 'MDC' in property.status %}
+    This property has received final approval and sale is pending to {{property.applicant}}.
+  {% elif 'Sold' in property.status %}
+    This property was sold to {{property.applicant}} on
+    {% for char in property.status|make_list|slice:"-10:" %}{{char}}{% endfor %} and so is not currently available through Renew Indianapolis.
+  {% else %}
+    This property's status is {{property.status}} so it is not currently available for application.
+  {% endif %}
+  </p>
+  <table class="table table-condensed table-responsive">
+    <tr><td>Community Development Corporation Area</td><td>{{property.cdc|title}}</td></tr>
+    <tr><td>Quiet Title Completed</td><td>{{property.quiet_title_complete|yesno|capfirst}}</td></tr>
+    <tr><td>Licensed Urban Garden in Place</td><td>{{property.urban_garden|yesno|capfirst}}</td></tr>
+    <tr><td>Eligible for Sidelot Program</td><td>{{property.sidelot_eligible|yesno|capfirst}}</td></tr>
+    <tr><td>Eligible for Vacant Lot Program</td><td>{{property.vacant_lot_eligible|yesno|capfirst}}</td></tr>
+    <tr><td>Reserved for owner occupants</td><td>{{property.homestead_only|yesno|capfirst}}</td></tr>
+    <tr><td>Owned by Renew Indianapolis directly</td><td>{{property.renew_owned|yesno|capfirst}}</td></tr>
+    <tr><td>Property Demolished through Hardest Hit Fund/Blight Elimination Program</td><td>{{property.hhf_demolition|yesno|capfirst}}</td></tr>
+  </table>
+</div>
+ <!-- <div class="ribbon ribbon-top-left"><span>Apply Now!</span></div> -->
+ <div class="col-md-6 col-lg-6">
+    <ul id="lightSlider">
+        {% for photo in photos %}
+          <li>
+            <a href="https://www.renewindianapolis.org/media/{{ photo.image }}"><img src="https://www.renewindianapolis.org/media/{{ photo.image }}"/></a>
+          <div class="caption"><p>{{photo.created}}</p></div>
+          </li>
+        {% empty %}
+        <li>
+          <img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{property.streetAddress}}, Indianapolis, IN {{property.zipcode}}" width=300 height=300/>
+          <div class="caption"><p>Google StreetView images may not be accurate.</p></div>
+        </li>
+        {% endfor %}
+    </ul>
+
+</div> <!-- end col -->
+
+</div> <!-- end row -->
+<div class="row">
+  <div class="col-md-6">
+      <p class="text-center lead">
+        Share this property on social media!
+      </p>
+      <p class="text-center">
+        <a href="https://www.addtoany.com/share?linkurl={{request.build_absolute_uri |urlencode}}&amp;linkname={{property.streetAddress|urlencode}}" target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32" height="32"></a>
+        <a href="https://www.addtoany.com/add_to/facebook?linkurl={{request.build_absolute_uri |urlencode}}&amp;linkname={{property.streetAddress|urlencode}}" target="_blank"><img src="https://static.addtoany.com/buttons/facebook.svg" width="32" height="32"></a>
+        <a href="https://www.addtoany.com/add_to/twitter?linkurl={{request.build_absolute_uri |urlencode}}&amp;linkname={{property.streetAddress|urlencode}}" target="_blank"><img src="https://static.addtoany.com/buttons/twitter.svg" width="32" height="32"></a>
+        <a href="https://www.addtoany.com/add_to/pinterest?linkurl={{request.build_absolute_uri |urlencode}}&amp;linkname={{property.streetAddress|urlencode}}" target="_blank"><img src="https://static.addtoany.com/buttons/pinterest.svg" width="32" height="32"></a>
+      </p>
+  </div>
+  <div class="col-md-6">
+    <p class="text-center">
+      {% if property.status == 'Available' and property.is_active %}
+      <a href="{% url 'submit_property_inquiry'%}?parcel={{property.parcel}}" class="btn btn-primary">Request a showing</a>
+      <a href="{% url 'process_application' action='new' %}?parcel={{property.parcel}}" class="btn btn-info">Apply for this property</a>
+      {% elif property.renew_owned and "Review Committee" in property.status and property.is_active %}
+      <a href="{% url 'submit_property_inquiry'%}?parcel={{property.parcel}}" class="btn btn-primary">Request a showing</a>
+      <a href="{% url 'process_application' action='new' %}?parcel={{property.parcel}}" class="btn btn-info">Apply for this property</a>
+      {% elif property.renew_owned is not True and "MDC" not in property.status and property.is_active %}
+      <a href="{% url 'submit_property_inquiry'%}?parcel={{property.parcel}}" class="btn btn-primary">Request a showing</a>
+      <a href="{% url 'process_application' action='new' %}?parcel={{property.parcel}}" class="btn btn-info">Apply for this property</a>
+      {% else %}
+      This property is not currently available for application or showings.<br/>
+      Its status is: {{property.status}}.<br/>Applicant: {{property.applicant}}.
+      {% endif %}
+  </p>
+</div> <!-- end col -->
+
+</div> <!-- end row -->
+</div> <!-- end container -->
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    jQuery("#lightSlider").lightSlider({
+      verticalHeight:500,
+      item:1,
+      auto:true,
+      pauseOnHover:true,
+      loop:false,
+      keyPress:true,
+    });
+  });
+</script>
+{% endblock wpwrap-content %}
