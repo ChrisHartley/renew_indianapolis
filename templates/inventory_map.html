@@ -426,16 +426,13 @@ CSS loading animation.
 
     <script>
 
-/*
-CSS loading animation
-*/
 
   function boolean_to_yesno(boolean){
   	if (boolean == true)
   		return "Yes"
   	return "No"
   }
-
+  /* thanks https://gist.github.com/eek/9c4887e80b3ede05c0e39fee4dce3747 */
   function slugify(text) {
     return text.toString().toLowerCase().trim()
   	.normalize('NFD') 				 // separate accent from letter
@@ -445,6 +442,10 @@ CSS loading animation
   	.replace(/[^\w\-]+/g, '')        // remove all non-word chars
   	.replace(/\-\-+/g, '-')          // replace multiple '-' with single '-'
   }
+
+  /*
+  CSS loading animation
+  */
 
     var $loading = $('#loader').hide();
     $(document)
@@ -572,20 +573,31 @@ CSS loading animation
       }
 
 
+      var legend_attribution = new ol.Attribution({
+        html: '<span class="badge" style="background-color:rgba(255,0,0,.7)">&nbsp;</span> Residential Dwelling (House)&nbsp;'+
+              '<span class="badge" style="background-color:rgba(0,255,0,.7)">&nbsp;</span> Commercial Building&nbsp;'+
+              '<span class="badge" style="background-color:rgba(0,0,255,.7)">&nbsp;</span> Vacant Lot or Detached Garage&nbsp;'+
+              '<span class="badge" style="background-color:rgba(0,0,0,.7)">&nbsp;</span> Sold or Approved for Sale&nbsp;'
+      });
+
       var surplusPolygons = new ol.layer.Vector({
           title: 'Surplus Inventory',
           projection: 'EPSG:4326',
           style: styleFunction,
           source: new ol.source.Vector({
             url: '{% url "property_search" %}',
-            format: new ol.format.GeoJSON()
+            format: new ol.format.GeoJSON(),
+            attributions: [ legend_attribution, ],
           }),
         });
 
       var searchPolygons = new ol.layer.Vector({
         title: 'Search Results',
         projection: 'EPSG:2965',
-        source: new ol.source.Vector(),
+        source: new ol.source.Vector({
+          attributions: [ legend_attribution, ],
+
+        }),
         style: styleFunction
       });
 
@@ -594,6 +606,9 @@ CSS loading animation
         projection: 'EPSG:4326',
         source: new ol.source.Vector(),
       });
+
+
+
 
 
       $(document).ready(function(){
@@ -635,7 +650,13 @@ CSS loading animation
          };
 
 
+         var attribution = new ol.control.Attribution({
+             collapsible: true,
+             collapsed: false,
+             tipLabel: 'Legend',
+             label: 'L',
 
+           });
 
           map = new ol.Map({
             layers: [
@@ -652,13 +673,15 @@ CSS loading animation
             ],
           //  overlays: [overlay],
             target: 'map',
+            controls: ol.control.defaults({ attribution: false }).extend([attribution]),
             overlays: [overlay],
             view: new ol.View({
               center: [188266, 1659330],
               zoom: 15,
               maxZoom: 21,
               projection: 'EPSG:2965'
-            })
+            }),
+            logo: false,
           });
 
           map.on('singleclick', function(evt) {
@@ -697,12 +720,52 @@ CSS loading animation
                 //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
                 img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small> <iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="250">';
               }
-              //console.log('!!Here'+feature.get("parcel"))
-              //$('#properties').append(img_object);
               $('#popup-content-image').html(img_object);
             });
           }
         });
+
+
+/* Geolocation support section */
+       var geolocation = new ol.Geolocation({
+        projection: map.getView().getProjection(),
+        tracking: true,
+        trackingOptions: {
+          enableHighAccuracy: true,
+          maximumAge: 2000
+        }
+      });
+
+      var iconStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+          anchor: [0.5, 100],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 1.0,
+          src: 'http://dev.openlayers.org/img/marker-green.png'
+           })
+          });
+
+    // add an empty iconFeature to the source of the layer
+      var iconFeature = new ol.Feature();
+      var iconSource = new ol.source.Vector({
+        features: [iconFeature]
+      });
+      var iconLayer = new ol.layer.Vector({
+        source: iconSource,
+        style : iconStyle
+      });
+
+    map.addLayer(iconLayer);
+
+    geolocation.on('change', function() {
+       var pos = geolocation.getPosition();
+       iconFeature.setGeometry(new ol.geom.Point(pos));
+       map.getView().setCenter(pos);
+       map.getView().setZoom(18);
+     });
+     /* End geolocation support section */
+
       });
     });
 
