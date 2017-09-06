@@ -69,7 +69,6 @@
 
 {% block wpwrap-content %}
 <div class="container">
-
 <div class="row">
   <div class="col-md-6 col-lg-6">
     <p class="lead">
@@ -79,7 +78,7 @@
     </p>
     <p>
   {% if property.status == 'Available' %}
-    This property is offered for sale for ${{property.price|intcomma}} through the Renew
+    This property is offered for sale for <b>${{property.price|intcomma}}</b> through the Renew
     Indianapolis application process.{% if property.price_obo %} The price for this property negotiable{% else %}
     The price for this property is fixed{%endif%} but may change at the discretion of the Renew Indianapolis Board of Directors{%if not property.renew_owned%} and the Department of Metropolitan Development{%endif%}.
   {% elif property.status == 'BEP demolition slated'%}
@@ -98,6 +97,7 @@
     This property's status is {{property.status}} so it is not currently available for application.
   {% endif %}
   </p>
+  <p>The <a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/{{property.parcel}}" target="_blank">Assessor's Property Report Card</a> (pdf) may contain additional information about this property.</p>
   <table class="table table-condensed table-responsive">
     <tr><td>Community Development Corporation Area</td><td>{{property.cdc|title}}</td></tr>
     <tr><td>Quiet Title Completed</td><td>{{property.quiet_title_complete|yesno|capfirst}}</td></tr>
