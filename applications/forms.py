@@ -87,7 +87,7 @@ class ApplicationForm(forms.ModelForm):
                 'Application Type',
                 Div('application_type'),
                 HTML('<div id="homestead_only_warning" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">Homesead Only</h3></div><div class="panel-body">The property you selected is only available for homestead (owner occupant) applications.</div></div>'),
-                HTML('<div id="bep_explanation" class="panel panel-warning" style="display:none"><div class="panel-heading"><h3 class="panel-title">Blight Elimination Program Sidelot Closing Delay</h3></div><div class="panel-body">This property is owned by Renew Indianapolis through the Blight Elimination Program. Per the terms of the program we will not be able to sell this property as a sidelot until January 1st, 2018. Applications are welcome and will be proccessed with a closing date after January 1st, 2018.</div></div>'),
+                HTML('<div id="bep_explanation" class="panel panel-warning" style="display:none"><div class="panel-heading"><h3 class="panel-title">Blight Elimination Program Sidelot Moratorium</h3></div><div class="panel-body">This property is owned by Renew Indianapolis through the Blight Elimination Program. The Renew Indianapolis Board of Directors decided at their September 7th, 2017 program to put a temporary moratorium on the sale of BEP lots through the sidelot program. Please check back in Spring, 2018 for an update on this program.</div></div>'),
                 css_class='well'
             ),
             Fieldset(
@@ -250,6 +250,10 @@ class ApplicationForm(forms.ModelForm):
             if property_selected is not None and property_selected.structureType != "Vacant Lot":
                 self.add_error('application_type', ValidationError(
                     'The property you have selected is not a vacant lot and hence is ineligible for our sidelot program.'))
+            if property_selected is not None and property_selected.hhf_demolition == True:
+                self.add_error('application_type', ValidationError(
+                    'This property is a BEP property and as such is not currently eligible for sale through our sidelot program.'
+                ))
 
         if Application.VACANT_LOT == application_type:
             if property_selected is not None and property_selected.structureType != "Vacant Lot":
