@@ -8,19 +8,19 @@ from property_inventory.models import Property, Zipcode, CDC, Zoning
 class PropertySearchSlimForm(forms.ModelForm):
     searchArea = forms.CharField(required=False, widget=HiddenInput())
     parcel_or_street_address = forms.CharField(required=False)
-    returnType = forms.CharField(required=False, widget=HiddenInput())
+    follow_me = forms.BooleanField(required=False, label='Show my location', widget=forms.CheckboxInput())
+
     BOOL_CHOICES = ((True, 'Yes'), (False, 'No'))
 
-    status = forms.BooleanField(required=False)
+#    status = forms.BooleanField(required=False)
 
     class Meta:
         model = Property
-        fields = [ 'vacant_lot_eligible', 'searchArea', 'zipcode', 'neighborhood']
+        fields = [ 'vacant_lot_eligible', 'searchArea', 'zipcode', 'neighborhood', 'status']
 
     def __init__(self, *args, **kwargs):
         super(PropertySearchSlimForm, self).__init__(*args, **kwargs)
         self.fields['searchArea'].widget = HiddenInput()
-        self.fields['returnType'].widget = HiddenInput()
     #    self.fields['parcel_or_street_address'].widget = HiddenInput()
         #self.fields['featured_properties_only']
         self.helper = FormHelper(self)
@@ -40,8 +40,8 @@ class PropertySearchSlimForm(forms.ModelForm):
                 Field('zipcode'),
                 Field('vacant_lot_eligible'),
                 Field('status'),
+                Field('follow_me'),
                 Field('searchArea'),
-                Field('returnType'),
                 FormActions(
                     Reset('cancel', 'Reset'),
                     Submit('submit', 'Search', css_class='top-search-button'),

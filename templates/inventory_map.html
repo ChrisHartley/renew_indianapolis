@@ -49,8 +49,14 @@
         z-index: 40;
       }
 
+      .pre-scrollable-override {
+        max-height: 90vh;
+        overflow: auto;
+      }
 
-      .sidebar { z-index: 45; }
+      .sidebar {
+        z-index: 45;
+      }
 
   /*    #layers {overflow-y: scroll;} */
       .main-row { position: relative; top: 0; }
@@ -372,7 +378,7 @@ CSS loading animation.
                <!-- body -->
                <div class="modal-body modal-full-body">
                  <table id="search_results"
-                    class="table table-condensed table-responsive">
+                    class="table table-condensed">
                   </table>
                </div>            <!-- body -->
              </div>          <!-- content -->
@@ -388,6 +394,7 @@ CSS loading animation.
       </div>
 
       <div class="row main-row">
+        <div class="full-height-parent">
         <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
           <div class="panel-group sidebar-body" id="accordion-left">
             <div class="panel panel-default">
@@ -403,10 +410,10 @@ CSS loading animation.
                 </h4>
               </div>
               <div id="layers" class="panel-collapse collapse in">
-                <div class="panel-body list-group">
+                <div class="panel-body list-group pre-scrollable pre-scrollable-override">
                   {% load crispy_forms_tags %}
                   {% crispy filter.form %}
-                  <button id="draw_clicky" class="btn" data-toggle="button" aria-pressed="false" autocomplete="off">Draw search area</button>
+        <!--          <button id="draw_clicky" class="btn" data-toggle="button" aria-pressed="false" autocomplete="off">Draw search area</button> -->
 
                 </div>
               </div>
@@ -414,6 +421,7 @@ CSS loading animation.
 
           </div>
         </div>
+      </div>
         <div id="loader" class="loader">Loading...</div>
 
         <div class="col-sm-4 col-md-6 mid"></div>
@@ -580,8 +588,8 @@ CSS loading animation.
               '<span class="badge" style="background-color:rgba(0,0,0,.7)">&nbsp;</span> Sold or Approved for Sale&nbsp;'
       });
 
-      var surplusPolygons = new ol.layer.Vector({
-          title: 'Surplus Inventory',
+      var inventoryPolygons = new ol.layer.Vector({
+          title: 'Full Inventory',
           projection: 'EPSG:4326',
           style: styleFunction,
           source: new ol.source.Vector({
@@ -668,7 +676,7 @@ CSS loading animation.
                 opacity: 1,
                 source: new ol.source.WMTS(options)
               }),
-              surplusPolygons,
+              inventoryPolygons,
               searchPolygons,
             ],
           //  overlays: [overlay],
@@ -729,12 +737,27 @@ CSS loading animation.
 /* Geolocation support section */
        var geolocation = new ol.Geolocation({
         projection: map.getView().getProjection(),
-        tracking: true,
+        tracking: false,
         trackingOptions: {
           enableHighAccuracy: true,
           maximumAge: 2000
         }
       });
+
+
+      $('#id_follow_me').change(function(){
+        if ($('#id_follow_me').is(":checked")){
+          alert("Following you...");
+          geolocation.tracking = true;
+          map.addLayer(iconLayer);
+        }
+        else{
+          alert("No following you...");
+          geolocation.tracking = false;
+          map.removeLayer(iconLayer);
+        }
+      });
+
 
       var iconStyle = new ol.style.Style({
         image: new ol.style.Icon({
@@ -756,13 +779,17 @@ CSS loading animation.
         style : iconStyle
       });
 
-    map.addLayer(iconLayer);
 
     geolocation.on('change', function() {
-       var pos = geolocation.getPosition();
-       iconFeature.setGeometry(new ol.geom.Point(pos));
-       map.getView().setCenter(pos);
-       map.getView().setZoom(18);
+      if ($('#id_follow_me').is(":checked")){
+        var pos = geolocation.getPosition();
+        alert('Location updated.');
+        console.log("Location change event fired!");
+        console.log(pos);
+        iconFeature.setGeometry(new ol.geom.Point(pos));
+        map.getView().setCenter(pos);
+        map.getView().setZoom(18);
+      }
      });
      /* End geolocation support section */
 
@@ -829,6 +856,12 @@ CSS loading animation.
                   "data": "properties.zipcode" },
                 { "title": 'Lot size (square feet)',
                   "data": "properties.area" },
+                { "title": 'Owned by Renew Indianapolis directly',
+                  "data": "properties.renew_owned",
+                    "render": function ( data, type, row, meta ) {
+                          return data == true ? 'Yes' : 'No';
+                        },
+                },
                 { "title": 'Status',
                   "data": "properties.status" },
 
@@ -839,8 +872,6 @@ CSS loading animation.
       event.preventDefault();
       searchPolygons.getSource().clear();
     //  $('#id_parcel_or_street_address').val($('#query').val()); //copy search value from top box to hidden element on form
-      $('#id_geometry_type').val('centroid'); // search results return centroids
-      $('#id_returnType').val('geojson');
       $('#id_searchArea').val('');
       $.ajax({
         url: '{% url "property_search" %}',
@@ -853,7 +884,7 @@ CSS loading animation.
           if(extent[0]!='Infinity'){
             applyInitialUIState();
             $('#modal_toggle').show();
-            map.removeLayer(surplusPolygons);
+            map.removeLayer(inventoryPolygons);
             map.getView().fit(extent, map.getSize())
             $('#search_results').DataTable().clear();
             $('#search_results').DataTable().rows.add(json.features).draw();

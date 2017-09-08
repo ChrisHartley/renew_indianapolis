@@ -58,18 +58,10 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
         queryset=Neighborhood.objects.all()
     )
 
-    AVAILABLE_CHOICE = 'A'
-    SOLD_CHOICE = 'S'
+    BOOL_CHOICES = ((False, 'No'), (True, 'Yes'))
+    status = django_filters.ChoiceFilter(method='filter_status', label='Include sold or sale pending properties', choices=BOOL_CHOICES, empty_label=None)
 
-    STATUS_CHOICES = (
-        (AVAILABLE_CHOICE,'Available'),
-        (SOLD_CHOICE,'Sold or Approved For Sale'),
-    )
 
-    BOOL_CHOICES = ((True, 'Yes'), (False, 'No'))
-    #status = django_filters.ChoiceFilter(method='filter_status', label='Limit search to...', widget=forms.RadioSelect(attrs={'class': 'radio'}), empty_label=None)
-    status =  django_filters.ChoiceFilter(widget=forms.RadioSelect(attrs={'class': 'radio'}), empty_label=None)
-    #available_only = django_filters.BooleanFilter(method='filter_available_only', label='Show only available properties')
 
     ZONING_CHOICES = (
         ('D', 'Dwelling'),
@@ -130,10 +122,10 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
         )
 
     def filter_status(self, queryset, field, value):
-        if value == self.AVAILABLE_CHOICE:
-            return queryset.filter(status__contains='Available')
-        if value == self.SOLD_CHOICE:
+        if value == 'True':
             return queryset
+        else:
+            return queryset.filter(status__contains='Available')
 
 
     def filter_searchArea(self, queryset, field, value):
