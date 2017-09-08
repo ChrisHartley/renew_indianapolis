@@ -308,10 +308,19 @@ class MDCCSVResponseMixin(object):
                 application = meeting_link.application
                 if application.application_type == application.SIDELOT:
                     price = 750 # hardcoded value for sidelots. Big trouble!
-                else:
+                    city_split = 250
+                    renew_split = 500
+                elif application.Property.price > 3500:
                     price = application.Property.price
-                city_split = round(price*Decimal('.55'))
-                renew_split = Decimal(price)-Decimal(city_split)
+                    city_split = round(price*Decimal('.55'))
+                    renew_split = Decimal(price)-Decimal(city_split)
+                elif application.Property.price == 3500.0:
+                    price = application.Property.price
+                    city_split = 1000.00
+                    renew_split = 2500.00
+                else:
+                    city_split = 0
+                    renew_split = 0
                 total = Decimal(city_split)+Decimal(renew_split)
                 if application.organization:
                     buyer = '{0} {1}, {2}'.format(application.user.first_name, application.user.last_name, application.organization.name)
