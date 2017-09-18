@@ -263,8 +263,8 @@ class Application(models.Model):
 
     def __unicode__(self):
         if self.organization:
-            return u'%s - %s - %s' % (self.user.email, self.organization.name, self.Property)
-        return u'%s - %s' % (self.user.email, self.Property)
+            return u'%s - %s - %s' % (self.organization.name, self.user.email, self.Property)
+        return u'%s %s - %s - %s' % (self.user.first_name, self.user.last_name, self.user.email, self.Property)
 
 class NeighborhoodNotification(models.Model):
     application = models.ForeignKey(Application, related_name="notification")
