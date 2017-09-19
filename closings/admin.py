@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django import forms
 from django.utils.text import slugify
-
+from datetime import date
 from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option
 from .forms import ClosingAdminForm
 from applications.models import Application, Meeting, MeetingLink
@@ -16,12 +16,30 @@ class PurchaseOptionInline(admin.TabularInline):
     readonly_fields=('closing',)
     extra = 1
 
+
+class PurchaseOptionFilter(admin.SimpleListFilter):
+    title = 'purchase option'
+    parameter_name = 'purchase_option'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('no', 'No option purchased or is expired'),
+            ('yes', 'Yes, option purchased and current'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'no':
+            return queryset.filter(Q(purchase_option__isnull=True) | Q(purchase_option__date_expiring__lt=date.today()) )
+        if self.value() == 'yes':
+            return queryset.filter(purchase_option__date_expiring__gte=date.today())
+
+
 class ClosingAdmin(admin.ModelAdmin):
 
     form = ClosingAdminForm
     list_display = ['__unicode__','title_company','date_time', 'processing_fee_paid','nsp', 'title_commitment_in_place', 'city_documents_in_place', 'ri_documents_in_place', 'title_company_documents_in_place']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
-    list_filter = ('title_company', 'closed')
+    list_filter = ('title_company', 'closed', PurchaseOptionFilter)
     readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid')
 
     inlines = [PurchaseOptionInline,]
