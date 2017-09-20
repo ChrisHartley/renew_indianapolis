@@ -76,7 +76,6 @@ function check_homestead_only_property(){
 }
 
 function check_bep_sidelot(){
-	console.log("Here we are"+$('#id_application_type').val()+' '+$('#bep_property').text() )
 	if ($('#id_application_type').val() == '3'){
 			if ( $('#bep_property').text() == 'Yes'){
 				$('#bep_explanation').show();
