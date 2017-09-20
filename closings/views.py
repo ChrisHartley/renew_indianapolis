@@ -30,8 +30,17 @@ class ProcessingFeePaymentPage(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProcessingFeePaymentPage, self).get_context_data(**kwargs)
         context['form'] = TitleCompanyChooser
-        context['creditCardFees'] = (int(self.object.amount_due)*settings.COMPANY_SETTINGS['CREDIT_CARD_PERCENTAGE_FEE'])+settings.COMPANY_SETTINGS['CREDIT_CARD_FLAT_FEE']*100
-        context['amountForStripe'] = int(int(self.object.amount_due*100)+context['creditCardFees'])
+
+        #context['creditCardFees'] = (int(self.object.amount_due)*settings.COMPANY_SETTINGS['CREDIT_CARD_PERCENTAGE_FEE'])+settings.COMPANY_SETTINGS['CREDIT_CARD_FLAT_FEE']*100
+        #context['creditCardFees'] = settings.STRIPE_FEES[self.object.amount_due]
+
+        #print context['creditCardFees'], context['amountForStripe']
+        #context['amountForStripe']
+        if self.object.amount_due == settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']:
+            context['creditCardFees'] = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_STRIPE_FEE']
+        elif self.object.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
+            context['creditCardFees'] = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_STRIPE_FEE']
+        context['amountForStripe'] = int(int(self.object.amount_due*100)+context['creditCardFees']) # $100 costs $3.30, $200 costs 6.28
         context['STRIPE_API_KEY'] = settings.STRIPE_PUBLIC_API_KEY
         context['COMPANY_SETTINGS'] = settings.COMPANY_SETTINGS
         return context
@@ -122,11 +131,14 @@ class ProcessingFeePaidPage(View):
         if request.POST.get('manual_title_company_choice') != '':
                 closing.title_company_freeform = request.POST.get('manual_title_company_choice')
         else:
-            try:
-                closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
-            except title_company.DoesNotExist as e:
-                messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
-                return HttpResponse("Invalid title company selected: {0}".format(e))
+            if request.POST.get('manual_title_company_choice') != '':
+                try:
+                    closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
+                except title_company.DoesNotExist as e:
+                    messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
+                    return HttpResponse("Invalid title company selected: {0}".format(e))
+            else:
+                closing.title_company_freeform = 'Applicant did not make a selection'
         try:
             obj.save()
             closing.save()
