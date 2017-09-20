@@ -34,19 +34,19 @@ class PropertySearchSlimForm(forms.ModelForm):
         self.helper.form_action = ''
         self.helper.layout = Layout(
                 Field('parcel_or_street_address'),
+                FormActions(
+                    Reset('cancel', 'Reset'),
+                    Submit('submit', 'Search', css_class='top-search-button'),
+                    #HTML('<button id="modal_toggle" class="btn btn-info btn-modal" data-toggle="modal" data-target="#fsModal">Show Results Table</button>'),
+                ),
                 Field('structureType'),
                 Field('zoning'),
                 Field('neighborhood'),
                 Field('zipcode'),
                 Field('vacant_lot_eligible'),
                 Field('status'),
-                Field('follow_me'),
+                #Field('follow_me'),
                 Field('searchArea'),
-                FormActions(
-                    Reset('cancel', 'Reset'),
-                    Submit('submit', 'Search', css_class='top-search-button'),
-                    HTML('<button id="modal_toggle" class="btn btn-info btn-modal" data-toggle="modal" data-target="#fsModal">Show Results Table</button>'),
-                )
         )
 
 

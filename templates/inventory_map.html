@@ -201,7 +201,17 @@ CSS loading animation.
         }
       }
 
+      /* Button to show list of search results on OL map */
+      .show-list {
+        padding:2px;
+        bottom: 4em;
+      }
 
+      .show-list-button{
+        width: auto !important;
+        padding: .3em !important;
+        z-index: 200;
+      }
     </style>
     <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -261,6 +271,7 @@ CSS loading animation.
 
   </head>
   <body>
+
     <div id="openingModal"
       class="modal animated bounceIn"
       tabindex="-1"
@@ -359,34 +370,10 @@ CSS loading animation.
 
       <div class="navbar-offset"></div>
 
-        <div id="fsModal"
-         class="modal modal-full animated bounceIn"
-         tabindex="-1"
-         role="dialog"
-         aria-labelledby="Search Results"
-         aria-hidden="true">
-         <div class="modal-dialog modal-full-dialog">
-             <!-- content -->
-             <div class="modal-content modal-full-content">
-               <!-- header -->
-               <div class="modal-header modal-full-header">
-                 <button class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
-                 <h1 class="modal-title modal-full-title">
-                   Search Results
-                 </h1>
-               </div><!-- header -->
-               <!-- body -->
-               <div class="modal-body modal-full-body">
-                 <table id="search_results"
-                    class="table table-condensed">
-                  </table>
-               </div>            <!-- body -->
-             </div>          <!-- content -->
-           </div>        <!-- dialog -->
-         </div>      <!-- modal -->
 
 
       <div id="map"></div>
+      <!-- <button id="modal_toggle" class="btn btn-info btn-modal ol-unselectable ol-control" data-toggle="modal" data-target="#fsModal">Show Results Table</button> -->
 
       <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -423,14 +410,38 @@ CSS loading animation.
         </div>
       </div>
         <div id="loader" class="loader">Loading...</div>
-
         <div class="col-sm-4 col-md-6 mid"></div>
+
       </div>
 
       <div class="mini-submenu mini-submenu-left pull-left">
         <i class="glyphicon glyphicon-filter"></i>
       </div>
-
+      <div id="fsModal"
+       class="modal modal-full animated bounceIn"
+       tabindex="-1"
+       role="dialog"
+       aria-labelledby="Search Results"
+       aria-hidden="true">
+       <div class="modal-dialog modal-full-dialog">
+           <!-- content -->
+           <div class="modal-content modal-full-content">
+             <!-- header -->
+             <div class="modal-header modal-full-header">
+               <button id='close_fsModal' class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+               <h1 class="modal-title modal-full-title">
+                 Search Results
+               </h1>
+             </div><!-- header -->
+             <!-- body -->
+             <div class="modal-body modal-full-body">
+               <table id="search_results"
+                  class="table table-condensed">
+                </table>
+             </div>            <!-- body -->
+           </div>          <!-- content -->
+         </div>        <!-- dialog -->
+       </div>      <!-- modal -->
 
     <script>
 
@@ -467,6 +478,7 @@ CSS loading animation.
 
       var parser = new ol.format.WMTSCapabilities();
       var map;
+      var ShowListButton
       proj4.defs("EPSG:2965","+proj=tmerc +lat_0=37.5 +lon_0=-85.66666666666667 +k=0.999966667 +x_0=99999.99989839978 +y_0=249999.9998983998 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft +no_defs");
 
       var styleCache = {};
@@ -521,10 +533,17 @@ CSS loading animation.
 
           if (status != 'Available'){
             //console.log(color);
-            fill_color = 'rgba(0,0,0,.1)' //clear
+            fill_color = 'rgba(0,0,0,.2)' //clear
+            width = 3
             fill = new ol.style.Fill({
               color: 'rgba(0,0,0,.1)' //clear
             });
+            stroke = new ol.style.Stroke({
+              //color: '#3399CC',
+              color: 'black',
+              width: 1.25
+            });
+
           }
 
           // If we are zoomed out then just show circle markers
@@ -561,14 +580,15 @@ CSS loading animation.
         }
         // if we are zoomed in then show the actual polygon
         else{
-          fill_color =
+          //fill_color =
           style = new ol.style.Style({
               fill: new ol.style.Fill({
                 color: fill_color,
               }),
               stroke: new ol.style.Stroke({
-                color: fill_color,
-                width: 1.25
+                color: fill_color.replace(/\.2/i, '1'),
+                lineDash: [4,4],
+                width: 4,
               }),
           });
 
@@ -666,6 +686,7 @@ CSS loading animation.
 
            });
 
+
           map = new ol.Map({
             layers: [
               // new ol.layer.Tile({
@@ -681,7 +702,7 @@ CSS loading animation.
             ],
           //  overlays: [overlay],
             target: 'map',
-            controls: ol.control.defaults({ attribution: false }).extend([attribution]),
+            controls: ol.control.defaults({ attribution: false }).extend([attribution,]),
             overlays: [overlay],
             view: new ol.View({
               center: [188266, 1659330],
@@ -708,7 +729,7 @@ CSS loading animation.
               overlay.setPosition(evt.coordinate);
               $.get('property/'+feature.get("parcel")+'/json', function(data){
                 parcel = data.features[0].properties;
-                html = '<b><a href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+'</a></b> (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel+'">'+parcel.parcel+'</a>)<br/>'+
+                html = '<b><a target="_blank" href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+'</a></b> (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel+'">'+parcel.parcel+'</a>)<br/>'+
                   '<b>Price</b>: $'+new Intl.NumberFormat().format(parcel.price)+'<br/>'+
                   '<b>Lot Area</b>: '+new Intl.NumberFormat().format(parcel.area)+' square feet<br/><b>Parcel Type</b>: '+parcel.structureType+'<br/>'+
                   '<b>Sidelot Program Eligible</b>: '+boolean_to_yesno(parcel.sidelot_eligible)+'<br/><b>Vacant Lot Program Eligible</b>: '+boolean_to_yesno(parcel.vacant_lot_eligible)+'<br/>'+
@@ -721,7 +742,7 @@ CSS loading animation.
             $.get('property/'+feature.get("parcel")+'/photos/?format=json&number=1', function(data){
               if (data.length > 0){
                 img_url = data[0].fields.image;
-                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'">'
+                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
               }
               else{
                 // or if we want a static google street view image:
@@ -733,6 +754,31 @@ CSS loading animation.
           }
         });
 
+        var button = document.createElement('button');
+        button.innerHTML = 'Show List';
+        button.className = 'show-list-button btn btn-info btn-modal'
+        button.id = 'modal_toggle'
+        button.setAttribute('data-toggle', 'modal');
+        button.setAttribute('data-target', '#fsModal');
+
+        var handleShowList = function(e) {
+            //alert('Showing the list!');
+            $('#fsModal').toggle();
+            //map.getView().setRotation(0);
+        };
+
+        button.addEventListener('click', handleShowList, false);
+
+        var element = document.createElement('div');
+        element.className = 'show-list ol-attribution ol-unselectable ol-control';
+        //data-toggle="modal" data-target="#fsModal"
+
+        element.appendChild(button);
+
+        ShowListButton = new ol.control.Control({
+            element: element
+        });
+      //  map.addControl(ShowListButton);
 
 /* Geolocation support section */
        var geolocation = new ol.Geolocation({
@@ -744,7 +790,6 @@ CSS loading animation.
         }
       });
 
-
       $('#id_follow_me').change(function(){
         if ($('#id_follow_me').is(":checked")){
           alert("Following you...");
@@ -752,7 +797,7 @@ CSS loading animation.
           map.addLayer(iconLayer);
         }
         else{
-          alert("No following you...");
+          alert("Not following you...");
           geolocation.tracking = false;
           map.removeLayer(iconLayer);
         }
@@ -805,6 +850,13 @@ CSS loading animation.
         map.addInteraction(drawing);
 
       });
+      /* Have to do this here since the modal close button doesn't otherwise work.
+          It would be better to actually fix the issue the right way but....
+      */
+      $('#close_fsModal').on('click', function(){
+        $('#fsModal').hide();
+
+      });
     });
 
     $(window).on('load',function(){
@@ -822,6 +874,9 @@ CSS loading animation.
             responsive: {
               display: $.fn.dataTable.Responsive.display.childRow
 
+            },
+            "language": {
+                "emptyTable": "No search results, please try searching again with different options",
             },
             "scrollX": false,
             "scrollY": false,
@@ -888,6 +943,7 @@ CSS loading animation.
             map.getView().fit(extent, map.getSize())
             $('#search_results').DataTable().clear();
             $('#search_results').DataTable().rows.add(json.features).draw();
+            map.addControl(ShowListButton);
           }
           else{
             alert("No search results");
@@ -899,6 +955,7 @@ CSS loading animation.
 
       });
     });
+
 
 
     </script>
