@@ -295,6 +295,9 @@ class Meeting(models.Model):
     def __unicode__(self):
         return u'%s - %s' % (self.get_meeting_type_display(), self.meeting_date)
 
+    class Meta:
+        ordering = ['meeting_date']
+
 
 class MeetingLink(models.Model):
 
