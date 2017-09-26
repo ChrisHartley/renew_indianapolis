@@ -28,7 +28,7 @@
     <dt>Property</dt><dd>{{application.application.Property.streetAddress}}</dd>
 
     <dt>Parcel</dt><dd>{{application.application.Property.parcel}}</dd>
-    <dt>Price</dt><dd>${{application.application.Property.price}}</dd>
+    <dt>Price</dt><dd>${{application.application.Property.price|intcomma}}</dd>
     <dt>Application Type</dt><dd>{{application.application.get_application_type_display}}</dd>
     <dt>Applicant</dt><dd>{{application.application.user.first_name}} {{application.application.user.last_name}}</dd>
     {% if application.application.organization %}
