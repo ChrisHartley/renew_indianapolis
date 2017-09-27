@@ -132,13 +132,22 @@ class closing(models.Model):
 
     def save(self, *args, **kwargs):
         super(closing, self).save(*args, **kwargs)
-        if not processing_fee.objects.filter(closing=self).exists():
-            if self.application.application_type == Application.SIDELOT:
-                amount = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']
-            else:
-                amount = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']
-            fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property))
-            fee.save()
+        # we can only do fancy stuff if there is an application associated with the closing, which legacy closings don't have. so skip allt he fancy stuff in that case.
+        if self.application:
+            # create a new processing fee object with the correct price if necessary
+            if not processing_fee.objects.filter(closing=self).exists():
+                if self.application.application_type == Application.SIDELOT or self.application.application_type == Application.VACANT_LOT:
+                    amount = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']
+                else:
+                    amount = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']
+                fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property))
+                fee.save()
+
+            # Change the status of the property to 'Sold mm/dd/yyyy' based on the closing date, if it isn't already.
+            if 'Sold' not in self.application.Property.status and self.closed == True and self.date_time is not None:
+                prop = self.application.Property
+                prop.status = 'Sold {0}'.format(self.date_time.strftime('%m/%d/%Y'))
+                prop.save()
 
     def __unicode__(self):
             if self.application:
