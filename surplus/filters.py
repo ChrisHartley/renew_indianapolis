@@ -21,8 +21,8 @@ class SurplusParcelFilter(django_filters.FilterSet):
     classification = django_filters.ChoiceFilter(choices=Parcel.CLASSIFICATION_CHOICES)
     demolition_order = django_filters.BooleanFilter()
     repair_order = django_filters.BooleanFilter()
-    rc = Parcel.objects.order_by('requested_from_commissioners_date').distinct(
-        'requested_from_commissioners_date').values_list('requested_from_commissioners_date', flat=True)
+    #rc = Parcel.objects.order_by('requested_from_commissioners_date').distinct(
+    #    'requested_from_commissioners_date').values_list('requested_from_commissioners_date', flat=True)
 
     #rc_formatted = []
     #for rc_value in rc:
@@ -33,17 +33,18 @@ class SurplusParcelFilter(django_filters.FilterSet):
     #        rc_formatted.append('None')
     #rc_dates = zip(rc_formatted, rc)
     #rc_dates = zip(rc, rc)
-    rc_dates = (
-        ("2017-08-02","2017-08-02"),
-        ("2017-05-18","2017-05-18"),
-        ("2017-05-30","2017-05-30"),
-        (None, 'None')
-    )
+    # rc_dates = (
+    #     ("2017-08-02","2017-08-02"),
+    #     ("2017-05-18","2017-05-18"),
+    #     ("2017-05-30","2017-05-30"),
+    #     (None, 'None')
+    # )
 
 
     # The problem might be the choice filter rather than a date filter. Can we
     # use a date filter with multi select widget
-    requested_from_commissioners = django_filters.DateFilter(widget=Select(choices=rc_dates), lookup_expr='exact')
+    #requested_from_commissioners = django_filters.DateFilter(widget=Select(choices=rc_dates), lookup_expr='exact')
+    requested_from_commissioners = django_filters.BooleanFilter(label='Requested from the commissioners')
     #requested_from_commissioners = django_filters.ChoiceFilter(
     #    choices=rc_dates, label='Date requested from commissioners', lookup_expr='exact')
     #requested_from_commissioners = django_filters.DateFilter()

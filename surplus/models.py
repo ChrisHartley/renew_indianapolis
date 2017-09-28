@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from property_inventory.models import Property
 
 """
 ## The absurd query to populate this model from existing data:
@@ -91,6 +92,7 @@ class Parcel(models.Model):
     notes = models.CharField(max_length=2048, blank=True)
 
     requested_from_commissioners_date = models.DateField(blank=True, null=True)
+    requested_from_commissioners = models.BooleanField(default=False)
 
     END_USE_BEP = 'BEP'
     END_USE_INVENTORY = 'Inventory'
@@ -125,6 +127,11 @@ class Parcel(models.Model):
 
     geometry = models.MultiPolygonField(srid=2965)
     centroid_geometry = models.PointField(srid=2965) # compuated from geometry on save
+
+    @property
+    def parcel_in_inventory(self):
+        return Property.objects.filter(parcel=self.parcel_number).exists()
+
 
     ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
     def save(self, *args, **kwargs):
