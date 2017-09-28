@@ -21,8 +21,8 @@ class SurplusParcelFilter(django_filters.FilterSet):
     classification = django_filters.ChoiceFilter(choices=Parcel.CLASSIFICATION_CHOICES)
     demolition_order = django_filters.BooleanFilter()
     repair_order = django_filters.BooleanFilter()
-    rc = Parcel.objects.order_by('requested_from_commissioners').distinct(
-        'requested_from_commissioners').values_list('requested_from_commissioners', flat=True)
+    rc = Parcel.objects.order_by('requested_from_commissioners_date').distinct(
+        'requested_from_commissioners_date').values_list('requested_from_commissioners_date', flat=True)
 
     #rc_formatted = []
     #for rc_value in rc:

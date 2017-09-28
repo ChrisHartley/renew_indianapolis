@@ -115,7 +115,8 @@ class SurplusMapTemplateView(TemplateView):
         context['filter'] = SurplusParcelFilter
         return context
 
-
+from django.db import connection
+import pprint
 @ensure_csrf_cookie
 def searchSurplusProperties(request):
     f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500))
@@ -132,14 +133,16 @@ def searchSurplusProperties(request):
         f.qs,
         geometry_field=geom,
         srid=2965,
-    #    fields=('parcel_number', 'has_building', geom),
         fields=fields,
-    #    fields=('parcel_number','street_address', 'zipcode', 'zoning',
-    #        'township', 'has_building', 'land_value', 'improved_value',
-    #        'area', 'assessor_classification', 'classification',
-    #        'demolition_order', 'repair_order', 'interesting', 'notes', geom),
         use_natural_foreign_keys=True
     )
+    #print connection.queries[0]['sql']
+    #print f.__dict__
+    #print f.filters['requested_from_commissioners'].__dict__
+    #pp = pprint.PrettyPrinter(indent=4)
+
+    #pp.pprint(f.filters['requested_from_commissioners'].__dict__)
+    #print connection.queries
     return HttpResponse(s, content_type='application/json')
 
 @csrf_exempt

@@ -90,9 +90,38 @@ class Parcel(models.Model):
     interesting = models.NullBooleanField(default=None)
     notes = models.CharField(max_length=2048, blank=True)
 
-    requested_from_commissioners = models.DateField(blank=True, null=True)
-    previously_held_gateway_area = models.BooleanField(default=False)
+    requested_from_commissioners_date = models.DateField(blank=True, null=True)
 
+    END_USE_BEP = 'BEP'
+    END_USE_INVENTORY = 'Inventory'
+    INTENDED_END_USE = (
+        (END_USE_BEP, 'Blight Elimination Program - Demolition'),
+        (END_USE_INVENTORY, 'Inventory for re-sale'),
+    )
+    intended_end_use = models.CharField(choices=INTENDED_END_USE, blank=True, max_length=30)
+
+    COMMISSIONERS_DENY = False
+    COMMISSIONERS_ACCEPT = True
+    COMMISSIONERS_UNKNOWN = None
+
+    COMMISSIONERS_RESPONSE_CHOICES = (
+        (COMMISSIONERS_DENY, 'Denied'),
+        (COMMISSIONERS_ACCEPT, 'Accepted'),
+        (COMMISSIONERS_UNKNOWN, 'None'),
+    )
+
+    commissioners_response = models.NullBooleanField(choices=COMMISSIONERS_RESPONSE_CHOICES)
+
+    commissioners_response_note = models.CharField(blank=True, max_length=1024)
+
+    commissioners_resolution_number = models.CharField(blank=True, max_length=100)
+
+    mdc_acquire_resolution_number = models.CharField(blank=True, max_length=100)
+    mdc_acquire_resolution_date = models.DateField(blank=True, null=True)
+    mdc_dispose_resolution_number = models.CharField(blank=True, max_length=100)
+    mdc_dispose_resolution_date = models.DateField(blank=True, null=True)
+
+    previously_held_gateway_area = models.BooleanField(default=False)
 
     geometry = models.MultiPolygonField(srid=2965)
     centroid_geometry = models.PointField(srid=2965) # compuated from geometry on save
