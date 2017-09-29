@@ -13,6 +13,6 @@ class ParcelAdmin(admin.OSMGeoAdmin):
         'mdc_dispose_resolution_number', 'parcel_in_inventory',
 
         )
-
+    readonly_fields = ('parcel_in_inventory',)
 
 admin.site.register(Parcel, ParcelAdmin)
