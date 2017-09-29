@@ -255,6 +255,10 @@ class Application(models.Model):
     )
 
     staff_notes = models.CharField(blank=True, max_length=1024)
+    staff_sidelot_waiver_required = models.NullBooleanField(
+        default=None,
+        verbose_name='Staff field, if a waiver is required with the sidelot application',
+    )
     neighborhood_notification_details = models.CharField(blank=True, max_length=10240)
     neighborhood_notification_feedback = models.CharField(blank=True, max_length=10240)
 

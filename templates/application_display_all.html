@@ -28,15 +28,22 @@
     <dt>Property</dt><dd>{{application.application.Property.streetAddress}}</dd>
 
     <dt>Parcel</dt><dd>{{application.application.Property.parcel}}</dd>
+    {% if application.application.application_type == 3 or application.application.application_type == 4 %}
+    <dt>Price</dt><dd>$750.00</dd>
+    {% else %}
     <dt>Price</dt><dd>${{application.application.Property.price|intcomma}}</dd>
+    {% endif %}
     <dt>Application Type</dt><dd>{{application.application.get_application_type_display}}</dd>
+    {% if application.application.application_type == 3 %}
+    <dt>Sidelot Application Requires Waiver</dt><dd>{{application.application.staff_sidelot_waiver_required|yesno:"Yes,No,Error"}}</dd>
+    {% endif %}
     <dt>Applicant</dt><dd>{{application.application.user.first_name}} {{application.application.user.last_name}}</dd>
     {% if application.application.organization %}
       <dt>Organization</dt><dd>{{application.application.organization}}</dd>
     {% endif %}
     <dt>BEP Property</dt><dd>{{application.application.Property.hhf_demolition|yesno:"Yes,No,Error"}}</dd>
-    <dt>Sidelot Eligible</dt><dd>{{application.application.Property.sidelot_eligible|yesno:"Yes,No,Error"}}</dd>
-    <dt>Vacant Log Eligible</dt><dd>{{application.application.Property.vacant_lot_eligible|yesno:"Yes,No,Error"}}</dd>
+    <dt>Parcel is Sidelot Program eligible</dt><dd>{{application.application.Property.sidelot_eligible|yesno:"Yes,No,Error"}}</dd>
+    <dt>Parcel is Vacant Lot Program eligible</dt><dd>{{application.application.Property.vacant_lot_eligible|yesno:"Yes,No,Error"}}</dd>
     <dt>Owned by Renew Indianapolis</dt><dd>{{application.application.Property.renew_owned|yesno:"Yes,No,Error"}}</dd>
     <dt>Neighborhood</dt><dd>{{application.application.Property.neighborhood}}</dd>
     <dt>Staff Summary</dt>
@@ -44,8 +51,8 @@
        {{application.application.staff_summary}}
     </dd>
 
-    <dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.application.staff_sow_total|intcomma}}</dd>
-    <dt>Proof of Funds</dt><dd>${{application.application.staff_pof_total|intcomma}}</dd>
+    <dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.application.staff_sow_total|default:"-"|intcomma}}</dd>
+    <dt>Proof of Funds</dt><dd>${{application.application.staff_pof_total|default:"-"|intcomma}}</dd>
     <dt>Proof of Funds notes</dt><dd>{{application.application.staff_pof_description}}</dd>
     <!-- <dt>Previous Purchases from Renew Indianapolis</dt><dd>(not implemented)</dd> -->
     <dt>Neighborhood Organizations Notified<dt><dd>{{application.application.neighborhood_notification_details}}</dd>

@@ -89,7 +89,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
         }),
         ('Staff fields', {
             'classes': ('collapse',),
-            'fields': ('staff_summary','staff_notes','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen','n_notification'))
+            'fields': ('staff_summary','staff_notes','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen','staff_sidelot_waiver_required','n_notification'))
 
         })
 
