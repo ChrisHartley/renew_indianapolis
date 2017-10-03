@@ -117,6 +117,7 @@ class Parcel(models.Model):
     commissioners_response_note = models.CharField(blank=True, max_length=1024)
 
     commissioners_resolution_number = models.CharField(blank=True, max_length=100)
+    commissioners_resolution_date = models.DateField(blank=True, null=True) 
 
     mdc_acquire_resolution_number = models.CharField(blank=True, max_length=100)
     mdc_acquire_resolution_date = models.DateField(blank=True, null=True)
@@ -140,7 +141,7 @@ class Parcel(models.Model):
         super(Parcel, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s - %s' % (self.street_address, self.parcel_number)
+        return u'{0} - {1}'.format(self.street_address, self.parcel_number)
 
     def natural_key(self):
-        return u'%s - %s' % (self.street_address, self.parcel_number)
+        return u'{0} - {1}'.format(self.street_address, self.parcel_number)
