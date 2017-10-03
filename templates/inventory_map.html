@@ -128,6 +128,8 @@
         overflow: auto;
       }
 
+
+      .no-vertical-align { vertical-align: bottom;}
 /*
 CSS loading animation.
 */
@@ -377,7 +379,8 @@ CSS loading animation.
 
       <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-        <div id="popup-content"></div><span id="popup-content-image"></span>
+              <span style="display: inline-block" id="popup-content"></span>
+              <span style="display: inline-block" id="popup-content-image"></span>
       </div>
 
       <div class="row main-row">
@@ -729,7 +732,7 @@ CSS loading animation.
               overlay.setPosition(evt.coordinate);
               $.get('property/'+feature.get("parcel")+'/json', function(data){
                 parcel = data.features[0].properties;
-                html = '<b><a target="_blank" href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+'</a></b> (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel+'">'+parcel.parcel+'</a>)<br/>'+
+                html = '<b><a target="_blank" href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+' ('+parcel.parcel+')</a></b><br/>'+
                   '<b>Price</b>: $'+new Intl.NumberFormat().format(parcel.price)+'<br/>'+
                   '<b>Lot Area</b>: '+new Intl.NumberFormat().format(parcel.area)+' square feet<br/><b>Parcel Type</b>: '+parcel.structureType+'<br/>'+
                   '<b>Sidelot Program Eligible</b>: '+boolean_to_yesno(parcel.sidelot_eligible)+'<br/><b>Vacant Lot Program Eligible</b>: '+boolean_to_yesno(parcel.vacant_lot_eligible)+'<br/>'+
@@ -742,12 +745,14 @@ CSS loading animation.
             $.get('property/'+feature.get("parcel")+'/photos/?format=json&number=1', function(data){
               if (data.length > 0){
                 img_url = data[0].fields.image;
-                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
+//                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
+
+                img_object = '<img class="img-rounded no-vertical-align" width="200" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
               }
               else{
                 // or if we want a static google street view image:
                 //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
-                img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small> <iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="250">';
+                img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small><br/><iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="429">';
               }
               $('#popup-content-image').html(img_object);
             });
