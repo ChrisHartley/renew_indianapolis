@@ -334,6 +334,10 @@ class MDCCSVResponseMixin(object):
                     price = application.Property.price
                     city_split = 1000.00
                     renew_split = 2500.00
+                elif application.Property.price == 750.0:
+                    price = application.Property.price
+                    city_split = 250.00
+                    renew_split = 500.00
                 else:
                     city_split = 0
                     renew_split = 0
