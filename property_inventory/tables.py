@@ -19,8 +19,6 @@ class reviewPendingStatusTable(TableReport):
         fields = ("parcel", "streetAddress", "zipcode",
                   "structureType",)
 
-
-
 class PropertySearchTable(TableReport):
 
     class Meta:
