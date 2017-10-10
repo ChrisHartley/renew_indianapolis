@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from property_inventory.models import Property
+from photos.models import photo
 
 """
 ## The absurd query to populate this model from existing data:
@@ -117,7 +118,7 @@ class Parcel(models.Model):
     commissioners_response_note = models.CharField(blank=True, max_length=1024)
 
     commissioners_resolution_number = models.CharField(blank=True, max_length=100)
-    commissioners_resolution_date = models.DateField(blank=True, null=True) 
+    commissioners_resolution_date = models.DateField(blank=True, null=True)
 
     mdc_acquire_resolution_number = models.CharField(blank=True, max_length=100)
     mdc_acquire_resolution_date = models.DateField(blank=True, null=True)
@@ -132,6 +133,10 @@ class Parcel(models.Model):
     @property
     def parcel_in_inventory(self):
         return Property.objects.filter(parcel=self.parcel_number).exists()
+
+    @property
+    def number_of_pictures(self):
+        return photo.objects.filter(prop__parcel=self.parcel_number).count()
 
 
     ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
