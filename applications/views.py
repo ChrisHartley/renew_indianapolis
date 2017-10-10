@@ -35,11 +35,27 @@ from django.utils.text import slugify
 
 from django.views.generic import DetailView, View
 
-def determine_next_date():
-    next_deadline = datetime.date(2007, 1, 1)
-    next_meeting = datetime.date(2007, 1, 1)
+import datetime
+from dateutil.rrule import *
+from dateutil.relativedelta import *
+
+def determine_next_deadline_date():
+    next_deadline = datetime.date(2017, 1, 1)
+    next_meeting = datetime.date(2017, 1, 1)
     i = 0
     while (next_deadline <= datetime.date.today()):
+        start = datetime.date.today()+relativedelta(days=i)
+        next_meeting = rrule(MONTHLY, count=1, byweekday=TH(4), dtstart=start)[0].date()
+        next_deadline = next_meeting-relativedelta(weekday=FR(-3))
+        i=i+1
+    return [next_meeting, next_deadline]
+
+
+def determine_next_meeting_date():
+    next_deadline = datetime.date(2007, 1, 1)
+    next_meeting = datetime.date(2017, 1, 1)
+    i = 0
+    while (next_meeting <= datetime.date.today()):
         start = datetime.date.today()+relativedelta(days=i)
         next_meeting = rrule(MONTHLY, count=1, byweekday=TH(4), dtstart=start)[0].date()
         next_deadline = next_meeting-relativedelta(weekday=FR(-3))
@@ -134,8 +150,8 @@ def process_application(request, action, id=None):
         'uploaded_files_all': uploaded_files_all,
         'title': 'application',
         'COMPANY_SETTINGS': settings.COMPANY_SETTINGS,
-        'next_deadline': determine_next_date()[1],
-        'next_meeting': determine_next_date()[0],
+        'next_deadline': determine_next_deadline_date()[1],
+        'next_meeting': determine_next_deadline_date()[0],
     })
 
 
@@ -338,17 +354,3 @@ class MDCSpreadsheet(MDCCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'
-
-
-from dateutil.rrule import *
-from dateutil.relativedelta import *
-import datetime
-class ShowReviewCommitteeDates(View):
-    def get(self,request, *args, **kwargs):
-        dates = determine_next_date()
-        next_meeting = dates[0]
-        next_deadline = dates[1]
-        if 'json' in self.request.GET.get('format', ''):
-            return JsonResponse({'next_deadline': next_deadline, 'next_meeting':next_meeting})
-        else:
-            return HttpResponse("Next meeting: {0}. Next deadline: {1}".format(next_meeting, next_deadline))

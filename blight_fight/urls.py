@@ -145,8 +145,6 @@ urlpatterns = [
              staff_member_required(MDCSpreadsheet.as_view()),
              name='mdc_spreadsheet'),
 
-        #url(r'meeting/get_next_review_committee/$', ShowReviewCommitteeDates.as_view()),
-
 
         url(r'meeting/price_change/view_packet/(?P<pk>[0-9]+)/$',
             staff_member_required(PriceChangeSummaryAll.as_view()),

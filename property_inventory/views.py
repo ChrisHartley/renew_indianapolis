@@ -45,7 +45,8 @@ from django.db import connection
 import datetime # used for price_change summary view
 from decimal import * # used for price_change summary view
 from applications.models import Meeting
-from applications.views import determine_next_date
+from applications.views import determine_next_meeting_date
+
 
 def get_inventory_csv(request):
     #qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
@@ -81,7 +82,7 @@ def getAddressFromParcel(request):
 # Show a table with property statuses broken down by sold, sale-approved and in-progress.
 
 def showApplications(request):
-    next_rc_meeting = determine_next_date()[0]
+    next_rc_meeting = determine_next_meeting_date()[0]
     config = RequestConfig(request)
 
     soldProperties = Property.objects.all().filter(
@@ -208,8 +209,6 @@ class InventoryMapTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(InventoryMapTemplateView, self).get_context_data(**kwargs)
         context['filter'] = PropertySearchSlimFilter
-        context['next_deadline'] = determine_next_date()[1]
-        context['next_meeting'] = determine_next_date()[0]
         return context
 
 class PropertyDetailJSONView(DetailView):
