@@ -41,6 +41,7 @@ class ProcessingFeePaymentPage(DetailView):
         elif self.object.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
             context['creditCardFees'] = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_STRIPE_FEE']
         context['amountForStripe'] = int(int(self.object.amount_due*100)+context['creditCardFees']) # $100 costs $3.30, $200 costs 6.28
+        context['display_credit_card_fee'] = '{:20,.2f}'.format(context['creditCardFees']/100.0)
         context['STRIPE_API_KEY'] = settings.STRIPE_PUBLIC_API_KEY
         context['COMPANY_SETTINGS'] = settings.COMPANY_SETTINGS
         return context
@@ -60,11 +61,14 @@ class ProcessingFeePaidPage(View):
         token = request.POST.get('stripeToken')
         amount = obj.amount_due
         stripe.api_key = settings.STRIPE_SECRET_API_KEY
-        print request.POST.get('amountForStripe')
+        if obj.amount_due == settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']:
+            credit_card_fee = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_STRIPE_FEE']
+        elif obj.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
+            credit_card_fee = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_STRIPE_FEE']
         try:
         # Use Stripe's library to make requests...
             charge = stripe.Charge.create(
-                amount=request.POST.get('amountForStripe'),
+                amount=int(int(obj.amount_due*100)+credit_card_fee), # $100 costs $3.30, $200 costs 6.28
                 currency="usd",
                 description="Processing fee - {0}".format(obj.closing.application.Property),
                 source=token,
@@ -129,16 +133,13 @@ class ProcessingFeePaidPage(View):
         obj.user = request.user
         closing = obj.closing
         if request.POST.get('manual_title_company_choice') != '':
-                closing.title_company_freeform = request.POST.get('manual_title_company_choice')
+            closing.title_company_freeform = request.POST.get('manual_title_company_choice')
         else:
-            if request.POST.get('manual_title_company_choice') != '':
-                try:
-                    closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
-                except title_company.DoesNotExist as e:
-                    messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
-                    return HttpResponse("Invalid title company selected: {0}".format(e))
-            else:
-                closing.title_company_freeform = 'Applicant did not make a selection'
+            try:
+                closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
+            except title_company.DoesNotExist as e:
+                messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
+                closing.title_company_freeform = 'Applicant did not make a selection or there was a problem with their selection.'
         try:
             obj.save()
             closing.save()
@@ -147,8 +148,8 @@ class ProcessingFeePaidPage(View):
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
             return HttpResponse("Error saving payment object: {0}".format(e))
         messages.add_message(request, messages.SUCCESS, 'Your card has been charged and our staff have been notified to proceed with your closing.')
-        pf = processing_fee.objects.get(id=kwargs['id'])
-        closing = pf.closing
+#        pf = processing_fee.objects.get(id=kwargs['id'])
+#        closing = pf.closing
         prop = closing.application.Property
         slug = slugify(prop)
         return HttpResponseRedirect(reverse('application_pay_processing_fee', kwargs={'id': kwargs['id'], 'slug': slug}))
