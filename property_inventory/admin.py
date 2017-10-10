@@ -70,7 +70,13 @@ class PropertyAdmin(admin.OSMGeoAdmin):
 
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('applications_search','view_photos')
+    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name')
+
+    def context_area_strategy(self, obj):
+        return ContextArea.objects.filter(geometry__contains=obj.geometry).first().disposition_strategy
+
+    def context_area_name(self, obj):
+        return ContextArea.objects.filter(geometry__contains=obj.geometry).first()
 
     def applications_search(self, obj):
         summary_link = '<a href="{}">{}</a>'.format(
