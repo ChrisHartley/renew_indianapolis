@@ -8,6 +8,8 @@ from django.utils.text import slugify
 import uuid
 from datetime import timedelta, date
 from django.conf import settings
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 
 class location(models.Model):
     name = models.CharField(max_length=254)
@@ -136,6 +138,14 @@ class closing(models.Model):
     ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        if self.closed == False and self.assigned_city_staff is not None and self.application and settings.SEND_CLOSING_ASSIGNMENT_EMAILS:
+            orig_closing = closing.objects.get(pk=self.pk)
+            if orig_closing.assigned_city_staff != self.assigned_city_staff:
+                subject = 'New closing assigned - {0} {1}'.format(self.application.Property, self.date_time)
+                message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://www.renewindianapolis.org/map{3}'.format(self.application.Property, self.date_time, self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
+                from_email = 'info@renewindianapolis.org'
+                send_mail(subject, message, from_email, [self.assigned_city_staff.email,])
+
         super(closing, self).save(*args, **kwargs)
         # we can only do fancy stuff if there is an application associated with the closing, which legacy closings don't have. so skip allt he fancy stuff in that case.
         if self.application:
@@ -153,6 +163,7 @@ class closing(models.Model):
                 prop = self.application.Property
                 prop.status = 'Sold {0}'.format(self.date_time.strftime('%m/%d/%Y'))
                 prop.save()
+
 
     def __unicode__(self):
             if self.application:

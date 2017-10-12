@@ -16,3 +16,6 @@ class ClosingAdminForm(ModelForm):
             raise ValidationError("Please select either an application or a property")
         # Always return the full collection of cleaned data.
         return cleaned_data
+
+class ClosingScheduleAdminForm(ModelForm):
+    pass

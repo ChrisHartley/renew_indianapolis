@@ -1,12 +1,12 @@
 from django.contrib import admin
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django import forms
 from django.utils.text import slugify
 from datetime import date
 from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy
-from .forms import ClosingAdminForm
+from .forms import ClosingAdminForm, ClosingScheduleAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property
 
@@ -156,11 +156,13 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     list_filter = ['assigned_city_staff']
     readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'closed')
     fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'city_sales_disclosure_form', 'closed')
-    ordering = ('-date_time',)
-
+    form = ClosingScheduleAdminForm
 
     inlines = []
 
+    def get_queryset(self, request):
+            qs = super(ClosingScheduleViewAdmin, self).get_queryset(request)
+            return qs.order_by(F('date_time').desc(nulls_last=True))
     def city_sales_disclosure_in_place(self, obj):
         return obj.city_sales_disclosure_form == True
     city_sales_disclosure_in_place.boolean = True
@@ -172,7 +174,6 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
         else:
             return False
     all_documents_in_place.boolean = True
-
 
 
 admin.site.register(purchase_option)

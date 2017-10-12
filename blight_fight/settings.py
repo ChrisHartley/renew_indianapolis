@@ -212,7 +212,10 @@ COMPANY_SETTINGS = {
     'STANDARD_PROCESSING_STRIPE_FEE': 628,
 }
 
+# This setting determins if property inquiries are allowed to be submitted
 PROPERTY_INQUIRIES_ENABLED = True
+# This setting sets if closing assignment notification emails are sent to city employees
+SEND_CLOSING_ASSIGNMENT_EMAILS = True
 
 # Production settings are kept in a separate file, settings_production.py
 # which overrides db, email, secret key, etc with production values
