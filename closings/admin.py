@@ -162,7 +162,7 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
 
     def get_queryset(self, request):
         qs = super(ClosingScheduleViewAdmin, self).get_queryset(request)
-        return qs.order_by(F('date_time').desc(nulls_last=True))
+        return qs.filter(application__Property__renew_owned=False).order_by(F('date_time').desc(nulls_last=True))
 
     def city_sales_disclosure_in_place(self, obj):
         return obj.city_sales_disclosure_form == True
