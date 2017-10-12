@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 import uuid
 from datetime import timedelta, date
+from django.conf import settings
 
 class location(models.Model):
     name = models.CharField(max_length=254)
@@ -125,6 +126,10 @@ class closing(models.Model):
     nsp_convenants = models.FileField(upload_to=save_location, blank=True, null=True)
     project_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     assignment_and_assumption_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
+    signed_purchase_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
+    renew_sales_disclosure_form = models.FileField(upload_to=save_location, blank=True, null=True)
+    city_sales_disclosure_form = models.FileField(upload_to=save_location, blank=True, null=True)
+    assigned_city_staff = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, limit_choices_to={'groups__name__in': ["City Staff",]})
     closed = models.BooleanField(default=False, help_text="Has this transaction been completed?")
     notes = models.CharField(max_length=2048, blank=True, help_text="Internal notes")
     city_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for the City of Indianapolis", blank=True, null=True)
@@ -156,3 +161,8 @@ class closing(models.Model):
                 return u'{0} - {1} {2}'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name)
             else:
                 return u'{0} - {1}'.format(self.prop, "Legacy Application")
+
+class closing_proxy(closing):
+    class Meta:
+        proxy = True
+        verbose_name = 'Closing Scheduling'

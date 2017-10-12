@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django import forms
 from django.utils.text import slugify
 from datetime import date
-from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option
+from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy
 from .forms import ClosingAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property
@@ -32,7 +32,6 @@ class PurchaseOptionFilter(admin.SimpleListFilter):
             return queryset.filter(Q(purchase_option__isnull=True) | Q(purchase_option__date_expiring__lt=date.today()) )
         if self.value() == 'yes':
             return queryset.filter(purchase_option__date_expiring__gte=date.today())
-
 
 class ClosingAdmin(admin.ModelAdmin):
 
@@ -150,10 +149,37 @@ class ClosingAdmin(admin.ModelAdmin):
                 "Download"
             ))
 
+
+class ClosingScheduleViewAdmin(ClosingAdmin):
+    model = closing_proxy
+    list_display = ['application', 'date_time', 'assigned_city_staff', 'title_company', 'title_commitment_in_place', 'all_documents_in_place', 'city_sales_disclosure_in_place']
+    list_filter = ['assigned_city_staff']
+    readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'closed')
+    fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'city_sales_disclosure_form', 'closed')
+    ordering = ('-date_time',)
+
+
+    inlines = []
+
+    def city_sales_disclosure_in_place(self, obj):
+        return obj.city_sales_disclosure_form == True
+    city_sales_disclosure_in_place.boolean = True
+
+    def all_documents_in_place(self, obj):
+        file_fields_to_check = [obj.deed, obj.ri_deed, obj.project_agreement, obj.assignment_and_assumption_agreement, obj.signed_purchase_agreement]
+        if all(file_fields_to_check):
+            return True
+        else:
+            return False
+    all_documents_in_place.boolean = True
+
+
+
 admin.site.register(purchase_option)
 admin.site.register(location)
 admin.site.register(company_contact)
 admin.site.register(mailing_address)
 admin.site.register(title_company)
 admin.site.register(closing, ClosingAdmin)
+admin.site.register(closing_proxy, ClosingScheduleViewAdmin)
 admin.site.register(processing_fee)
