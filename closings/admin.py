@@ -154,8 +154,8 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     model = closing_proxy
     list_display = ['application', 'date_time', 'assigned_city_staff', 'title_company', 'title_commitment_in_place', 'all_documents_in_place', 'city_sales_disclosure_in_place']
     list_filter = ['assigned_city_staff', 'closed', PurchaseOptionFilter]
-    readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'closed')
-    fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'city_sales_disclosure_form', 'closed')
+    readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'closed')
+    fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'city_sales_disclosure_form', 'closed')
     form = ClosingScheduleAdminForm
 
     inlines = []
@@ -167,6 +167,21 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     def city_sales_disclosure_in_place(self, obj):
         return obj.city_sales_disclosure_form == True
     city_sales_disclosure_in_place.boolean = True
+
+
+    def deed_in_place(self, obj):
+        return obj.deed is not None
+    deed_in_place.boolean = True
+
+    def project_agreement_in_place(self, obj):
+        return obj.project_agreement is not None
+    project_agreement_in_place.boolean = True
+
+    def assignment_and_assumption_agreement_in_place(self, obj):
+        return obj.assignment_and_assumption_agreement is not None
+    assignment_and_assumption_agreement_in_place.boolean = True
+
+
 
     def all_documents_in_place(self, obj):
         file_fields_to_check = [obj.deed, obj.ri_deed, obj.project_agreement, obj.assignment_and_assumption_agreement]
