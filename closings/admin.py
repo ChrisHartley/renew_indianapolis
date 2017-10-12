@@ -153,7 +153,7 @@ class ClosingAdmin(admin.ModelAdmin):
 class ClosingScheduleViewAdmin(ClosingAdmin):
     model = closing_proxy
     list_display = ['application', 'date_time', 'assigned_city_staff', 'title_company', 'title_commitment_in_place', 'all_documents_in_place', 'city_sales_disclosure_in_place']
-    list_filter = ['assigned_city_staff']
+    list_filter = ['assigned_city_staff', 'closed']
     readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'closed')
     fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed','project_agreement', 'assignment_and_assumption_agreement', 'city_sales_disclosure_form', 'closed')
     form = ClosingScheduleAdminForm
@@ -168,7 +168,7 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     city_sales_disclosure_in_place.boolean = True
 
     def all_documents_in_place(self, obj):
-        file_fields_to_check = [obj.deed, obj.ri_deed, obj.project_agreement, obj.assignment_and_assumption_agreement, obj.signed_purchase_agreement]
+        file_fields_to_check = [obj.deed, obj.ri_deed, obj.project_agreement, obj.assignment_and_assumption_agreement]
         if all(file_fields_to_check):
             return True
         else:
