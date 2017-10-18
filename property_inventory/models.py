@@ -47,6 +47,9 @@ class Neighborhood(Overlay):
 class ContextArea(Overlay):
     disposition_strategy = models.CharField(max_length=50)
 
+class MVAClassifcation(Overlay):
+    mva_cat = models.CharField(max_length=10)
+
 ### The Property model is the heart of blight_fight. A Property is a parcel of land with a unique identifier, the
 ### parcel number. It has various attributes, including geometry, and can fall within a Overlay geometry (above).
 ###
@@ -111,6 +114,8 @@ class Property(models.Model):
         verbose_name="Property was demolished through Hardest Hit Funds/Blight Elimination Program")
     vacant_lot_eligible = models.BooleanField(default=False, help_text="Property is eligible for sale through the vacant lot program.")
     #slug = AutoSlugField(always_update=True, unique=True, populate_from=lambda instance: instance.streetAddress + instance.parcel)
+
+    acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired')
 
     class Meta:
         verbose_name_plural = "properties"

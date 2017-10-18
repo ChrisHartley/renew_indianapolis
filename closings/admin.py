@@ -160,6 +160,7 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
 
     inlines = []
 
+    # This admin view is used by city employees so it shows a limited about of information and only properties owned by the city.
     def get_queryset(self, request):
         qs = super(ClosingScheduleViewAdmin, self).get_queryset(request)
         return qs.filter(application__Property__renew_owned=False).order_by(F('date_time').desc(nulls_last=True))
@@ -167,7 +168,6 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     def city_sales_disclosure_in_place(self, obj):
         return obj.city_sales_disclosure_form == True
     city_sales_disclosure_in_place.boolean = True
-
 
     def deed_in_place(self, obj):
         return obj.deed is not None
@@ -180,8 +180,6 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     def assignment_and_assumption_agreement_in_place(self, obj):
         return obj.assignment_and_assumption_agreement is not None
     assignment_and_assumption_agreement_in_place.boolean = True
-
-
 
     def all_documents_in_place(self, obj):
         file_fields_to_check = [obj.deed, obj.ri_deed, obj.project_agreement, obj.assignment_and_assumption_agreement]
