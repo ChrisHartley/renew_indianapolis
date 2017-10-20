@@ -144,7 +144,7 @@ class closing(models.Model):
                 subject = 'New closing assigned - {0} {1}'.format(self.application.Property, self.date_time)
                 message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://www.renewindianapolis.org/map{3}'.format(self.application.Property, self.date_time, self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
                 from_email = 'info@renewindianapolis.org'
-                send_mail(subject, message, from_email, [self.assigned_city_staff.email,])
+                send_mail(subject, message, from_email, [self.assigned_city_staff.email,settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']])
 
         super(closing, self).save(*args, **kwargs)
         # we can only do fancy stuff if there is an application associated with the closing, which legacy closings don't have. so skip allt he fancy stuff in that case.
@@ -177,3 +177,14 @@ class closing_proxy(closing):
     class Meta:
         proxy = True
         verbose_name = 'Closing Scheduling'
+
+
+class project_agreement(models.Model):
+    prop = models.ForeignKey(Property)
+    start_date = models.DateField(null=False, blank=False, help_text='When the Project Agreement begins, either at closing or upon assumption')
+    expiration_date = models.DateField(null=False, blank=False)
+
+class release_inspection(models.Model):
+    prop = models.ForeignKey
+    user = models.ForeignKey(User)
+    created = models.DateTimeField()
