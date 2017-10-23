@@ -33,12 +33,29 @@ class PurchaseOptionFilter(admin.SimpleListFilter):
         if self.value() == 'yes':
             return queryset.filter(purchase_option__date_expiring__gte=date.today())
 
+class ProccessingFeePaidFilter(admin.SimpleListFilter):
+    title = 'processing fee paid'
+    parameter_name = 'processing_fee_payment'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('no', 'No, processing fee not paid'),
+            ('yes', 'Yes, prcessing fee paid'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'no':
+            return queryset.filter(processing_fee__paid__exact=False)
+        if self.value() == 'yes':
+            return queryset.filter(processing_fee__paid__exact=True)
+
+
 class ClosingAdmin(admin.ModelAdmin):
 
     form = ClosingAdminForm
     list_display = ['__unicode__','title_company','date_time', 'processing_fee_paid', 'city_documents_in_place', 'ri_documents_in_place', 'title_commitment_in_place', 'title_company_documents_in_place']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
-    list_filter = ('title_company', 'closed', PurchaseOptionFilter)
+    list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter)
     readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid')
 
     inlines = [PurchaseOptionInline,]
