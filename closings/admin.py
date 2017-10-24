@@ -183,8 +183,16 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
         return qs.filter(application__Property__renew_owned=False).order_by(F('date_time').desc(nulls_last=True))
 
     def city_sales_disclosure_in_place(self, obj):
-        return obj.city_sales_disclosure_form is not None
+#        return obj.city_sales_disclosure_form is not None
+        file_fields_to_check = [ obj.city_sales_disclosure_form ]
+        if all(file_fields_to_check):
+            return True
+        else:
+            return False
     city_sales_disclosure_in_place.boolean = True
+
+
+
 
     def deed_in_place(self, obj):
         return obj.deed is not None
