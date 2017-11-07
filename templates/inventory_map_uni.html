@@ -448,6 +448,14 @@ CSS loading animation.
   		return "Yes"
   	return "No"
   }
+
+  function surplus_classification(integer){
+    if (integer=='1') return 'Tax sale unsold, 120 day redemption period'
+    if (integer=='2') return 'Regular surplus'
+    if (integer=='3') return 'Former surplus'
+    return "Unknown status"
+
+  }
   /* thanks https://gist.github.com/eek/9c4887e80b3ede05c0e39fee4dce3747 */
   function slugify(text) {
     return text.toString().toLowerCase().trim()
@@ -964,7 +972,7 @@ CSS loading animation.
             $.get('/map/surplus/property/'+feature.get("parcel_number"), function(data){
               parcel = data.features[0].properties;
               html = '<b><a target="_blank" href="/map/property/'+parcel.parcel_number+','+slugify(parcel.street_address)+'/">'+parcel.street_address+' ('+parcel.parcel_number+')</a></b><br/>'+
-                '<b>Property Source</b>: '+parcel.classification+'<br/>'+
+                '<b>Property Source</b>: '+surplus_classification(parcel.classification)+'<br/>'+
                 '<b>Notes</b>: '+parcel.notes+'<br/>'+
                 '<b>Interesting</b>: '+boolean_to_yesno(parcel.interesting)+'<br/>'
               $('#popup-content').html(html);
@@ -1160,7 +1168,7 @@ CSS loading animation.
     });
 
     $(window).on('load',function(){
-         $('#openingModal').modal('show');
+    //     $('#openingModal').modal('show');
      });
 
     var geojson_format = new ol.format.GeoJSON()
