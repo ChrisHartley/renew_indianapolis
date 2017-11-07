@@ -912,7 +912,13 @@ CSS loading animation.
                 return feature;
               });
 
-            if (feature) {
+              var layer = map.forEachFeatureAtPixel(evt.pixel,
+                function(feature, layer) {
+                  return layer;
+                });
+              console.log(layer)
+
+            if (feature && layer.get('title') == 'BEP Lot Inventory') {
             //  console.log(feature);
               $('#popup-content').empty();
               $('#filter').empty();
@@ -948,6 +954,69 @@ CSS loading animation.
               $('#popup-content-image').html(img_object);
             });
           }
+
+          if (feature && layer.get('title') == 'Surplus Inventory') {
+            console.log(feature);
+            $('#popup-content').empty();
+            $('#filter').empty();
+            $('#popup-content-image').empty();
+            overlay.setPosition(evt.coordinate);
+            $.get('/map/surplus/property/'+feature.get("parcel_number"), function(data){
+              parcel = data.features[0].properties;
+              html = '<b><a target="_blank" href="/map/property/'+parcel.parcel_number+','+slugify(parcel.street_address)+'/">'+parcel.street_address+' ('+parcel.parcel_number+')</a></b><br/>'+
+                '<b>Property Source</b>: '+parcel.classification+'<br/>'+
+                '<b>Notes</b>: '+parcel.notes+'<br/>'+
+                '<b>Interesting</b>: '+boolean_to_yesno(parcel.interesting)+'<br/>'
+              $('#popup-content').html(html);
+          });
+          $.get('/map/property/'+feature.get("parcel_number")+'/photos/?format=json&number=1', function(data){
+            if (data.length > 0){
+              img_url = data[0].fields.image;
+//                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
+
+              img_object = '<img class="img-rounded no-vertical-align" width="200" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
+            }
+            else{
+              // or if we want a static google street view image:
+              //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
+              img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small><br/><iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="429">';
+            }
+            $('#popup-content-image').html(img_object);
+          });
+        }
+
+        if (feature && layer.get('title') == 'Renew Inventory') {
+          console.log(feature);
+          $('#popup-content').empty();
+          $('#filter').empty();
+          $('#popup-content-image').empty();
+          overlay.setPosition(evt.coordinate);
+          $.get('/map/property/'+feature.get("parcel")+'/json', function(data){
+            parcel = data.features[0].properties;
+            html = '<b><a target="_blank" href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+' ('+parcel.parcel+')</a></b><br/>'+
+              '<b>Structure Type</b>: '+parcel.structureType+'<br/>'+
+              '<b>Status</b>: '+parcel.status+'<br/>'+
+              '<b>Applicant</b>: '+parcel.applicant+'<br/>'
+            $('#popup-content').html(html);
+        });
+        $.get('/map/property/'+feature.get("parcel")+'/photos/?format=json&number=1', function(data){
+          if (data.length > 0){
+            img_url = data[0].fields.image;
+//                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
+
+            img_object = '<img class="img-rounded no-vertical-align" width="200" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
+          }
+          else{
+            // or if we want a static google street view image:
+            //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
+            img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small><br/><iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="429">';
+          }
+          $('#popup-content-image').html(img_object);
+        });
+      }
+
+
+
         });
 
         var button = document.createElement('button');
