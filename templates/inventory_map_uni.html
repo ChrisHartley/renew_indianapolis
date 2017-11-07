@@ -918,7 +918,7 @@ CSS loading animation.
               $('#filter').empty();
               $('#popup-content-image').empty();
               overlay.setPosition(evt.coordinate);
-              $.get('/inventory_review/parcel/'+feature.get("parcel_number")+'/json', function(data){
+              $.get('/map/inventory_review/parcel/'+feature.get("parcel_number")+'/json', function(data){
                 parcel = data.features[0].properties;
                 html = '<b><a target="_blank" href="/map/property/'+parcel.parcel_number+','+slugify(parcel.street_address)+'/">'+parcel.street_address+' ('+parcel.parcel_number+')</a></b><br/>'+
                   '<b>Bid Group</b>: '+parcel.bid_group+'<br/>'+
