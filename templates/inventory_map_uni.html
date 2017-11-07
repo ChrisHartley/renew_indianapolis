@@ -473,7 +473,7 @@ CSS loading animation.
       });
 
       function update_mortgage(parcel, selectedObject){
-        $.get('/inventory_review/parcel/update/?parcel_number='+parcel+'&mortgage_decision='+selectedObject.value+'',
+        $.get('/map/inventory_review/parcel/update/?parcel_number='+parcel+'&mortgage_decision='+selectedObject.value+'',
             function(data){$('#mortgage_decision_text').text(selectedObject.value)}
           );
 
