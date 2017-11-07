@@ -74,6 +74,8 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
         method='filter_zoning',
         label='Property Zoning',
     )
+    renew_owned_properties = django_filters.MultipleChoiceFilter(choices=BOOL_CHOICES, label='Exclude Renew Owned Properties', method="filter_renew_owned_properties")
+    hhf_properties = django_filters.MultipleChoiceFilter(choices=BOOL_CHOICES, label='Exclude Hardist Hit Fund Demolition properties', method="filter_hhf_properties")
 
 
 # new vs old inventory
@@ -107,6 +109,22 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
 
             },
         }
+
+
+    def filter_hhf_properties(self, queryset, field, value):
+        if value[0] == 'True':
+            return queryset.exclude(hhf_demolition=True)
+        else:
+            return queryset
+
+
+    def filter_renew_owned_properties(self, queryset, field, value):
+        if value[0] == 'True':
+            return queryset.exclude(renew_owned=True)
+        else:
+            return queryset
+
+
 
     def filter_zoning(self, queryset, field, value):
         print value
@@ -164,6 +182,8 @@ class PropertySearchFilter(django_filters.FilterSet):
     yesno_choices = [('true', 'Yes'), ('false', 'No')]
     #featured_properties_only = django_filters.BooleanFilter(method="filter_featured_properties", label='Search only featured properties')#, widget=forms.widgets.CheckboxInput())
     featured_properties_only = django_filters.MultipleChoiceFilter(choices=yesno_choices, label='Search Featured Properties Only', method="filter_featured_properties")
+
+
 
     class Meta:
         model = Property

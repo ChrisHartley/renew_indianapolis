@@ -9,6 +9,8 @@ from django.forms import Textarea
 from django.urls import NoReverseMatch
 from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property
 from applications.admin import PriceChangeMeetingLinkInline
+from property_inquiry.models import propertyInquiry
+import datetime
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'
@@ -70,7 +72,7 @@ class PropertyAdmin(admin.OSMGeoAdmin):
 
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name')
+    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries')
 
     def context_area_strategy(self, obj):
         return ContextArea.objects.filter(geometry__contains=obj.geometry).first().disposition_strategy
@@ -82,6 +84,16 @@ class PropertyAdmin(admin.OSMGeoAdmin):
         summary_link = '<a href="{}">{}</a>'.format(
             reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.parcel,), "View Applications")
         return mark_safe(summary_link)
+
+    def number_of_inquiries(self, obj):
+        inquiries = {}
+        for duration in (30,60,90,180):
+            end_day = datetime.date.today()
+            start_day = end_day - datetime.timedelta(duration)
+            inquiries['previous {0} days'.format(duration,)] = propertyInquiry.objects.filter(Property=obj).filter(timestamp__range=(start_day, end_day)).count()
+        inquiries['all time'] = propertyInquiry.objects.filter(Property=obj).count()
+        return inquiries
+        #return propertyInquiry.objects.filter(Property__exact=obj).count()
 
     def view_photos(self, obj):
         photo_page_link = '<a href="{}">{}</a>'.format(

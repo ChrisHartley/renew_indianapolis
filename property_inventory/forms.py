@@ -10,8 +10,7 @@ class PropertySearchSlimForm(forms.ModelForm):
     parcel_or_street_address = forms.CharField(required=False)
     follow_me = forms.BooleanField(required=False, label='Show my location', widget=forms.CheckboxInput())
 
-    BOOL_CHOICES = ((True, 'Yes'), (False, 'No'))
-
+    
 #    status = forms.BooleanField(required=False)
 
     class Meta:
@@ -45,6 +44,7 @@ class PropertySearchSlimForm(forms.ModelForm):
                 Field('zipcode'),
                 Field('vacant_lot_eligible'),
                 Field('status'),
+                Field('renew_owned_properties'),
                 #Field('follow_me'),
                 Field('searchArea'),
         )

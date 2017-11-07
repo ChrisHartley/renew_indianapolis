@@ -345,7 +345,7 @@ CSS loading animation.
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Download <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="{% url 'inventory_download' %}">Download full list as csv</a></li>
+                  <li><a href="{% url 'inventory_review_csv' %}">Download full list as csv</a></li>
                   <!-- <li><a href="#">Another action</a></li>
                   <li><a href="#">Something else here</a></li>
                   <li class="divider"></li>
@@ -371,6 +371,9 @@ CSS loading animation.
       <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
               <span style="display: inline-block" id="popup-content"></span>
+              <form action="" method="POST" id="updateForm"/>
+              <span id='filter'></span>
+              </form>
               <span style="display: inline-block" id="popup-content-image"></span>
       </div>
 
@@ -469,6 +472,12 @@ CSS loading animation.
         $loading.hide();
       });
 
+      function update_mortgage(parcel, selectedObject){
+        $.get('/inventory_review/parcel/update/?parcel_number='+parcel+'&mortgage_decision='+selectedObject.value+'',
+            function(data){$('#mortgage_decision_text').text(selectedObject.value)}
+          );
+
+      }
 
       var parser = new ol.format.WMTSCapabilities();
       var map;
@@ -477,68 +486,38 @@ CSS loading animation.
 
       var styleCache = {};
 
-      var styleFunction = function(feature, resolution) {
+      var riInventoryStyleFunction = function(feature, resolution){
         var parcel = feature.get('parcel');
         var key = parcel.concat('-', String(resolution).split('.')[0]);
         var style = styleCache[key];
         if (!style) {
-          var structure_type;
-          structure_type = feature.get('structureType', false);
-          var status;
-          status = feature.get('status', false);
-          var icon;
-          var color;
-          var fill;
-          var stroke;
-          var fill_color;
-          if (structure_type=='Residential Dwelling'){
-            fill_color = 'rgba(255,0,0,0.4)' //red
-            fill = new ol.style.Fill({
-              color: 'rgba(255,0,0,0.4)' //red
-            });
-            stroke = new ol.style.Stroke({
-              //color: '#3399CC',
-              color: 'black',
-              width: 1.25
-            });
-          }
-          else if (structure_type=='Mixed Use Commercial'){
-            fill_color = 'rgba(0,255,0,0.4)' //green
-            fill = new ol.style.Fill({
-              color: 'rgba(0,255,0,0.4)' //green
-            });
-            stroke = new ol.style.Stroke({
-              //color: '#3399CC',
-              color: 'black',
-              width: 1.25
-            });
+          var available, status_text, structure_type, has_building
+          var fill_color
+          status_text = feature.get('status', 'error')
+          structure_type = feature.get('structureType', false)
+          if (structure_type == 'Vacant Lot' || structure_type == 'Detached Garage/Boat House'){
+            has_building = false
           }
           else{
-            fill_color = 'rgba(0,0,255,0.4)' //blue
-            fill = new ol.style.Fill({
-              color: 'rgba(0,0,255,0.4)' //blue
-            });
-            stroke = new ol.style.Stroke({
-              color: 'black',
-              width: 1.25
-            });
-            color = 'black';
+            has_building = true
+          }
+          if (status_text.substring(0,4) == 'Avai'){
+            available = true
+          }else{
+            available = false
           }
 
-          if (status != 'Available'){
-            //console.log(color);
+
+          if (available==false){
             fill_color = 'rgba(0,0,0,.2)' //clear
-            width = 3
-            fill = new ol.style.Fill({
-              color: 'rgba(0,0,0,.1)' //clear
-            });
-            stroke = new ol.style.Stroke({
-              //color: '#3399CC',
-              color: 'black',
-              width: 1.25
-            });
-
           }
+          else if (has_building==true){ // Available, building
+            fill_color = 'rgba(31,120,180,.9)' //dark blue
+          }
+          else if (has_building==false){ // Available, lot
+            fill_color = 'rgba(166,206,227,.9)' //light blue
+          }
+
 
           // If we are zoomed out then just show circle markers
           if (resolution > 3){
@@ -575,12 +554,191 @@ CSS loading animation.
         // if we are zoomed in then show the actual polygon
         else{
           //fill_color =
+          fill_color = fill_color.substring(0,fill_color.length-2)+'3)'
           style = new ol.style.Style({
               fill: new ol.style.Fill({
                 color: fill_color,
               }),
               stroke: new ol.style.Stroke({
-                color: fill_color.replace(/\.2/i, '1'),
+                color: fill_color,
+                lineDash: [4,4],
+                width: 4,
+              }),
+          });
+
+
+        }
+
+
+          styleCache[key] = style;
+          return style;
+          };
+          return styleCache[key];
+        }
+
+        var surplusInventoryStyleFunction = function(feature, resolution){
+          var parcel = feature.get('parcel_number');
+          var key = parcel.concat('-', String(resolution).split('.')[0]);
+          var style = styleCache[key];
+          if (!style) {
+            var available, status_text, structure_type, has_building
+            var fill_color
+  //          status_text = feature.get('status', 'error')
+//            structure_type = feature.get('structureType', false)
+            has_building = feature.get('has_building', false)
+            if (has_building==true){ // Available, building
+              fill_color = 'rgba(51,160,44,.9)' //dark green
+            }
+            else{ // Available, lot
+              fill_color = 'rgba(178,223,138,.9)' //light green
+            }
+
+
+            // If we are zoomed out then just show circle markers
+            if (resolution > 3){
+              style = new ol.style.Style({
+                geometry: function(feature) {
+
+                  if (feature.getGeometry().getType() === 'MultiPolygon'){
+                    return feature.getGeometry().getPolygons()[0].getInteriorPoint();
+                  }
+                  else{
+                    return feature.getGeometry().getInteriorPoint();
+                  }
+                },
+                image: new ol.style.Circle({
+                  fill: new ol.style.Fill({
+                    color: fill_color,
+                  }),
+                  stroke: new ol.style.Stroke({
+                    color: 'black',
+                    width: 1.25
+                  }),
+                  radius: 5,
+                  //imgSize: [10, 10]
+                }),
+                fill: new ol.style.Fill({
+                  color: fill_color,
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'black',
+                  width: 1.25
+                }),
+              });
+          }
+          // if we are zoomed in then show the actual polygon
+          else{
+            //fill_color =
+            fill_color = fill_color.substring(0,fill_color.length-2)+'3)'
+            style = new ol.style.Style({
+                fill: new ol.style.Fill({
+                  color: fill_color,
+                }),
+                stroke: new ol.style.Stroke({
+                  color: fill_color,
+                  lineDash: [4,4],
+                  width: 4,
+                }),
+            });
+
+
+          }
+
+
+            styleCache[key] = style;
+            return style;
+            };
+            return styleCache[key];
+          }
+
+
+
+
+      var bepStyleFunction = function(feature, resolution) {
+        //console.log(feature);
+        var parcel = feature.get('parcel_number');
+        var key = parcel.concat('-', String(resolution).split('.')[0]);
+        var style = styleCache[key];
+        if (!style) {
+          var property_type, has_building, bid_group
+          property_type = feature.get('property_type', false);
+          has_building = feature.get('has_building', false);
+          bid_group = feature.get('bid_group', false);
+          var status;
+          status = feature.get('status', false);
+          var icon;
+          var color;
+          var fill;
+          var stroke;
+          var fill_color;
+          if (property_type=='1' && has_building==true){ // Surplus, building
+            fill_color = 'rgba(51,160,44,.9)' //dark green
+          }
+          else if (property_type=='1' && has_building==false){ // Surplus, lot
+            fill_color = 'rgba(178,223,138,.9)' //light green
+          }
+          else if (property_type=='2' && has_building==true){ // RI Inventory, building
+            fill_color = 'rgba(31,120,180,.9)' // dark blue
+          }
+          else if (property_type=='2' && has_building==false){ // RI Inventory, lot
+            fill_color = 'rgba(166,206,227,.9)' // light blue
+          }
+          else if (property_type=='3' && bid_group < 5.0){ // BEP, building
+            fill_color = 'rgba(227,26,28,.9)' // dark red
+          }
+          else if (property_type=='3' && bid_group >=5.0){ // BEP, lot
+            fill_color = 'rgba(251,154,153,.9)' // light red
+          }
+
+
+          if (status != '1'){
+            //console.log(color);
+            fill_color.replace(/\.2/i, '.2');
+            //fill_color = 'rgba(0,0,0,.2)' //clear
+          }
+
+          // If we are zoomed out then just show circle markers
+          if (resolution > 3){
+            style = new ol.style.Style({
+              geometry: function(feature) {
+
+                if (feature.getGeometry().getType() === 'MultiPolygon'){
+                  return feature.getGeometry().getPolygons()[0].getInteriorPoint();
+                }
+                else{
+                  return feature.getGeometry().getInteriorPoint();
+                }
+              },
+              image: new ol.style.Circle({
+                fill: new ol.style.Fill({
+                  color: fill_color,
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'black',
+                  width: 1.25
+                }),
+                radius: 5,
+                //imgSize: [10, 10]
+              }),
+              fill: new ol.style.Fill({
+                color: fill_color,
+              }),
+              stroke: new ol.style.Stroke({
+                color: 'black',
+                width: 1.25
+              }),
+            });
+        }
+        // if we are zoomed in then show the actual polygon
+        else{
+          fill_color = fill_color.substring(0,fill_color.length-2)+'3)'
+          //fill_color = fill_color+'3)'
+          style = new ol.style.Style({
+              fill: new ol.style.Fill({
+                color: fill_color,
+              }),
+              stroke: new ol.style.Stroke({
+                color: fill_color,
                 lineDash: [4,4],
                 width: 4,
               }),
@@ -595,21 +753,55 @@ CSS loading animation.
       }
 
 
-      var legend_attribution = new ol.Attribution({
-        html: '<span class="badge" style="background-color:rgba(255,0,0,.7)">&nbsp;</span> Residential Dwelling (House)&nbsp;'+
-              '<span class="badge" style="background-color:rgba(0,255,0,.7)">&nbsp;</span> Commercial Building&nbsp;'+
-              '<span class="badge" style="background-color:rgba(0,0,255,.7)">&nbsp;</span> Vacant Lot or Detached Garage&nbsp;'+
+      var ri_attribution = new ol.Attribution({
+        html: '<span class="badge" style="background-color:rgba(31,120,180,.7)">&nbsp;</span> RI Inventory Structure&nbsp;'+
+              '<span class="badge" style="background-color:rgba(166,206,227,.7)">&nbsp;</span> RI Inventory Vacant Lot&nbsp;'+
               '<span class="badge" style="background-color:rgba(0,0,0,.7)">&nbsp;</span> Sold or Approved for Sale&nbsp;'
       });
 
-      var inventoryPolygons = new ol.layer.Vector({
-          title: 'Full Inventory',
+      var bep_attribution = new ol.Attribution({
+        html: '<span class="badge" style="background-color:rgba(227,26,28,.7)">&nbsp;</span> Bid Group 1-4&nbsp;'+
+              '<span class="badge" style="background-color:rgba(251,154,153,.7)">&nbsp;</span> Bid Group 5-8&nbsp;'
+      });
+
+      var surplus_attribution = new ol.Attribution({
+        html: '<span class="badge" style="background-color:rgba(51,160,44,.7)">&nbsp;</span> Surplus Structure&nbsp;'+
+              '<span class="badge" style="background-color:rgba(178,223,138,.7)">&nbsp;</span> Surplus Vacant Lot&nbsp;'
+      });
+
+// BEP lots
+      var bepInventoryPolygons = new ol.layer.Vector({
+          title: 'BEP Lot Inventory',
           projection: 'EPSG:4326',
-          style: styleFunction,
+          style: bepStyleFunction,
           source: new ol.source.Vector({
-            url: '{% url "property_search" %}',
+            url: '{% url "inventory_review_search" %}',
             format: new ol.format.GeoJSON(),
-            attributions: [ legend_attribution, ],
+          attributions: [ bep_attribution, ],
+          }),
+        });
+
+//       riInventoryPolygons,
+      var riInventoryPolygons = new ol.layer.Vector({
+        title: 'Renew Inventory',
+        projection: 'EPSG:4326',
+        style: riInventoryStyleFunction,
+        source: new ol.source.Vector({
+          url: '/map/property/search/?hhf_properties=True',
+          format: new ol.format.GeoJSON(),
+          attributions: [ ri_attribution, ],
+        }),
+      });
+
+//        surplusPolygons,
+      var surplusPolygons = new ol.layer.Vector({
+          title: 'Surplus Inventory',
+          projection: 'EPSG:2965',
+          style: surplusInventoryStyleFunction,
+          source: new ol.source.Vector({
+              url: '/map/surplus/search/?geometry_type=polgyon&requested_from_commissioners=False',
+              format: new ol.format.GeoJSON(),
+            attributions: [ surplus_attribution, ],
           }),
         });
 
@@ -618,10 +810,10 @@ CSS loading animation.
         title: 'Search Results',
         projection: 'EPSG:2965',
         source: new ol.source.Vector({
-          attributions: [ legend_attribution, ],
+        //  attributions: [ legend_attribution, ],
 
         }),
-        style: styleFunction
+        //style: styleFunction
       });
 
       var drawnSearchArea = new ol.layer.Vector({
@@ -692,7 +884,9 @@ CSS loading animation.
                 opacity: 1,
                 source: new ol.source.WMTS(options)
               }),
-              inventoryPolygons,
+              bepInventoryPolygons,
+              riInventoryPolygons,
+              surplusPolygons,
               searchPolygons,
             ],
           //  overlays: [overlay],
@@ -719,22 +913,27 @@ CSS loading animation.
               });
 
             if (feature) {
+            //  console.log(feature);
               $('#popup-content').empty();
+              $('#filter').empty();
               $('#popup-content-image').empty();
               overlay.setPosition(evt.coordinate);
-              $.get('property/'+feature.get("parcel")+'/json', function(data){
+              $.get('/inventory_review/parcel/'+feature.get("parcel_number")+'/json', function(data){
                 parcel = data.features[0].properties;
-                html = '<b><a target="_blank" href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+' ('+parcel.parcel+')</a></b><br/>'+
-                  '<b>Price</b>: $'+new Intl.NumberFormat().format(parcel.price)+'<br/>'+
-                  '<b>Lot Area</b>: '+new Intl.NumberFormat().format(parcel.area)+' square feet<br/><b>Parcel Type</b>: '+parcel.structureType+'<br/>'+
-                  '<b>Sidelot Program Eligible</b>: '+boolean_to_yesno(parcel.sidelot_eligible)+'<br/><b>Vacant Lot Program Eligible</b>: '+boolean_to_yesno(parcel.vacant_lot_eligible)+'<br/>'+
-                  '<b>Status</b>: '+parcel.status+'<br/>'
-                if (parcel.status.indexOf('Available')){
-                  html = html + '<b>Applicant</b>: '+parcel.applicant+'<br/>'
-                }
+                html = '<b><a target="_blank" href="/map/property/'+parcel.parcel_number+','+slugify(parcel.street_address)+'/">'+parcel.street_address+' ('+parcel.parcel_number+')</a></b><br/>'+
+                  '<b>Bid Group</b>: '+parcel.bid_group+'<br/>'+
+                  '<b>MVA Category</b>: '+parcel.mva_category+'<br/>'+
+                  '<b>Property Type</b>: '+parcel.property_type+'<br/>'+
+                  '<b>Mortgage decision</b>:<span id="mortgage_decision_text">'+parcel.mortgage_decision+'</span><br/>'+
+                  '<b>Flagged</b>: '+boolean_to_yesno(parcel.flagged)+'<br/>'
                 $('#popup-content').html(html);
+                var release_selected, reup_selected
+                if(parcel.mortgage_decision=='Re-up mortgage'){reup_selected='selected'}
+                if(parcel.mortgage_decision=='Let the mortgage expire'){release_selected='selected'}
+                form_html = '<select onchange="update_mortgage('+parcel.parcel_number+', this)" id="mortgage_decision"><option value=none>---</option><option value="Let the mortgage expire" '+release_selected+'>Release mortgage</option><option value="Re-up mortgage" '+reup_selected+'>Re-up mortgage</option></select>'
+                $('#filter').html(form_html);
             });
-            $.get('property/'+feature.get("parcel")+'/photos/?format=json&number=1', function(data){
+            $.get('/map/property/'+feature.get("parcel_number")+'/photos/?format=json&number=1', function(data){
               if (data.length > 0){
                 img_url = data[0].fields.image;
 //                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
@@ -764,7 +963,10 @@ CSS loading animation.
             //map.getView().setRotation(0);
         };
 
+
+
         button.addEventListener('click', handleShowList, false);
+
 
         var element = document.createElement('div');
         element.className = 'show-list ol-attribution ol-unselectable ol-control';
@@ -772,10 +974,42 @@ CSS loading animation.
 
         element.appendChild(button);
 
+        var toggle_layer = function(e){
+          var layers = map.getLayers().array_
+          for (var i = 0; i < layers.length; i++) {
+              if (layers[i].get('title') == this.name){
+                 layers[i].setVisible(this.checked)
+              }
+          }
+          //this.name).setVisible(this.checked);
+          //bepInventoryPolygons.setVisible(this.checked);
+        };
+
+        layers = map.getLayers().array_
+        for (var i = 0; i < layers.length; i++) {
+          if (layers[i].get('title')){
+            var toggle = document.createElement('input');
+            toggle.type = 'checkbox'
+            toggle.name = layers[i].get('title')
+            toggle.value = layers[i].get('title')
+            toggle.checked = true
+            toggle.id = toggle.value+'_toggle_id'
+
+            var label = document.createElement('label')
+            label.htmlFor = toggle.id
+            label.appendChild(document.createTextNode('Show '+toggle.value));
+
+            element.appendChild(toggle);
+            element.appendChild(label);
+            toggle.addEventListener('click', toggle_layer, false);
+          }
+        }
+
+
         ShowListButton = new ol.control.Control({
             element: element
         });
-      //  map.addControl(ShowListButton);
+        map.addControl(ShowListButton);
 
 /* Geolocation support section */
        var geolocation = new ol.Geolocation({
@@ -852,8 +1086,8 @@ CSS loading animation.
       */
       $('#close_fsModal').on('click', function(){
         $('#fsModal').hide();
-
       });
+
     });
 
     $(window).on('load',function(){

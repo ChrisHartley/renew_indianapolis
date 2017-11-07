@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'closings',
     'photos',
     'surplus',
+    'univiewer',
     #'import_export',
     #'accella_records',
     #'debug_toolbar',

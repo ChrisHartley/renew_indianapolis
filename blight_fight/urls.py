@@ -16,8 +16,8 @@ from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, Su
 from annual_report_form.views import showAnnualReportForm
 from user_files.views import delete_uploaded_file, import_uploader, send_file
 from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage
-# from applications.views import
 
+from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 
 
 admin.site.site_header = 'Blight Fight administration'
@@ -162,10 +162,40 @@ urlpatterns = [
            process_application, name='process_application'),
         url(r'application/(?P<action>\w+)/(?P<id>[0-9]+)/$',
            process_application, name='process_application'),
+
+#from uniview.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView
+
+
+        url(r'inventory_review/search/$',
+            staff_member_required(UniPropertySearchView.as_view()),
+            name='inventory_review_search'),
+        url(r'inventory_review/parcel/(?P<parcel>[0-9]{7})/json$',
+            staff_member_required(UniParcelDetailJSONView.as_view()),
+            name='inventory_review_parcel_json'),
+        url(r'inventory_review/parcel/update/$',
+            bepUpdateFieldsFromMap,
+            ),
+        url(r'inventory_review/parcel/(?P<parcel>[0-9]{7})/update$',
+            staff_member_required(UniParcelUpdateView.as_view()),
+            name='inventory_review_parcel_update'),
+        url(r'inventory_review/map/$',
+            staff_member_required(UniMapTemplateView.as_view()),
+            name='inventory_review_map'),
+        url(r'inventory_review/parcel/download\.csv$',
+            get_uniinventory_csv,
+            name='inventory_review_csv',
+            ),
+
+
+
+
     ]
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
-    urlpatterns += [url(r'^media/(?P<path>.*)$', serve, {
-                        'document_root': settings.MEDIA_ROOT})
-                        ]
+    urlpatterns += [
+                        url(r'^media/(?P<path>.*)$', serve, {
+                            'document_root': settings.MEDIA_ROOT})
+                        #url(r'^media/(?P<category>[-\w\d]+)/(?P<filename>.*)$', meta_send_file),
+
+                    ]

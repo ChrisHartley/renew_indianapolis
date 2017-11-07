@@ -13,7 +13,10 @@ Or if using counter_book data:
 insert into surplus_parcel (parcel_number, street_address, township, zipcode,
 has_building, improved_value, land_value, assessor_classification,
 classification, demolition_order, repair_order, interesting, notes, geometry,
-centroid_geometry, area, zoning) select p.parcel_c as "parcel_number",
+centroid_geometry, area, zoning, previously_held_gateway_area,
+commissioners_resolution_number, commissioners_response_note, intended_end_use,
+ mdc_acquire_resolution_number, mdc_dispose_resolution_number,
+  requested_from_commissioners) select p.parcel_c as "parcel_number",
 p."streetAddress" as street_address, case when p.township = 'PIKE' then 1 when
 p.township = 'WAYNE' then 2 when p.township = 'DECATUR' then 3 when
 p.township = 'WASHINGTON' then 4 when p.township = 'CENTER' then 5
@@ -27,10 +30,16 @@ when p.township = 'WARREN' then 8 when p.township = 'FRANKLIN' then 9
  classification, False as demolition_order, False as repair_order, False as
  interesting, ''::character varying as notes, p.geom as geometry,
  st_centroid(p.geom) as centroid_geometry, st_area(p.geom)::int as area,
- z.label as zoning FROM parcels p left join counter_book_2017 c on
+ z.label as zoning, False as "previously_held_gateway_area",
+ '' as "commissioners_resolution_number",
+ '' as "commissioners_response_note",
+ '' as "intended_end_use",
+ '' as mdc_acquire_resolution_number,
+ '' as mdc_dispose_resolution_number,
+ False as requested_from_commissioners
+ FROM parcels p left join counter_book_2017 c on
  c.parcel_number = p.parcel_c left join zoning z on
  st_within(st_centroid(p.geom), st_setsrid(z.geom, 2965)) where p.parcel_c in()
-
 
 """
 
