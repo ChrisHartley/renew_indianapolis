@@ -16,7 +16,7 @@ from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, Su
 from annual_report_form.views import showAnnualReportForm
 from user_files.views import delete_uploaded_file, import_uploader, send_file
 from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage
-
+from property_condition.views import submitConditionReport
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 
 
@@ -185,6 +185,9 @@ urlpatterns = [
             get_uniinventory_csv,
             name='inventory_review_csv',
             ),
+        url(r'condition_report/$',
+            submitConditionReport,
+            name='inventory_review_map'),
 
 
 
