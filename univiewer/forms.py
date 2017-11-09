@@ -12,6 +12,7 @@ class UniSearchForm(forms.ModelForm):
     #geometry_type = forms.CharField()
     bid_group_cluster = forms.SelectMultiple()
 
+
     class Meta:
         model = parcel
         exclude = []
@@ -33,9 +34,12 @@ class UniSearchForm(forms.ModelForm):
         self.helper.form_action = ''
         self.helper.layout = Layout(
 
-            Field('parcel_or_street_address', css_class='input-sm'),
-            Field('mortgage_decision', css_class='input-sm'),
+            Field('parcel_or_street_address'),
+            Field('mortgage_decision'),
             Field('bid_group_filter', css_class='input-sm'),
+            Field('mva_category_filter', css_class='input-sm'),
+            Field('adjacent_homesteads_non_surplus_filter', css_class='input-sm'),
+            Field('ilp_within_quarter_mile_filter', css_class='input-sm'),
             FormActions(
                 Reset('cancel', 'Reset'),
                 Submit('submit', 'Search', css_class='top-search-button'),

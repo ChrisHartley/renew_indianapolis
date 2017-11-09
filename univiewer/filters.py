@@ -23,6 +23,21 @@ class UniSearchFilter(django_filters.FilterSet):
 
     bid_group_filter = django_filters.MultipleChoiceFilter(choices=BID_GROUP_CHOICES, method="bid_group_choice_filter", label='Bid Group')
 
+    MVA_VALUES = parcel.objects.order_by('mva_category').distinct(
+        'mva_category').values_list('mva_category', flat=True)
+    MVA_CHOICES = zip(MVA_VALUES, MVA_VALUES)
+
+    mva_category_filter = django_filters.MultipleChoiceFilter(choices=MVA_CHOICES, method="mva_category_choice_filter", label='MVA Categories')
+
+    adjacent_homesteads_non_surplus_filter = django_filters.NumericRangeFilter(widget=django_filters.widgets.RangeWidget(), label='# adjacent homesteads')
+    ilp_within_quarter_mile_filter = django_filters.NumericRangeFilter(widget=django_filters.widgets.RangeWidget(), label='# ILPs within a quarter mile')
+
+    #adjacent_homesteads_non_surplus_filter__gt = django_filters.NumberFilter(name='price', lookup_expr='gt')
+    #adjacent_homesteads_non_surplus_filter__lt = django_filters.NumberFilter(name='price', lookup_expr='lt')
+
+    def mva_category_choice_filter(self, queryset, name, value):
+        return queryset.filter(mva_category__in=value)
+
     def general_search_filter(self, queryset, name, value):
         return queryset.filter(
             Q(street_address__icontains=value) |
