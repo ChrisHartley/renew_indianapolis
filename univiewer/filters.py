@@ -1,28 +1,40 @@
 import django_filters
 from django.contrib.gis.db import models
+from django.db.models import Q
+
 from .models import market_value_analysis, parcel
 from .forms import UniSearchForm
 
 class UniSearchFilter(django_filters.FilterSet):
-    parcel_or_street_address = django_filters.CharFilter(method='filter_parcel_or_street_address', label="Street address or parcel number")
 
-    BOOL_CHOICES = ((False, 'No'), (True, 'Yes'))
-    has_building_filter = django_filters.MultipleChoiceFilter(
-        choices=BOOL_CHOICES, name='has_building', label='Parcel has improvements')
 
-    mva_area = django_filters.ModelChoiceFilter(
-         label='MVA Classification', name='mva__geometry', lookup_expr="within",
-        queryset=market_value_analysis.objects.all()
+    parcel_or_street_address = django_filters.CharFilter(method='general_search_filter', label="Street address or parcel number")
+
+
+    mortgage_decision_filter = django_filters.MultipleChoiceFilter(choices=parcel.MORTGAGE_CHOICES, lookup_expr="mortgage_decision__exact", label='Mortgage Decision')
+
+    EARLY_BID_GROUPS = 'Early Bid Groups'
+    LATE_BID_GROUPS = 'Late Bid Groups'
+    BID_GROUP_CHOICES = (
+        (EARLY_BID_GROUPS, 'Early Bid Groups (1-4)'),
+        (LATE_BID_GROUPS, 'Late Bid Groups (5-8)'),
+
     )
 
+    bid_group_filter = django_filters.MultipleChoiceFilter(choices=BID_GROUP_CHOICES, method="bid_group_choice_filter", label='Bid Group')
 
-    status = django_filters.MultipleChoiceFilter(
-        choices=parcel.STATUS_CHOICES,
-        lookup_expr="exact",
-        label="Status"
-    )
+    def general_search_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(street_address__icontains=value) |
+            Q(parcel_number__exact=value)
+        )
 
-
+    def bid_group_choice_filter(self, queryset, name, value):
+        if value[0] == self.EARLY_BID_GROUPS:
+            return queryset.filter(bid_group__regex=r'^[1-4]{1}\.')
+        if value[0] == self.LATE_BID_GROUPS:
+            return queryset.filter(bid_group__regex=r'^[5-9]{1}\.')
+        return queryset
 
     class Meta:
         model = parcel

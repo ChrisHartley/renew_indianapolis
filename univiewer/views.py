@@ -14,8 +14,7 @@ from .filters import UniSearchFilter
 
 from djqscsv import render_to_csv_response
 def get_uniinventory_csv(request):
-    #qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
-    qs = parcel.objects.all().order_by('street_address')
+    qs = parcel.objects.all().values('parcel_number','street_address', 'bid_group', 'mortgage_decision', 'mva_category', 'ilp_within_quarter_mile', 'adjacent_homesteads_non_surplus').order_by('street_address')
     return render_to_csv_response(qs)
 
 class UniParcelDetailJSONView(DetailView):
@@ -40,14 +39,14 @@ class UniPropertySearchView(ListView):
 
     def render_to_response(self, context, **response_kwargs):
         s = serialize('geojson',
-                                  parcel.objects.all(), #context['filter'].qs,
-                                  geometry_field='geometry',
-                                  srid=2965,
-                                  fields=('id', 'parcel_number', 'street_address', 'has_building', 'property_type', 'status', 'bid_group', 'mva_category'),
-                                #          'sidelot_eligible', 'vacant_lot_eligible','neighborhood', 'homestead_only', 'bep_demolition', 'quiet_title_complete',
-                                #          'urban_garden','price', 'renew_owned', 'area','price_obo', 'hhf_demolition', 'geometry'),
-                                  use_natural_foreign_keys=True
-                                  )
+          context['filter'].qs,
+          geometry_field='geometry',
+          srid=2965,
+          fields=('id', 'parcel_number', 'street_address', 'bid_group',
+            'mva_category', 'mortgage_decision', 'ilp_within_quarter_mile',
+            'adjacent_homesteads_non_surplus'),
+          use_natural_foreign_keys=True
+          )
         return HttpResponse(s, content_type='application/json')
 
 

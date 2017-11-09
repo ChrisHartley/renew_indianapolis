@@ -44,8 +44,8 @@ class parcel(models.Model):
     EXPIRE_MORTGAGE = 'Let the mortgage expire'
 
     MORTGAGE_CHOICES = (
-        (REUP_MORTGAGE,'Re-up mortgage'),
-        (EXPIRE_MORTGAGE,'Let the mortgage expire'),
+        (REUP_MORTGAGE,'Re-up mortgage, unlikely to sell'),
+        (EXPIRE_MORTGAGE,'Let the mortgage expire, sale likely'),
     )
 
     mortgage_decision = models.CharField(choices=MORTGAGE_CHOICES, null=True, max_length=100)
@@ -54,7 +54,10 @@ class parcel(models.Model):
     bid_group = models.FloatField(null=False)
     notes = models.CharField(max_length=1024, blank=True)
     flagged = models.BooleanField(default=False)
-    distance_to_ilp = models.IntegerField(null=True, blank=True)
+    ilp_within_quarter_mile = models.IntegerField(null=True, blank=True)
+    adjacent_homesteads_non_surplus = models.IntegerField(null=True, blank=True)
+
+
 
     geometry = models.MultiPolygonField(srid=2965)
 

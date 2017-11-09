@@ -591,8 +591,6 @@ CSS loading animation.
           if (!style) {
             var available, status_text, structure_type, has_building
             var fill_color
-  //          status_text = feature.get('status', 'error')
-//            structure_type = feature.get('structureType', false)
             has_building = feature.get('has_building', false)
             if (has_building==true){ // Available, building
               fill_color = 'rgba(51,160,44,.9)' //dark green
@@ -668,41 +666,18 @@ CSS loading animation.
         var key = parcel.concat('-', String(resolution).split('.')[0]);
         var style = styleCache[key];
         if (!style) {
-          var property_type, has_building, bid_group
-          property_type = feature.get('property_type', false);
-          has_building = feature.get('has_building', false);
+          var bid_group, status
           bid_group = feature.get('bid_group', false);
-          var status;
-          status = feature.get('status', false);
           var icon;
           var color;
           var fill;
           var stroke;
           var fill_color;
-          if (property_type=='1' && has_building==true){ // Surplus, building
-            fill_color = 'rgba(51,160,44,.9)' //dark green
-          }
-          else if (property_type=='1' && has_building==false){ // Surplus, lot
-            fill_color = 'rgba(178,223,138,.9)' //light green
-          }
-          else if (property_type=='2' && has_building==true){ // RI Inventory, building
-            fill_color = 'rgba(31,120,180,.9)' // dark blue
-          }
-          else if (property_type=='2' && has_building==false){ // RI Inventory, lot
-            fill_color = 'rgba(166,206,227,.9)' // light blue
-          }
-          else if (property_type=='3' && bid_group < 5.0){ // BEP, building
+          if (bid_group < 5.0){ // BEP, building
             fill_color = 'rgba(227,26,28,.9)' // dark red
           }
-          else if (property_type=='3' && bid_group >=5.0){ // BEP, lot
+          else if (bid_group >=5.0){ // BEP, lot
             fill_color = 'rgba(251,154,153,.9)' // light red
-          }
-
-
-          if (status != '1'){
-            //console.log(color);
-            fill_color.replace(/\.2/i, '.2');
-            //fill_color = 'rgba(0,0,0,.2)' //clear
           }
 
           // If we are zoomed out then just show circle markers
@@ -821,7 +796,7 @@ CSS loading animation.
         //  attributions: [ legend_attribution, ],
 
         }),
-        //style: styleFunction
+        style: bepStyleFunction,
       });
 
       var drawnSearchArea = new ol.layer.Vector({
@@ -926,7 +901,7 @@ CSS loading animation.
                 });
               console.log(layer)
 
-            if (feature && layer.get('title') == 'BEP Lot Inventory') {
+            if (feature && (layer.get('title') == 'BEP Lot Inventory' || layer.get('title') == 'Search Results' ) ) {
             //  console.log(feature);
               $('#popup-content').empty();
               $('#filter').empty();
@@ -937,7 +912,8 @@ CSS loading animation.
                 html = '<b><a target="_blank" href="/map/property/'+parcel.parcel_number+','+slugify(parcel.street_address)+'/">'+parcel.street_address+' ('+parcel.parcel_number+')</a></b><br/>'+
                   '<b>Bid Group</b>: '+parcel.bid_group+'<br/>'+
                   '<b>MVA Category</b>: '+parcel.mva_category+'<br/>'+
-                  '<b>Property Type</b>: '+parcel.property_type+'<br/>'+
+                  '<b>ILP within quarter mile</b>: '+parcel.ilp_within_quarter_mile+'<br/>'+
+                  '<b>Adjacent homesteads (excluding those in county surplus)</b>: '+parcel.adjacent_homesteads_non_surplus+'<br/>'+
                   '<b>Mortgage decision</b>:<span id="mortgage_decision_text">'+parcel.mortgage_decision+'</span><br/>'+
                   '<b>Flagged</b>: '+boolean_to_yesno(parcel.flagged)+'<br/>'
                 $('#popup-content').html(html);
@@ -1192,54 +1168,31 @@ CSS loading animation.
 
             "columns": [
                 { "title": 'Parcel Number',
-                  "data": "properties.parcel" },
+                  "data": "properties.parcel_number" },
                 { "title": 'Street Address',
-                  "data": "properties.streetAddress" },
-                { "title": 'Property Type',
-                  "data": "properties.structureType" },
-                { "title": 'Price',
-                  "data": "properties.price" },
-                { "title": 'Zoning',
-                  "data": "properties.zone" },
-                { "title": 'Sidelot Program Eligible',
-                  "data": "properties.sidelot_eligible",
-                  "render": function ( data, type, row, meta ) {
-                        return data == true ? 'Yes' : 'No';
-                      },
-                },
-                { "title": 'Vacant Lot Program Eligible',
-                  "data": "properties.vacant_lot_eligible",
-                  "render": function ( data, type, row, meta ) {
-                        return data == true ? 'Yes' : 'No';
-                      },
-                },
-                { "title": 'Neighborhood',
-                  "data": "properties.neighborhood" },
-                { "title": 'Zipcode',
-                  "data": "properties.zipcode" },
-                { "title": 'Lot size (square feet)',
-                  "data": "properties.area" },
-                { "title": 'Owned by Renew Indianapolis directly',
-                  "data": "properties.renew_owned",
-                    "render": function ( data, type, row, meta ) {
-                          return data == true ? 'Yes' : 'No';
-                        },
-                },
-                { "title": 'Status',
-                  "data": "properties.status" },
-
+                  "data": "properties.street_address" },
+                { "title": "Mortgage Decision",
+                  "data": "properties.mortgage_decision" },
+                { "title": "Bid Group",
+                  "data": "properties.bid_group" },
+                { "title": "MVA Category",
+                  "data": "properties.mva_category" },
+                { "title": "ILP Within a Quarter Mile",
+                  "data": "properties.ilp_within_quarter_mile" },
+                { "title": "Adjacent Homestead (non-surplus)",
+                  "data": "properties.adjacent_homesteads_non_surplus" },
             ],
         } );
 
-    $('#PropertySearchSlimForm').on('submit', function(event){
+    $('#UniSearchForm').on('submit', function(event){
       event.preventDefault();
       searchPolygons.getSource().clear();
     //  $('#id_parcel_or_street_address').val($('#query').val()); //copy search value from top box to hidden element on form
       $('#id_searchArea').val('');
       $.ajax({
-        url: '{% url "property_search" %}',
+        url: '{% url "inventory_review_search" %}',
         type: "GET",
-        data: $('#PropertySearchSlimForm').serialize(),
+        data: $('#UniSearchForm').serialize(),
         success: function(json){
 
           searchPolygons.getSource().addFeatures(geojson_format.readFeatures(json));
@@ -1247,7 +1200,6 @@ CSS loading animation.
           if(extent[0]!='Infinity'){
             applyInitialUIState();
             $('#modal_toggle').show();
-            map.removeLayer(inventoryPolygons);
             map.getView().fit(extent, map.getSize())
             $('#search_results').DataTable().clear();
             $('#search_results').DataTable().rows.add(json.features).draw();

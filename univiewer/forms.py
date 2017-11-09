@@ -8,8 +8,9 @@ from .models import parcel
 
 class UniSearchForm(forms.ModelForm):
 
-    general_search = forms.CharField(max_length=30, label='Address, parcel number')
+    parcel_or_street_address = forms.CharField(max_length=30, label='Address, parcel number', required=False)
     #geometry_type = forms.CharField()
+    bid_group_cluster = forms.SelectMultiple()
 
     class Meta:
         model = parcel
@@ -31,15 +32,14 @@ class UniSearchForm(forms.ModelForm):
         self.helper.form_method = 'get'
         self.helper.form_action = ''
         self.helper.layout = Layout(
+
+            Field('parcel_or_street_address', css_class='input-sm'),
+            Field('mortgage_decision', css_class='input-sm'),
+            Field('bid_group_filter', css_class='input-sm'),
             FormActions(
                 Reset('cancel', 'Reset'),
                 Submit('submit', 'Search', css_class='top-search-button'),
                 #HTML('<button id="modal_toggle" class="btn btn-info btn-modal" data-toggle="modal" data-target="#fsModal">Show Results Table</button>'),
             ),
-            Field('has_building', css_class='input-sm'),
-            Field('general_search', css_class='input-sm'),
-            Field('property_type', css_class='input-sm'),
-            Field('flagged', css_class='input-sm'),
         #    Field('township', css_class='input-sm'),
-            Field('notes', css_class='input-sm'),
         )
