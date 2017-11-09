@@ -29,8 +29,8 @@ class UniSearchFilter(django_filters.FilterSet):
 
     mva_category_filter = django_filters.MultipleChoiceFilter(choices=MVA_CHOICES, method="mva_category_choice_filter", label='MVA Categories')
 
-    adjacent_homesteads_non_surplus_filter = django_filters.NumericRangeFilter(widget=django_filters.widgets.RangeWidget(), label='# adjacent homesteads')
-    ilp_within_quarter_mile_filter = django_filters.NumericRangeFilter(widget=django_filters.widgets.RangeWidget(), label='# ILPs within a quarter mile')
+    adjacent_homesteads_non_surplus_filter = django_filters.RangeFilter(widget=django_filters.widgets.RangeWidget(), name='adjacent_homesteads_non_surplus', label='# adjacent homesteads')
+    ilp_within_quarter_mile_filter = django_filters.RangeFilter(widget=django_filters.widgets.RangeWidget(), name='ilp_within_quarter_mile', label='# ILPs within a quarter mile')
 
     #adjacent_homesteads_non_surplus_filter__gt = django_filters.NumberFilter(name='price', lookup_expr='gt')
     #adjacent_homesteads_non_surplus_filter__lt = django_filters.NumberFilter(name='price', lookup_expr='lt')
