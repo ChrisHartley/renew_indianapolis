@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render_to_response
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.views.generic import DetailView, View
 import stripe
@@ -11,6 +11,10 @@ from .models import processing_fee, title_company
 from .forms import TitleCompanyChooser
 from django.contrib import messages
 from django.utils.text import slugify
+from wsgiref.util import FileWrapper
+from django.contrib.admin.views.decorators import staff_member_required
+
+
 
 class ApplicationPurchaseAgreement(DetailView):
     model = Application
@@ -135,11 +139,12 @@ class ProcessingFeePaidPage(View):
         if request.POST.get('manual_title_company_choice') != '':
             closing.title_company_freeform = request.POST.get('manual_title_company_choice')
         else:
-            try:
-                closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
-            except title_company.DoesNotExist as e:
-                messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
-                closing.title_company_freeform = 'Applicant did not make a selection or there was a problem with their selection.'
+            if request.POST.get('title_company') != '':
+                try:
+                    closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
+                except title_company.DoesNotExist as e:
+                    messages.add_message(request, messages.ERROR, 'You did not select a title company, a staff member will contact you.')
+                    closing.title_company_freeform = 'Applicant did not make a selection or there was a problem with their selection.'
         try:
             obj.save()
             closing.save()
@@ -154,3 +159,26 @@ class ProcessingFeePaidPage(View):
         slug = slugify(prop)
         return HttpResponseRedirect(reverse('application_pay_processing_fee', kwargs={'id': kwargs['id'], 'slug': slug}))
         #return HttpResponse("Everything worked for {0}".format(obj.closing.application.Property))
+
+#
+# @staff_member_required
+# def send_file(request, category, filename):
+#     """
+#     https://www.djangosnippets.org/snippets/365/
+#     Send a file through Django without loading the whole file into
+#     memory at once. The FileWrapper will turn the file object into an
+#     iterator for chunks of 8KB.
+#     """
+#     #possible_closings = closing.objects.filter(application__Property=property)
+#     #requested_file = get_object_or_404(UploadedFile, id=id)
+#     #filename = str(requested_file.supporting_document.name)
+#     if category in('closings'):
+#         filename = settings.MEDIA_ROOT+category+'/'+filename
+#         with open(filename, 'rb') as f:
+#             wrapper = FileWrapper(f)
+#             content_type = mimetypes.MimeTypes().guess_type(filename)[0]
+#             response = HttpResponse(wrapper, content_type=content_type)
+#             response['Content-Length'] = os.path.getsize(filename)
+#             response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(filename))
+#             return response
+#     raise Http404

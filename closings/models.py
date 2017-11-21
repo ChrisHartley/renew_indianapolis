@@ -120,7 +120,7 @@ class closing(models.Model):
     date_time = models.DateTimeField(blank=True, null=True)
     location = models.ForeignKey('location', blank=True, null=True)
     title_company = models.ForeignKey(title_company, blank=True, null=True)
-    title_company_freeform = models.CharField(max_length=50, blank=True, null=True)
+    title_company_freeform = models.CharField(max_length=255, blank=True, null=True)
     title_commitment = models.FileField(upload_to=save_location, blank=True, null=True)
     closing_statement = models.FileField(upload_to=save_location, blank=True, null=True)
     deed = models.FileField(upload_to=save_location, blank=True, null=True)
@@ -183,8 +183,9 @@ class project_agreement(models.Model):
     prop = models.ForeignKey(Property)
     start_date = models.DateField(null=False, blank=False, help_text='When the Project Agreement begins, either at closing or upon assumption')
     expiration_date = models.DateField(null=False, blank=False)
+    buyer_name = models.CharField(max_length=254)
 
-class release_inspection(models.Model):
-    prop = models.ForeignKey
-    user = models.ForeignKey(User)
-    created = models.DateTimeField()
+#class release_inspection(models.Model):
+#    prop = models.ForeignKey
+#    user = models.ForeignKey(User)
+#    created = models.DateTimeField()
