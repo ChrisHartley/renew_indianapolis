@@ -60,7 +60,6 @@ class ProcessingFeePaidPage(View):
     http_method_names = ['post','get']
 
     def post(self, request, *args, **kwargs):
-        print request.POST
         obj = get_object_or_404(processing_fee, pk=kwargs['id'])
         token = request.POST.get('stripeToken')
         amount = obj.amount_due
@@ -123,10 +122,8 @@ class ProcessingFeePaidPage(View):
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, your card has not been charged.')
             return HttpResponse("Edge case error: {0}".format(e))
             # Something else happened, completely unrelated to Stripe
-        print obj
 
         obj.amount_received = int(request.POST.get('amountForStripe')) / 100
-        print obj.amount_received
         if obj.amount_received < obj.amount_due:
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
             return HttpResponse("Partial payments are not permitted")
@@ -143,8 +140,11 @@ class ProcessingFeePaidPage(View):
                 try:
                     closing.title_company = title_company.objects.get(pk=request.POST.get('title_company'))
                 except title_company.DoesNotExist as e:
-                    messages.add_message(request, messages.ERROR, 'You did not select a title company, a staff member will contact you.')
-                    closing.title_company_freeform = 'Applicant did not make a selection or there was a problem with their selection.'
+                    messages.add_message(request, messages.ERROR, 'There was an error with your title company selection, a staff member will contact you.')
+                    closing.title_company_freeform = "There was a problem with the applicant's title company selection."
+            else:
+                messages.add_message(request, messages.ERROR, 'You did not select a title company, a staff member will contact you.')
+                closing.title_company_freeform = 'Applicant did not make a title company selection.'
         try:
             obj.save()
             closing.save()
