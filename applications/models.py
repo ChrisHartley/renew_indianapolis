@@ -23,7 +23,7 @@ class Application(models.Model):
     user = models.ForeignKey(User)
     Property = models.ForeignKey(Property, null=True, blank=True)
     organization = models.ForeignKey(Organization, null=True, blank=True,
-                                     help_text="This is the name that will be shown on the deed")
+                                     help_text="Other parties (eg organizations, spouses, siblings, etc). This, or the name on your account, are the only names that can be shown on the deed")
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
