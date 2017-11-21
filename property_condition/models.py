@@ -9,18 +9,91 @@ def content_file_name(instance, filename):
     return '/'.join(['condition_report', instance.Property.streetAddress, filename])
 
 
+class Room(models.Model):
+    ROOM_TYPE_CHOICES = (
+        ('ATCFN','Attic, Finished'),
+        ('ENBAL','Balcony, Enclosed'),
+        ('MSTBD','MasterBedroom'),
+        ('2BDRM','Bedroom 2nd'),
+        ('3BDRM','Bedroom 3rd'),
+        ('4BDRM','Bedroom 4th'),
+        ('5BDRM','Bedroom 5th'),
+        ('6BDRM','Bedroom 6th'),
+        ('BONUS','BonusRoom'),
+        ('BKFST','BreakfastRoom'),
+        ('DENLB','DenLibrary'),
+        ('DIN','DiningRoom'),
+        ('EXRCS','ExerciseRm'),
+        ('FAMLY','FamilyRoom'),
+        ('GREAT','GreatRoom'),
+        ('GUEST','GuestRoom'),
+        ('HERTH','HearthRoom'),
+        ('HMTHR','HomeTheatr'),
+        ('KITCH','Kitchen'),
+        ('LNDRY','LaundryRm'),
+        ('LIVNG','LivingRoom'),
+        ('LOFT','Loft'),
+        ('MUDRM','MudRoom'),
+        ('OFFIC','Office'),
+        ('RECRM','Rec\/PlayRm'),
+        ('SITRM','SittingRoom'),
+        ('SUNRM','SunRoom'),
+        ('UTILITY','Utility Room'),
+        ('WINEC','WineCellar'),
+        ('WRKSH','Workshop'),
+    )
+    room_type = models.CharField(choices=ROOM_TYPE_CHOICES, blank=False, null=False, max_length=254)
+
+    LEVEL_CHOICES = (
+        ('BASEMENT', 'Basement'),
+        ('LOWER', 'Lower'),
+        ('UPPER', 'Upper'),
+    )
+
+    room_level = models.CharField(choices=LEVEL_CHOICES, blank=False, null=False, max_length=254)
+
+    FLOORING_TYPE = (
+        ('B','Brick'),
+        ('C','Carpeting'),
+        ('H','Hardwood'),
+        ('L','Laminate'),
+        ('LH','Laminated Hardwood'),
+        ('M','Marble'),
+        ('P','Parquet'),
+        ('T','Tile-Ceramic'),
+        ('V','Vinyl'),
+        ('VinylHardwood','Vinyl Hardwood'),
+        ('O','Other')
+    )
+
+    flooring_type = models.CharField(choices=FLOORING_TYPE, blank=False, null=False, max_length=254)
+    dimensions = models.CharField(max_length=7, blank=True, null=False)
+    conditionreport = models.ForeignKey('property_condition.ConditionReport')
+
+    def __unicode__(self):
+        return u'{0} - {1}'.format(self.conditionreport, self.get_room_type_display())
+
 class ConditionReport(models.Model):
     GOOD_STATUS = 3
     FAIR_STATUS = 2
     POOR_STATUS = 1
+    MISSING_STATUS = 0
     NA_STATUS = None
 
-    STATUS_CHOICES = ((GOOD_STATUS, 'Good / Satisfactory'), (FAIR_STATUS,
-                                                             'Fair / Repair'), (POOR_STATUS, 'Poor / Replace'), (NA_STATUS, 'N/A'))
+    STATUS_CHOICES = (
+        (GOOD_STATUS, 'Good / Satisfactory'),
+        (FAIR_STATUS, 'Fair / Repair'),
+        (POOR_STATUS, 'Poor / Replace'),
+        (MISSING_STATUS, 'Missing'),
+        (NA_STATUS, 'N/A'))
 
     Property = models.ForeignKey('property_inventory.Property')
     picture = models.ImageField(upload_to=content_file_name, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    general_property_notes = models.CharField(
+        max_length=512, blank=True, verbose_name='General Property Notes')
+
 
     roof_shingles = models.IntegerField(
         choices=STATUS_CHOICES, null=True, blank=True, verbose_name='Shingles')
@@ -146,12 +219,16 @@ class ConditionReport(models.Model):
         """
         Save Photo after ensuring it is not blank.  Resize as needed.
         """
+        #print "Does the object already exist?", self.id
+        if not self.id:
+            super(ConditionReport, self).save()
 
-        super(ConditionReport, self).save()
+            if self.picture:
+                filename = self.picture.path
+                image = Image.open(filename)
 
-        if self.picture:
-            filename = self.picture.path
-            image = Image.open(filename)
+                image.thumbnail(size, Image.ANTIALIAS)
+                image.save(filename)
 
-            image.thumbnail(size, Image.ANTIALIAS)
-            image.save(filename)
+    def __unicode__(self):
+        return u'{0} - {1}'.format(self.Property, self.timestamp)

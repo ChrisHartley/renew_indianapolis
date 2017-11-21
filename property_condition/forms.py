@@ -2,13 +2,28 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, ButtonHolder, Div, Button, MultiField, Field
 from crispy_forms.bootstrap import FormActions
-from property_condition.models import ConditionReport
+from property_condition.models import ConditionReport, Room
 from property_inventory.models import Property
 
+class RoomForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        exclude = []
+
+class RoomFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super(ExampleFormSetHelper, self).__init__(*args, **kwargs)
+        self.layout = Layout(
+            'room_type',
+            'room_level',
+            'flooring_type',
+            'dimensions'
+        )
+        self.render_required_fields = True
 
 class ConditionReportForm(forms.ModelForm):
     Property = forms.ModelChoiceField(queryset=Property.objects.exclude(
-        structureType__exact='Vacant Lot').order_by('streetAddress'))
+        structureType__exact='Vacant Lot').exclude(status__contains='Sold').order_by('streetAddress'))
 
     class Meta:
         model = ConditionReport
@@ -26,7 +41,8 @@ class ConditionReportForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 'Property Condition Report',
-                'Property'
+                'Property',
+                Field('general_property_notes'),
             ),
             Fieldset(
                 'Property Picture',
