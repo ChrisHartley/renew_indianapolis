@@ -207,3 +207,13 @@ class featured_property(models.Model):
 
     def __unicode__(self):
         return u'{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])
+
+class blc_listing(models.Model):
+        Property = models.ForeignKey(Property, related_name='blc_listing')
+        blc_id = models.CharField(max_length=50, blank=False)
+        blc_url = models.URLField(max_length=255, blank=True)
+        date_time = models.DateTimeField(auto_now_add=True)
+        note = models.CharField(max_length=1024, blank=True)
+        active = models.BooleanField(default=True)
+        def __unicode__(self):
+            return u'{0} - {1} - {2}'.format(self.Property, self.blc_id, self.date_time)

@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
-from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property
+from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing
 from applications.admin import PriceChangeMeetingLinkInline
 from property_inquiry.models import propertyInquiry
 import datetime
@@ -150,3 +150,4 @@ admin.site.register(CDC)
 admin.site.register(Neighborhood)
 admin.site.register(ContextArea, ContextAreaAdmin)
 admin.site.register(featured_property)
+admin.site.register(blc_listing)
