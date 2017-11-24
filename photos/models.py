@@ -16,8 +16,8 @@ class photo(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to=save_location, max_length=512, blank=False, null=False)
 
-    def image_tag(self):
-        return mark_safe('<img src="/media/%s" width="150" height="150" />' % (self.image))
+    def image_tag(self, width=150, height=150):
+        return mark_safe('<img src="/media/{0}" width="{1}" height="{2}" />'.format(self.image, width, height))
 
     image_tag.short_description = 'Image'
 

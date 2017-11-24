@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
 from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing
+from photos.models import photo
 from applications.admin import PriceChangeMeetingLinkInline
 from property_inquiry.models import propertyInquiry
 import datetime
@@ -72,7 +73,11 @@ class PropertyAdmin(admin.OSMGeoAdmin):
 
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries')
+    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo')
+
+    def main_photo(self, obj):
+        ph = photo.objects.filter(prop=obj).filter(main_photo__exact=True).first()
+        return ph.image_tag(300, 300)
 
     def context_area_strategy(self, obj):
         return ContextArea.objects.filter(geometry__contains=obj.geometry).first().disposition_strategy
@@ -99,6 +104,8 @@ class PropertyAdmin(admin.OSMGeoAdmin):
         photo_page_link = '<a href="{}">{}</a>'.format(
                     reverse("property_photos", kwargs={'parcel': obj.parcel}), "View Photos")
         return mark_safe(photo_page_link)
+
+
 
 class ContextAreaAdmin(admin.OSMGeoAdmin):
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
@@ -144,10 +151,13 @@ class price_changeAdmin(admin.OSMGeoAdmin):
             formfield.widget = Textarea(attrs=formfield.widget.attrs)
         return formfield
 
+class blc_listingAdmin(admin.OSMGeoAdmin):
+    search_fields = ('Property__streetAddress','Property__parcel', 'blc_id')
+
 admin.site.register(price_change, price_changeAdmin)
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
 admin.site.register(ContextArea, ContextAreaAdmin)
 admin.site.register(featured_property)
-admin.site.register(blc_listing)
+admin.site.register(blc_listing, blc_listingAdmin)
