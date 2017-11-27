@@ -67,8 +67,8 @@ class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
 
 class PropertyAdmin(admin.OSMGeoAdmin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name')
-    list_display = ('parcel', 'streetAddress', 'structureType','status')
-    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned' )
+    list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status')
+    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active')
     inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin]
 
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
