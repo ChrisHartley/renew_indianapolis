@@ -29,7 +29,7 @@ class ApplicantProfileAdmin(admin.ModelAdmin):
     readonly_fields = ('user_email', 'user_first_name', 'user_last_name', 'count_applications', 'external_system_id')
     list_display = ('user_email', 'user_first_name', 'user_last_name', 'phone_number', 'mailing_address_line1', 'mailing_address_line2', 'mailing_address_line3', 'mailing_address_city', 'mailing_address_state', 'mailing_address_zip', 'count_applications')
     fields = ('user_email', 'user_first_name', 'user_last_name', 'phone_number', 'mailing_address_line1', 'mailing_address_line2', 'mailing_address_line3', 'mailing_address_city', 'mailing_address_state', 'mailing_address_zip', 'count_applications', 'external_system_id')
-    search_fields = ('user__email', 'phone_number', 'user__first_name', 'user__last_name')
+    search_fields = ('user__email', 'phone_number', 'user__first_name', 'user__last_name', 'external_system_id')
 
     #inlines = [OrganizationInline]
 
@@ -51,6 +51,7 @@ class ApplicantProfileAdmin(admin.ModelAdmin):
 
 class OrganiationAdmin(admin.ModelAdmin):
     model = Organization
+    search_fields = ('user__email', 'email', 'name', 'user__first_name', 'user__last_name', 'external_system_id')
     readonly_fields = ('external_system_id',)
 
 class UserAdmin(UserAdmin):
