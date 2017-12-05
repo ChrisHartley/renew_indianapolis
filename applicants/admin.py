@@ -52,7 +52,7 @@ class ApplicantProfileAdmin(admin.ModelAdmin):
 class OrganiationAdmin(admin.ModelAdmin):
     model = Organization
     search_fields = ('user__email', 'email', 'name', 'user__first_name', 'user__last_name', 'external_system_id')
-    list_display = ('name', 'entity_type', 'user__email')
+    list_display = ('name', 'entity_type',)
     readonly_fields = ('external_system_id',)
 
 class UserAdmin(UserAdmin):
