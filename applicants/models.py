@@ -24,6 +24,14 @@ class ApplicantProfile(models.Model):
     mailing_address_zip = models.CharField(
         max_length=100, blank=False, verbose_name='Zipcode')
 
+    external_system_id = models.CharField(max_length=100, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.external_system_id == '':
+            self.external_system_id = 'INDY-APPLICANT-{0}'.format(self.pk,)
+        super(ApplicantProfile, self).save(*args, **kwargs)
+
+
     def __unicode__(self):
         return u'{0}'.format(self.user.first_name)
 
@@ -87,6 +95,14 @@ class Organization(models.Model):
     #     verbose_name='IRS Determination Letter', help_text='Required for 501(c)3 non-profits', blank=True, null=True)
     # most_recent_financial_statement = models.FileField(
     #     verbose_name='Most Recent Financial Statement', help_text='If available', blank=True, null=True)
+
+    external_system_id = models.CharField(max_length=100, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.external_system_id == '':
+            self.external_system_id = 'INDY-ORGANIZATION-{0}'.format(self.pk,)
+        super(Organization, self).save(*args, **kwargs)
+
 
     def __unicode__(self):
         return u'{0}'.format(self.name)
