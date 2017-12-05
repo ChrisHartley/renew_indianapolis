@@ -49,6 +49,9 @@ class ApplicantProfileAdmin(admin.ModelAdmin):
         return mark_safe(summary_link)
     count_applications.short_description = 'Application count'
 
+class OrganiationAdmin(admin.ModelAdmin):
+    model = Organization
+    readonly_fields = ('external_system_id',)
 
 class UserAdmin(UserAdmin):
     inlines = (ApplicantProfileInline, )
@@ -56,6 +59,6 @@ class UserAdmin(UserAdmin):
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
-admin.site.register(Organization)
+admin.site.register(Organization, OrganiationAdmin)
 admin.site.register(ApplicantProfile, ApplicantProfileAdmin)
 #admin.site.register(ApplicantProfile, ApplicantProfileAdmin)
