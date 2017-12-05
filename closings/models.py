@@ -138,13 +138,20 @@ class closing(models.Model):
     ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        orig_closing = closing.objects.get(pk=self.pk)
         if self.closed == False and self.assigned_city_staff is not None and self.application and settings.SEND_CLOSING_ASSIGNMENT_EMAILS:
-            orig_closing = closing.objects.get(pk=self.pk)
             if orig_closing.assigned_city_staff != self.assigned_city_staff:
                 subject = 'New closing assigned - {0} {1}'.format(self.application.Property, self.date_time)
                 message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://www.renewindianapolis.org/map{3}'.format(self.application.Property, self.date_time, self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
                 from_email = 'info@renewindianapolis.org'
                 send_mail(subject, message, from_email, [self.assigned_city_staff.email,settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']])
+
+        if self.closed == True and orig_closing.closed == False and self.application and self.application.Property.renew_owned == False and settings.SEND_CITY_CLOSED_NOTIFICATION_EMAIL:
+            subject = 'City owned property closed by Renew Indianapolis - {0}'.format(self.application.Property,)
+            message = 'This is a courtesy notification that the property at {0} was sold, please update your files as necessary.'.format(self.application.Property,)
+            from_email = 'info@renewindianapolis.org'
+            send_mail(subject, message, from_email, [settings.CITY_PROPERTY_MANAGER_EMAIL],)
+            pass
 
         super(closing, self).save(*args, **kwargs)
         # we can only do fancy stuff if there is an application associated with the closing, which legacy closings don't have. so skip allt he fancy stuff in that case.
@@ -184,8 +191,13 @@ class project_agreement(models.Model):
     start_date = models.DateField(null=False, blank=False, help_text='When the Project Agreement begins, either at closing or upon assumption')
     expiration_date = models.DateField(null=False, blank=False)
     buyer_name = models.CharField(max_length=254)
+#    released = models.BooleanField(default=False)
 
-#class release_inspection(models.Model):
-#    prop = models.ForeignKey
-#    user = models.ForeignKey(User)
-#    created = models.DateTimeField()
+# class release_inspection(models.Model):
+#     prop = models.ForeignKey
+#     user = models.ForeignKey(User)
+#     staff_user = models.ForeignKey(User, related_name='staff_user')
+#     created = models.DateTimeField(auto_now_add=True)
+#     modified = models.DateTimeField(auto_now=True)
+#     staff_notes = models.CharField(max_length=5000)
+#     user_notes = models.CharField(max_length=5000)

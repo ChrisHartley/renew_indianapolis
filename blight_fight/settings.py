@@ -217,6 +217,8 @@ COMPANY_SETTINGS = {
 PROPERTY_INQUIRIES_ENABLED = True
 # This setting sets if closing assignment notification emails are sent to city employees
 SEND_CLOSING_ASSIGNMENT_EMAILS = True
+CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
+SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
 
 # Production settings are kept in a separate file, settings_production.py
 # which overrides db, email, secret key, etc with production values
