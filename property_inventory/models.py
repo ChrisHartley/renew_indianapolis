@@ -117,6 +117,7 @@ class Property(models.Model):
     #slug = AutoSlugField(always_update=True, unique=True, populate_from=lambda instance: instance.streetAddress + instance.parcel)
 
     acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired')
+    buyer_application = models.ForeignKey('applications.Application', null=True, blank=True, help_text='The final buyer application.')
 
     class Meta:
         verbose_name_plural = "properties"
