@@ -21,6 +21,8 @@ from .models import Application, Meeting, MeetingLink
 from property_inventory.models import Property
 from applicants.models import ApplicantProfile
 from user_files.models import UploadedFile
+from closings.models import processing_fee
+
 from django.contrib.auth.models import User
 
 
@@ -355,6 +357,54 @@ class MDCCSVResponseMixin(object):
 
 
 class MDCSpreadsheet(MDCCSVResponseMixin, DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'price_change_summary_view_all.html'
+
+
+class MONCSVResponseMixin(object):
+    """
+    A mixin that constructs a CSV response from the context data if
+    the CSV export option was provided in the request.
+    """
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Creates a CSV response if requested, otherwise returns the default
+        template response.
+        """
+        # Sniff if we need to return a CSV export
+        if 'csv' in self.request.GET.get('export', ''):
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'notification-merge-template.csv')
+            writer = csv.writer(response)
+
+            header = ['First Name', 'Email Address', 'Property', 'Status', 'Reason', 'Sidelot', 'Link']
+            #header = ['Parcel','Street Address','Application Type','Structure Type','City\'s Sale Price','Renew\'s Sale Price','Total','Buyer Name']
+            writer.writerow(header)
+            # Write the data from the context somehow
+            #from applications.models import MeetingLink.APPROVED_STATUS
+            for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type'):
+                application = meeting_link.application
+                user_name = '{0} {1}'.format(application.user.first_name, application.user.last_name)
+                sidelot_text = ''
+                if application.application_type == Application.SIDELOT:
+                    sidelot_text = 'Since this is a sidelot you have the option of closing directly with Renew Indianapolis...'
+                try:
+                    pf = processing_fee.objects.get(closing__application__exact=application)
+                    pf_link = '<a target="_blank" href="{}">{}</a>'.format(
+                        reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)), reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)))
+                except processing_fee.DoesNotExist:
+                    pf_link = ''
+                row = [user_name, application.user.email, application.Property, meeting_link.get_meeting_outcome_display(), '', sidelot_text, pf_link]
+                #row = [application.Property.parcel, application.Property.streetAddress, application.get_application_type_display(), application.Property.structureType, city_split, renew_split, total, buyer]
+                writer.writerow(row)
+            return response
+        # Business as usual otherwise
+        else:
+            return super(MONCSVResponseMixin, self).render_to_response(context, **response_kwargs)
+
+
+class MeetingOutcomeNotificationSpreadsheet(MONCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'

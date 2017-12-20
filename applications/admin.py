@@ -152,7 +152,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline, PriceChangeMeetingLinkInline]
-    readonly_fields = ('agenda', 'applications', 'create_mdc_spreadsheet', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page','price_change_CMA_zip','price_change_csv')
+    readonly_fields = ('agenda', 'applications', 'create_mdc_spreadsheet', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page','price_change_CMA_zip','price_change_csv', 'create_meeting_outcome_notification_spreadsheet')
 #    list_select_related = True
 
 
@@ -171,6 +171,14 @@ class MeetingAdmin(admin.ModelAdmin):
             reverse("mdc_spreadsheet", args=(obj.id,)), "View CSV Spreadsheet for MDC Resolution")
         return mark_safe(summary_link)
     create_mdc_spreadsheet.short_description = 'MDC Resolution CSV spreadsheet'
+
+    def create_meeting_outcome_notification_spreadsheet(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
+        summary_link = '<a target="_blank" href="{}?export=csv">{}</a>'.format(
+            reverse("meeting_outcome_notification_spreadsheet", args=(obj.id,)), "View CSV Spreadsheet for Meeting Outcome Mail Merge")
+        return mark_safe(summary_link)
+    create_meeting_outcome_notification_spreadsheet.short_description = 'Meeting Outcome Mail Merge CSV spreadsheet'
 
 
     def agenda(self, obj):
