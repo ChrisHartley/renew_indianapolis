@@ -387,12 +387,12 @@ class MONCSVResponseMixin(object):
                 application = meeting_link.application
                 user_name = '{0} {1}'.format(application.user.first_name, application.user.last_name)
                 sidelot_text = ''
-                if application.application_type == Application.SIDELOT:
-                    sidelot_text = 'Since this is a sidelot you have the option of closing directly with Renew Indianapolis...'
+                if application.application_type in(Application.SIDELOT, Application.VACANT_LOT):
+                    sidelot_text = 'Since this is a sidelot or vacant lot program application you have the option of closing directly with Renew Indianapolis, rather than with a title company.'
                 try:
                     pf = processing_fee.objects.get(closing__application__exact=application)
-                    pf_link = '<a target="_blank" href="{}">{}</a>'.format(
-                        reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)), reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)))
+                    pf_link = 'https://www.renewindianapolis.org{0}'.format(
+                        reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)),)
                 except processing_fee.DoesNotExist:
                     pf_link = ''
                 row = [user_name, application.user.email, application.Property, meeting_link.get_meeting_outcome_display(), '', sidelot_text, pf_link]
