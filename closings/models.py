@@ -172,6 +172,7 @@ class closing(models.Model):
             if 'Sold' not in self.application.Property.status and self.closed == True and self.date_time is not None:
                 prop = self.application.Property
                 prop.status = 'Sold {0}'.format(self.date_time.strftime('%m/%d/%Y'))
+                prop.buyer_application = self.application
                 prop.save()
 
 
