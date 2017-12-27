@@ -71,7 +71,7 @@ class NeighborhoodNotificationAdmin(admin.TabularInline):
         return formfield
 
 class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
-    list_display = ('modified','Property', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
+    list_display = ('modified','Property', 'num_scheduled_apps', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
     readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_vacant_lot','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification')
@@ -146,6 +146,18 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
             ))
         #pass
     n_notification.short_description = 'Neighborhood Notification'
+
+
+    def num_scheduled_apps(self, obj):
+        count = Application.objects.filter(Property__exact=obj.Property).filter(status__exact=Application.COMPLETE_STATUS).filter(meeting__isnull=False).count()
+        if obj.Property is not None:
+            summary_link = '<a href="{}">{}</a>'.format(
+                reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.Property.parcel,), count)
+        else:
+            summary_link = '-'
+        return mark_safe(summary_link)
+
+    num_scheduled_apps.short_description = 'Number of completed, schedule apps'
 
 class MeetingAdmin(admin.ModelAdmin):
     model = Meeting
