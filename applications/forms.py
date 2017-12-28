@@ -260,7 +260,7 @@ class ApplicationForm(forms.ModelForm):
                 self.add_error('application_type', ValidationError(
                     'The property you have selected is not a vacant lot and hence is ineligible for our vacant lot program.'))
             else:
-                if property_selected.vacant_lot_eligible != True:
+                if property_selected is not None and property_selected.vacant_lot_eligible != True:
                     self.add_error('application_type', ValidationError(
                         'The property you have selected is not eligible for the '+
                         'vacant lot program. Properties in some locations are '+
