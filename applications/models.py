@@ -41,7 +41,7 @@ class Application(models.Model):
         (HOMESTEAD, 'Homestead - Applicants will use this property as their primary residence.'),
         (STANDARD, 'Standard - Applicants intend to rent or sell the property after completing the proposed project.'),
         (SIDELOT, 'Sidelot - lot is adjacent to owner occupied property'),
-        (VACANT_LOT, 'Vacant Lot - Properties that have been in city inventory for an extended period of time; no requirement to build and no eligibility criteria.')
+        (VACANT_LOT, 'Vacant Lot - Properties that have been in city inventory for an extended period of time; no requirement to build.')
     )
 
     WITHDRAWN_STATUS = 1
