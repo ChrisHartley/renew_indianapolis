@@ -189,6 +189,11 @@ class closing_proxy(closing):
         proxy = True
         verbose_name = 'Closing Scheduling'
 
+class closing_proxy2(closing):
+    class Meta:
+        proxy = True
+        verbose_name = 'Closing Summary'
+
 
 class project_agreement(models.Model):
     prop = models.ForeignKey(Property)

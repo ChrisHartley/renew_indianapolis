@@ -1,0 +1,153 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    <h1> Closings Review Summary </h1>
+{% endblock %}
+{% load humanize %}
+{% load custom_tags %}
+
+{% block result_list %}
+
+<div class="results">
+    <table>
+
+    <thead>
+      <tr>
+        <th>
+          <div class="text">
+            <a href="#">Sale Type</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#"># Closings</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Total sales</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Total City Proceeds</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">Total Renew Proceeds</a>
+          </div>
+        </th>
+
+
+        <th>
+          <div class="text">
+            <a href="#">
+              <strong>% Of Total Sales</strong>
+            </a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary %}
+      <tr class="{% cycle 'row1' 'row2' %}">
+        <td>
+          {% if row.application__application_type == 3 %} Sidelot
+          {% elif row.application__application_type == 2 %} Standard
+          {% elif row.application__application_type == 1 %} Homestead
+          {% elif row.application__application_type == 4 %} Vacant Lot
+          {% endif %}
+        </td>
+        <td>{{ row.total | intcomma }}</td>
+
+        <td>{{ row.total_sale_price | intcomma }}</td>
+        <td>{{ row.total_city_proceeds | intcomma }}</td>
+        <td>{{ row.total_ri_proceeds | intcomma }}</td>
+
+        <td>
+          <strong>
+          {{ row.total | percentof:summary_total.total }}
+          </strong>
+        </td>
+      </tr>
+
+      {% endfor %}
+      <tr style="font-weight:bold; border-top:2px solid #DDDDDD;">
+            <td> Total </td>
+            <td> {{ summary_total.total | intcomma }} </td>
+            <td> {{ summary_total.total_sale_price | intcomma }} </td>
+            <td> {{ summary_total.total_city_proceeds | intcomma }} </td>
+            <td> {{ summary_total.total_ri_proceeds | intcomma }} </td>
+            <td> 100% </td>
+        </tr>
+    </tbody>
+
+  </table>
+</div>
+&nbsp;
+<div class='results'>
+  <h2> Closings over time </h2>
+
+      <div class="bar-chart">
+      {% for x in summary_over_time %}
+          <div class="bar" style="height:{{x.pct}}%">
+              <div class="bar-tooltip">
+                  {% if scale == 'hour' %} {{x.period | date:"P"}}<br/> {% endif %}
+                  {% if scale == 'day' %} {{x.period | date:"M d"}}<br/> {% endif %}
+                  {% if scale == 'month' %} {{x.period | date:"M Y"}}<br/> {% endif %}
+                  {% if scale == 'year' %} {{x.period | date:"M"}}<br/> {% endif %}
+                  {{x.count | default:0}} (${{x.total | default:0 | intcomma }})
+              </div>
+          </div>
+      {% endfor %}
+      </div>
+  </div>
+
+  <style>
+
+  .bar-chart {
+    display: flex;
+    justify-content: space-around;
+    height: 160px;
+    padding-top: 60px;
+    overflow: hidden;
+  }
+  .bar-chart .bar {
+      flex: 100%;
+      align-self: flex-end;
+      margin-right: 2px;
+      position: relative;
+      background-color: #79aec8;
+  }
+  .bar-chart .bar:last-child {
+      margin: 0;
+  }
+  .bar-chart .bar:hover {
+      background-color: #417690;
+      opacity: 100;
+  }
+
+  .bar-chart .bar:hover .bar-tooltip {
+      position: relative;
+      z-index: 999;
+      opacity: 1;
+  }
+
+  .bar-chart .bar .bar-tooltip {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-weight: bold;
+      opacity: 0;
+  }
+
+
+  </style>
+
+
+{% endblock %}
+
+{% block pagination %}{% endblock %}

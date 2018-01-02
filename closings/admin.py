@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django import forms
 from django.utils.text import slugify
 from datetime import date
-from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy
+from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy, closing_proxy2
 from .forms import ClosingAdminForm, ClosingScheduleAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property
@@ -215,6 +215,97 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     all_documents_in_place.boolean = True
 
 
+
+from django.db.models import Count, Sum, Min, Max
+from django.db.models.functions import Trunc
+from django.db.models import DateField, DateTimeField
+
+def get_next_in_date_hierarchy(request, date_hierarchy):
+    if date_hierarchy + '__day' in request.GET:
+        return 'hour'
+
+    if date_hierarchy + '__month' in request.GET:
+        return 'day'
+
+    if date_hierarchy + '__year' in request.GET:
+        return 'month'
+
+    return 'month'
+
+class ClosingDistributionAdmin(admin.ModelAdmin):
+    change_list_template = 'closing_summary_change_list.html'
+    date_hierarchy = 'date_time'
+    list_filter = ('application__Property__renew_owned', 'title_company')
+
+    def get_queryset(self, request):
+        return super(ClosingDistributionAdmin, self).get_queryset(request).filter(closed=True)
+
+
+
+    def changelist_view(self, request, extra_context=None):
+        response = super(ClosingDistributionAdmin, self).changelist_view(
+            request,
+            extra_context=extra_context,
+        )
+
+        try:
+            qs = response.context_data['cl'].queryset.filter(closed=True)
+        except (AttributeError, KeyError):
+            return response
+
+        metrics = {
+            'total': Count('id'),
+            'total_sale_price': Sum(F('ri_proceeds') + F('city_proceeds') ),
+            'total_city_proceeds': Sum('city_proceeds'),
+            'total_ri_proceeds': Sum('ri_proceeds'),
+        }
+
+        response.context_data['summary'] = list(
+            qs
+            .values('application__application_type')
+            .annotate(**metrics)
+            .order_by('-application__application_type')
+        )
+
+        response.context_data['summary_total'] = dict(
+            qs.aggregate(**metrics)
+
+        )
+
+        period = get_next_in_date_hierarchy(
+                    request,
+                    self.date_hierarchy,
+                )
+
+        response.context_data['scale'] = period
+        summary_over_time = qs.annotate(
+            period=Trunc(
+                'date_time',
+                period,
+                output_field=DateTimeField(),
+            ),
+        ).values('period').annotate(total=Sum(F('ri_proceeds') + F('city_proceeds')), count=Count('id')).order_by('period')
+
+        summary_range = summary_over_time.aggregate(
+            low=Min('total'),
+            high=Max('total'),
+        )
+        high = summary_range.get('high', 0)
+        low = summary_range.get('low', 0)
+
+        response.context_data['summary_over_time'] = [{
+            'period': x['period'],
+            'total': x['total'] or 0,
+            'count': x['count'],
+            'pct': \
+               ((x['total'] or 0) - low) / (high - low) * 100
+               if high > low else 1,
+        } for x in summary_over_time]
+
+        return response
+
+
+
 admin.site.register(purchase_option)
 admin.site.register(location)
 admin.site.register(company_contact)
@@ -222,4 +313,5 @@ admin.site.register(mailing_address)
 admin.site.register(title_company)
 admin.site.register(closing, ClosingAdmin)
 admin.site.register(closing_proxy, ClosingScheduleViewAdmin)
+admin.site.register(closing_proxy2, ClosingDistributionAdmin)
 admin.site.register(processing_fee)
