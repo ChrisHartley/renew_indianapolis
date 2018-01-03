@@ -15,4 +15,10 @@ class propertyInquiry(models.Model):
         verbose_name_plural = "property inquiries"
 
     def __unicode__(self):
-        return '%s - %s' % (self.Property, self.user.email)
+        return u'%s - %s' % (self.Property, self.user.email)
+
+class PropertyInquirySummary(propertyInquiry):
+    class Meta:
+        proxy = True
+        verbose_name = 'Property Inquiry Summary'
+        verbose_name_plural = 'Property Inquiry Summaries'
