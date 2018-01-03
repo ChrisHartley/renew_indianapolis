@@ -1,0 +1,124 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    <h1> Property Inquiry Summary </h1>
+{% endblock %}
+{% load humanize %}
+{% load custom_tags %}
+
+{% block result_list %}
+
+<div class="results">
+    <table>
+
+    <thead>
+      <tr>
+        <th>
+          <div class="text">
+            <a href="#">Property Zipcode</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#"># inquiries</a>
+          </div>
+        </th>
+        <th>
+          <div class="text">
+            <a href="#">
+              <strong>% Of Total Inquiries</strong>
+            </a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary %}
+      <tr class="{% cycle 'row1' 'row2' %}">
+        <td>{{row.Property__zipcode__name}}
+        <td> {{row.count|default:0|intcomma}}</td>
+        <td>
+          <strong>
+           {{ row.count | default:0 | percentof:summary_total.count }}
+          </strong>
+        </td>
+      </tr>
+
+      {% endfor %}
+      <tr style="font-weight:bold; border-top:2px solid #DDDDDD;">
+            <td> Total </td>
+            <td> {{ summary_total.count | intcomma }} </td>
+          <!--  <td> ${{ summary_total.total_sales | intcomma | default:0 }} </td> -->
+            <td> 100% </td>
+        </tr>
+    </tbody>
+
+  </table>
+</div>
+&nbsp;
+<div class='results'>
+  <h2> Applications reviewed over time </h2>
+
+      <div class="bar-chart">
+      {% for x in summary_over_time %}
+
+          <div class="bar" style="height:{% if x.pct <= 2 %} 2% {%else%}{{x.pct}}%{%endif%}">
+              <div class="bar-tooltip">
+                {% if scale == 'hour' %} {{x.period | date:"P"}}<br/> {% endif %}
+                {% if scale == 'day' %} {{x.period | date:"M d"}}<br/> {% endif %}
+                {% if scale == 'month' %} {{x.period | date:"M Y"}}<br/> {% endif %}
+                {% if scale == 'year' %} {{x.period | date:"M"}}<br/> {% endif %}
+                {{x.count | default:0}}
+              </div>
+          </div>
+      {% endfor %}
+      </div>
+  </div>
+
+  <style>
+
+  .bar-chart {
+    display: flex;
+    justify-content: space-around;
+    height: 160px;
+    padding-top: 60px;
+    overflow: hidden;
+  }
+  .bar-chart .bar {
+      flex: 100%;
+      align-self: flex-end;
+      margin-right: 2px;
+      position: relative;
+      background-color: #79aec8;
+  }
+  .bar-chart .bar:last-child {
+      margin: 0;
+  }
+  .bar-chart .bar:hover {
+      background-color: #417690;
+      opacity: 100;
+  }
+
+  .bar-chart .bar:hover .bar-tooltip {
+      position: relative;
+      z-index: 999;
+      opacity: 1;
+  }
+
+  .bar-chart .bar .bar-tooltip {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-weight: bold;
+      opacity: 0;
+  }
+
+
+  </style>
+
+
+{% endblock %}
+
+{% block pagination %}{% endblock %}
