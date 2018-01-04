@@ -137,6 +137,8 @@ class closing(models.Model):
     city_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for the City of Indianapolis", blank=True, null=True)
     ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, null=True)
 
+    archived = models.BooleanField(default=False, help_text="Closing did not occur and should be archived.")
+
     def save(self, *args, **kwargs):
         try:
             orig_closing = closing.objects.get(pk=self.pk)
