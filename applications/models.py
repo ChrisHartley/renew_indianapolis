@@ -30,6 +30,7 @@ class Application(models.Model):
                                      help_text="Other parties (eg organizations, spouses, siblings, etc). This, or the name on your account, are the only names that can be shown on the deed")
 
     created = models.DateTimeField(auto_now_add=True)
+    submitted_timestamp = models.DateTimeField(null=True, blank=True)
     modified = models.DateTimeField(auto_now=True)
 
     HOMESTEAD = 1
@@ -268,6 +269,11 @@ class Application(models.Model):
 
 
     #meeting is MeetingLink accessor
+
+    def save(self, *args, **kwargs):
+        if self.status == self.COMPLETE_STATUS and self.submitted_timestamp is None:
+            self.submitted_timestamp = datetime.datetime.now()
+        super(Application, self).save(*args, **kwargs)
 
     def __unicode__(self):
         if self.organization:
