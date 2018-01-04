@@ -267,10 +267,14 @@ class Application(models.Model):
     neighborhood_notification_details = models.CharField(blank=True, max_length=10240)
     neighborhood_notification_feedback = models.CharField(blank=True, max_length=10240)
 
+    price_at_time_of_submission = models.DecimalField(
+        max_digits=8, decimal_places=2, help_text="The price of the property at time of submission", null=True)
 
     #meeting is MeetingLink accessor
 
     def save(self, *args, **kwargs):
+        if self.status == self.COMPLETE_STATUS and self.Property is not None and self.price_at_time_of_submission is None:
+            self.price_at_time_of_submission = self.Property.price
         if self.status == self.COMPLETE_STATUS and self.submitted_timestamp is None:
             self.submitted_timestamp = datetime.datetime.now()
         super(Application, self).save(*args, **kwargs)

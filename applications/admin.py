@@ -74,7 +74,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     list_display = ('modified','Property', 'num_scheduled_apps', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
-    readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_vacant_lot','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification', 'submitted_timestamp')
+    readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_vacant_lot','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification', 'submitted_timestamp', 'price_at_time_of_submission')
     fieldsets = (
         (None, {
             'fields': ( ('user','user_readable','organization'), ('created', 'modified', 'submitted_timestamp'), ('Property', 'property_type','property_status','property_vacant_lot','property_sidelot'), 'status', ('application_summary_page','application_detail_page'))
@@ -89,7 +89,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
         }),
         ('Staff fields', {
             'classes': ('collapse',),
-            'fields': ('staff_summary','staff_notes','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen', 'staff_sidelot_waiver_required','n_notification'))
+            'fields': ('staff_summary','staff_notes','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen', 'staff_sidelot_waiver_required','n_notification', 'price_at_time_of_submission'))
 
         })
 
