@@ -133,6 +133,7 @@ class Parcel(models.Model):
     mdc_acquire_resolution_date = models.DateField(blank=True, null=True)
     mdc_dispose_resolution_number = models.CharField(blank=True, max_length=100)
     mdc_dispose_resolution_date = models.DateField(blank=True, null=True)
+    city_deed_recorded = models.DateField(blank=True, null=True)
 
     previously_held_gateway_area = models.BooleanField(default=False)
 

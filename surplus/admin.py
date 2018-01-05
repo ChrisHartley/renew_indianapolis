@@ -10,8 +10,7 @@ class ParcelAdmin(admin.OSMGeoAdmin):
         'parcel_number', 'street_address', 'requested_from_commissioners', 'requested_from_commissioners_date',
         'intended_end_use', 'commissioners_response', 'commissioners_response_note',
         'commissioners_resolution_number', 'mdc_acquire_resolution_number',
-        'mdc_dispose_resolution_number', 'parcel_in_inventory', 'number_of_pictures'
-
+        'mdc_dispose_resolution_number', 'parcel_in_inventory', 'city_deed_recorded', 'number_of_pictures'
         )
     readonly_fields = ('parcel_in_inventory','number_of_pictures',)
 
