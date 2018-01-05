@@ -70,10 +70,10 @@ class PropertyAdmin(admin.OSMGeoAdmin):
     list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status')
     list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active')
     inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin]
-
+    raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo')
+    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo',)
 
     def main_photo(self, obj):
         ph = photo.objects.filter(prop=obj).filter(main_photo__exact=True).first()
