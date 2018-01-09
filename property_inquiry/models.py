@@ -4,12 +4,41 @@ from property_inventory.models import Property
 
 
 class propertyInquiry(models.Model):
+
+    # Sold
+    # user cancelled
+    # user non-responsive
+
+    # proposed showing email sent
+    # proposed date
+    # completed
+    # who was present at showing
+    # notes on request
+    # show number of photos
     user = models.ForeignKey(User)
     Property = models.ForeignKey(Property, blank=True, null=True)
     timestamp = models.DateTimeField(
         auto_now_add=True, verbose_name="Time/Date")
-    showing_scheduled = models.DateTimeField(null=True)
+    showing_scheduled = models.DateTimeField(blank=True, null=True)
     applicant_ip_address = models.GenericIPAddressField(blank=True, null=True)
+
+    SOLD_STATUS = 1
+    USER_CANCELLED_STATUS = 2
+    USER_NON_RESPONSIVE_STATUS = 3
+    USER_CONTACTED_STATUS = 4
+    SCHEDULED_STATUS = 5
+    COMPLETED_STATUS = 6
+    STATUS_CHOICES = (
+        (SOLD_STATUS,'Property was sold after request submitted'),
+        (USER_CANCELLED_STATUS,'User cancelled request'),
+        (USER_NON_RESPONSIVE_STATUS,'User was unresponsive'),
+        (USER_CONTACTED_STATUS,'Contacted user to schedule'),
+        (SCHEDULED_STATUS,'Showing scheduled'),
+        (COMPLETED_STATUS,'Showing completed'),
+    )
+
+    status = models.IntegerField(blank=True, null=True, choices=STATUS_CHOICES)
+    notes = models.TextField(blank=True)
 
     class Meta:
         verbose_name_plural = "property inquiries"
