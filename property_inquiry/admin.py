@@ -3,17 +3,33 @@ from .models import propertyInquiry, PropertyInquirySummary
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
+from property_condition.models import ConditionReport
+
 class propertyInquiryAdmin(admin.ModelAdmin):
     list_display = ('Property', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
-    fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp', 'status', 'notes', 'number_of_pictures')
+    fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp', 'status', 'notes', 'number_of_pictures', 'condition_report_link')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
-    readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures')
+    readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link')
     list_filter = ['status',]
 
 
     def number_of_pictures(self, obj):
-        return obj.Property.photo_set.get_queryset().count()
+        url = reverse('property_photos', kwargs={'parcel':obj.Property.parcel,})
+        count = obj.Property.photo_set.get_queryset().count()
+        link = '<a href="{}">{}</a>'.format(url,count)
+        return mark_safe(link)
     number_of_pictures.short_description = 'Number of photos of property in BlightFight'
+
+    def condition_report_link(self,obj):
+        cr = ConditionReport.objects.filter(Property__exact=obj.Property).order_by('timestamp').first()
+        if cr is not None:
+            url = reverse('admin:property_condition_conditionreport_change', args=(cr.id,))
+            name_link = '<a href="{}">{}</a>'.format(url,cr.timestamp)
+        else:
+            url = reverse('admin:property_condition_conditionreport_add')
+            name_link = '<a href="{}">{}</a>'.format(url,'Add')
+        return mark_safe(name_link)
+    condition_report_link.short_description = 'Condition Report'
 
     def user_name(self, obj):
         email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
