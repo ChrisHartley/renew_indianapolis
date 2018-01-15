@@ -21,6 +21,7 @@ class PropertyInquiryForm(ModelForm):
         self.fields.keyOrder = [
             'applicant_name', 'applicant_email_address', 'applicant_phone', 'Property']
         self.helper = FormHelper()
+        self.helper.render_unmentioned_fields = False
         self.helper.form_id = 'propertyInquiryForm'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-3'
