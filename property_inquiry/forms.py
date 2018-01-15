@@ -32,5 +32,5 @@ class PropertyInquiryForm(ModelForm):
 
     class Meta:
         model = propertyInquiry
-        include = ['Property',]
+        fields = ['Property',]
         #exclude = ['user', 'showing_scheduled', 'applicant_ip_address', ]
