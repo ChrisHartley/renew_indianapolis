@@ -119,6 +119,8 @@ class Property(models.Model):
     acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired')
     buyer_application = models.ForeignKey('applications.Application', null=True, blank=True, help_text='The final buyer application.')
 
+    property_inspection_group = models.CharField(blank=True, max_length=10)
+
     class Meta:
         verbose_name_plural = "properties"
         ordering = ['streetAddress', 'parcel']
