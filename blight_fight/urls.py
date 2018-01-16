@@ -18,6 +18,7 @@ from user_files.views import delete_uploaded_file, import_uploader, send_file
 from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage
 from property_condition.views import submitConditionReport
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
+from epp_connector.views import fetch_epp_inventory
 
 
 admin.site.site_header = 'Blight Fight administration'
@@ -192,8 +193,7 @@ urlpatterns = [
             submitConditionReport,
             name='inventory_review_map'),
 
-
-
+        url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx')
 
     ]
 

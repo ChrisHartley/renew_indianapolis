@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'photos',
     'surplus',
     'univiewer',
+    'epp_connector',
     #'import_export',
     #'accella_records',
     #'debug_toolbar',
