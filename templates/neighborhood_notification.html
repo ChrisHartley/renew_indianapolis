@@ -8,10 +8,9 @@ Neighborhood Notification - {{application.Property}}
 Hello,
 </p>
 <p>
-Renew Indianapolis has received the following applications for property within the bounds of your organization. We are asking for your feedback as we consider this application.
+Renew Indianapolis has received the following applications for a property within the bounds of your organization. We are asking for your feedback as we consider this application.
 </p>
 <p>
-Application:</br>
 Applicant: {{application.user.first_name}} {{application.user.last_name}}</br>
 {% if application.organization %}
 Organization: {{application.organization}}</br>
@@ -51,11 +50,11 @@ maintain the lot but will have no obligation to build or restrictions on re-sale
 If you have any questions for the applicant you can contact them directly at {{application.user.email}} or reply to this email and I will ask for you.
 </p>
 <p>
-As you may know Renew Indianapolis sells city owned “landbank” properties through an application process.
-As part of that process we solicit feedback from the neighborhood organizations that work in the area where
+As you may know, Renew Indianapolis sells city-owned “landbank” properties through an application process.
+As part of that process, we solicit feedback from the neighborhood organizations that work in the area where
 each property is located. If you have any feedback for our Review Committee or Board of Directors as they
 consider these applications please do let us know. Feedback from neighborhood groups is very important in
-the decision making process.
+the decision-making process.
 </p>
 <p>
 These applications will be considered at the Review Committee meeting on {% for meeting in application.meeting.all %}{% if forloop.first %}{{meeting.meeting_date}}{% endif %}{% endfor %}. If they recommend approval the applications
