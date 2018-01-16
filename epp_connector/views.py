@@ -77,7 +77,7 @@ def fetch_epp_inventory(request):
             print("Endpoint returned success = false")
             return HttpResponse(status=500)
         workbook.close()
-        os.chmod(FILENAME, 0o777)
+        os.chmod(FILENAME, 0o666)
     else:
         print('File cached, not re-fetching.')
     wrapper = FileWrapper(open(FILENAME,'rb'))
