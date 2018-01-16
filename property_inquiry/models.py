@@ -5,16 +5,7 @@ from property_inventory.models import Property
 
 class propertyInquiry(models.Model):
 
-    # Sold
-    # user cancelled
-    # user non-responsive
 
-    # proposed showing email sent
-    # proposed date
-    # completed
-    # who was present at showing
-    # notes on request
-    # show number of photos
     user = models.ForeignKey(User)
     Property = models.ForeignKey(Property, blank=True, null=True)
     timestamp = models.DateTimeField(
@@ -28,6 +19,7 @@ class propertyInquiry(models.Model):
     USER_CONTACTED_STATUS = 4
     SCHEDULED_STATUS = 5
     COMPLETED_STATUS = 6
+    DUPLICATE_REQUEST_STATUS = 7
     STATUS_CHOICES = (
         (SOLD_STATUS,'Property was sold after request submitted'),
         (USER_CANCELLED_STATUS,'User cancelled request'),
@@ -35,6 +27,7 @@ class propertyInquiry(models.Model):
         (USER_CONTACTED_STATUS,'Contacted user to schedule'),
         (SCHEDULED_STATUS,'Showing scheduled'),
         (COMPLETED_STATUS,'Showing completed'),
+        (DUPLICATE_REQUEST_STATUS, 'Duplicate request')
     )
 
     status = models.IntegerField(blank=True, null=True, choices=STATUS_CHOICES)
