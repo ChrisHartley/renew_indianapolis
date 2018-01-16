@@ -7,9 +7,6 @@ import os
 from django.http import HttpResponse
 from wsgiref.util import FileWrapper
 
-#import create_current_inventory_xlsx_simple
-
-
 import xlsxwriter
 from os.path import getmtime
 import datetime
@@ -80,6 +77,7 @@ def fetch_epp_inventory(request):
             print("Endpoint returned success = false")
             return HttpResponse(status=500)
         workbook.close()
+        os.chmod(FILENAME, 0o777)
     else:
         print('File cached, not re-fetching.')
     wrapper = FileWrapper(open(FILENAME,'rb'))
