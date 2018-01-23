@@ -6,12 +6,15 @@ from django.core.urlresolvers import reverse
 from property_condition.models import ConditionReport
 
 class propertyInquiryAdmin(admin.ModelAdmin):
-    list_display = ('Property', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
+    list_display = ('Property', 'renew_owned', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
     fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp', 'status', 'notes', 'number_of_pictures', 'condition_report_link')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
     readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link')
-    list_filter = ['status',]
+    list_filter = ['status', 'Property__renew_owned']
 
+
+    def renew_owned(self, obj):
+        return obj.Property.renew_owned
 
     def number_of_pictures(self, obj):
         url = reverse('property_photos', kwargs={'parcel':obj.Property.parcel,})
