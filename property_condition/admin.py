@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import ConditionReport, Room
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+from django import forms
 
-
-class RoomInline(admin.TabularInline):
+class RoomInline(admin.StackedInline):
     model = Room
     #fields = ('date_purchased', 'date_expiring', 'amount_paid', )
     #readonly_fields=('closing',)
@@ -18,6 +18,13 @@ class ConditionReportAdmin(admin.ModelAdmin):
         upload_photo_page_link = '<a target="_blank" href="{}">{}</a>'.format(
             reverse("admin_add_photos"), "Add photos page")
         return mark_safe(upload_photo_page_link)
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super(ConditionReportAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if 'notes' in db_field.name:
+            formfield.widget = forms.Textarea(attrs={'rows':4})
+        return formfield
+
 
     fieldsets = (
         ('Property', {

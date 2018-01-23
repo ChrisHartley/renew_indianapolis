@@ -68,7 +68,7 @@ class Room(models.Model):
     )
 
     flooring_type = models.CharField(choices=FLOORING_TYPE, blank=False, null=False, max_length=254)
-    dimensions = models.CharField(max_length=7, blank=True, null=False)
+    dimensions = models.CharField(max_length=50, blank=True, null=False)
     conditionreport = models.ForeignKey('property_condition.ConditionReport')
 
     def __unicode__(self):
@@ -96,7 +96,7 @@ class ConditionReport(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     general_property_notes = models.CharField(
-        max_length=512, blank=True, verbose_name='General Property Notes')
+        max_length=5000, blank=True, verbose_name='General Property Notes')
 
 
     roof_shingles = models.IntegerField(
