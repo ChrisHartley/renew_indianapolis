@@ -2,6 +2,7 @@ from django.db import models
 from PIL import Image
 import numpy as np
 from django.conf import settings
+from django.db.models import Q
 #from property_inventory.models import Property
 
 
@@ -87,7 +88,10 @@ class ConditionReport(models.Model):
         (MISSING_STATUS, 'Missing'),
         (NA_STATUS, 'N/A'))
 
-    Property = models.ForeignKey('property_inventory.Property')
+    def limit_property_choices():
+        return Q( (Q(structureType__exact='Residential Dwelling') | Q(structureType__exact='Mixed Use Commercial')), ~Q(status__contains='Sold'))
+
+    Property = models.ForeignKey('property_inventory.Property', limit_choices_to=limit_property_choices())
     picture = models.ImageField(upload_to=content_file_name, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
