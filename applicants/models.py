@@ -99,8 +99,9 @@ class Organization(models.Model):
     external_system_id = models.CharField(max_length=100, blank=True)
 
     def save(self, *args, **kwargs):
-        if self.external_system_id == '':
-            self.external_system_id = 'INDY-ORGANIZATION-{0}'.format(self.pk,)
+        super(Organization, self).save(*args, **kwargs)
+        if self.external_system_id == '' or self.external_system_id == 'INDY-ORGANIZATION-None':
+            self.external_system_id = 'INDY-ORGANIZATION-{0}'.format(self.id,)
         super(Organization, self).save(*args, **kwargs)
 
 
