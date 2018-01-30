@@ -88,7 +88,7 @@ class ClosingAdmin(admin.ModelAdmin):
         else:
             if db_field.name == "application":
                 formfield.queryset = Application.objects.filter(
-                    ( Q(meeting__meeting_outcome__exact=MeetingLink.APPROVED_STATUS) & Q(meeting__meeting__meeting_type__exact=Meeting.MDC) ) |
+                    ( Q(meeting__meeting_outcome__exact=MeetingLink.APPROVED_STATUS) & Q(meeting__meeting__meeting_type__exact=Meeting.MDC) & Q(Property__renew_owned__exact=False) ) |
                         ( Q(meeting__meeting_outcome__exact=MeetingLink.APPROVED_STATUS) & Q(meeting__meeting__meeting_type__exact=Meeting.BOARD_OF_DIRECTORS) & Q(Property__renew_owned__exact=True) )
                 ).exclude(Property__status__icontains='Sold').filter(closing_set__isnull=True).filter(status=Application.COMPLETE_STATUS)
             if db_field.name == "prop":
