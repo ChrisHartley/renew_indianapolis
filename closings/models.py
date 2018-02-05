@@ -155,8 +155,12 @@ class closing(models.Model):
             if self.closed == True and orig_closing.closed == False and self.application and self.application.Property.renew_owned == False and settings.SEND_CITY_CLOSED_NOTIFICATION_EMAIL:
                 subject = 'City owned property closed by Renew Indianapolis - {0}'.format(self.application.Property,)
                 message = 'This is a courtesy notification that the property at {0} was sold, please update your files as necessary.'.format(self.application.Property,)
+                recipient = [settings.CITY_PROPERTY_MANAGER_EMAIL,]
+                if self.application.Property.urban_garden == True:
+                    message = message + ' Our records show there was an active urban garden license on this property.'
+                    recipient.append(settings.CITY_URBAN_GARDENING_MANAGER_EMAIL)
                 from_email = 'info@renewindianapolis.org'
-                send_mail(subject, message, from_email, [settings.CITY_PROPERTY_MANAGER_EMAIL],)
+                send_mail(subject, message, from_email, recipient,)
 
         super(closing, self).save(*args, **kwargs)
         # we can only do fancy stuff if there is an application associated with the closing, which legacy closings don't have. so skip allt he fancy stuff in that case.

@@ -169,6 +169,7 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_FORM_CLASS = 'applicants.forms.SignupForm'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Renew Indianapolis]'
 #SOCIALACCOUNT_FORMS = {
 #    'signup': 'applicants.forms.CustomSignupForm'
 #}
@@ -219,6 +220,7 @@ PROPERTY_INQUIRIES_ENABLED = True
 # This setting sets if closing assignment notification emails are sent to city employees
 SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
+CITY_URBAN_GARDENING_MANAGER_EMAIL = 'david.hirschle@indy.gov' # notified in closings app if city owned urban garden license property sells
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
 
 # Production settings are kept in a separate file, settings_production.py
