@@ -305,7 +305,8 @@ from decimal import *
 class MDCCSVResponseMixin(object):
     """
     A mixin that constructs a CSV response from the context data if
-    the CSV export option was provided in the request.
+    the CSV export option was provided in the request. In this case to create the
+    MDC spreadsheet.
     """
     def render_to_response(self, context, **response_kwargs):
         """
@@ -408,3 +409,50 @@ class MeetingOutcomeNotificationSpreadsheet(MONCSVResponseMixin, DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'
+
+import xlsxwriter
+from io import BytesIO
+class ePPPropertyUpdate(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'price_change_summary_view_all.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        header = ['Parcel Number', 'Property Status', 'Property Class', 'Owner Party Number', 'Owner Party External System Id', 'Property Address.Address1', 'Property Address.Address2', 'Property Address.City', 'Property Address.County', 'Property Address.State', 'Property Address.Postal Code', 'Status Date', 'Property Manager Party Number', 'Property Manager Party External System Id', 'Update', 'Available', 'Foreclosure Year', 'Inventory Type', 'Legal Description', 'Listing Comments', 'Maintenance Manager Party External System Id', 'Maintenance Manager Party Number', 'Parcel Square Footage', 'Parcel Length', 'Parcel Width', 'Published', 'Tags', 'Latitude', 'Longitude', 'Parcel Boundary', 'Census Tract', 'Congressional District', 'Legislative District', 'Local District', 'Neighborhood', 'School District', 'Voting Precinct', 'Zoned As', 'Acquisition Amount', 'Acquisition Date', 'Acquisition Method', 'Sold Amount', 'Sold Date', 'Actual Disposition', 'Asking Price', 'Assessment Year', 'Current Assessment', 'Minimum Bid Amount', 'Block Condition', 'Brush Removal', 'Cleanup Assessment', 'Demolition Needed', 'Environmental Cleanup Needed', 'Market Condition', 'Potential Use', 'Property Condition', 'Property of Interest', 'Quiet Title', 'Rehab Candidate', 'Target Disposition', 'Trash Removal ', 'Custom.BEP Mortgage Expiration Date', 'Custom.BLC Number', 'Custom.CDC', 'Custom.Grant Program', 'Custom.Sales Program'
+        ]
+
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet('PropertyDescription')
+        text_format = workbook.add_format({'num_format': '@'})
+
+        for i in range(len(header)):
+            worksheet.write(0, i, header[i])
+
+        max_index = 0
+        for index,price_change_link in enumerate(context['meeting'].price_change_meeting_link.all().filter(meeting_outcome=1), 1):
+            price_change = price_change_link.price_change
+            worksheet.write(index, header.index('Parcel Number'), price_change.Property.parcel, text_format)
+            worksheet.write(index, header.index('Update'), 'Y')
+            worksheet.write(index, header.index('Asking Price'), price_change.proposed_price)
+            max_index = index
+
+            ## This changes the property status if approved to Sale Pending. This works at all stages b/c
+        for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type').exclude(meeting_outcome=4), max_index+1):
+            application = meeting_link.application
+            if meeting_link.meeting_outcome == MeetingLink.APPROVED_STATUS:
+                status = 'Sale Pending'
+
+            # If this is the first stage of review then status should already be available but it doesn't hurt to re-set it
+            if meeting_link.meeting_outcome == MeetingLink.NOT_APPROVED_STATUS:
+                status = 'Available'
+
+            worksheet.write(index, header.index('Parcel Number'), application.Property.parcel, text_format)
+            worksheet.write(index, header.index('Update'), 'Y')
+            worksheet.write(index, header.index('Property Status'), status, text_format)
+
+
+        workbook.close()
+        response = HttpResponse(output.getvalue(), content_type='application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="price_change.xlsx"'
+        return response

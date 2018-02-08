@@ -7,7 +7,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
-from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet
+from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
 from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry
@@ -145,6 +145,12 @@ urlpatterns = [
         url(r'meeting/mdc_spreadsheet/(?P<pk>[0-9]+)/$',
              staff_member_required(MDCSpreadsheet.as_view()),
              name='mdc_spreadsheet'),
+
+        url(r'meeting/epp_update_spreadsheet/(?P<pk>[0-9]+)/$',
+             staff_member_required(ePPPropertyUpdate.as_view()),
+             name='epp_update_spreadsheet'),
+
+
 
         url(r'meeting/mail_merge_notification_spreadsheet/(?P<pk>[0-9]+)/$',
              staff_member_required(MeetingOutcomeNotificationSpreadsheet.as_view()),
