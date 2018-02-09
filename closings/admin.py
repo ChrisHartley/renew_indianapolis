@@ -59,7 +59,7 @@ class ClosingAdmin(admin.ModelAdmin):
     list_display = ['__unicode__','title_company','date_time', 'processing_fee_paid', 'city_documents_in_place', 'ri_documents_in_place', 'title_commitment_in_place', 'title_company_documents_in_place']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'prop__renew_owned', 'archived')
-    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid')
+    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid', 'print_deposit_slip')
     actions = [make_archived,]
     inlines = [PurchaseOptionInline,]
 
@@ -168,6 +168,13 @@ class ClosingAdmin(admin.ModelAdmin):
             reverse("download_file", kwargs={'id':obj.id}),
                 "Download"
             ))
+
+    def print_deposit_slip(self, obj):
+        closing_deposit_link = '<a target="_blank" href="{}">{}</a>'.format(
+            reverse("closing_deposit_slip", args=(obj.id,)), "Print deposit sheet")
+        return mark_safe(closing_deposit_link)
+
+
 
 
 class ClosingScheduleViewAdmin(ClosingAdmin):

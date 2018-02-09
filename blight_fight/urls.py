@@ -15,7 +15,7 @@ from applicants.views import edit_organization, profile_home, profile_home, show
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
 from user_files.views import delete_uploaded_file, import_uploader, send_file
-from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage
+from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, ClosingDepositSlipDetailView
 from property_condition.views import submitConditionReport
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 from epp_connector.views import fetch_epp_inventory
@@ -198,6 +198,10 @@ urlpatterns = [
         url(r'condition_report/$',
             submitConditionReport,
             name='inventory_review_map'),
+
+        url(r'closing/deposit_slip/(?P<pk>[0-9]+)/$',
+            staff_member_required(ClosingDepositSlipDetailView.as_view()),
+            name='closing_deposit_slip'),
 
         url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx')
 

@@ -1,0 +1,24 @@
+{% extends 'base-simple-container.html' %}
+{% load humanize %}
+{% load custom_tags %}
+{% block center%}
+<div class="row">
+
+  <div class="col-md-10 col-md-offset-2 col-xs-10 col-xs-offset-2 col-sm-10 col-sm-offset-2 col-lg-10 col-lg-offset-2">
+    The following property has been sold:
+
+    <dl class="dl-horizontal">
+      <dt>Classification: </dt><dd>{% if closing.application.Property.structureType == 'Vacant Lot' and closing.application.Property.hhf_demolition%}BEP {%endif%}{{closing.application.Property.structureType}}</dd>
+      <dt>Parcel</dt><dd>{{closing.application.Property.parcel}}</dd>
+      <dt>Address</dt><dd>{{closing.application.Property.streetAddress}}</dd>
+      <dt>Buyer(s)</dt><dd>{{closing.application.user.first_name}} {{closing.application.user.last_name}} / {{closing.application.organization}}</dd>
+      <dt>Title co.</dt><dd>{{closing.title_company}}</dd>
+      <dt>Date of closing</dt><dd>{{closing.date_time|date:"M d, Y"}}</dd>
+      <dt>Disbursements</dt><dd>Renew: ${{closing.ri_proceeds|intcomma}} City: ${{closing.city_proceeds|default:0|intcomma}}</dd>
+    </dl>
+  </div>
+
+<script type="text/javascript">
+  window.onload = function () { window.print(); }
+</script>
+{% endblock center %}

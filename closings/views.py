@@ -7,14 +7,17 @@ import stripe
 from decimal import *
 from datetime import date
 from applications.models import Application
-from .models import processing_fee, title_company
+from .models import processing_fee, title_company, closing
 from .forms import TitleCompanyChooser
 from django.contrib import messages
 from django.utils.text import slugify
 from wsgiref.util import FileWrapper
 from django.contrib.admin.views.decorators import staff_member_required
 
-
+class ClosingDepositSlipDetailView(DetailView):
+    model = closing
+    context_object_name = 'closing'
+    template_name = 'closing_deposit_slip.html'
 
 class ApplicationPurchaseAgreement(DetailView):
     model = Application
