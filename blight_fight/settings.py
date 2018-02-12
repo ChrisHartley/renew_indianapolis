@@ -210,9 +210,9 @@ COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindianapolis.org',
     'APPLICATION_CONTACT_PHONE': '317-454-8528',
     'SIDELOT_PROCESSING_FEE': 100,
-    'SIDELOT_PROCESSING_STRIPE_FEE': 330,
+    'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 200,
-    'STANDARD_PROCESSING_STRIPE_FEE': 628,
+    'STANDARD_PROCESSING_STRIPE_FEE': 481, # new based on non-profit 2.2% + $0.30 rate
 }
 
 # This setting determins if property inquiries are allowed to be submitted
