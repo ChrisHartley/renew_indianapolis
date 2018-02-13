@@ -456,3 +456,69 @@ class ePPPropertyUpdate(DetailView):
         response = HttpResponse(output.getvalue(), content_type='application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="price_change.xlsx"'
         return response
+
+
+
+class ePPPartyUpdate(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'price_change_summary_view_all.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        person_header = ['First Name', 'Last Name', 'Party Number', 'External System Id', 'Organization External System Id', 'Organization Party Number', 'Update', 'Address.Address 1', 'Address.City', 'Address.State', 'Address.Postal Code', 'Address.Address 2', 'Address.Country', 'Address.County', 'Address.Latitude', 'Address.Longitude', 'Email', 'Function', 'Middle', 'Prefix', 'Suffix', 'Telephone', 'TIN', 'Title']
+        organization_header = ['Class', 'Legal Name', 'Contact.First Name', 'Contact.Last Name', 'Party Number', 'External System Id', 'Contact.External System Id', 'Update', 'Address.Address 1', 'Address.City', 'Address.State', 'Address.Postal Code', 'Address.Address 2', 'Address.Country', 'Address.County', 'Address.Latitude', 'Address.Longitude', 'Business Type', 'DBA Name', 'DUNS', 'EIN', 'Email', 'Function', 'Industry', 'Telephone']
+
+
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        person_worksheet = workbook.add_worksheet('Person')
+        organization_worksheet = workbook.add_worksheet('Organization')
+        text_format = workbook.add_format({'num_format': '@'})
+
+        for i in range(len(person_header)):
+            person_worksheet.write(0, i, person_header[i])
+
+        for i in range(len(organization_header)):
+            organization_worksheet.write(0, i, organization_header[i])
+
+
+            ## This gets all the applications at the meeting and creates one row in the appropriate sheet for each application.
+            ## This does create duplication and blank rows but that doesn't matter because ePP skips them both.
+        organization_index = 1
+        person_index = 1
+        for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
+            application = meeting_link.application
+            if application.organization is None:
+                person_worksheet.write(person_index, person_header.index('First Name'), application.user.first_name, text_format)
+                person_worksheet.write(person_index, person_header.index('Last Name'), application.user.last_name, text_format)
+                person_worksheet.write(person_index, person_header.index('External System Id'), application.user.profile.external_system_id, text_format)
+                person_worksheet.write(person_index, person_header.index('Address.Address 1'), application.user.profile.mailing_address_line1, text_format)
+                person_worksheet.write(person_index, person_header.index('Address.City'), application.user.profile.mailing_address_city, text_format)
+                person_worksheet.write(person_index, person_header.index('Address.State'), application.user.profile.mailing_address_state, text_format)
+                person_worksheet.write(person_index, person_header.index('Address.Postal Code'), application.user.profile.mailing_address_zip, text_format)
+                person_worksheet.write(person_index, person_header.index('Address.Address 2'), application.user.profile.mailing_address_line2, text_format)
+                person_worksheet.write(person_index, person_header.index('Email'), application.user.email, text_format)
+                person_worksheet.write(person_index, person_header.index('Function'), 'Owner|Buyer', text_format)
+                person_worksheet.write(person_index, person_header.index('Telephone'), application.user.profile.phone_number, text_format)
+                person_index = person_index + 1
+            else:
+                organization_worksheet.write(organization_index,organization_header.index('Class'), 'External', text_format)
+                organization_worksheet.write(organization_index,organization_header.index('Legal Name'), application.organization.name, text_format)
+                organization_worksheet.write(organization_index,organization_header.index('Contact.First Name'), application.user.first_name, text_format)
+                organization_worksheet.write(organization_index,organization_header.index('Contact.Last Name'), application.user.last_name, text_format)
+                organization_worksheet.write(organization_index,organization_header.index('External System Id'), application.organization.external_system_id, text_format)
+                person_worksheet.write(organization_index, person_header.index('Address.Address 1'), application.organization.mailing_address_line1, text_format)
+                person_worksheet.write(organization_index, person_header.index('Address.City'), application.organization.mailing_address_city, text_format)
+                person_worksheet.write(organization_index, person_header.index('Address.State'), application.organization.mailing_address_state, text_format)
+                person_worksheet.write(organization_index, person_header.index('Address.Postal Code'), application.organization.mailing_address_zip, text_format)
+                person_worksheet.write(organization_index, person_header.index('Address.Address 2'), application.organization.mailing_address_line2, text_format)
+                person_worksheet.write(organization_index, person_header.index('Email'), application.organization.email, text_format)
+                person_worksheet.write(organization_index, person_header.index('Function'), 'Owner|Buyer', text_format)
+                person_worksheet.write(organization_index, person_header.index('Telephone'), application.organization.phone_number, text_format)
+                organization_index = organization_index + 1
+
+
+        workbook.close()
+        response = HttpResponse(output.getvalue(), content_type='application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="party-import.xlsx"'
+        return response
