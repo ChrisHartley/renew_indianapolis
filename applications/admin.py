@@ -164,7 +164,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline, PriceChangeMeetingLinkInline]
-    readonly_fields = ('agenda', 'applications', 'create_mdc_spreadsheet', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page','price_change_CMA_zip','price_change_csv', 'create_meeting_outcome_notification_spreadsheet', 'create_epp_update_spreadsheet')
+    readonly_fields = ('agenda', 'applications', 'create_mdc_spreadsheet', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page','price_change_CMA_zip','price_change_csv', 'create_meeting_outcome_notification_spreadsheet', 'create_epp_update_spreadsheet', 'create_epp_party_spreadsheet')
 #    list_select_related = True
 
 
@@ -200,6 +200,16 @@ class MeetingAdmin(admin.ModelAdmin):
             reverse("epp_update_spreadsheet", args=(obj.id,)), "Generate Spreadsheet for ePP Price and Status Property Update")
         return mark_safe(summary_link)
     create_epp_update_spreadsheet.short_description = 'ePropertyPlus Update spreadsheet'
+
+    def create_epp_party_spreadsheet(self, obj):
+        if obj.id is None:
+            return mark_safe('<a href="">(none)</a>')
+        summary_link = '<a target="_blank" href="{}">{}</a>'.format(
+            reverse("epp_update_party_spreadsheet", args=(obj.id,)), "Generate Spreadsheet for ePP Party Update")
+        return mark_safe(summary_link)
+    create_epp_party_spreadsheet.short_description = 'ePropertyPlus Update Party spreadsheet'
+
+
 
 
     def agenda(self, obj):
