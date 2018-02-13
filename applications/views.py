@@ -325,23 +325,31 @@ class MDCCSVResponseMixin(object):
             #from applications.models import MeetingLink.APPROVED_STATUS
             for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type').filter(application__Property__renew_owned__exact=False).filter(meeting_outcome=MeetingLink.SCHEDULED_STATUS):
                 application = meeting_link.application
+
+                # Price is locked at time of submission, but older apps might
+                # not have a price, so use the property price then.
+                if application.price_at_time_of_submission is None:
+                    property_price = application.Property.price
+                else:
+                    property_price = application.price_at_time_of_submission
+
                 if application.application_type == application.SIDELOT:
                     price = 750 # hardcoded value for sidelots. Big trouble!
                     city_split = 250
                     renew_split = 500
-                elif application.Property.price > 3500:
+                elif property_price > 3500:
                     price = application.Property.price
                     city_split = round(price*Decimal('.55'))
                     renew_split = Decimal(price)-Decimal(city_split)
-                elif application.Property.price == 3500.0:
+                elif property_price == 3500.0:
                     price = application.Property.price
                     city_split = 1000.00
                     renew_split = 2500.00
-                elif application.Property.price == 750.0:
+                elif property_price == 750.0:
                     price = application.Property.price
                     city_split = 250.00
                     renew_split = 500.00
-                else:
+                else: # Error case, should catch people's attention to fix manually
                     city_split = 0
                     renew_split = 0
                 total = Decimal(city_split)+Decimal(renew_split)
