@@ -27,10 +27,10 @@ class ApplicantProfile(models.Model):
     external_system_id = models.CharField(max_length=100, blank=True)
 
     def save(self, *args, **kwargs):
-        if self.external_system_id == '':
-            self.external_system_id = 'INDY-APPLICANT-{0}'.format(self.pk,)
         super(ApplicantProfile, self).save(*args, **kwargs)
-
+        if self.external_system_id == '' or self.external_system_id == 'INDY-APPLICANT-None':
+            self.external_system_id = 'INDY-APPLICANT-{0}'.format(self.id,)
+        super(ApplicantProfile, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'{0}'.format(self.user.first_name)
