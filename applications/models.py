@@ -274,7 +274,10 @@ class Application(models.Model):
 
     def save(self, *args, **kwargs):
         if self.status == self.COMPLETE_STATUS and self.Property is not None and self.price_at_time_of_submission is None:
-            self.price_at_time_of_submission = self.Property.price
+            if self.application_type == self.SIDELOT:
+                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['SIDELOT_PRICE']
+            else:
+                self.price_at_time_of_submission = self.Property.price
         if self.status == self.COMPLETE_STATUS and self.submitted_timestamp is None:
             self.submitted_timestamp = datetime.datetime.now()
         super(Application, self).save(*args, **kwargs)

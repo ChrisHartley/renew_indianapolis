@@ -333,20 +333,16 @@ class MDCCSVResponseMixin(object):
                 else:
                     property_price = application.price_at_time_of_submission
 
-                if application.application_type == application.SIDELOT:
-                    price = 750 # hardcoded value for sidelots. Big trouble!
-                    city_split = 250
-                    renew_split = 500
-                elif property_price > 3500:
-                    price = application.Property.price
+                if property_price > 3500:
+                    price = property_price
                     city_split = round(price*Decimal('.55'))
                     renew_split = Decimal(price)-Decimal(city_split)
                 elif property_price == 3500.0:
-                    price = application.Property.price
+                    price = property_price
                     city_split = 1000.00
                     renew_split = 2500.00
                 elif property_price == 750.0:
-                    price = application.Property.price
+                    price = property_price
                     city_split = 250.00
                     renew_split = 500.00
                 else: # Error case, should catch people's attention to fix manually

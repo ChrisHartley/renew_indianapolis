@@ -213,6 +213,7 @@ COMPANY_SETTINGS = {
     'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 200,
     'STANDARD_PROCESSING_STRIPE_FEE': 481, # new based on non-profit 2.2% + $0.30 rate
+    'SIDELOT_PRICE': 750.00, # Regular sidelot price
 }
 
 # This setting determins if property inquiries are allowed to be submitted
