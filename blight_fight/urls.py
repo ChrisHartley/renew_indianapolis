@@ -7,7 +7,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 
 from neighborhood_associations.views import get_relevant_neighborhood_assocations
-from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate
+from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
 from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry
@@ -19,6 +19,7 @@ from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, Clos
 from property_condition.views import submitConditionReport
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 from epp_connector.views import fetch_epp_inventory
+from neighborhood_notifications.views import update_registered_organizations
 
 
 admin.site.site_header = 'Blight Fight administration'
@@ -159,6 +160,10 @@ urlpatterns = [
              staff_member_required(MeetingOutcomeNotificationSpreadsheet.as_view()),
              name='meeting_outcome_notification_spreadsheet'),
 
+        url(r'meeting/generate_neighborhood_notifications/(?P<pk>[0-9]+)/$',
+            staff_member_required(GenerateNeighborhoodNotifications.as_view()),
+            name='generate_neighborhood_notifications'),
+
         url(r'meeting/price_change/view_packet/(?P<pk>[0-9]+)/$',
             staff_member_required(PriceChangeSummaryAll.as_view()),
             name='price_change_summary_view_all'),
@@ -206,7 +211,9 @@ urlpatterns = [
             staff_member_required(ClosingDepositSlipDetailView.as_view()),
             name='closing_deposit_slip'),
 
-        url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx')
+        url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx'),
+
+        url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
 
     ]
 

@@ -1,4 +1,5 @@
 ajaxuploader==0.3.8
+arcgis-rest-query==0.14
 certifi==2017.4.17
 chardet==3.0.3
 diff-match-patch==20121119

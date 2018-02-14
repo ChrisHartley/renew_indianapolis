@@ -526,3 +526,56 @@ class ePPPartyUpdate(DetailView):
         response = HttpResponse(output.getvalue(), content_type='application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="party-import.xlsx"'
         return response
+
+from neighborhood_notifications.models import registered_organization, blacklisted_emails
+from user_files.models import UploadedFile
+from django.db.models import Q
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+class GenerateNeighborhoodNotifications(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'price_change_summary_view_all.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
+            application = meeting_link.application
+            orgs = registered_organization.objects.filter(geometry__contains=application.Property.geometry).exclude(email='n/a')
+            #for o in orgs:
+            #    if blacklisted_emails.objects.filter(email=o.email).count() == 0:
+            #        print "good", o
+            #    else:
+            #        print "blacklisted", o
+
+
+            subject = 'Neighborhood Notification - {0}'.format(application.Property,)
+            from_email = 'info@renewindianapolis.org'
+            message = render_to_string('email/neighborhood_notification_email.txt', {'application': application})
+            recipient = []
+            org_names = []
+            for recip in orgs.values('email'):
+                recipient.append(recip['email'])
+            for recip in orgs.values('name'):
+                org_names.append(recip['name'])
+            #recipient = orgs.values('email')
+            email = EmailMessage(
+                subject,
+                message,
+                from_email,
+                recipient,
+                reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+            )
+
+            files = UploadedFile.objects.filter(application=application).filter(Q(file_purpose=UploadedFile.PURPOSE_SCHEDULE_OF_VALUES) | Q(file_purpose=UploadedFile.PURPOSE_ELEVATION_VIEW) )
+            for f in files:
+                #email.attach_file(f.supporting_document.path)
+                email.attach_file('/tmp/blank.txt')
+            email.send()
+            application.neighborhood_notification_details = ', '.join(org_names)
+            application.save()
+            print application.neighborhood_notification_details
+            #print application.Property, files.count(), orgs.count(), orgs.values('email')
+            #send_mass_mail(subject, message, from_email, recipient,)
+
+        return HttpResponse('<html></html>')
