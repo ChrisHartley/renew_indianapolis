@@ -1,0 +1,33 @@
+{% load humanize %}
+Hello,
+
+Renew Indianapolis has received the following applications for a property within the bounds of your organization. We are asking for your feedback as we consider this application.
+
+Applicant: {{application.user.first_name}} {{application.user.last_name}}{% if application.organization %}
+Organization: {{application.organization}}
+{% endif %}
+Property: {{application.Property.streetAddress}}
+Parcel: {{application.Property.parcel}}
+
+{{application.user.first_name}} {{application.user.last_name}}{% if application.organization %} ({{application.organization}}){% endif %} intends to {% if application.application_type == 1 %}
+{% if application.Property.structureType == 'Vacant Lot' %}build a new home for themselves.
+  {% else %}rehab the home to live in themselves.{% endif %}
+  They intend to invest ${{application.staff_sow_total|default:0|intcomma}} in the home. A copy of the scope of work is attached to this email.
+{% endif %}{% if application.application_type == 2 %}
+{% if application.Property.structureType == 'Vacant Lot' %}build a new home{% else %}rehab the home{% endif %}{%if application.is_rental == True %} as a rental.{% else %} for sale.{% endif %} They intend to invest ${{application.staff_sow_total|default:0|intcomma}} in the home.
+A copy of the scope of work is attached to this email.
+{% endif %}{% if application.application_type == 3 %}use property as a sidelot.{% endif %}{% if application.application_type == 4 %}maintain the lot but will have no obligation to build or restrictions on re-sale.
+{% endif %}
+
+If you have any questions for the applicant you can contact them directly at {{application.user.email}} or reply to this email and I will ask for you.
+
+As you may know, Renew Indianapolis sells city-owned “landbank” properties through an application process.
+As part of that process, we solicit feedback from the neighborhood organizations that work in the area where
+each property is located. If you have any feedback for our Review Committee or Board of Directors as they
+consider these applications please do let us know. Feedback from neighborhood groups is very important in
+the decision-making process.
+
+These applications will be considered at the Review Committee meeting on {% for meeting in application.meeting.all %}{% if forloop.first %}{{meeting.meeting_date}}{% endif %}{% endfor %}. If they recommend approval the applications
+ will be considered at the next Board of Directors meeting and finally if they approve at the following Metropolitan Development Commission meeting, where the final decision will be made.
+
+Your feedback is welcome at any stage and can be emailed to me to be passed along.
