@@ -569,8 +569,8 @@ class GenerateNeighborhoodNotifications(DetailView):
 
             files = UploadedFile.objects.filter(application=application).filter(Q(file_purpose=UploadedFile.PURPOSE_SCHEDULE_OF_VALUES) | Q(file_purpose=UploadedFile.PURPOSE_ELEVATION_VIEW) )
             for f in files:
-                #email.attach_file(f.supporting_document.path)
-                email.attach_file('/tmp/blank.txt')
+                email.attach_file(f.supporting_document.path)
+                #email.attach_file('/tmp/blank.txt')
             email.send()
             application.neighborhood_notification_details = ', '.join(org_names)
             application.save()
