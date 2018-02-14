@@ -35,7 +35,7 @@ import zipfile
 import tempfile
 from django.utils.text import slugify
 
-from django.views.generic import DetailView, View
+from django.views.generic import DetailView, View, UpdateView
 
 import datetime
 from dateutil.rrule import *
@@ -530,17 +530,26 @@ class ePPPartyUpdate(DetailView):
 from neighborhood_notifications.models import registered_organization, blacklisted_emails
 from user_files.models import UploadedFile
 from django.db.models import Q
-from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-class GenerateNeighborhoodNotifications(DetailView):
+from django.core.urlresolvers import reverse
+from django.contrib import messages
+class GenerateNeighborhoodNotifications(UpdateView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'
+    form = None
+    fields = []
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.INFO, 'Neighborhood notifications sent.')
+        reverse("generate_neighborhood_notifications", kwargs={'pk': self.kwargs['pk']})
 
     def render_to_response(self, context, **response_kwargs):
+        applications = []
         for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
             application = meeting_link.application
+            applications.append(application)
             orgs = registered_organization.objects.filter(geometry__contains=application.Property.geometry).exclude(email='n/a')
             #for o in orgs:
             #    if blacklisted_emails.objects.filter(email=o.email).count() == 0:
@@ -558,7 +567,6 @@ class GenerateNeighborhoodNotifications(DetailView):
                 recipient.append(recip['email'])
             for recip in orgs.values('name'):
                 org_names.append(recip['name'])
-            #recipient = orgs.values('email')
             email = EmailMessage(
                 subject,
                 message,
@@ -567,15 +575,16 @@ class GenerateNeighborhoodNotifications(DetailView):
                 reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
             )
 
-            files = UploadedFile.objects.filter(application=application).filter(Q(file_purpose=UploadedFile.PURPOSE_SCHEDULE_OF_VALUES) | Q(file_purpose=UploadedFile.PURPOSE_ELEVATION_VIEW) )
+            files = UploadedFile.objects.filter(application=application).filter(Q(file_purpose=UploadedFile.PURPOSE_SCHEDULE_OF_VALUES) | Q(file_purpose=UploadedFile.PURPOSE_ELEVATION_VIEW) | Q(file_purpose=UploadedFile.PURPOSE_SOW))
             for f in files:
-                email.attach_file(f.supporting_document.path)
-                #email.attach_file('/tmp/blank.txt')
-            email.send()
-            application.neighborhood_notification_details = ', '.join(org_names)
-            application.save()
-            print application.neighborhood_notification_details
-            #print application.Property, files.count(), orgs.count(), orgs.values('email')
-            #send_mass_mail(subject, message, from_email, recipient,)
-
-        return HttpResponse('<html></html>')
+                if settings.DEBUG:
+                    email.attach_file('/tmp/blank.txt')
+                else:
+                    email.attach_file(f.supporting_document.path)
+            if self.request.POST.get('send') == 'True':
+                email.send()
+                application.neighborhood_notification_details = ', '.join(org_names)
+                application.save()
+        context['applications'] = applications
+        return render(self.request, 'neighborhood_notification_preview.html', context)
+        #return HttpResponse('<html></html>')

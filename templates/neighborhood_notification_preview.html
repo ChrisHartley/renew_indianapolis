@@ -1,0 +1,27 @@
+{% extends 'base-simple-container.html' %}
+{% block center %}
+<h1>Hello!</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% for app in applications%}
+{{app}}</br>
+{{app.neighborhood_notification_details}}
+<pre>
+{% include 'email/neighborhood_notification_email.txt' with application=app %}
+{% for file in app.file.all %}{% if file.file_purpose == 1 or file.file_purpose == 4 or file.file_purpose == 5 %}. {{file}}
+{% endif %}{% endfor %}
+</pre>
+{% endfor %}
+<a class="btn btn-danger" href="{% url 'generate_neighborhood_notifications' meeting.id %}?send=True" role="button">Send these notifications</a>
+<form method='POST' action='{% url 'generate_neighborhood_notifications' meeting.id %}'>
+  {% csrf_token %}
+  <input type='hidden' name='send' value='True'></input>
+  <button type="submit" class="btn btn-danger">Send these notifications</button>
+
+</form>
+{% endblock center %}
