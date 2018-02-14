@@ -534,16 +534,18 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-class GenerateNeighborhoodNotifications(UpdateView):
+class GenerateNeighborhoodNotifications(DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'price_change_summary_view_all.html'
-    form = None
-    fields = []
+    #form = None
+    #fields = []
 
-    def get_success_url(self):
-        messages.add_message(self.request, messages.INFO, 'Neighborhood notifications sent.')
-        reverse("generate_neighborhood_notifications", kwargs={'pk': self.kwargs['pk']})
+    #def post()
+
+    #def get_success_url(self):
+    #    messages.add_message(self.request, messages.INFO, 'Neighborhood notifications sent.')
+    #    return reverse("generate_neighborhood_notifications", kwargs={'pk': self.kwargs['pk']})
 
     def render_to_response(self, context, **response_kwargs):
         applications = []
@@ -581,8 +583,10 @@ class GenerateNeighborhoodNotifications(UpdateView):
                     email.attach_file('/tmp/blank.txt')
                 else:
                     email.attach_file(f.supporting_document.path)
-            if self.request.POST.get('send') == 'True':
+            print "SEnd?", self.request.GET.get('send')
+            if self.request.GET.get('send') == 'True':
                 email.send()
+                print 'Sent email'
                 application.neighborhood_notification_details = ', '.join(org_names)
                 application.save()
         context['applications'] = applications
