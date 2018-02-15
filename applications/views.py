@@ -553,22 +553,20 @@ class GenerateNeighborhoodNotifications(DetailView):
             application = meeting_link.application
             applications.append(application)
             orgs = registered_organization.objects.filter(geometry__contains=application.Property.geometry).exclude(email='n/a')
-            #for o in orgs:
-            #    if blacklisted_emails.objects.filter(email=o.email).count() == 0:
-            #        print "good", o
-            #    else:
-            #        print "blacklisted", o
 
+            recipient = []
+            org_names = []
+            for o in orgs:
+                if blacklisted_emails.objects.filter(email=o.email).count() == 0: # check if email exists in blacklist (bounces, opt-out, etc)
+                    recipient.append(recip['email'])
+                    org_names.append(recip['name'])
+                else:
+                    pass
 
             subject = 'Neighborhood Notification - {0}'.format(application.Property,)
             from_email = 'info@renewindianapolis.org'
             message = render_to_string('email/neighborhood_notification_email.txt', {'application': application})
-            recipient = []
-            org_names = []
-            for recip in orgs.values('email'):
-                recipient.append(recip['email'])
-            for recip in orgs.values('name'):
-                org_names.append(recip['name'])
+
             email = EmailMessage(
                 subject,
                 message,
@@ -579,16 +577,15 @@ class GenerateNeighborhoodNotifications(DetailView):
 
             files = UploadedFile.objects.filter(application=application).filter(Q(file_purpose=UploadedFile.PURPOSE_SCHEDULE_OF_VALUES) | Q(file_purpose=UploadedFile.PURPOSE_ELEVATION_VIEW) | Q(file_purpose=UploadedFile.PURPOSE_SOW))
             for f in files:
-                if settings.DEBUG:
+                if settings.DEBUG: # application media files don't exist in testing environment, so attach dummy file.
                     email.attach_file('/tmp/blank.txt')
                 else:
                     email.attach_file(f.supporting_document.path)
-            print "SEnd?", self.request.GET.get('send')
+            #print "Send?", self.request.GET.get('send')
             if self.request.GET.get('send') == 'True':
                 email.send()
-                print 'Sent email'
+            #    print 'Sent email'
                 application.neighborhood_notification_details = ', '.join(org_names)
                 application.save()
         context['applications'] = applications
         return render(self.request, 'neighborhood_notification_preview.html', context)
-        #return HttpResponse('<html></html>')

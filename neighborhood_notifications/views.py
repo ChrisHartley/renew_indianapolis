@@ -9,7 +9,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.gdal.error import GDALException
 from django.db import IntegrityError
 
-# Create your views here.
+# Pull updated list of registered organizations from the city's public list
 def update_registered_organizations(request):
     URL = 'http://imaps.indy.gov/arcgis/rest/services/RegisteredOrganizations/MapServer/'
     LAYER = 0
@@ -26,10 +26,11 @@ def update_registered_organizations(request):
         try:
             geometry = GEOSGeometry(str(record['geometry']))
             if not geometry.valid:
-                #raise ValueError('The geometry was invalid')
-                geometry=None
+                geometry = geometry.buffer(0)
+                print "Geometry was invalid, repair was successfull:", geometry.valid
         except GDALException, ValueError:
             number_errors = number_errors + 1
+            print "Error on", record['properties']['ORG_NAME']
             break
         try:
             x = registered_organization(
@@ -41,8 +42,9 @@ def update_registered_organizations(request):
                 )
             x.save()
             if registered_organization.objects.filter(geometry__isvalid=True).filter(id=x.id).count() == 0:
-                print "Error, invalid geometry"
+                print "Error, invalid geometry", record['properties']['ORG_NAME']
             number_created = number_created + 1
         except IntegrityError:
             number_errors = number_errors + 1
+            print "IntegrityError on ", record['properties']['ORG_NAME']
     return HttpResponse('<html><body><ul><li>Number deleted: {0}</li><li>Number created: {1}</li><li>Number errors: {2}</li></ul></body></html>'.format(number_deleted[0], number_created, number_errors))
