@@ -15,7 +15,7 @@
 {{app.neighborhood_notification_details}}
 <pre>
 {% include 'email/neighborhood_notification_email.txt' with application=app %}
-{% for file in app.file.all %}{% if file.file_purpose == 1 or file.file_purpose == 4 or file.file_purpose == 5 %}. {{file}}
+{% for file in app.file.all %}{% if file.send_with_neighborhood_notification %}. {{file}}
 {% endif %}{% endfor %}
 </pre>
 {% endfor %}
