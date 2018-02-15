@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-#from django.contrib import admin
 from django.contrib.gis import admin
-
 from .models import registered_organization, blacklisted_emails
-# Register your models here.
+
 class registered_organization_admin(admin.OSMGeoAdmin):
-    pass
+    search_fields = ( 'name', 'first_name', 'last_name', 'email', )
+
+class blacklisted_emails_admin(admin.OSMGeoAdmin):
+    search_fields = ('name', 'email')
+
 admin.site.register(registered_organization, registered_organization_admin)
-admin.site.register(blacklisted_emails)
+admin.site.register(blacklisted_emails, blacklisted_emails_admin)
