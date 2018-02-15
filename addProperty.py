@@ -82,6 +82,14 @@ def getParcelArea(parcel, cursor):
 	cursor.execute("SELECT round(ST_area(geom)) FROM parcels WHERE parcel_c = '"+str(parcel)+"'")
 	return cursor_gis.fetchone()[0]
 
+def getShortLegal(parcel, cursor):
+	cursor.execute('SELECT "Legal_Description" FROM counter_book_2017_updated WHERE "Parcel_Number" = \''+str(parcel)+"\'")
+	return cursor.fetchone()[0]
+
+def getDeedDate(parcel, cursor):
+	cursor.execute('SELECT "Deed_Date"::date FROM counter_book_2017_updated WHERE "Parcel_Number" = \''+str(parcel)+"\'")
+	return cursor.fetchone()[0]
+
 def getUrbanGardenStatus(parcel, cursor):
 	cursor.execute("SELECT count(*) FROM urban_gardens WHERE parcel_c = '"+str(parcel)+"'")
 	return cursor_gis.fetchone()[0] > 0
@@ -165,7 +173,9 @@ urban_garden_status = getUrbanGardenStatus(parcel, cursor_gis)
 bep_demolition_status = getBEPDemolitionStatus(parcel, cursor_gis)
 geometry = getGeometry(parcel, cursor_gis)
 centroid_geometry = getCentroidGeometry(parcel, cursor_gis)
+short_legal = getShortLegal(parcel, cursor_gis)
+deed_date = getDeedDate(parcel, cursor_gis)
 
-query = "INSERT INTO property_inventory_property (\"propertyType\", parcel, \"streetAddress\", nsp, quiet_title_complete, \"structureType\", cdc_id, zone_id, zipcode_id, neighborhood_id, urban_garden, bep_demolition, status, sidelot_eligible, vacant_lot_eligible, price, area, homestead_only, applicant, price_obo, project_agreement_released, is_active, renew_owned, hhf_demolition, geometry, centroid_geometry ) VALUES ('lb', '%(parcel)s', '%(streetAddress)s', %(nsp)s, %(quiet_title_complete)s, '%(structureType)s', %(cdc_id)s, %(zone_id)s, %(zipcode_id)s, %(neighborhood_id)s, %(urban_garden_status)s, %(bep_demolition_status)s,'Available', %(sidelot_eligible)s, %(vacant_lot_eligible)s, %(price)s, %(area)s, %(homestead_only)s, NULL, %(price_obo)s, %(project_agreement_released)s, %(is_active)s, %(renew_owned)s, %(hhf_demolition)s, '%(geometry)s', '%(centroid_geometry)s' )" % {"parcel": parcel, "streetAddress": streetAddress, "nsp": nsp, "quiet_title_complete": quiet_title_complete, "structureType": structureType, "cdc_id": cdc_id, "zone_id": zone_id, "zipcode_id": zipcode_id, "neighborhood_id": neighborhood_id, "sidelot_eligible": sidelot_eligible, "vacant_lot_eligible": vacant_lot_eligible, "price": price, "area": area, "homestead_only": homestead_only, "urban_garden_status": urban_garden_status, "bep_demolition_status": bep_demolition_status, "price_obo": price_obo, "project_agreement_released": project_agreement_released, "is_active": is_active, "renew_owned": renew_owned, "hhf_demolition":hhf_demolition, "geometry": geometry, "centroid_geometry": centroid_geometry}
+query = "INSERT INTO property_inventory_property (\"propertyType\", parcel, \"streetAddress\", nsp, quiet_title_complete, \"structureType\", cdc_id, zone_id, zipcode_id, neighborhood_id, urban_garden, bep_demolition, status, sidelot_eligible, vacant_lot_eligible, price, area, homestead_only, applicant, price_obo, project_agreement_released, is_active, property_inspection_group, renew_owned, short_legal_description, acquisition_date, hhf_demolition, geometry, centroid_geometry ) VALUES ('lb', '%(parcel)s', '%(streetAddress)s', %(nsp)s, %(quiet_title_complete)s, '%(structureType)s', %(cdc_id)s, %(zone_id)s, %(zipcode_id)s, %(neighborhood_id)s, %(urban_garden_status)s, %(bep_demolition_status)s,'Available', %(sidelot_eligible)s, %(vacant_lot_eligible)s, %(price)s, %(area)s, %(homestead_only)s, NULL, %(price_obo)s, %(project_agreement_released)s, %(is_active)s, %(inspection_group)s, %(renew_owned)s, '%(short_legal)s', '%(deed_date)s', %(hhf_demolition)s, '%(geometry)s', '%(centroid_geometry)s' )" % {"parcel": parcel, "streetAddress": streetAddress, "nsp": nsp, "quiet_title_complete": quiet_title_complete, "structureType": structureType, "cdc_id": cdc_id, "zone_id": zone_id, "zipcode_id": zipcode_id, "neighborhood_id": neighborhood_id, "sidelot_eligible": sidelot_eligible, "vacant_lot_eligible": vacant_lot_eligible, "price": price, "area": area, "homestead_only": homestead_only, "urban_garden_status": urban_garden_status, "bep_demolition_status": bep_demolition_status, "price_obo": price_obo, "project_agreement_released": project_agreement_released, "is_active": is_active, "inspection_group": "''", "renew_owned": renew_owned, "hhf_demolition":hhf_demolition, "short_legal":short_legal, "deed_date":deed_date, "geometry": geometry, "centroid_geometry": centroid_geometry}
 #print query+";"
 sys.stderr.write(query+";\n")

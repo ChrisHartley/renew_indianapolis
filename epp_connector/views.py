@@ -48,6 +48,7 @@ def fetch_epp_inventory(request):
 
     if tdelta.total_seconds() > REFRESH_SECONDS:
         print('File stale, re-fetching')
+
         workbook = xlsxwriter.Workbook(FILENAME)
         worksheet = workbook.add_worksheet('Landbank Inventory')
         currency_format = workbook.add_format()

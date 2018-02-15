@@ -11,6 +11,7 @@ import zipfile
 import datetime
 
 last_import = datetime.datetime(2017, 12, 12)
+
 props = Property.objects.exclude(structureType__exact='Vacant Lot').order_by('parcel')
 #for p in props:
 #    print p

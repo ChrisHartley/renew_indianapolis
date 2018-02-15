@@ -17,9 +17,11 @@ class parcel(models.Model):
     SURPLUS_TYPE = 1
     INVENTORY_TYPE = 2
     BEP_TYPE = 3
+    TAX_SALE_UNSOLD = 4
 
     PROPERTY_TYPE_CHOICES = (
         (SURPLUS_TYPE, 'County Surplus'),
+        (TAX_SALE_UNSOLD, 'Tax Sale Unsold'),
         (INVENTORY_TYPE, 'Renew Inventory'),
         (BEP_TYPE, 'BEP lot'),
     )
