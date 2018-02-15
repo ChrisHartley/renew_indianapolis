@@ -558,8 +558,8 @@ class GenerateNeighborhoodNotifications(DetailView):
             org_names = []
             for o in orgs:
                 if blacklisted_emails.objects.filter(email=o.email).count() == 0: # check if email exists in blacklist (bounces, opt-out, etc)
-                    recipient.append(recip['email'])
-                    org_names.append(recip['name'])
+                    recipient.append(o.email)
+                    org_names.append(o.name)
                 else:
                     pass
 
@@ -587,5 +587,6 @@ class GenerateNeighborhoodNotifications(DetailView):
             #    print 'Sent email'
                 application.neighborhood_notification_details = ', '.join(org_names)
                 application.save()
+
         context['applications'] = applications
         return render(self.request, 'neighborhood_notification_preview.html', context)

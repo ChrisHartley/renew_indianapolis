@@ -12,7 +12,6 @@
 {% endif %}
 {% for app in applications%}
 {{app}}</br>
-{{app.neighborhood_notification_details}}
 <pre>
 {% include 'email/neighborhood_notification_email.txt' with application=app %}
 {% for file in app.file.all %}{% if file.send_with_neighborhood_notification %}. {{file}}
@@ -20,10 +19,4 @@
 </pre>
 {% endfor %}
 <a class="btn btn-danger" href="{% url 'generate_neighborhood_notifications' meeting.id %}?send=True" role="button">Send these notifications</a>
-<form method='GET' action='{% url 'generate_neighborhood_notifications' meeting.id %}'>
-  {% csrf_token %}
-  <input type='hidden' name='send' value='True'></input>
-  <button type="submit" class="btn btn-danger">Send these notifications</button>
-
-</form>
 {% endblock center %}
