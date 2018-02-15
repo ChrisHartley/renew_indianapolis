@@ -76,6 +76,7 @@ class UploadedFile(models.Model):
         blank=True,
         max_length=255
     )
+    send_with_neighborhood_notification = models.BooleanField(default=False, verbose_name='Include this file in the neighborhodo notification email?')
 
     def __unicode__(self):
         return os.path.basename(self.supporting_document.name)

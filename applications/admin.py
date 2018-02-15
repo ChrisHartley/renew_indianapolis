@@ -11,7 +11,7 @@ from functools import partial
 
 class UploadedFileInline(admin.TabularInline):
     model = UploadedFile
-    fields = ('file_purpose', 'file_purpose_other_explanation', 'supporting_document', 'file_download','user','application')
+    fields = ('file_purpose', 'file_purpose_other_explanation', 'supporting_document', 'file_download', 'send_with_neighborhood_notification', 'user','application')
     readonly_fields = ('file_download',)
     extra = 1
 

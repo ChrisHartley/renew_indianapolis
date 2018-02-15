@@ -1,6 +1,8 @@
 {% extends 'base-simple-container.html' %}
 {% block center %}
 <h1>Hello!</h1>
+
+<p>Did you remenber to <a href="{%url 'update_registered_organizations' %}">Update</a> the list of registered neighborhood organizations?</p>
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}

@@ -575,7 +575,7 @@ class GenerateNeighborhoodNotifications(DetailView):
                 reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
             )
 
-            files = UploadedFile.objects.filter(application=application).filter(Q(file_purpose=UploadedFile.PURPOSE_SCHEDULE_OF_VALUES) | Q(file_purpose=UploadedFile.PURPOSE_ELEVATION_VIEW) | Q(file_purpose=UploadedFile.PURPOSE_SOW))
+            files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
             for f in files:
                 if settings.DEBUG: # application media files don't exist in testing environment, so attach dummy file.
                     email.attach_file('/tmp/blank.txt')

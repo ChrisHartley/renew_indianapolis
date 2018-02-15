@@ -6,7 +6,7 @@ from .models import UploadedFile
 # Register your models here.
 class UploadedFileAdmin(admin.ModelAdmin):
     model = UploadedFile
-    list_display = ('user','organization','application','supporting_document')
+    list_display = ('user','organization','application','supporting_document', 'send_with_neighborhood_notification')
     readonly_fields = ('file_download',)
 
     def file_download(self, obj):
