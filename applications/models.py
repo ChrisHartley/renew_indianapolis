@@ -249,12 +249,14 @@ class Application(models.Model):
     vacant_lot_end_use = models.CharField(
         max_length=1024,
         verbose_name='What is your intended end-use for this property? Why are you buying it?',
+        help_text='',
         blank=True,
     )
 
     finished_square_footage = models.CharField(
         max_length=1024,
-        verbose_name='What is the final finished square footage of the structure(s)',
+        verbose_name='Finished or conditioned square footage',
+        help_text='What is the final finished square footage of the structure(s)',
         blank=True,
     )
 

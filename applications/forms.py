@@ -199,6 +199,7 @@ class ApplicationForm(forms.ModelForm):
         property_selected = cleaned_data.get('Property')
         proof_of_funds = cleaned_data.get('proof_of_funds')
         sidelot_eligible = cleaned_data.get('sidelot_eligible', None)
+        square_footage = cleaned_data.get('finished_square_footage')
 
         if conflict_board_rc is None:
             self.add_error("conflict_board_rc", ValidationError(
@@ -285,16 +286,29 @@ class ApplicationForm(forms.ModelForm):
                 self.add_error('planned_improvements', ValidationError(msg))
             if not timeline or timeline == "":
                 self.add_error('timeline', ValidationError(msg))
+            if not square_footage or square_footage == "":
+                self.add_error('finished_square_footage', ValidationError(msg))
             if not estimated_cost or estimated_cost == 0:
                 self.add_error('estimated_cost', ValidationError(msg))
             if not source_of_financing or source_of_financing == "":
                 self.add_error('source_of_financing', ValidationError(msg))
             if UploadedFile.objects.filter(file_purpose__exact=UploadedFile.PURPOSE_SOW).filter(application__exact=app_id).count() == 0:
                 self.add_error(None, ValidationError(
-                    'You must upload a separate scope of work document with your application'))
+                    'You must upload a separate scope of work document with your application.'))
             if UploadedFile.objects.filter(file_purpose__exact=UploadedFile.PURPOSE_POF).filter(application__exact=app_id).count() == 0:
                 self.add_error(None, ValidationError(
-                    'You must upload a separate proof of funds document with your application'))
+                    'You must upload a separate proof of funds document with your application.'))
+            if UploadedFile.objects.filter(file_purpose__exact=UploadedFile.PURPOSE_SITE_PLAN).filter(application__exact=app_id).count() == 0 and property_selected is not None and property_selected.structureType == "Vacant Lot":
+                self.add_error(None, ValidationError(
+                    'You must upload a separate site plan with your application since the selected property is a vacant lot.'))
+            if UploadedFile.objects.filter(file_purpose__exact=UploadedFile.PURPOSE_FLOOR_PLAN).filter(application__exact=app_id).count() == 0 and property_selected is not None and property_selected.structureType == "Vacant Lot":
+                self.add_error(None, ValidationError(
+                    'You must upload a separate floor plan with your application since the selected property is a vacant lot.'))
+            if UploadedFile.objects.filter(file_purpose__exact=UploadedFile.PURPOSE_ELEVATION_VIEW).filter(application__exact=app_id).count() == 0 and property_selected is not None and property_selected.structureType == "Vacant Lot":
+                self.add_error(None, ValidationError(
+                    'You must upload a separate elevation view with your application since the selected property is a vacant lot.'))
+
+
 
             if Application.STANDARD == application_type:
                 if not long_term_ownership or long_term_ownership == "":
