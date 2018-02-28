@@ -246,6 +246,18 @@ class Application(models.Model):
         help_text='To be eligible for our side lot program you must claim a homestead deduction on an adjacent property that shares at least a 75% property line with the vacant lot you are applying for. If you are not eligible you may still apply but you will be required to complete a sidelot policy waiver form, which we will email to you.'
     )
 
+    vacant_lot_end_use = models.CharField(
+        max_length=1024,
+        verbose_name='What is your intended end-use for this property? Why are you buying it?',
+        blank=True,
+    )
+
+    finished_square_footage = models.CharField(
+        max_length=1024,
+        verbose_name='What is the final finished square footage of the structure(s)',
+        blank=True,
+    )
+
     nsp_income_qualifier = models.CharField(
         max_length=255,
         verbose_name="Which entity will conduct the income qualification process for new tenants for this property?",

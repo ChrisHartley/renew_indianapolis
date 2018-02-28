@@ -84,17 +84,17 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
             'fields': ( ('conflict_board_rc', 'conflict_board_rc_name'), 'active_citations', 'prior_tax_foreclosure', 'tax_status_of_properties_owned', 'other_properties_names_owned', 'landlord_in_marion_county', 'landlord_registry')
         }),
         ('Application Details', {
-            'fields': ('application_type','planned_improvements','estimated_cost','source_of_financing','is_rental','nsp_income_qualifier','long_term_ownership','timeline','sidelot_eligible')
+            'fields': ('application_type','planned_improvements','finished_square_footage', 'estimated_cost','source_of_financing','is_rental','nsp_income_qualifier','long_term_ownership','timeline','sidelot_eligible', 'vacant_lot_end_use')
 
         }),
         ('Staff fields', {
-            'classes': ('collapse',),
+            #'classes': ('collapse',),
             'fields': ('staff_summary','staff_notes','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen', 'staff_sidelot_waiver_required','n_notification', 'price_at_time_of_submission'))
 
         })
 
     )
-    inlines = [ UploadedFileInline, NeighborhoodNotificationAdmin, MeetingLinkInline ]
+    inlines = [ UploadedFileInline, MeetingLinkInline ]
     list_select_related = True
 
     def application_summary_page(self, obj):

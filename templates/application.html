@@ -131,27 +131,32 @@ function showAppropriateSections(value){
 	if (value === '3') { // 3 = sidelot app
 		$('.standard-app').hide(400);
 		$('.homestead-app').hide(400);
+		$('.vacantlot-app').hide(400);
 		$('.sidelot-app').show(400);
 	}
 	if (value === '2') { // 2 = standard app
 		$('.homestead-app').hide(400);
 		$('.sidelot-app').hide(400);
+		$('.vacantlot-app').hide(400);
 		$('.standard-app').show(400);
 	}
 	if (value === '1') { // 1 = homestead app
 		$('.standard-app').hide(400);
 		$('.sidelot-app').hide(400);
+		$('.vacantlot-app').hide(400);
 		$('.homestead-app').show(400);
 	}
 	if (value === '4') { // 4 = vacant lot app
 		$('.standard-app').hide();
 		$('.homestead-app').hide();
 		$('.sidelot-app').hide();
+		$('.vacantlot-app').show(400);
 	}
 	if (value === '') { // initial default
 		$('.standard-app').hide();
 		$('.homestead-app').hide();
 		$('.sidelot-app').hide();
+		$('.vacantlot-app').hide();
 		}
 
 
@@ -308,7 +313,7 @@ $(function(){
 });
 
 $(function(){
-	var elevationfileuploader = new qq.FileUploader({
+	var thirdpartyauthorizationuploader = new qq.FileUploader({
 		action: "{% url 'my_ajax_upload' %}",
 		element: $('#3rd-party-authorization-file-uploader')[0],
 		multiple: true,
@@ -337,6 +342,65 @@ $(function(){
 	});
 });
 
+$(function(){
+	var siteplanuploader = new qq.FileUploader({
+		action: "{% url 'my_ajax_upload' %}",
+		element: $('#siteplan-file-uploader')[0],
+		multiple: true,
+		onComplete: function(id, fileName, responseJSON) {
+			if(responseJSON.success) {
+				//alert("success!");
+			} else {
+				alert("Upload Failed!");
+				console.log(fileName);
+				console.log(responseJSON);
+			}
+		},
+		onAllComplete: function(uploads) {
+			// uploads is an array of maps
+			// the maps look like this: {file: FileObject, response: JSONServerResponse}
+			alert("Site Plan uploads complete!");
+		},
+		params: {
+			'csrf_token': '{{ csrf_token }}',
+			'csrf_name': 'csrfmiddlewaretoken',
+			'csrf_xname': 'X-CSRFToken',
+			'file_purpose': '13',
+			'application': '{{ app_id }}',
+
+		},
+	});
+});
+
+$(function(){
+	var floorplanuploader = new qq.FileUploader({
+		action: "{% url 'my_ajax_upload' %}",
+		element: $('#floorplan-file-uploader')[0],
+		multiple: true,
+		onComplete: function(id, fileName, responseJSON) {
+			if(responseJSON.success) {
+				//alert("success!");
+			} else {
+				alert("Upload Failed!");
+				console.log(fileName);
+				console.log(responseJSON);
+			}
+		},
+		onAllComplete: function(uploads) {
+			// uploads is an array of maps
+			// the maps look like this: {file: FileObject, response: JSONServerResponse}
+			alert("Floor Plan uploads complete!");
+		},
+		params: {
+			'csrf_token': '{{ csrf_token }}',
+			'csrf_name': 'csrfmiddlewaretoken',
+			'csrf_xname': 'X-CSRFToken',
+			'file_purpose': '14',
+			'application': '{{ app_id }}',
+
+		},
+	});
+});
 
 
 document.querySelector('#submit-id-save_for_later').addEventListener("click", function(){

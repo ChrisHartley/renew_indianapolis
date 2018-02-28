@@ -100,6 +100,7 @@ class ApplicationForm(forms.ModelForm):
             Fieldset(
                 'Planned Improvements',
                 Field('planned_improvements'),
+                Field('finished_square_footage'),
                 Field('timeline'),
                 css_class='standard-app homestead-app well'
             ),
@@ -114,6 +115,12 @@ class ApplicationForm(forms.ModelForm):
                 Field('sidelot_eligible'),
                 css_class='sidelot-app well'
             ),
+            Fieldset(
+                'Vacant Lot End Use',
+                Field('vacant_lot_end_use'),
+                css_class='vacantlot-app well'
+            ),
+
             Fieldset(
                 'Uploaded Files',
                 HTML('<p>Before your application can be submitted for review you must attach both a scope of work and proof of funds, as referenced earlier. You can upload those files here.</p>'),
@@ -132,7 +139,10 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://www.renewindianapolis.org/wp-content/uploads/Scope-of-Work-Template.xls" target="_blank">spreadsheet</a> or <a href="http://www.renewindianapolis.org/wp-content/uploads/Scope-of-Work-Template.pdf" target="_blank">printable template</a> as a starting point.</div></div>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Elevation View</div><div id="elevation-file-uploader" class="form-control-static col-lg-6">Drop your elevation view file here to upload</div>'),
-                HTML('<div class="help-block col-lg-6 col-lg-offset-4">If you are proposing new construction on a vacant lot you must upload an elevation view of your proposed construction.</div></div>'),
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Site Plan</div><div id="siteplan-file-uploader" class="form-control-static col-lg-6">Drop your site plan file here to upload</div>'),
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Floor Plan</div><div id="floorplan-file-uploader" class="form-control-static col-lg-6">Drop your floor plan file here to upload</div>'),
+
+                HTML('<div class="help-block col-lg-6 col-lg-offset-4">If you are proposing new construction on a vacant lot you must upload an site plan, elevation view and floor plan of your proposed construction.</div></div>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Proof of Funds</div><div id="pof-file-uploader" class="form-control-static col-lg-6">Drop your proof of funds file here to upload</div>'),
                 HTML("""<div class="help-block col-lg-6 col-lg-offset-4">
