@@ -134,8 +134,8 @@ class closing(models.Model):
     assigned_city_staff = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, limit_choices_to={'groups__name__in': ["City Staff",]})
     closed = models.BooleanField(default=False, help_text="Has this transaction been completed?")
     notes = models.CharField(max_length=2048, blank=True, help_text="Internal notes")
-    city_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for the City of Indianapolis", blank=True, null=True)
-    ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, null=True)
+    city_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for the City of Indianapolis", blank=True, default=0)
+    ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, default=0)
 
     archived = models.BooleanField(default=False, help_text="Closing did not occur and should be archived.")
 
