@@ -286,7 +286,7 @@ class ApplicationForm(forms.ModelForm):
                 self.add_error('planned_improvements', ValidationError(msg))
             if not timeline or timeline == "":
                 self.add_error('timeline', ValidationError(msg))
-            if not square_footage or square_footage == "":
+            if property_selected is not None and property_selected.structureType == "Vacant Lot" and (not square_footage or square_footage == ""):
                 self.add_error('finished_square_footage', ValidationError(msg))
             if not estimated_cost or estimated_cost == 0:
                 self.add_error('estimated_cost', ValidationError(msg))
