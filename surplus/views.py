@@ -130,7 +130,7 @@ def searchSurplusProperties(request):
             'demolition_order', 'repair_order', 'interesting', 'notes', 'requested_from_commissioners', geom)
 
     s = serializers.serialize('geojson',
-        f.qs.filter(classification__exact=1),
+        f.qs.filter(classification__in=[1,2]),
         geometry_field=geom,
         srid=2965,
         fields=fields,
