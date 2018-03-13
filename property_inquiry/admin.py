@@ -4,12 +4,13 @@ from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
 from property_condition.models import ConditionReport
+from applications.models import Application
 
 class propertyInquiryAdmin(admin.ModelAdmin):
     list_display = ('Property', 'renew_owned', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
-    fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp', 'status', 'notes', 'number_of_pictures', 'condition_report_link')
+    fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp', 'status', 'notes', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
-    readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link')
+    readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
     list_filter = ['status', 'Property__renew_owned']
 
 
@@ -33,6 +34,9 @@ class propertyInquiryAdmin(admin.ModelAdmin):
             name_link = '<a href="{}">{}</a>'.format(url,'Add')
         return mark_safe(name_link)
     condition_report_link.short_description = 'Condition Report'
+
+    def number_completed_apps(self,obj):
+        return Application.objects.filter(Property=obj.Property).filter(status=Application.COMPLETE_STATUS).count()
 
     def user_name(self, obj):
         email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
