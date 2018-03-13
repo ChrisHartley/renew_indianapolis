@@ -684,14 +684,14 @@ CSS loading animation.
 
           map = new ol.Map({
             layers: [
-               new ol.layer.Tile({
-                 source: new ol.source.OSM(),
-                 opacity: 1,
-               }),
-              // new ol.layer.Tile({
-              //   opacity: 0,
-              //   source: new ol.source.WMTS(options)
-              // }),
+          //     new ol.layer.Tile({
+          //       source: new ol.source.OSM(),
+          //       opacity: 1,
+          //     }),
+              new ol.layer.Tile({
+                opacity: 0,
+                source: new ol.source.WMTS(options)
+              }),
               inventoryPolygons,
               searchPolygons,
             ],
