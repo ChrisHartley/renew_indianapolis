@@ -19,10 +19,10 @@ def update_registered_organizations(request):
 
     service = ArcGIS(URL)
     geojson = service.get(LAYER)
-
+    records = geojson['features']
     number_created = 0
     number_errors = 0
-    for record in geojson['features']:
+    for record in records:
         try:
             geometry = GEOSGeometry(str(record['geometry']))
             if not geometry.valid:
@@ -31,7 +31,6 @@ def update_registered_organizations(request):
         except GDALException, ValueError:
             number_errors = number_errors + 1
             print "Error on", record['properties']['ORG_NAME']
-            break
         try:
             x = registered_organization(
                 name=record['properties']['ORG_NAME'],
@@ -43,7 +42,8 @@ def update_registered_organizations(request):
             x.save()
             if registered_organization.objects.filter(geometry__isvalid=True).filter(id=x.id).count() == 0:
                 print "Error, invalid geometry", record['properties']['ORG_NAME']
-            number_created = number_created + 1
+            else:
+                number_created = number_created + 1
         except IntegrityError:
             number_errors = number_errors + 1
             print "IntegrityError on ", record['properties']['ORG_NAME']

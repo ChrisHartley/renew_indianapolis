@@ -557,7 +557,7 @@ class GenerateNeighborhoodNotifications(DetailView):
             recipient = []
             org_names = []
             for o in orgs:
-                if blacklisted_emails.objects.filter(email=o.email).count() == 0: # check if email exists in blacklist (bounces, opt-out, etc)
+                if o.email and blacklisted_emails.objects.filter(email=o.email).count() == 0: # check if email exists in blacklist (bounces, opt-out, etc)
                     recipient.append(o.email)
                     org_names.append(o.name)
                 else:
@@ -585,8 +585,72 @@ class GenerateNeighborhoodNotifications(DetailView):
             if self.request.GET.get('send') == 'True':
                 email.send()
             #    print 'Sent email'
-                application.neighborhood_notification_details = ', '.join(org_names)
+                new_notifications = ', '.join(org_names)
+                application.neighborhood_notification_details = application.neighborhood_notification_details + new_notifications
                 application.save()
 
         context['applications'] = applications
         return render(self.request, 'neighborhood_notification_preview.html', context)
+
+class GenerateNeighborhoodNotificationsVersion2(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'price_change_summary_view_all.html'
+    #form = None
+    #fields = []
+
+    #def post()
+
+    #def get_success_url(self):
+    #    messages.add_message(self.request, messages.INFO, 'Neighborhood notifications sent.')
+    #    return reverse("generate_neighborhood_notifications", kwargs={'pk': self.kwargs['pk']})
+
+    def render_to_response(self, context, **response_kwargs):
+        applications = []
+        for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
+            application = meeting_link.application
+            applications.append(application)
+
+        orgs = []
+        for org in registered_organization.objects.all():
+
+            if blacklisted_emails.objects.filter(email=org.email).count() != 0: # check if email exists in blacklist (bounces, opt-out, etc)
+                break
+
+            apps_in_area = []
+            for app in applications:
+                if registered_organization.objects.filter(geometry__contains=app.Property.geometry).filter(id=org.id):
+                    apps_in_area.append(app)
+            if len(apps_in_area) == 0:
+                print "No apps in", org.name
+                break
+            orgs.append( (org, apps_in_area) )
+            subject = 'Neighborhood Notifications - Renew Indianapolis'
+            from_email = 'info@renewindianapolis.org'
+            message = render_to_string('email/neighborhood_notification_email_single_org.txt', {'applications': apps_in_area})
+
+            email = EmailMessage(
+                subject,
+                message,
+                from_email,
+                [org.email,],
+                reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+            )
+
+            files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
+            for f in files:
+                if settings.DEBUG: # application media files don't exist in testing environment, so attach dummy file.
+                    email.attach_file('/tmp/blank.txt')
+                else:
+                    email.attach_file(f.supporting_document.path)
+            #print "Send?", self.request.GET.get('send')
+            if self.request.GET.get('send') == 'True':
+                email.send()
+            #    print 'Sent email'
+                for app in apps_in_area:
+                    app.neighborhood_notification_details = '{} {}'.format(app.neighborhood_notification_details,o.name)
+                    app.save()
+
+        #context['applications'] = applications
+        context['organizations'] = orgs
+        return render(self.request, 'neighborhood_notification_preview_single_org.html', context)
