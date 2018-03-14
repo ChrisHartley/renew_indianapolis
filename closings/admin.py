@@ -180,7 +180,7 @@ class ClosingAdmin(admin.ModelAdmin):
 class ClosingScheduleViewAdmin(ClosingAdmin):
     model = closing_proxy
     list_display = ['application', 'date_time', 'assigned_city_staff', 'title_company', 'title_commitment_in_place', 'all_documents_in_place', 'city_sales_disclosure_in_place']
-    list_filter = ['assigned_city_staff', 'closed', PurchaseOptionFilter]
+    list_filter = ['assigned_city_staff', 'closed', PurchaseOptionFilter, 'archived']
     readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'closed')
     fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'city_sales_disclosure_form', 'closed')
     form = ClosingScheduleAdminForm
