@@ -13,7 +13,7 @@ class annualReportForm(ModelForm):
     Property = forms.ModelChoiceField(
         queryset=Property.objects.filter(status__contains='Sold').exclude(project_agreement_released__exact=True).order_by('streetAddress'),
         help_text='Select the property you are submitting this report for. One property per report.',
-        required=False
+        required=True
     )
     def __init__(self, *args, **kwargs):
         super(annualReportForm, self).__init__(*args, **kwargs)
@@ -29,7 +29,8 @@ class annualReportForm(ModelForm):
             Fieldset("Property Details",
                      'Property',
                     # Div(HTML('<label class="control-label col-lg-3" for="result">Street Address</label><div id="result" class="controls col-lg-4"></div>'), css_class="form-group")
-
+                     'sold',
+                     'resale_buyer',
                      ),
             Fieldset("Your Information",
                      'name',
@@ -53,6 +54,7 @@ class annualReportForm(ModelForm):
 
                      ),
             Fieldset("Photos",
+                     'lot_picture',
                      'front_exterior_picture',
                      'back_exterior_picture',
                      'kitchen_picture',
