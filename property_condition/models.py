@@ -212,6 +212,8 @@ class ConditionReport(models.Model):
     hvac_air_conditioner_notes = models.CharField(
         max_length=512, blank=True, verbose_name='Notes')
 
+    scope_of_work = models.FileField(upload_to=content_file_name, blank=True)
+
     @property
     def condition_avg(self):
         condition_array = [self.roof_shingles, self.roof_framing, self.roof_gutters, self.foundation_slab, self.foundation_crawl, self.exterior_siding_brick, self.exterior_siding_vinyl, self.exterior_siding_wood, self.exterior_siding_other, self.windows, self.garage, self.fencing, self.landscaping,

@@ -12,12 +12,24 @@ class RoomInline(admin.StackedInline):
 
 class ConditionReportAdmin(admin.ModelAdmin):
     inlines = [RoomInline,]
-    readonly_fields = ('upload_photo_page',)
+    readonly_fields = ('upload_photo_page', 'scope_download', 'pic_download')
 
     def upload_photo_page(self, obj):
         upload_photo_page_link = '<a target="_blank" href="{}">{}</a>'.format(
             reverse("admin_add_photos"), "Add photos page")
         return mark_safe(upload_photo_page_link)
+
+    def scope_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'scope'}),
+                "Download"
+            ))
+
+    def pic_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'photo'}),
+                "Download"
+            ))
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(ConditionReportAdmin, self).formfield_for_dbfield(db_field, **kwargs)
@@ -32,8 +44,9 @@ class ConditionReportAdmin(admin.ModelAdmin):
                 (
                     'Property',
                     'general_property_notes',
-                    'picture',
+                    ('picture','pic_download'),
                     'upload_photo_page',
+                    ('scope_of_work', 'scope_download',),
                 )
             }
         ),
