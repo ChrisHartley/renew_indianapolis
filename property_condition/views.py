@@ -7,6 +7,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.conf import settings
 import os
 from wsgiref.util import FileWrapper
+import mimetypes
 
 from django_tables2_reports.config import RequestConfigReport as RequestConfig
 
