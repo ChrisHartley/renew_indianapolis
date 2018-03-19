@@ -20,12 +20,16 @@ class ConditionReportAdmin(admin.ModelAdmin):
         return mark_safe(upload_photo_page_link)
 
     def scope_download(self, obj):
+        if obj.id is None:
+            return '<none>'
         return mark_safe('<a href="{}">{}</a>'.format(
             reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'scope'}),
                 "Download"
             ))
 
     def pic_download(self, obj):
+        if obj.id is None:
+            return '<none>'
         return mark_safe('<a href="{}">{}</a>'.format(
             reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'photo'}),
                 "Download"
