@@ -35,6 +35,12 @@
         </th>
         <th>
           <div class="text">
+            <a href="#">Total City Loan Proceeds</a>
+          </div>
+        </th>
+
+        <th>
+          <div class="text">
             <a href="#">Total Renew Proceeds</a>
           </div>
         </th>
@@ -63,6 +69,7 @@
 
         <td>{{ row.total_sale_price | intcomma }}</td>
         <td>{{ row.total_city_proceeds | intcomma }}</td>
+        <td>{{ row.total_city_loan_proceeds | intcomma }}</td>
         <td>{{ row.total_ri_proceeds | intcomma }}</td>
 
         <td>
@@ -78,6 +85,7 @@
             <td> {{ summary_total.total | intcomma }} </td>
             <td> {{ summary_total.total_sale_price | intcomma }} </td>
             <td> {{ summary_total.total_city_proceeds | intcomma }} </td>
+            <td> {{ summary_total.total_city_loan_proceeds | intcomma }} </td>
             <td> {{ summary_total.total_ri_proceeds | intcomma }} </td>
             <td> 100% </td>
         </tr>

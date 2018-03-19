@@ -250,8 +250,6 @@ class ClosingDistributionAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super(ClosingDistributionAdmin, self).get_queryset(request).filter(closed=True)
 
-
-
     def changelist_view(self, request, extra_context=None):
         response = super(ClosingDistributionAdmin, self).changelist_view(
             request,
@@ -265,8 +263,9 @@ class ClosingDistributionAdmin(admin.ModelAdmin):
 
         metrics = {
             'total': Count('id'),
-            'total_sale_price': Sum(F('ri_proceeds') + F('city_proceeds') ),
+            'total_sale_price': Sum(F('ri_proceeds') + F('city_proceeds') + F('city_loan_proceeds') ),
             'total_city_proceeds': Sum('city_proceeds'),
+            'total_city_loan_proceeds': Sum('city_loan_proceeds'),
             'total_ri_proceeds': Sum('ri_proceeds'),
         }
 
@@ -294,7 +293,7 @@ class ClosingDistributionAdmin(admin.ModelAdmin):
                 period,
                 output_field=DateTimeField(),
             ),
-        ).values('period').annotate(total=Sum(F('ri_proceeds') + F('city_proceeds')), count=Count('id')).order_by('period')
+        ).values('period').annotate(total=Sum(F('ri_proceeds') + F('city_proceeds') + F('city_loan_proceeds')), count=Count('id')).order_by('period')
 
         summary_range = summary_over_time.aggregate(
             low=Min('total'),

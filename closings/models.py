@@ -135,6 +135,7 @@ class closing(models.Model):
     closed = models.BooleanField(default=False, help_text="Has this transaction been completed?")
     notes = models.CharField(max_length=2048, blank=True, help_text="Internal notes")
     city_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for the City of Indianapolis", blank=True, default=0)
+    city_loan_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount due to the City of Indianapolis, but not paid at closing", blank=True, default=0)
     ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, default=0)
 
     archived = models.BooleanField(default=False, help_text="Closing did not occur and should be archived.")
