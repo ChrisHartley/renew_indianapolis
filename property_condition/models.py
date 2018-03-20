@@ -6,8 +6,6 @@ from django.db.models import Q
 #from property_inventory.models import Property
 
 
-def content_file_name(instance, filename):
-    return '/'.join(['condition_report', instance.Property.streetAddress, filename])
 
 
 class Room(models.Model):
@@ -74,7 +72,13 @@ class Room(models.Model):
     def __unicode__(self):
         return u'{0} - {1}'.format(self.conditionreport, self.get_room_type_display())
 
+def content_file_name(instance, filename):
+    path = '/'.join(['condition_report', instance.Property.streetAddress, filename])
+    print '!!!!PATH:', path
+    return path
+
 class ConditionReport(models.Model):
+
     GOOD_STATUS = 3
     FAIR_STATUS = 2
     POOR_STATUS = 1
@@ -212,7 +216,7 @@ class ConditionReport(models.Model):
     hvac_air_conditioner_notes = models.CharField(
         max_length=512, blank=True, verbose_name='Notes')
 
-    scope_of_work = models.FileField(upload_to=content_file_name, blank=True)
+    scope_of_work = models.FileField(blank=True)
 
     @property
     def condition_avg(self):
@@ -226,15 +230,14 @@ class ConditionReport(models.Model):
         Save Photo after ensuring it is not blank.  Resize as needed.
         """
         #print "Does the object already exist?", self.id
-        if not self.id:
-            super(ConditionReport, self).save()
+        super(ConditionReport, self).save()
 
-            if self.picture:
-                filename = self.picture.path
-                image = Image.open(filename)
+        if self.picture:
+            filename = self.picture.path
+            image = Image.open(filename)
 
-                image.thumbnail(size, Image.ANTIALIAS)
-                image.save(filename)
+            image.thumbnail(size, Image.ANTIALIAS)
+            image.save(filename)
 
     def __unicode__(self):
         return u'{0} - {1}'.format(self.Property, self.timestamp)
