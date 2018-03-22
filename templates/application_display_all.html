@@ -31,7 +31,7 @@
     {% if application.application.application_type == 3 or application.application.application_type == 4 %}
     <dt>Price</dt><dd>$750.00</dd>
     {% else %}
-    <dt>Price</dt><dd>${{application.application.Property.price|intcomma}}</dd>
+    <dt>Price</dt><dd>${{application.application.price_at_time_of_submission|intcomma}}</dd>
     {% endif %}
     <dt>Application Type</dt><dd>{{application.application.get_application_type_display}}</dd>
     {% if application.application.application_type == 3 %}
