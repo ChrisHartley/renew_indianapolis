@@ -442,7 +442,7 @@ class ePPPropertyUpdate(DetailView):
             max_index = index
 
             ## This changes the property status if approved to Sale Pending. This works at all stages b/c
-        for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type').exclude(meeting_outcome=4), max_index+1):
+        for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('-meeting_outcome').exclude(meeting_outcome=4), max_index+1):
             application = meeting_link.application
             if meeting_link.meeting_outcome == MeetingLink.APPROVED_STATUS:
                 status = 'Sale Pending'
