@@ -225,5 +225,6 @@ class yard_sign(models.Model):
     Property = models.ForeignKey(Property, related_name='yard_sign')
     date_time = models.DateTimeField(auto_now_add=True)
     note = models.CharField(max_length=1024, blank=True)
+    removed_date_time = models.DateTimeField(blank=True)
     def __unicode__(self):
         return u'{0} - {1} - {2}'.format(self.Property, self.date_time, self.note[:20])
