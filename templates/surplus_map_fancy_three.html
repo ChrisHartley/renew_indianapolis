@@ -531,14 +531,14 @@
 
           map = new ol.Map({
             layers: [
-              // new ol.layer.Tile({
-              //   source: new ol.source.OSM(),
-              //   opacity: 0.7
-              // }),
               new ol.layer.Tile({
-                opacity: 1,
-                source: new ol.source.WMTS(options)
+                source: new ol.source.OSM(),
+                opacity: 1
               }),
+              // new ol.layer.Tile({
+              //   opacity: 1,
+              //   source: new ol.source.WMTS(options)
+              // }),
               surplusPolygons,
               surplusCentroids,
               searchPolygons,
