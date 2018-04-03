@@ -188,15 +188,28 @@ class Application(models.Model):
 
     conflict_board_rc = models.NullBooleanField(
         choices=YESNO_TYPES,
-        verbose_name="Do you, any partner/member of your entity, or any of your entity's board members serve on the Renew Indianapolis Board of Directors or Committees and thus pose a potential conflict of interest?",
+        verbose_name="Do you, any family members or partner/member of your entity, or any of your entity's board members or employees work for Renew Indianapolis or serve on the Renew Indianapolis Board of Directors or Committees and thus pose a potential conflict of interest?",
         blank=True
     )
 
     conflict_board_rc_name = models.CharField(
-        verbose_name="If yes, what is his or her name?",
+        verbose_name="If yes, what is their name?",
         blank=True,
         max_length=255
     )
+
+    conflict_city = models.NullBooleanField(
+        choices=YESNO_TYPES,
+        verbose_name="Do you, any family members or partner/member of your entity, or any of your entity's board members or employees serve on the Metropolitan Development Commission or are employed by the City of Indianapolis Department of Metropolitan Development and thus pose a potential conflict of interest?",
+        blank=True
+    )
+
+    conflict_city_name = models.CharField(
+        verbose_name="If yes, what is their name?",
+        blank=True,
+        max_length=255
+    )
+
 
     active_citations = models.NullBooleanField(
         choices=YESNO_TYPES,

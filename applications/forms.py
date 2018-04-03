@@ -53,6 +53,8 @@ class ApplicationForm(forms.ModelForm):
                 'About You',
                 Field('conflict_board_rc'),
                 Field('conflict_board_rc_name'),
+                Field('conflict_city'),
+                Field('conflict_city_name'),
                 Field('active_citations'),
                 Field('tax_status_of_properties_owned'),
                 Field('other_properties_names_owned'),
@@ -181,6 +183,9 @@ class ApplicationForm(forms.ModelForm):
         conflict_board_rc = cleaned_data.get('conflict_board_rc', None)
         conflict_board_rc_name = cleaned_data.get(
             'conflict_board_rc_name', None)
+        conflict_city = cleaned_data.get('conflict_city', None)
+        conflict_city_name = cleaned_data.get(
+            'conflict_city_name', None)
         tax_status_of_properties_owned = cleaned_data.get(
             'tax_status_of_properties_owned', None)
         prior_tax_foreclosure = cleaned_data.get('prior_tax_foreclosure', None)
@@ -200,6 +205,8 @@ class ApplicationForm(forms.ModelForm):
         proof_of_funds = cleaned_data.get('proof_of_funds')
         sidelot_eligible = cleaned_data.get('sidelot_eligible', None)
         square_footage = cleaned_data.get('finished_square_footage')
+        vacant_lot_end_use = cleaned_data.get('vacant_lot_end_use', None)
+
 
         if conflict_board_rc is None:
             self.add_error("conflict_board_rc", ValidationError(
@@ -208,6 +215,15 @@ class ApplicationForm(forms.ModelForm):
         if conflict_board_rc is True and conflict_board_rc_name == '':
             self.add_error("conflict_board_rc_name", ValidationError(
                 "You anwsered Yes above, please provide a name."))
+
+        if conflict_city is None:
+            self.add_error("conflict_city", ValidationError(
+                'This is a required question.'))
+
+        if conflict_city is True and conflict_city_name == '':
+            self.add_error("conflict_city_name", ValidationError(
+                "You anwsered Yes above, please provide a name."))
+
 
         if tax_status_of_properties_owned is None:
             self.add_error('tax_status_of_properties_owned',
@@ -278,7 +294,11 @@ class ApplicationForm(forms.ModelForm):
                         'not eligible for sale under the vacant lot program. '+
                         'These properties are available for development under our '+
                         'standard or homestead programs.'))
-
+                else:
+                    if vacant_lot_end_use == '':
+                        self.add_error('vacant_lot_end_use', ValidationError(
+                        'Please answer this question.'
+                        ))
 
         if Application.HOMESTEAD == application_type or Application.STANDARD == application_type:
             msg = "This is a required field."
