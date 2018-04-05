@@ -26,10 +26,10 @@ class annual_report(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     percent_completed = models.PositiveIntegerField(
-        help_text="Roughly speaking, what percentage complete is this project?", blank=True)
+        help_text="Roughly speaking, what percentage complete is this project?", blank=True, null=True)
 
     past_expenses = models.PositiveIntegerField(
-        help_text="It is ok to use rough estimates.", verbose_name='Funds spent to date', blank=True)
+        help_text="It is ok to use rough estimates.", verbose_name='Funds spent to date', blank=True, null=True)
     work_completed = models.TextField(max_length=5120, help_text="What work has been completed?",
                                       verbose_name='Written narative of the improvements made to date',
                                       blank=True)
@@ -41,7 +41,7 @@ class annual_report(models.Model):
     future_expenses = models.PositiveIntegerField(
         help_text="It is ok to use rough estimates.",
         verbose_name='Anticipated remaining expenses',
-        blank=True)
+        blank=True, null=True)
 
     feedback = models.TextField(
         max_length=5120, help_text="Do you have any other comments on your project or feedback for Renew Indianapolis about your experience with our program?",
