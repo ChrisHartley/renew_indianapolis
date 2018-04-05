@@ -74,7 +74,6 @@ class Room(models.Model):
 
 def content_file_name(instance, filename):
     path = '/'.join(['condition_report', instance.Property.streetAddress, filename])
-    print '!!!!PATH:', path
     return path
 
 class ConditionReport(models.Model):
