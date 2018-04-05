@@ -6,7 +6,7 @@
 <h1>{{meeting.get_meeting_type_display}} Agenda</br><small>{{meeting.meeting_date}}</small></h1>
 <ul>
 {% for meeting_link in meeting_links %}
-<li><h3>{{ meeting_link.grouper }}</h3>
+<li><h3>{{ meeting_link.grouper }} ({{meeting_link.list|length}})</h3>
   <dl>
     {% for application in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"application.staff_sidelot_waiver_required" %}
       <dt> <b>{{ application.application.user.first_name }} {{ application.application.user.last_name }}</br>
