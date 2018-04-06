@@ -34,8 +34,8 @@ def fetch_epp_inventory(request):
         ('Price', 'askingPrice'),
         ('Zoning','zonedAs'),
         ('Parcel Size','parcelSquareFootage'),
+        ('Sales Programs Eligible','s_custom_0001'),
         ('Status','currentStatus'),
-        #('Sales Programs Eligible','s_custom_0001'),
         #('Vacant Lot Program Eligible',''),
         #('Property ID', 'id'),
     )

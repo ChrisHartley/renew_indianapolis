@@ -90,6 +90,18 @@ class ePPHelper(object):
         r = self.session.post(URL, params=parameters)
         return self.parse_results(r)
 
+    def get_published_available_properties(self):
+        URL = 'https://public-indy.epropertyplus.com/landmgmtpub/remote/public/property/getPublishedProperties'
+        parameters = {
+            'page': 1,
+            'limit': 5000,
+            'json':  '{"criterias":[{"name":"published","operator":"EQUALS","value":"Yes"},{"name":"currentStatus","operator":"EQUALS","value":"Available"}]}',
+            'sort': '[{"property":"postalCode","direction":"ASC"},{"property":"propertyAddress1","direction":"ASC"}]',
+        }
+
+        r = self.session.post(URL, params=parameters)
+        return self.parse_results(r)
+
     def get_published_properties(self):
         URL = 'https://public-indy.epropertyplus.com/landmgmtpub/remote/public/property/getPublishedProperties'
         parameters = {
