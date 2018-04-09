@@ -333,14 +333,14 @@ class MDCCSVResponseMixin(object):
                 else:
                     property_price = application.price_at_time_of_submission
 
-                if property_price > 3500:
+                if property_price >= 3500:
                     price = property_price
                     city_split = round(price*Decimal('.55'))
                     renew_split = Decimal(price)-Decimal(city_split)
-                elif property_price == 3500.0:
-                    price = property_price
-                    city_split = 1000.00
-                    renew_split = 2500.00
+                # elif property_price == 3500.0:
+                #     price = property_price
+                #     city_split = 1000.00
+                #     renew_split = 2500.00
                 elif property_price == 750.0:
                     price = property_price
                     city_split = 250.00
