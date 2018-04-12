@@ -8,7 +8,7 @@ from django_tables2_reports.config import RequestConfigReport as RequestConfig
 from django.core.urlresolvers import reverse
 
 from django.core.mail import send_mail
-
+from django.template.loader import render_to_string
 from ipware.ip import get_real_ip
 
 from property_inquiry.models import propertyInquiry
@@ -49,15 +49,12 @@ def submitPropertyInquiry(request):
             form.add_error(None, "You can not submit more than 3 property inquiries every 48 hours. Please try again later.")
         if form.is_valid():
             form_saved = form.save(commit=False)
-
             form_saved.applicant_ip_address = get_real_ip(request)
             form_saved.user = request.user
             form_saved.save()
-            message_body = 'Applicant: ' + form_saved.user.first_name + ' ' + form_saved.user.last_name + '\n' + 'Parcel: ' + \
-                form_saved.Property.parcel + '\nAddress: ' + \
-                form_saved.Property.streetAddress + '\nStatus: ' + form_saved.Property.status
-            send_mail('New Property Inquiry', message_body, 'chris.hartley@renewindianapolis.org',
-                      ['chris.hartley@renewindianapolis.org',], fail_silently=False)
+            message_body = render_to_string('email/property_inquiry_confirmation.txt', {'Property': form_saved.Property })
+            message_subject = 'Inquiry Received - {0}'.format(form_saved.Property)
+            send_mail(message_subject, message_body, 'info@renewindianapolis.org', [form_saved.user.email,], fail_silently=False)
             return HttpResponseRedirect(reverse('property_inquiry_confirmation', args=(form_saved.id,)))
     return render(request, 'property_inquiry.html', {
         'form': form,
