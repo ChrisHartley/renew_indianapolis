@@ -1,0 +1,14 @@
+Hello {{user.first_name}} {{user.last_name}},
+
+You submitted requests to visit the following properties:
+{% for inquiry in inquiry_list %}
+* {{inquiry.Property}} ({{inquiry.timestamp|date:"M d"}}){% endfor %}
+
+We apologize and we are working through the backlog as quickly as we can and
+should be contacting you shortly. If you have any questions, please contact
+Matt Hostetler, Indianapolis Department of Metropolitan Development directly
+at 317-327-5810 or matthew.hostetler@indy.gov.
+
+Thank you,
+
+Renew Indianapolis and the Indianapolis Department of Metropolitan Development
