@@ -1,0 +1,12 @@
+Your requst to visit {{ Property.streetAddress }}, parcel #{{ Property.parcel }} has been recorded.
+{% if Property.renew_owned %}
+Someone from Renew Indianapolis will contact you via email or phone within 5 business days to schedule a visit to the property.
+{% else %}
+Your request will be forwarded to the Department of Metropolitan Development at the City Of Indianapolis, who will contact you
+via email or phone within 5 business days to schedule a visit to the property.
+{% endif %}
+Please make sure to check your email, including your spam folder, so you don't miss this follow-up.
+
+Thank you,
+
+Renew Indianapolis
