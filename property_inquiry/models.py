@@ -21,6 +21,7 @@ class propertyInquiry(models.Model):
     SCHEDULED_STATUS = 5
     COMPLETED_STATUS = 6
     DUPLICATE_REQUEST_STATUS = 7
+    USER_DID_NOT_SHOW = 8
     STATUS_CHOICES = (
         (NULL_STATUS, 'Initial status'),
         (SOLD_STATUS,'Property was sold after request submitted'),
@@ -29,7 +30,8 @@ class propertyInquiry(models.Model):
         (USER_CONTACTED_STATUS,'Contacted user to schedule'),
         (SCHEDULED_STATUS,'Showing scheduled'),
         (COMPLETED_STATUS,'Showing completed'),
-        (DUPLICATE_REQUEST_STATUS, 'Duplicate request')
+        (DUPLICATE_REQUEST_STATUS, 'Duplicate request'),
+        (USER_DID_NOT_SHOW, 'User did not appear at appointment'),
     )
 
     status = models.IntegerField(blank=True, null=True, choices=STATUS_CHOICES)
