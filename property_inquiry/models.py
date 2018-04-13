@@ -13,6 +13,7 @@ class propertyInquiry(models.Model):
     showing_scheduled = models.DateTimeField(blank=True, null=True)
     applicant_ip_address = models.GenericIPAddressField(blank=True, null=True)
 
+    NULL_STATUS = None
     SOLD_STATUS = 1
     USER_CANCELLED_STATUS = 2
     USER_NON_RESPONSIVE_STATUS = 3
@@ -21,6 +22,7 @@ class propertyInquiry(models.Model):
     COMPLETED_STATUS = 6
     DUPLICATE_REQUEST_STATUS = 7
     STATUS_CHOICES = (
+        (NULL_STATUS, 'Initial status'),
         (SOLD_STATUS,'Property was sold after request submitted'),
         (USER_CANCELLED_STATUS,'User cancelled request'),
         (USER_NON_RESPONSIVE_STATUS,'User was unresponsive'),
@@ -44,3 +46,9 @@ class PropertyInquirySummary(propertyInquiry):
         proxy = True
         verbose_name = 'Property Inquiry Summary'
         verbose_name_plural = 'Property Inquiry Summaries'
+
+#class PropertyInquiryMapProxy(propertyInquiry):
+#    class Meta:
+#        proxy = True
+#        verbose_name = 'Property Inquiry Map Summary'
+#        verbose_name_plural = 'Property Inquiry Map Summaries'

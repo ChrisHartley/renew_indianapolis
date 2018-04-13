@@ -1,17 +1,38 @@
 from django.contrib import admin
-from .models import propertyInquiry, PropertyInquirySummary
+from .models import propertyInquiry, PropertyInquirySummary #, PropertyInquiryMapProxy
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
+from django.contrib.admin import SimpleListFilter
 
 from property_condition.models import ConditionReport
 from applications.models import Application
+
+
+# add additional filter, year, and allow null status filter
+
+class PropertyInquiryYearListFilter(SimpleListFilter):
+    title = 'Property Inquiry Year'
+    parameter_name = 'inquiry-year'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('2014','2014'),
+            ('2015','2015'),
+            ('2016','2016'),
+            ('2017','2017'),
+            ('2018','2018'),
+        )
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(timestamp__year=self.value())
+        return queryset
 
 class propertyInquiryAdmin(admin.ModelAdmin):
     list_display = ('Property', 'renew_owned', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
     fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp', 'status', 'notes', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
     readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
-    list_filter = ['status', 'Property__renew_owned']
+    list_filter = ['status', 'Property__renew_owned', PropertyInquiryYearListFilter]
 
 
     def renew_owned(self, obj):
@@ -49,6 +70,16 @@ class propertyInquiryAdmin(admin.ModelAdmin):
 
     def user_phone(self, obj):
         return obj.user.profile.phone_number
+
+
+# class PropertyInquiryMapAdmin(propertyInquiryAdmin):
+#
+#     def changelist_view(self, request, extra_context=None):
+#         extra_context = extra_context or {}
+#         extra_context['centroids'] = propertyInquiry.objects.filter(status__isnull=True)
+#         return super(PropertyInquiryMapAdmin,
+#                      self).changelist_view(request,
+#                                            extra_context=extra_context)
 
 from django.db.models import Count, Sum, Min, Max
 from django.db.models.functions import Trunc
@@ -132,5 +163,5 @@ class PropertyInquirySummaryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PropertyInquirySummary, PropertyInquirySummaryAdmin)
-
+#admin.site.register(PropertyInquiryMapProxy, PropertyInquiryMapAdmin)
 admin.site.register(propertyInquiry, propertyInquiryAdmin)
