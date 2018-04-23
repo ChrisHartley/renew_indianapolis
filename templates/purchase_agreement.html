@@ -10,7 +10,7 @@ Parcel Number: {{application.Property.parcel}}</br>
 in the city of Indianapolis, County of Marion, State of  Indiana upon the following terms and conditions:
 <ol>
 <li><h4>Purchase Price and Conditions of Payment</h4></li>
-The purchase price shall be {{application.price_at_time_of_submission|num2words|title}} Dollars (${{application.price_at_time_of_submission|floatformat:2|intcomma}}).
+The purchase price shall be {% if application.price_at_time_of_submission is None %}_________________  Dollars ($______________){%else%}{{application.price_at_time_of_submission|num2words|title}} Dollars (${{application.price_at_time_of_submission|floatformat:2|intcomma}}) {%endif%}.
 <ul class="list-unstyled">
     <li><strong>A: Cash.</strong></li> The purchase price shall be paid in its entirety in cash at the time of closing the sale.
     <li><strong>B: Cash With Assumption of Existing Project Agreement as outlines in the Assignment/Assumption Agreement</strong></li>
@@ -60,7 +60,4 @@ ____________________________</br>
  ____________________________</br>
 (SELLER)</br>
 </p>
-<script type="text/javascript">
-window.onload = function () { alert("PA is loaded, print window deactivated."); }
-</script>
 {% endblock center %}
