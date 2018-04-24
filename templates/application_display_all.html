@@ -6,7 +6,7 @@
 
 {% regroup meeting.meeting_link.all|dictsort:"application.application_type" by application.get_application_type_display as meeting_links  %}
 {% for meeting_link in meeting_links %}
-{% for application in meeting_link.list|dictsort:"application.Property.streetAddress" %}
+{% for application in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"application.staff_sidelot_waiver_required"|dictsort:"schedule_weight" %}
 
 
 <div class="row">

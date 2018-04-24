@@ -23,7 +23,7 @@ class UploadedFileInline(admin.TabularInline):
 
 class MeetingLinkInline(admin.TabularInline):
     model = MeetingLink
-    fields = ('meeting', 'meeting_outcome', 'application_link', 'notes', )
+    fields = ('meeting', 'meeting_outcome', 'application_link', 'notes', 'schedule_weight' )
     readonly_fields=('application','application_link')
     extra = 1
 

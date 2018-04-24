@@ -364,6 +364,7 @@ class MeetingLink(models.Model):
     meeting_outcome = models.IntegerField(choices=STATUS_CHOICES, null=False, default=SCHEDULED_STATUS)
     application = models.ForeignKey(Application, related_name='meeting')
     notes = models.CharField(max_length=1024, blank=True, null=False)
+    schedule_weight = models.IntegerField(default=0, null=False, blank=True)
 
     @property
     def meeting_date(self):
