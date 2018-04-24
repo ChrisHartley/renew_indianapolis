@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
 from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign
+from applications.models import Application
 from photos.models import photo
 from applications.admin import PriceChangeMeetingLinkInline
 from property_inquiry.models import propertyInquiry
@@ -73,7 +74,7 @@ class PropertyAdmin(admin.OSMGeoAdmin):
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo',)
+    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary')
 
     def main_photo(self, obj):
         ph = photo.objects.filter(prop=obj).filter(main_photo__exact=True).first()
@@ -89,6 +90,18 @@ class PropertyAdmin(admin.OSMGeoAdmin):
         summary_link = '<a href="{}">{}</a>'.format(
             reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.parcel,), "View Applications")
         return mark_safe(summary_link)
+
+    def application_summary(self, obj):
+        apps = []
+        for app in obj.application_set.exclude(status=Application.INITIAL_STATUS):
+            apps.append('<a href="{0}">{1} {2} ({3}) ({4}), {5}</a>'.format(
+                reverse("admin:applications_application_change", args=(app.id,)),
+                app.user.first_name, app.user.last_name,
+                app.organization, app.get_status_display(),
+                app.created.strftime('%Y-%m-%d') ))
+        app_links = '<li>'.join(apps)
+        app_links = '<li>' + app_links
+        return mark_safe('<ul>{0}</ul>'.format(app_links,))
 
     def number_of_inquiries(self, obj):
         inquiries = {}
