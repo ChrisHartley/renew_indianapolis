@@ -42,10 +42,9 @@ from photos.models import photo
 
 from django.db import connection
 
-import datetime # used for price_change summary view
+import datetime # used for price_change summary view, getting next RC meeting
 from decimal import * # used for price_change summary view
 from applications.models import Meeting
-from applications.views import determine_next_meeting_date
 
 
 def get_inventory_csv(request):
@@ -81,7 +80,6 @@ def getAddressFromParcel(request):
 # Show a table with property statuses broken down by sold, sale-approved and in-progress.
 
 def showApplications(request):
-    next_rc_meeting = determine_next_meeting_date()[0]
     config = RequestConfig(request)
 
     soldProperties = Property.objects.all().filter(
@@ -89,11 +87,14 @@ def showApplications(request):
     approvedProperties = Property.objects.all().filter(
         status__istartswith='Sale').order_by('status', 'applicant')
 
+    next_rc_meeting = Meeting.objects.filter(Q(meeting_type=Meeting.REVIEW_COMMITTEE)&Q(meeting_date__gte=datetime.date.today())).order_by('meeting_date').first()
+    if next_rc_meeting is not None:
+        meeting_date = next_rc_meeting.meeting_date
+        reviewPendingProperties = Property.objects.filter(application__meeting__meeting=next_rc_meeting).distinct().order_by('zipcode__name', 'streetAddress')
+    else:
+        meeting_date = 'future'
+        reviewPendingProperties = Property.objects.none().order_by('zipcode__name', 'streetAddress')
 
-    reviewPendingProperties = Property.objects.filter(
-        Q(application__meeting__meeting__meeting_date=next_rc_meeting) &
-        Q(application__meeting__meeting__meeting_type=Meeting.REVIEW_COMMITTEE)
-        ).distinct().order_by('zipcode__name', 'streetAddress')
 
     soldFilter = ApplicationStatusFilters(
         request.GET, queryset=soldProperties, prefix="sold-")
@@ -110,7 +111,7 @@ def showApplications(request):
     config.configure(soldTable)
     config.configure(approvedTable)
     return render(request, 'app_status_template.html', {
-        'meeting': next_rc_meeting,
+        'meeting': meeting_date,
         'reviewPendingTable': reviewPendingTable,
         'soldTable': soldTable,
         'approvedTable': approvedTable,
