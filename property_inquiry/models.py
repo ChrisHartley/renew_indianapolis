@@ -24,7 +24,7 @@ class propertyInquiry(models.Model):
     USER_DID_NOT_SHOW = 8
     STATUS_CHOICES = (
         (NULL_STATUS, 'Initial status'),
-        (SOLD_STATUS,'Property was sold after request submitted'),
+        (SOLD_STATUS,'Property was sold/pending after request submitted'),
         (USER_CANCELLED_STATUS,'User cancelled request'),
         (USER_NON_RESPONSIVE_STATUS,'User was unresponsive'),
         (USER_CONTACTED_STATUS,'Contacted user to schedule'),
