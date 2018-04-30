@@ -426,7 +426,7 @@ class MeetingLink(models.Model):
                     meeting_date = rrule(MONTHLY, count=1, byweekday=WE(3), dtstart=self.meeting.meeting_date)[0].date()
                 next_meeting = Meeting(meeting_type=meeting_type, meeting_date=meeting_date)
                 next_meeting.save()
-            next_meeting_link = MeetingLink(application=self.application, meeting=next_meeting, notes=notes)
+            next_meeting_link = MeetingLink(application=self.application, meeting=next_meeting, notes=notes, schedule_weight=self.schedule_weight)
             next_meeting_link.save()
         super(MeetingLink, self).save(*args, **kwargs)
 
