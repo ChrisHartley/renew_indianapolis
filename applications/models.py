@@ -398,6 +398,15 @@ class MeetingLink(models.Model):
                     new_closing.save()
                     # email applicant with congratulatory email and URL to pay processing fee
 
+        # If application is rejected at the Board or MDC level then change the status to Available.
+        # If we were to use this logic at the Review Committee level where there could be competing applications
+        # then it will do bad things.
+        if self.meeting_outcome == self.NOT_APPROVED_STATUS and (self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS or self.meeting.meeting_type == Meeting.MDC):
+            prop = self.application.Property
+            prop.status = 'Available'
+            prop.save()
+            schedule_next_meeting = False
+
         if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS):
             notes = 'made by robot'
             # Tabled status means it goes back on the agenda for the next occurance of the same meeting
