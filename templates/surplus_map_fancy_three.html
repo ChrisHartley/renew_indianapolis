@@ -526,19 +526,19 @@
         $.get('/static/WMTSCapabilities.xml', function(text){
           var result = parser.read(text);
           var options = ol.source.WMTS.optionsFromCapabilities(result, {
-            layer: '2017Photography_Labels', matrixSet: 'default028mm'
+            layer: '2017FallPhotography_Labels', matrixSet: 'default028mm'
           });
 
           map = new ol.Map({
             layers: [
-              new ol.layer.Tile({
+              /*new ol.layer.Tile({
                 source: new ol.source.OSM(),
                 opacity: 1
+              }), */
+              new ol.layer.Tile({
+                 opacity: 1,
+                 source: new ol.source.WMTS(options)
               }),
-              // new ol.layer.Tile({
-              //   opacity: 1,
-              //   source: new ol.source.WMTS(options)
-              // }),
               surplusPolygons,
               surplusCentroids,
               searchPolygons,
