@@ -551,6 +551,9 @@ class GenerateNeighborhoodNotifications(DetailView):
         applications = []
         for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
             application = meeting_link.application
+            if application.neighborhood_notification_details != '':
+                continue
+
             applications.append(application)
             orgs = registered_organization.objects.filter(geometry__contains=application.Property.geometry).exclude(email='n/a').order_by('-geometry')
 
@@ -609,8 +612,6 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
         applications = []
         for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
             application = meeting_link.application
-            if application.neighborhood_notification_details != '':
-                continue
             applications.append(application)
 
         orgs = []
