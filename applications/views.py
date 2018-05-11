@@ -574,7 +574,7 @@ class GenerateNeighborhoodNotifications(DetailView):
                 recipient,
                 reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
             )
-            
+
             files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
             for f in files:
                 if settings.DEBUG: # application media files don't exist in testing environment, so attach dummy file.
@@ -609,6 +609,8 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
         applications = []
         for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
             application = meeting_link.application
+            if application.neighborhood_notification_details != '':
+                continue
             applications.append(application)
 
         orgs = []
