@@ -53,7 +53,7 @@ INSTALLED_APPS = (
     'univiewer',
     'epp_connector',
     'neighborhood_notifications',
-    'post_sale',
+#    'post_sale',
     #'import_export',
     #'accella_records',
     #'debug_toolbar',
