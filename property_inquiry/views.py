@@ -84,12 +84,7 @@ class IdentifyClusters(View):
             'age': int(request.GET.get('age', 90)),
             'min_points': int(request.GET.get('min_points', 1)),
         }
-        p_clusters = propertyInquiry.objects.raw("""
-            select pi.*, st_clusterdbscan(st_transform(geometry,2965), eps:=%(distance)s, minPoints :=%(min_points)s) over () as cid
-            from property_inventory_property p
-            left join property_inquiry_propertyinquiry pi on pi."Property_id" = p.id
-            where pi.status is null and timestamp >= now() - interval '%(age)s days' order by cid""",
-            params)
+        p_clusters = propertyInquiry.objects.raw("""select pi.*, st_clusterdbscan(st_transform(geometry,2965), eps:=%(distance)s, minPoints :=%(min_points)s) over () as cid from property_inventory_property p left join property_inquiry_propertyinquiry pi on pi."Property_id" = p.id where pi.status is null and timestamp >= now() - interval '%(age)s days' order by cid""", params)
 
         return render(request, self.template_name, {'clusters':p_clusters, 'params': params})
 
