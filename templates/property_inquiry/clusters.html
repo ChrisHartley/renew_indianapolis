@@ -1,0 +1,64 @@
+{% extends 'allauth-base.html' %}
+{% block head_title %}Property Inquiry Clusters :: Renew Indianapolis{% endblock %}
+{% block extra_head %}
+<!-- Bootstrap -->
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+<script src="{{ STATIC_URL }}ajaxuploader/js/fileuploader.js" ></script>
+<link href="{{ STATIC_URL }}ajaxuploader/css/fileuploader.css" media="screen" rel="stylesheet" type="text/css" />
+
+<script src="{{ STATIC_URL }}admin/js/vendor/jquery/jquery.min.js"></script>
+<script src="{{ STATIC_URL }}admin/js/jquery.init.js"></script>
+<script src="{{ STATIC_URL }}admin/js/admin/RelatedObjectLookups.js"></script>
+
+{% endblock extra_head %}
+
+{% block content %}
+<h2>Settings</h2>
+<p><form method="GET" action="">
+{% csrf_token %}
+Clusters within <input type="number" id="distance" name="distance" value={{params.distance}} /> feet<br/>
+Inquiries in the past <input type="number" id="age" name="age" value={{params.age}} /> days</br>
+Minimum cluster size <input type="number" id="min_points" name="min_points" value={{params.min_points}} /></br>
+<input type="submit" value="Recalculate"/>
+</form>
+</p>
+<h2>Outstanding Inquiries</h2>
+
+{% regroup clusters by cid as clusters_grouped %}
+{% for cluster in clusters_grouped%}
+<div class="panel panel-default">
+  {% for pi in cluster.list|dictsort:"Property.streetAddress" %}
+      {% if forloop.first%}
+      <form method="POST" action="">
+        {% csrf_token %}
+        <div class="panel-heading">
+           <h3 class="panel-title">Group {{cluster.grouper }}</h3>
+         </div>
+         <div class="panel-body">
+           Properties: <div class="properties"><ul>{% endif %}{% ifchanged pi.Property %}<li>{{pi.Property}}</li>{% endifchanged %}
+  {%endfor%}</ul></div>
+  {% for pi in cluster.list|dictsort:"Property.streetAddress" %}
+    {% if forloop.first%}
+      Emails: <div class="emails">
+    {% endif %}{{pi.user.email}},{%endfor%}</div><div>
+    <input name="pi_ids" type="hidden" value="{% for pi in cluster.list|dictsort:"Property.streetAddress" %}{{pi.id}} {%endfor%}"/>
+    <input type="date" name="date"/>
+    <input type="time" name="time" step="1800" />
+    <input type="submit" value="Submit"/></div>
+</form>
+</div>
+</div>
+{% endfor %}
+
+
+{% endblock content%}
+
+
+{% block extra_body %}
+{% endblock extra_body %}

@@ -10,7 +10,7 @@ from neighborhood_associations.views import get_relevant_neighborhood_assocation
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
-from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry
+from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, IdentifyClusters
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
@@ -20,7 +20,7 @@ from property_condition.views import submitConditionReport, send_cr_file
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 from epp_connector.views import fetch_epp_inventory
 from neighborhood_notifications.views import update_registered_organizations
-
+#from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
 
 admin.site.site_header = 'Blight Fight administration'
 
@@ -129,6 +129,15 @@ urlpatterns = [
             name='application_paid_processing_fee'
         ),
 
+        # url(r'application/modify_project_aggreement/(?P<pk>[0-9]+)/$',
+        #     login_required(ApplicationModifyProjectAggreementUpdate.as_view()),
+        #     name='modify_project_aggreement_edit_application'),
+        #
+        # url(r'application/modify_project_aggreement/new/$',
+        #     login_required(ApplicationModifyProjectAggreementCreate.as_view()),
+        #     name='modify_project_aggreement_new_application'),
+
+
         url(r'meeting/view_agenda/(?P<pk>[0-9]+)/$',
              staff_member_required(ReviewCommitteeAgenda.as_view()),
              name='rc_agenda'),
@@ -222,6 +231,9 @@ urlpatterns = [
         url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx'),
 
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
+        url(r'pi_cluster/$', IdentifyClusters.as_view(), name='identify_pi_clusters'),
+
+
 
     ]
 

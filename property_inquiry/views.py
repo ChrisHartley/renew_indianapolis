@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import user_passes_test
-
+from django.utils.decorators import method_decorator
 
 from django_tables2_reports.config import RequestConfigReport as RequestConfig
 
@@ -17,7 +18,10 @@ from property_inquiry.filters import PropertyInquiryFilters
 from property_inquiry.tables import PropertyInquiryTable
 from property_inquiry.forms import PropertyInquiryForm
 
+from django.views import View
+
 from django.conf import settings
+from django.contrib import messages
 import datetime
 
 
@@ -70,3 +74,33 @@ def property_inquiry_confirmation(request, id):
         'title': 'thank you',
         'Property': inquiry.Property,
     })
+
+@method_decorator(staff_member_required, name='dispatch')
+class IdentifyClusters(View):
+    template_name = 'property_inquiry/clusters.html'
+    def get(self, request):
+        params = {
+            'distance': int(request.GET.get('distance', 2640)),
+            'age': int(request.GET.get('age', 90)),
+            'min_points': int(request.GET.get('min_points', 1)),
+        }
+        p_clusters = propertyInquiry.objects.raw("""
+            select pi.*, st_clusterdbscan(st_transform(geometry,2965), eps:=%(distance)s, minPoints :=%(min_points)s) over () as cid
+            from property_inventory_property p
+            left join property_inquiry_propertyinquiry pi on pi."Property_id" = p.id
+            where pi.status is null and timestamp >= now() - interval '%(age)s days' order by cid""",
+            params)
+
+        return render(request, self.template_name, {'clusters':p_clusters, 'params': params})
+
+    def post(self, request):
+        ids = request.POST.get('pi_ids').split()
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        for id in ids:
+            pi = propertyInquiry.objects.get(id=id)
+            pi.status = propertyInquiry.USER_CONTACTED_STATUS
+            pi.showing_scheduled = datetime.datetime.strptime('{} {}'.format(date,time), "%Y-%m-%d %H:%M")
+            pi.save()
+            messages.info(request, '{} updated'.format(pi,))
+        return HttpResponseRedirect(reverse('identify_pi_clusters'))
