@@ -451,6 +451,9 @@ class ePPPropertyUpdate(DetailView):
             if meeting_link.meeting_outcome == MeetingLink.NOT_APPROVED_STATUS:
                 status = 'Available'
 
+            if meeting_link.meeting_outcome == MeetingLink.TABLED_STATUS:
+                status = 'Available'
+
             worksheet.write(index, header.index('Parcel Number'), application.Property.parcel, text_format)
             worksheet.write(index, header.index('Update'), 'Y')
             worksheet.write(index, header.index('Property Status'), status, text_format)
