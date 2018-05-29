@@ -4,7 +4,7 @@ from .models import Parcel
 
 class ParcelAdmin(admin.OSMGeoAdmin):
     modifiable = False
-    list_filter = ('has_building','classification','interesting','assessor_classification', 'requested_from_commissioners')
+    list_filter = ('has_building','classification','interesting','assessor_classification', 'requested_from_commissioners', 'vetted')
     search_fields = ['parcel_number', 'street_address', 'notes']
     list_display = (
         'parcel_number', 'street_address', 'requested_from_commissioners', 'requested_from_commissioners_date',

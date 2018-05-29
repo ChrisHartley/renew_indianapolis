@@ -101,6 +101,9 @@ class Parcel(models.Model):
     interesting = models.NullBooleanField(default=None)
     notes = models.CharField(max_length=2048, blank=True)
 
+    vetted = models.BooleanField(default=False)
+    vetting_notes = models.CharField(max_length=2048, blank=True, default='')
+
     requested_from_commissioners_date = models.DateField(blank=True, null=True)
     requested_from_commissioners = models.BooleanField(default=False)
 
