@@ -127,7 +127,7 @@ def searchSurplusProperties(request):
         fields = ('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
             'area', 'assessor_classification', 'classification',
-            'demolition_order', 'repair_order', 'interesting', 'notes', 'requested_from_commissioners', geom)
+            'demolition_order', 'repair_order', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', geom)
 
     s = serializers.serialize('geojson',
         f.qs.filter(classification__in=[1,2]),
@@ -163,6 +163,6 @@ def surplusUpdateFieldsFromMap(request):
 
 
 def get_surplus_inventory_csv(request):
-    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes') #.values('parcel', 'street_address')
+    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes', 'vetted', 'vetting_notes') #.values('parcel', 'street_address')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
