@@ -704,7 +704,7 @@
           searchPolygons.getSource().addFeatures(geojson_format.readFeatures(json));
           var extent = searchPolygons.getSource().getExtent();
           if(extent[0]!='Infinity'){
-            map.getView().fit(extent, map.getSize())
+            map.getView().fit(extent,{ size: map.getSize(), maxZoom: 21})
             //console.log(json.features);
             //$('#search_results').DataTable().destory(remove=False);
             $('#search_results').DataTable().clear();
