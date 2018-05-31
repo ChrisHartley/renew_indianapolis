@@ -11,6 +11,8 @@ from .forms import SurplusSearchForm
 from datetime import date
 class SurplusParcelFilter(django_filters.FilterSet):
     notes = django_filters.CharFilter(lookup_expr='icontains')
+    vetting_notes = django_filters.CharFilter(lookup_expr='icontains')
+
     general_search = django_filters.CharFilter(method='general_search_filter')
     area = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder': 'sqft'}))
     has_building = django_filters.BooleanFilter(label='Has a structure')
