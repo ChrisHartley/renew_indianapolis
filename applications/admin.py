@@ -70,9 +70,24 @@ class NeighborhoodNotificationAdmin(admin.TabularInline):
             formfield.queryset = Neighborhood_Association.objects.filter(receive_notifications__exact=True).filter(geometry__contains=app.Property.geometry)
         return formfield
 
+class MeetingScheduledFilter(admin.SimpleListFilter):
+    title = 'scheduled for a meeting'
+    parameter_name = 'scheduled'
+    def lookups(self, request, model_admin):
+        return (
+            ('true','Scheduled'),
+            ('false', 'Not scheduled'),
+            )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'true':
+            return queryset.filter(meeting__isnull=False)
+        if self.value() == 'false':
+            return queryset.filter(meeting__isnull=True)
+
 class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     list_display = ('modified','submitted_timestamp','Property', 'num_scheduled_apps', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
-    list_filter = ('status','application_type')
+    list_filter = ('status','application_type', MeetingScheduledFilter)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
     readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_vacant_lot','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification', 'submitted_timestamp', 'price_at_time_of_submission')
     fieldsets = (
