@@ -56,7 +56,7 @@ make_archived.short_description = "Mark selected closings as archived"
 class ClosingAdmin(admin.ModelAdmin):
 
     form = ClosingAdminForm
-    list_display = ['__unicode__','title_company','date_time', 'processing_fee_paid', 'assigned_city_staff']
+    list_display = ['__unicode__','application__Property__renew_owned','title_company','date_time', 'processing_fee_paid', 'assigned_city_staff']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'prop__renew_owned', 'archived')
     readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid', 'print_deposit_slip')
