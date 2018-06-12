@@ -18,7 +18,7 @@ def update_registered_organizations(request):
     number_deleted = registered_organization.objects.all().delete()
 
     service = ArcGIS(URL)
-    geojson = service.get(LAYER)
+    geojson = service.get(LAYER, fields='*')
     records = geojson['features']
     number_created = 0
     number_errors = 0
