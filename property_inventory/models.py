@@ -226,5 +226,33 @@ class yard_sign(models.Model):
     date_time = models.DateTimeField(auto_now_add=True)
     note = models.CharField(max_length=1024, blank=True)
     removed_date_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'yard sign'
+        verbose_name_plural = 'yard signs'
+
     def __unicode__(self):
         return u'{0} - {1} - {2}'.format(self.Property, self.date_time, self.note[:20])
+
+class take_back(models.Model):
+    Property = models.ForeignKey(Property, related_name='take_back')
+    take_back_date = models.DateField(blank=False)
+    original_sale_date = models.DateField(blank=False)
+    original_sale_price = models.DecimalField(max_digits=8, decimal_places=2)
+    note = models.TextField(max_length=1024, blank=True)
+    owner = models.CharField(max_length=1024, blank=True)
+    application = models.ForeignKey('applications.Application', null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'take back'
+        verbose_name_plural = 'take back'
+
+    def __unicode__(self):
+        return u'{0} - {1}'.format(self.Property, self.owner)
+
+    def save(self, *args, **kwargs):
+        if self.application is not None:
+            self.owner = self.application.applicant
+        if self.application is None and self.owner == '':
+            return
+        super(take_back, self).save(*args, **kwargs)  # Call the "real" save() method.

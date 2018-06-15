@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
-from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign
+from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign, take_back
 from applications.models import Application
 from photos.models import photo
 from applications.admin import PriceChangeMeetingLinkInline
@@ -170,11 +170,15 @@ class blc_listingAdmin(admin.OSMGeoAdmin):
 class yard_signAdmin(admin.OSMGeoAdmin):
     search_fields = ('Property__streetAddress','Property__parcel', 'note')
 
+class take_backAdmin(admin.OSMGeoAdmin):
+    raw_id_fields = ('application',)
+
 
 admin.site.register(price_change, price_changeAdmin)
 admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
+admin.site.register(take_back, take_backAdmin)
 admin.site.register(ContextArea, ContextAreaAdmin)
 admin.site.register(featured_property)
 admin.site.register(blc_listing, blc_listingAdmin)
