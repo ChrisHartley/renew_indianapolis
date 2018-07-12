@@ -244,7 +244,7 @@ class take_back(models.Model):
     application = models.ForeignKey('applications.Application', null=True, blank=True)
 
     class Meta:
-        verbose_name = 'take back'
+        verbose_name = 'take backs'
         verbose_name_plural = 'take back'
 
     def __unicode__(self):
