@@ -13,6 +13,7 @@ class RoomInline(admin.StackedInline):
 class ConditionReportAdmin(admin.ModelAdmin):
     inlines = [RoomInline,]
     readonly_fields = ('upload_photo_page', 'scope_download', 'pic_download')
+    search_fields = ('Property__parcel', 'Property__streetAddress')
 
     def upload_photo_page(self, obj):
         upload_photo_page_link = '<a target="_blank" href="{}">{}</a>'.format(

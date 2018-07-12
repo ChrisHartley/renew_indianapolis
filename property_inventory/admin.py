@@ -12,6 +12,7 @@ from applications.models import Application
 from photos.models import photo
 from applications.admin import PriceChangeMeetingLinkInline
 from property_inquiry.models import propertyInquiry
+from property_condition.models import ConditionReport
 import datetime
 
 class PropertyStatusYearListFilter(SimpleListFilter):
@@ -74,7 +75,7 @@ class PropertyAdmin(admin.OSMGeoAdmin):
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary')
+    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary', 'condition_report_link')
 
     def main_photo(self, obj):
         ph = photo.objects.filter(prop=obj).filter(main_photo__exact=True).first()
@@ -111,12 +112,17 @@ class PropertyAdmin(admin.OSMGeoAdmin):
             inquiries['previous {0} days'.format(duration,)] = propertyInquiry.objects.filter(Property=obj).filter(timestamp__range=(start_day, end_day)).count()
         inquiries['all time'] = propertyInquiry.objects.filter(Property=obj).count()
         return inquiries
-        #return propertyInquiry.objects.filter(Property__exact=obj).count()
 
     def view_photos(self, obj):
         photo_page_link = '<a href="{}">{}</a>'.format(
                     reverse("property_photos", kwargs={'parcel': obj.parcel}), "View Photos")
         return mark_safe(photo_page_link)
+
+    def condition_report_link(self, obj):
+        count = ConditionReport.objects.filter(Property__exact=obj).count()
+        summary_link = '<a href="{}">reports - {}</a>'.format(
+            reverse("admin:app_list", args=('property_condition',))+'conditionreport/?q={}'.format(obj.parcel,), count)
+        return mark_safe(summary_link)
 
 
 
