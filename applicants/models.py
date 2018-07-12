@@ -28,6 +28,10 @@ class ApplicantProfile(models.Model):
 
     def save(self, *args, **kwargs):
         super(ApplicantProfile, self).save(*args, **kwargs)
+        if self.user.username == '' and self.user.email !='':
+            u = self.user
+            u.username = self.user.email
+            u.save()
         if self.external_system_id == '' or self.external_system_id == 'INDY-APPLICANT-None':
             self.external_system_id = 'INDY-APPLICANT-{0}'.format(self.id,)
         super(ApplicantProfile, self).save(*args, **kwargs)
