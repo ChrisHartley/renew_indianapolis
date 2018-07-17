@@ -753,7 +753,7 @@ CSS loading animation.
         });
 
         var button = document.createElement('button');
-        button.innerHTML = 'Show List';
+        button.innerHTML = 'Search Results';
         button.className = 'show-list-button btn btn-info btn-modal'
         button.id = 'modal_toggle'
         button.setAttribute('data-toggle', 'modal');
@@ -762,6 +762,7 @@ CSS loading animation.
         var handleShowList = function(e) {
             //alert('Showing the list!');
             $('#fsModal').toggle();
+            $('#search_results').DataTable().columns.adjust(); // adjusts column width in header, need to call by hand
             //map.getView().setRotation(0);
         };
 
