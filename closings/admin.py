@@ -8,7 +8,7 @@ from datetime import date
 from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy, closing_proxy2
 from .forms import ClosingAdminForm, ClosingScheduleAdminForm
 from applications.models import Application, Meeting, MeetingLink
-from property_inventory.models import Property
+from property_inventory.models import Property, blc_listing
 
 class PurchaseOptionInline(admin.TabularInline):
     model = purchase_option
@@ -49,9 +49,19 @@ class ProccessingFeePaidFilter(admin.SimpleListFilter):
         if self.value() == 'yes':
             return queryset.filter(processing_fee__paid__exact=True)
 
-def make_archived(modeladmin, request, queryset):
-    queryset.update(archived=True)
-make_archived.short_description = "Mark selected closings as archived"
+
+from utils.utils import batch_update_view
+def custom_batch_editing__admin_action(self, request, queryset):
+    return batch_update_view(
+        model_admin=self,
+        request=request,
+        queryset=queryset,
+        # this is the name of the field on the YourModel model
+        field_names=['closed', 'notes', 'city_proceeds', 'city_loan_proceeds', 'ri_proceeds', 'archived', 'date_time', 'location'],
+        #exclude_field_names=['parcel', 'street_address']
+    )
+custom_batch_editing__admin_action.short_description = "Batch Update"
+
 
 class ClosingAdmin(admin.ModelAdmin):
 
@@ -59,10 +69,10 @@ class ClosingAdmin(admin.ModelAdmin):
     list_display = ['__unicode__','title_company','renew_owned', 'date_time', 'processing_fee_paid', 'assigned_city_staff']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'prop__renew_owned', 'archived')
-    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid', 'print_deposit_slip')
-    actions = [make_archived,]
+    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid', 'print_deposit_slip','blc_listed')
+    actions = [custom_batch_editing__admin_action]
     inlines = [PurchaseOptionInline,]
-
+    raw_id_fields = ('application',)
 
     def get_formset(self, request, obj=None, **kwargs):
         kwargs['formfield_callback'] = partial(self.formfield_for_dbfield, request=request, obj=obj)
@@ -181,6 +191,14 @@ class ClosingAdmin(admin.ModelAdmin):
             return obj.prop.renew_owned
         return None
     renew_owned.boolean = True
+
+    def blc_listed(self, obj):
+        if obj.application is not None:
+            return blc_listing.objects.filter(Property=obj.application.Property).count() > 0
+        if obj.prop is not None:
+            return blc_listing.objects.filter(Property=obj.prop).count()
+        return None
+
 
 
 class ClosingScheduleViewAdmin(ClosingAdmin):

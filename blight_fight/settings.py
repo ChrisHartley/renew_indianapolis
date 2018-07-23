@@ -53,9 +53,10 @@ INSTALLED_APPS = (
     'univiewer',
     'epp_connector',
     'neighborhood_notifications',
-#    'post_sale',
+    'post_sale',
     #'import_export',
     #'accella_records',
+    'utils',
     #'debug_toolbar',
 )
 
@@ -68,6 +69,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_tables2_reports.middleware.TableReportMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'blight_fight.urls'

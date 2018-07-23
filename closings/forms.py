@@ -12,7 +12,7 @@ class ClosingAdminForm(ModelForm):
         application = cleaned_data.get("application")
         if prop and application:
             raise ValidationError("Can't have both a property and an application - please select one or another")
-        if not prop and not application:
+        if not self.instance and not prop and not application:
             raise ValidationError("Please select either an application or a property")
         # Always return the full collection of cleaned data.
         return cleaned_data
