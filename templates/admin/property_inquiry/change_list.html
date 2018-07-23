@@ -1,0 +1,37 @@
+{% extends "admin/change_list.html" %}
+{% block content %}
+{% load staticfiles %}
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+<script>
+var features = new Array()
+{% for centroid in centroids %}
+features.push( new ol.Feature({
+         'geometry': new ol.geom.Point({{centroid.Property.centroid_geometry.0}}, {{centroid.Property.centroid_geometry.1}}),
+       }) );
+
+
+{% endfor %}
+    var vectorSource = new ol.source.Vector({
+      features: features,
+      wrapX: false
+    });
+    var vector = new ol.layer.Vector({
+      source: vectorSource,
+    });
+    var map = new ol.Map({
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        }),
+        vector,
+      ],
+      target: 'map',
+      view: new ol.View({
+        center: [0, 0],
+        zoom: 2
+      })
+    });
+
+</script>
+<div id="map" class="map"></div>
+{{block.super}} {% endblock %}
