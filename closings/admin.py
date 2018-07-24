@@ -198,6 +198,7 @@ class ClosingAdmin(admin.ModelAdmin):
         if obj.prop is not None:
             return blc_listing.objects.filter(Property=obj.prop).count()
         return None
+    blc_listed.boolean = True
 
 
 
