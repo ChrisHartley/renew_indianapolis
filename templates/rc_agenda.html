@@ -11,7 +11,7 @@
     {% for application in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"application.staff_sidelot_waiver_required"|dictsort:"schedule_weight" %}
       <dt> <b>{{ application.application.user.first_name }} {{ application.application.user.last_name }}</br>
         {% if application.application.organization %} {{ application.application.organization }} </br> {% endif %}
-        {{ application.application.Property }}</b>
+        {{ application.application.Property }}</b> ${{application.application.price_at_time_of_submission|intcomma}}
         {% if application.application.staff_sidelot_waiver_required %} (sidelot policy waiver required) {% endif %}
 
       </dt>
