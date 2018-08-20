@@ -46,6 +46,7 @@ class Room(models.Model):
     LEVEL_CHOICES = (
         ('BASEMENT', 'Basement'),
         ('LOWER', 'Lower'),
+        ('MAIN', 'Main'),
         ('UPPER', 'Upper'),
     )
 
@@ -101,6 +102,11 @@ class ConditionReport(models.Model):
     general_property_notes = models.CharField(
         max_length=5000, blank=True, verbose_name='General Property Notes')
 
+
+    secure = models.NullBooleanField(null=True, blank=True, help_text='Property is secured')
+    occupied = models.NullBooleanField(null=True, blank=True, help_text='Property is occupied as long term residence')
+    major_structural_issues = models.NullBooleanField(null=True, blank=True, help_text='Are there major structural issues, eg roof holes, foundation collapse?')
+    quick_condition =  models.IntegerField(null=True, blank=True, help_text='On a scale of 1-10 (bad-good) what is the property?')
 
     roof_shingles = models.IntegerField(
         choices=STATUS_CHOICES, null=True, blank=True, verbose_name='Shingles')

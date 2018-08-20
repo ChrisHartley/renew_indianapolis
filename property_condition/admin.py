@@ -12,8 +12,13 @@ class RoomInline(admin.StackedInline):
 
 class ConditionReportAdmin(admin.ModelAdmin):
     inlines = [RoomInline,]
-    readonly_fields = ('upload_photo_page', 'scope_download', 'pic_download')
+    readonly_fields = ('upload_photo_page', 'scope_download', 'pic_download', 'get_condition_avg')
     search_fields = ('Property__parcel', 'Property__streetAddress')
+
+
+    def get_condition_avg(self, obj):
+        return obj.condition_avg
+
 
     def upload_photo_page(self, obj):
         upload_photo_page_link = '<a target="_blank" href="{}">{}</a>'.format(
@@ -47,11 +52,12 @@ class ConditionReportAdmin(admin.ModelAdmin):
         ('Property', {
             'fields':
                 (
-                    'Property',
+                    ('Property', 'get_condition_avg' ),
                     'general_property_notes',
                     ('picture','pic_download'),
                     'upload_photo_page',
                     ('scope_of_work', 'scope_download',),
+                    ('secure', 'occupied', 'major_structural_issues', 'quick_condition'),
                 )
             }
         ),
