@@ -280,7 +280,6 @@
               <button id='modal_toggle' class="btn btn-primary btn-modal" data-toggle="modal" data-target="#fsModal" >Show List</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">Link</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Download <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -335,6 +334,8 @@
 
       <div id="map">
       </div>
+      {% load crispy_forms_tags %}
+      <div style="display:none">{% crispy filter.form filter.form.helper %}</div>
       <div class="row main-row">
         <!-- <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
           <div class="panel-group sidebar-body" id="accordion-left">
@@ -352,7 +353,7 @@
               </div>
               <div id="layers" class="panel-collapse collapse in">
                 <div class="panel-body list-group">
-                  {% load crispy_forms_tags %}
+
                   {% crispy filter.form filter.form.helper %}
 
                 </div>
@@ -591,7 +592,8 @@
               $.get('surplus/property/'+feature.get("parcel_number")+'/', function(data){
                 parcel = data.features[0].properties;
               image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.street_address+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
-              iframe = '<iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="300" width="300">';
+              iframe = '<iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="400" width="400">';
+
               checked = ''
               if (parcel.interesting){ checked = 'checked=checked'; }
               filter = 'Interesting? <input type="checkbox" name="interesting" '+checked+'/><br/>'+
@@ -613,6 +615,7 @@
               $('#properties').html(html);
               $('#filter').html(filter);
               $('#property_info').modal('show')
+
             });
 
             }
