@@ -7,13 +7,16 @@
 {% block wpwrap-content %}
 {% load render_table from django_tables2 %}
 {% load crispy_forms_tags %}
-The following applications will be reviewed at the {{meeting}} meeting of the Review Committee:<br/>
+<p>
+<h3>The following applications will be reviewed at the {{meeting}} meeting of the Review Committee:</h3>
 {% render_table reviewPendingTable %}
-<br/><br/>
-The following applications have been reviewed by Renew Indianapolis and/or the Metropolitan Development Commission:<br/>
+</p>
+<p>
+<h3>The following properties are sale pending:</h3>
 {% render_table approvedTable %}
-<br/><br/>
-The following sales have been completed:<br/>
+</p>
+<p>
+<h3>The following sales have been completed:</h3>
 {% render_table soldTable %}
-<br/><br/>
+</p>
 {% endblock wpwrap-content %}
