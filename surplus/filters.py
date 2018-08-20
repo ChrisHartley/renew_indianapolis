@@ -51,12 +51,23 @@ class SurplusParcelFilter(django_filters.FilterSet):
     #    choices=rc_dates, label='Date requested from commissioners', lookup_expr='exact')
     #requested_from_commissioners = django_filters.DateFilter()
 
+    big_ask = django_filters.BooleanFilter(method='big_ask_filter', label='Coming from the big ask')
+
     def general_search_filter(self, queryset, name, value):
         return queryset.filter(
             Q(street_address__icontains=value) |
             Q(zipcode__exact=value) |
             Q(parcel_number__exact=value)
         )
+
+    def big_ask_filter(self, queryset, name, value):
+        print('in big ask!', value)
+        if value==True:
+            q = queryset.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True))
+            print(q)
+            return q
+        else:
+            return queryset
 
     class Meta:
         model = Parcel

@@ -7,6 +7,7 @@ from django.contrib.gis.serializers.geojson import Serializer as GeoJSONSerializ
 from django.core.serializers import serialize, register_serializer  # new in 1.8 supports geojson
 from django.forms.models import model_to_dict
 from djqscsv import render_to_csv_response
+from django.db.models import Q
 
 from .models import Parcel
 from .filters import SurplusParcelFilter
@@ -94,7 +95,6 @@ class ParcelDetailView(JSONResponseMixin, DetailView):
                               use_natural_foreign_keys=True
                               )
         return HttpResponse(s, content_type='application/json')
-#        return JsonResponse(context.get('parcel').__dict__, encoder=GeoJSONSerializer)
 
 class ParcelListView(ListView):
     model = Parcel
@@ -119,7 +119,7 @@ from django.db import connection
 import pprint
 @ensure_csrf_cookie
 def searchSurplusProperties(request):
-    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500))
+    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500).filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True)))
     geom = 'geometry'
     fields = ('parcel_number', 'has_building', geom)
     if request.GET.get("geometry_type") == "centroid":
@@ -130,19 +130,13 @@ def searchSurplusProperties(request):
             'demolition_order', 'repair_order', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', geom)
 
     s = serializers.serialize('geojson',
-        f.qs.filter(classification__in=[1,2]),
+        f.qs,
         geometry_field=geom,
         srid=2965,
         fields=fields,
         use_natural_foreign_keys=True
     )
-    #print connection.queries[0]['sql']
-    #print f.__dict__
-    #print f.filters['requested_from_commissioners'].__dict__
-    #pp = pprint.PrettyPrinter(indent=4)
 
-    #pp.pprint(f.filters['requested_from_commissioners'].__dict__)
-    #print connection.queries
     return HttpResponse(s, content_type='application/json')
 
 @csrf_exempt

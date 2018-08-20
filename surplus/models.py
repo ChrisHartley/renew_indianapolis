@@ -4,29 +4,23 @@ from photos.models import photo
 
 """
 ## The absurd query to populate this model from existing data:
-# select s.parcel_c as "parcel", s."streetAddress" as "street_address", case when s.township = 'PIKE' then 1 when s.township = 'WAYNE' then 2 when s.township = 'DECATUR' then 3 when s.township = 'WASHINGTON' then 4 when s.township = 'CENTER' then 5 when s.township = 'PERRY' then 6 when s.township = 'LAWRENCE' then 7 when s.township = 'WARREN' then 8 when s.township = 'FRANKLIN' then 9 end as "township", s.zipcode, case when has_building = True then True else False end as "has_building", t."CURRENT_AV_TOTAL_IMPROVEMENTS" as improved_value, t."CURRENT_AV_TOTAL_LAND" as land_value, case when t."AV_LAND_1PCT_CB_CAP" > 0 then 1 when t."AV_N_HOME_RES_LAND_2PCT_CB_CAP" > 0 then 2 when t."AV_COMM_APT_LAND_2PCT_CB_CAP" > 0 then 2 when t."AV_LTC_FAC_LAND_2PCT_CB_CAP" > 0 then 2 when t."AV_LAND_3PCT_CB_CAP" > 0 then 3 else 3 end as assessor_classification, 2 as classification, False as interesting, ''::character varying as notes, s.geom as geometry, st_centroid(s.geom) as centroid_geometry, st_area(s.geom) as area, z.label as zoning INTO tmp_20170411 FROM "TAXDATA" t
-#     RIGHT JOIN state_parcels_marion_county p ON p."PARCELID"::text = t."PARCEL_NUMBER"::text
-#     RIGHT JOIN parcels_with_state_id ps ON ps.stateparce::text = p."IDPARCEL"::text
-#     RIGHT JOIN surplus s ON ps.parcel_c::text = s.parcel_c::text
-#     LEFT JOIN zoning z on st_within(st_centroid(s.geom), st_setsrid(z.geom, 2965));
-Or if using counter_book data:
 insert into surplus_parcel (parcel_number, street_address, township, zipcode,
 has_building, improved_value, land_value, assessor_classification,
 classification, demolition_order, repair_order, interesting, notes, geometry,
 centroid_geometry, area, zoning, previously_held_gateway_area,
 commissioners_resolution_number, commissioners_response_note, intended_end_use,
  mdc_acquire_resolution_number, mdc_dispose_resolution_number,
-  requested_from_commissioners) select p.parcel_c as "parcel_number",
+  requested_from_commissioners, vetted, vetting_notes) select p.parcel_c as "parcel_number",
 p."streetAddress" as street_address, case when p.township = 'PIKE' then 1 when
 p.township = 'WAYNE' then 2 when p.township = 'DECATUR' then 3 when
 p.township = 'WASHINGTON' then 4 when p.township = 'CENTER' then 5
 when p.township = 'PERRY' then 6 when p.township = 'LAWRENCE' then 7
 when p.township = 'WARREN' then 8 when p.township = 'FRANKLIN' then 9
  end as "township", p.zipcode, case when has_building = True then True else
- False end as has_building, c.improv_value as "improved_value",
- c.land_value as "land_value", case when c.property_class = 'RESIDENTIAL' and
- c.homestead_value != '0' then 1  when c.property_class = 'RESIDENTIAL' and
- c.homestead_value = '0' then 2 else 3 end as assessor_classification, 2 as
+ False end as has_building, c."Improv_Value" as "improved_value",
+ c."Land_Value" as "land_value", case when c."Property_Class" = 'RESIDENTIAL' and
+ c."Homestead_Value" != '0' then 1  when c."Property_Class" = 'RESIDENTIAL' and
+ c."Homestead_Value" = '0' then 2 else 3 end as assessor_classification, 2 as
  classification, False as demolition_order, False as repair_order, False as
  interesting, ''::character varying as notes, p.geom as geometry,
  st_centroid(p.geom) as centroid_geometry, st_area(p.geom)::int as area,
@@ -36,9 +30,11 @@ when p.township = 'WARREN' then 8 when p.township = 'FRANKLIN' then 9
  '' as "intended_end_use",
  '' as mdc_acquire_resolution_number,
  '' as mdc_dispose_resolution_number,
- False as requested_from_commissioners
- FROM parcels p left join counter_book_2017 c on
- c.parcel_number = p.parcel_c left join zoning z on
+ False as requested_from_commissioners,
+ False as vetted,
+ '' as vetting_notes
+ FROM parcels p left join counter_book_2018 c on
+ c."Parcel_Number" = p.parcel_c left join zoning z on
  st_within(st_centroid(p.geom), st_setsrid(z.geom, 2965)) where p.parcel_c in()
 
 """

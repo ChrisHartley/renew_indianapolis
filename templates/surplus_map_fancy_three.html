@@ -83,7 +83,7 @@
       }
 
 
-      .modal {
+      .modal_help {
         position: fixed;
         top: 50px;
         right: 0;
@@ -92,7 +92,7 @@
         overflow: hidden;
       }
 
-      .modal-dialog {
+      .modal-dialog_help {
         position: fixed;
         margin: 0;
         width: 100%;
@@ -100,7 +100,7 @@
         padding: 0;
       }
 
-      .modal-content {
+      .modal-content_help {
         position: absolute;
         top: 0;
         right: 0;
@@ -111,7 +111,7 @@
         box-shadow: none;
       }
 
-      .modal-header {
+      .modal-header_help {
         position: absolute;
         top: 0;
         right: 0;
@@ -122,14 +122,14 @@
         border: 0;
       }
 
-      .modal-title {
+      .modal-title_help {
         font-weight: 300;
         font-size: 2em;
         color: #fff;
         line-height: 30px;
       }
 
-      .modal-body {
+      .modal-body_help {
         position: absolute;
         top: 50px;
         bottom: 60px;
@@ -138,7 +138,7 @@
         overflow: auto;
       }
 
-      .modal-footer {
+      .modal-footer_help {
         position: absolute;
         right: 0;
         bottom: -50px;
@@ -310,22 +310,22 @@
          role="dialog"
          aria-labelledby="myModalLabel"
          aria-hidden="true">
-         <div class="modal-dialog">
+         <div class="modal-dialog modal-dialog_help">
              <!-- content -->
-             <div class="modal-content">
+             <div class="modal-content modal-content_help">
                <!-- header -->
-               <div class="modal-header">
-                 <h1 class="modal-title">
+               <div class="modal-header modal-header_help">
+                 <h1 class="modal-title modal-title_help">
                    Search Results
                  </h1>
                </div><!-- header -->
                <!-- body -->
-               <div class="modal-body">
+               <div class="modal-body modal-body_help">
                  <!--<span id="search_results_pan" class="well well-lg">--><table id="search_results" class="table table-responsive table-condensed table-bordered" cellspacing="0" width="100%"></table>
 
                </div>            <!-- body -->
                <!-- footer -->
-               <div class="modal-footer">
+               <div class="modal-footer modal-footer_help">
                  <button class="btn btn-secondary" data-dismiss="modal">Close</button>
                </div>          <!-- footer -->
              </div>          <!-- content -->
@@ -336,7 +336,7 @@
       <div id="map">
       </div>
       <div class="row main-row">
-        <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
+        <!-- <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
           <div class="panel-group sidebar-body" id="accordion-left">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -353,16 +353,16 @@
               <div id="layers" class="panel-collapse collapse in">
                 <div class="panel-body list-group">
                   {% load crispy_forms_tags %}
-                  {% crispy filter.form %}
+                  {% crispy filter.form filter.form.helper %}
 
                 </div>
               </div>
             </div>
 
           </div>
-        </div>
+        </div> -->
         <div class="col-sm-4 col-md-6 mid"></div>
-        <div class="col-sm-4 col-md-3 sidebar sidebar-right pull-right">
+        <!-- <div class="col-sm-4 col-md-3 sidebar sidebar-right pull-right">
           <div class="panel-group sidebar-body" id="accordion-right">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -393,7 +393,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="mini-submenu mini-submenu-left pull-left">
         <i class="fa fa-list-alt"></i>
@@ -401,7 +401,31 @@
       <div class="mini-submenu mini-submenu-right pull-right">
         <i class="fa fa-tasks"></i>
       </div>
+      <div class="modal fade" id="property_info">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="property_info_address"></h4>
+            </div>
+            <div class="modal-body">
+              <p>
+                <div id="properties">
+                <form action="" method="POST" id="updateForm"/>
+                <div id='filter'></div>
+                </form>
+                <table id="search_results_short" class="table table-responsive table-condensed"></table>
+                </div>
 
+              </p>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
 
 
     <script>
@@ -575,7 +599,6 @@
                 '<input type="hidden" name="parcel_number" value="'+parcel.parcel_number+'"/>'+
                 '<input type="submit" id="submit" value="Save"/>';
               html = '<ul class="list-unstyled">'+
-                '<li>'+parcel.street_address+' (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel_number+'">'+parcel.parcel_number+'</a>)</li>'+
                 '<li>Area: '+parcel.area+' Township: '+parcel.township+'</li>'+
                 '<li>Residential: '+parcel.assessor_classification+' Source: '+parcel.classification+'</li>'+
                 '<li>Has building: '+parcel.has_building+' Zoning: '+parcel.zoning+'</li>'+
@@ -583,10 +606,13 @@
                 '<li>Requested From Commissioners: '+parcel.requested_from_commissioners+' Notes: '+parcel.notes+'</li>'+
                 '<li>Interesting: '+parcel.interesting+'</li>'+
                 '<li>Vetted: '+parcel.vetted+'</li>'+
-                '<li>Vetting Notes: '+parcel.vetting_notes+'</li></ul>'+
+                '<li>Vetting Notes: '+parcel.vetting_notes+'</li>'+
+                '<li>Condition Report: <a href="https://www.renewindianapolis.org/map/admin/property_condition/conditionreport/?q='+parcel.parcel_number+'" target="_blank">View or create report</a></li></ul>'+
                 iframe;
+              $("#property_info_address").html(parcel.street_address+' (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel_number+'">'+parcel.parcel_number+'</a>)')
               $('#properties').html(html);
               $('#filter').html(filter);
+              $('#property_info').modal('show')
             });
 
             }
