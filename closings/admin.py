@@ -208,7 +208,9 @@ class ClosingScheduleViewAdmin(ClosingAdmin):
     list_filter = ['assigned_city_staff', 'closed', PurchaseOptionFilter, 'archived']
     readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'closed')
     fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'city_sales_disclosure_form', 'closed')
-    form = ClosingScheduleAdminForm
+#    form = ClosingScheduleAdminForm
+    actions = None
+
 
     inlines = []
 

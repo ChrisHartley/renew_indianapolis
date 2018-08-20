@@ -35,8 +35,8 @@ class company_contact(models.Model):
 
 class mailing_address(models.Model):
     mailing_address_line1 = models.CharField(max_length=254)
-    mailing_address_line2 = models.CharField(max_length=254)
-    mailing_address_line3 = models.CharField(max_length=254)
+    mailing_address_line2 = models.CharField(max_length=254, blank=True)
+    mailing_address_line3 = models.CharField(max_length=254, blank=True)
     mailing_address_city = models.CharField(max_length=254)
     mailing_address_state = USStateField()
     mailing_address_zip = USZipCodeField()
@@ -202,11 +202,11 @@ class closing_proxy2(closing):
         verbose_name = 'Closing Summary'
 
 
-class project_agreement(models.Model):
-    prop = models.ForeignKey(Property)
-    start_date = models.DateField(null=False, blank=False, help_text='When the Project Agreement begins, either at closing or upon assumption')
-    expiration_date = models.DateField(null=False, blank=False)
-    buyer_name = models.CharField(max_length=254)
+#class project_agreement(models.Model):
+#    prop = models.ForeignKey(Property)
+#    start_date = models.DateField(null=False, blank=False, help_text='When the Project Agreement begins, either at closing or upon assumption')
+#    expiration_date = models.DateField(null=False, blank=False)
+#    buyer_name = models.CharField(max_length=254)
 #    released = models.BooleanField(default=False)
 
 # class release_inspection(models.Model):
