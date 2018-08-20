@@ -18,6 +18,21 @@
     <style type="text/css">
       body { overflow: hidden; }
 
+
+      .google-maps {
+        position: relative;
+        padding-bottom: 75%;
+        height: 0;
+        overflow: hidden;
+      }
+      .google-maps iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+      }
+
       .navbar-offset { margin-top: 50px; }
       #map { position: absolute; top: 50px; bottom: 0px; left: 0px; right: 0px; }
       #map .ol-zoom { font-size: 1.2em; }
@@ -257,8 +272,6 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -396,12 +409,12 @@
           </div>
         </div> -->
       </div>
-      <div class="mini-submenu mini-submenu-left pull-left">
+      <!-- <div class="mini-submenu mini-submenu-left pull-left">
         <i class="fa fa-list-alt"></i>
       </div>
       <div class="mini-submenu mini-submenu-right pull-right">
         <i class="fa fa-tasks"></i>
-      </div>
+      </div> -->
       <div class="modal fade" id="property_info">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -592,7 +605,7 @@
               $.get('surplus/property/'+feature.get("parcel_number")+'/', function(data){
                 parcel = data.features[0].properties;
               image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.street_address+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
-              iframe = '<iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="400" width="400">';
+              iframe = '<div class="google-maps"><iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="600" width="600"></div>';
 
               checked = ''
               if (parcel.interesting){ checked = 'checked=checked'; }
