@@ -21,6 +21,8 @@ from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniM
 from epp_connector.views import fetch_epp_inventory
 from neighborhood_notifications.views import update_registered_organizations
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
+from property_condition.views import view_or_create_condition_report
+
 
 admin.site.site_header = 'Blight Fight administration'
 
@@ -223,6 +225,9 @@ urlpatterns = [
             send_cr_file,
             name='condition_report_file'
         ),
+        url(r'condition_report_admin/(?P<parcel>[0-9]+)$',
+            view_or_create_condition_report,
+            name="find_or_create_and_redirect_cr_admin"),
 
         url(r'closing/deposit_slip/(?P<pk>[0-9]+)/$',
             staff_member_required(ClosingDepositSlipDetailView.as_view()),

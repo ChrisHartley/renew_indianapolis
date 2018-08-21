@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect, reverse
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
@@ -8,7 +8,7 @@ from django.conf import settings
 import os
 from wsgiref.util import FileWrapper
 import mimetypes
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 from django_tables2_reports.config import RequestConfigReport as RequestConfig
 
@@ -79,3 +79,15 @@ def condition_report_list(request):
         'title': 'Condition Reports Admin',
         'table': table
     })
+
+def view_or_create_condition_report(request, parcel):
+    if parcel and Property.objects.filter(parcel=parcel).exists():
+        if ConditionReport.objects.filter(Property__parcel=parcel).exists():
+            return redirect(
+                reverse('admin:property_condition_conditionreport_change', args=[ConditionReport.objects.filter(Property__parcel=parcel).order_by('timestamp').first().pk] )
+                )
+        else:
+            cr = ConditionReport(Property=Property.objects.get(parcel=parcel))
+            cr.save()
+            return redirect(reverse('admin:property_condition_conditionreport_change', args=[cr.pk]))
+    return HttpResponseNotFound('<h1>Parcel not found</h1>')
