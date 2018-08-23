@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from property_inventory.models import Property
+from property_condition.models import ConditionReport
 from photos.models import photo
 
 """
@@ -142,6 +143,11 @@ class Parcel(models.Model):
     @property
     def parcel_in_inventory(self):
         return Property.objects.filter(parcel=self.parcel_number).exists()
+
+    @property
+    def condition_report_exists(self):
+        prop = Property.objects.get(parcel=self.parcel_number)
+        return ConditionReport.objects.filter(Property=prop).exists()
 
     @property
     def number_of_pictures(self):

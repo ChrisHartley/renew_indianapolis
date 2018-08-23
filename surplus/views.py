@@ -11,7 +11,7 @@ from django.db.models import Q
 
 from .models import Parcel
 from .filters import SurplusParcelFilter
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
 from django.core import serializers
 
 class DisplayNameJsonSerializer(GeoJSONSerializer):
@@ -92,7 +92,11 @@ class ParcelDetailView(JSONResponseMixin, DetailView):
         s = serializers.serialize('geojson',
                               [context.get('parcel'),],
                               geometry_field='geometry',
-                              use_natural_foreign_keys=True
+                              fields = ('parcel_number','street_address', 'zipcode', 'zoning',
+                                  'township', 'has_building', 'land_value', 'improved_value',
+                                  'area', 'assessor_classification', 'classification',
+                                  'demolition_order', 'repair_order', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', 'intended_end_use'),
+                              use_natural_foreign_keys=True,
                               )
         return HttpResponse(s, content_type='application/json')
 
