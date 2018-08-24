@@ -11,6 +11,7 @@ from django.db.models import Q
 
 from .models import Parcel
 from .filters import SurplusParcelFilter
+from property_condition.models import ConditionReport
 from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
 from django.core import serializers
 
@@ -123,7 +124,12 @@ from django.db import connection
 import pprint
 @ensure_csrf_cookie
 def searchSurplusProperties(request):
-    f = SurplusParcelFilter(request.GET, queryset=Parcel.objects.exclude(area__lte=500).filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True)))
+    properties_with_reports = ConditionReport.objects.filter(quick_condition__isnull=False).values_list('Property__parcel', flat=True)
+    if request.GET.get('report') == 'false':
+        qs = Parcel.objects.exclude(area__lte=500).filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True)).exclude(parcel_number__in=properties_with_reports)
+    else:
+        qs = Parcel.objects.exclude(area__lte=500).filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True)).filter(parcel_number__in=properties_with_reports)
+    f = SurplusParcelFilter(request.GET, queryset=qs)
     geom = 'geometry'
     fields = ('parcel_number', 'has_building', geom)
     if request.GET.get("geometry_type") == "centroid":
