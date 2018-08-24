@@ -16,6 +16,8 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = ['127.0.0.1',]
+
 ADMINS = (('Chris Hartley', 'chris.hartley@renewindianapolis.org'),)
 
 # Application definition
@@ -58,6 +60,8 @@ INSTALLED_APPS = (
     #'accella_records',
     'utils',
     #'debug_toolbar',
+    #'expense_tracking',
+    #'work_orders',
 )
 
 MIDDLEWARE_CLASSES = (
