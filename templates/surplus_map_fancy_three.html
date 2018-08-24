@@ -581,7 +581,7 @@
           projection: 'EPSG:2965',
           minResolution: '3',
           source: new ol.source.Vector({
-            url: '/map/surplus/search/?geometry_type=centroid',
+            url: '/map/surplus/search/?geometry_type=centroid&report=true',
             format: new ol.format.GeoJSON()
           }),
           style: completedStyle,
