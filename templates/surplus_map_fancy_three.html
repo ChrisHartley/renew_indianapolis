@@ -580,8 +580,6 @@
           })
 
           var RotateNorthControl = function(opt_options) {
-            console.log('here');
-            alert(opt_options);
             var options = opt_options || {};
 
             var anchor = document.createElement('a');
@@ -611,6 +609,63 @@
           ol.inherits(RotateNorthControl, ol.control.Control);
 
 
+          var geolocation = new ol.Geolocation({
+            tracking: false
+          });
+
+
+          //create a vector source to add the icon(s) to.
+          var vectorSource = new ol.source.Vector({});
+
+
+          var vectorLayer = new ol.layer.Vector({
+              source: vectorSource
+          });
+
+          var TrackingControl = function(opt_options) {
+            console.log('here');
+            var options = opt_options || {};
+
+            var anchor = document.createElement('a');
+            anchor.href = '#track-toggle';
+            anchor.innerHTML = 'O';
+
+            var this_ = this;
+            var handleTrackingControl = function(e) {
+              // prevent #rotate-north anchor from getting appended to the url
+              e.preventDefault();
+              geolocation.on('change', function(evt) {
+                 //save position and set map center
+                 var pos = ol.proj.transform(geolocation.getPosition(), 'EPSG:4326', 'EPSG:2965');
+                 //alert(geolocation.getPosition())
+                 map.getView().setCenter(pos);
+
+                 //create icon at new map center
+                 var iconFeature = new ol.Feature({
+                       geometry: new ol.geom.Point(pos)
+                 });
+
+                 //add icon to vector source
+                 vectorSource.addFeature(iconFeature);
+              });
+  };
+
+            anchor.addEventListener('click', handleTrackingControl, false);
+            anchor.addEventListener('touchstart', handleTrackingControl, false);
+
+            var element = document.createElement('div');
+            element.className = 'tracking-control ol-unselectable';
+            element.appendChild(anchor);
+
+            ol.control.Control.call(this, {
+              element: element,
+              target: options.target
+            });
+
+          };
+          ol.inherits(TrackingControl, ol.control.Control);
+
+
 
           map = new ol.Map({
             layers: [
@@ -637,32 +692,7 @@
           });
 
 
-          var geolocation = new ol.Geolocation({
-            tracking: false
-          });
 
-
-          //create a vector source to add the icon(s) to.
-          var vectorSource = new ol.source.Vector({});
-
-          geolocation.on('change', function(evt) {
-             //save position and set map center
-             var pos = ol.proj.transform(geolocation.getPosition(), 'EPSG:4326', 'EPSG:2965');
-             //alert(geolocation.getPosition())
-             map.getView().setCenter(pos);
-
-             //create icon at new map center
-             var iconFeature = new ol.Feature({
-                   geometry: new ol.geom.Point(pos)
-             });
-
-             //add icon to vector source
-             vectorSource.addFeature(iconFeature);
-          });
-
-          var vectorLayer = new ol.layer.Vector({
-              source: vectorSource
-          });
 
 
           map.on('singleclick', function(evt) {
@@ -695,7 +725,7 @@
                   '<li>Vetted: '+parcel.vetted+'</li>'+
                   '<li>Vetting Notes: '+parcel.vetting_notes+'</li>'+
                   '<li>End Use: '+parcel.intended_end_use+'</li>'+
-                  '<li>Condition Report: <a href="http://www.renewindianapolis.org/map/admin/condition_report_admin/'+parcel.parcel_number+'" target="_blank">View or create report</a></li></ul>'+
+                  '<li>Condition Report: <a href="{% if debug %}http://www.renewindianapolis.org{%else%}http://localhost:8000{%endif%}/map/admin/condition_report_admin/'+parcel.parcel_number+'" target="_blank">View or create report</a></li></ul>'+
                   iframe;
                 $("#property_info_address").html(parcel.street_address+' (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel_number+'">'+parcel.parcel_number+'</a>)')
                 $('#properties').html(html);

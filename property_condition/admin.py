@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ConditionReport, Room
+from .models import ConditionReport, Room, ConditionReportProxy
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django import forms
@@ -168,5 +168,41 @@ class ConditionReportAdmin(admin.ModelAdmin):
 
     )
 
+class ConditionReportProxyAdmin(admin.ModelAdmin):
+    readonly_fields = ('upload_photo_page', 'pic_download',)
+    def upload_photo_page(self, obj):
+        upload_photo_page_link = '<a target="_blank" href="{}?Property={}">{}</a>'.format(
+            reverse("admin_add_photos"), obj.Property.pk, "Add photos page")
+        return mark_safe(upload_photo_page_link)
+
+    def pic_download(self, obj):
+        if obj.id is None:
+            return '<none>'
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'photo'}),
+                "Download"
+            ))
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super(ConditionReportProxyAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if 'notes' in db_field.name:
+            formfield.widget = forms.Textarea(attrs={'rows':4})
+        return formfield
+
+
+    fieldsets = (
+        ('Property', {
+            'fields':
+                (
+                    ('Property',),
+                    'general_property_notes',
+                    ('picture','pic_download'),
+                    'upload_photo_page',
+                    ('secure', 'occupied', 'major_structural_issues', 'quick_condition'),
+                )
+            }
+        ),
+    )
+
 admin.site.register(ConditionReport, ConditionReportAdmin)
-# Register your models here.
+admin.site.register(ConditionReportProxy, ConditionReportProxyAdmin)

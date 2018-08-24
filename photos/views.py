@@ -17,6 +17,12 @@ class DumpPhotosView(SuccessMessageMixin, FormView):
     success_url = reverse_lazy('admin_add_photos')
     success_message = "%(prop)s images saved."
 
+    def get_initial(self):
+        initial_data = super(DumpPhotosView, self).get_initial()
+        if self.request.GET.get('Property'):
+            initial_data['prop'] = self.request.GET.get('Property')
+        return initial_data
+
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.

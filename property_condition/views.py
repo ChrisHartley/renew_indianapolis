@@ -14,7 +14,7 @@ from django_tables2_reports.config import RequestConfigReport as RequestConfig
 
 from property_inquiry.models import propertyInquiry
 from property_inventory.models import Property
-from property_condition.models import ConditionReport
+from property_condition.models import ConditionReport, ConditionReportProxy
 from property_condition.forms import ConditionReportForm
 from property_condition.filters import ConditionReportFilters
 from property_condition.tables import ConditionReportTable
@@ -83,11 +83,12 @@ def condition_report_list(request):
 def view_or_create_condition_report(request, parcel):
     if parcel and Property.objects.filter(parcel=parcel).exists():
         if ConditionReport.objects.filter(Property__parcel=parcel).exists():
-            return redirect(
-                reverse('admin:property_condition_conditionreport_change', args=[ConditionReport.objects.filter(Property__parcel=parcel).order_by('timestamp').first().pk] )
-                )
+            return redirect('{0}?_popup=1'.format(
+                reverse('admin:property_condition_conditionreportproxy_change', args=[ConditionReportProxy.objects.filter(Property__parcel=parcel).order_by('timestamp').first().pk])
+                ),
+            )
         else:
             cr = ConditionReport(Property=Property.objects.get(parcel=parcel))
             cr.save()
-            return redirect(reverse('admin:property_condition_conditionreport_change', args=[cr.pk]))
-    return HttpResponseNotFound('<h1>Parcel not found</h1>')
+            return redirect('{0}?_popup=1'.format(reverse('admin:property_condition_conditionreportproxy_change', args=[cr.pk])),)
+    return HttpResponseNotFound('<h1>Parcel not found. BEP Property?</h1>')

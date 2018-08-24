@@ -246,3 +246,7 @@ class ConditionReport(models.Model):
 
     def __unicode__(self):
         return u'{0} - {1}'.format(self.Property, self.timestamp)
+
+class ConditionReportProxy(ConditionReport):
+    class Meta:
+        proxy = True
