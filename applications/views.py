@@ -514,14 +514,14 @@ class ePPPartyUpdate(DetailView):
                 organization_worksheet.write(organization_index,organization_header.index('Contact.First Name'), application.user.first_name, text_format)
                 organization_worksheet.write(organization_index,organization_header.index('Contact.Last Name'), application.user.last_name, text_format)
                 organization_worksheet.write(organization_index,organization_header.index('External System Id'), application.organization.external_system_id, text_format)
-                person_worksheet.write(organization_index, person_header.index('Address.Address 1'), application.organization.mailing_address_line1, text_format)
-                person_worksheet.write(organization_index, person_header.index('Address.City'), application.organization.mailing_address_city, text_format)
-                person_worksheet.write(organization_index, person_header.index('Address.State'), application.organization.mailing_address_state, text_format)
-                person_worksheet.write(organization_index, person_header.index('Address.Postal Code'), application.organization.mailing_address_zip, text_format)
-                person_worksheet.write(organization_index, person_header.index('Address.Address 2'), application.organization.mailing_address_line2, text_format)
-                person_worksheet.write(organization_index, person_header.index('Email'), application.organization.email, text_format)
-                person_worksheet.write(organization_index, person_header.index('Function'), 'Owner|Buyer', text_format)
-                person_worksheet.write(organization_index, person_header.index('Telephone'), application.organization.phone_number, text_format)
+                organization_worksheet.write(organization_index, person_header.index('Address.Address 1'), application.organization.mailing_address_line1, text_format)
+                organization_worksheet.write(organization_index, person_header.index('Address.City'), application.organization.mailing_address_city, text_format)
+                organization_worksheet.write(organization_index, person_header.index('Address.State'), application.organization.mailing_address_state, text_format)
+                organization_worksheet.write(organization_index, person_header.index('Address.Postal Code'), application.organization.mailing_address_zip, text_format)
+                organization_worksheet.write(organization_index, person_header.index('Address.Address 2'), application.organization.mailing_address_line2, text_format)
+                organization_worksheet.write(organization_index, person_header.index('Email'), application.organization.email, text_format)
+                organization_worksheet.write(organization_index, person_header.index('Function'), 'Owner|Buyer', text_format)
+                organization_worksheet.write(organization_index, person_header.index('Telephone'), application.organization.phone_number, text_format)
                 organization_index = organization_index + 1
 
 
