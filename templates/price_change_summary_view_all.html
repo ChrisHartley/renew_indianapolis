@@ -45,7 +45,7 @@
   <li>Assessed Improvement Value: ${{price_change.assessed_improvement_value|intcomma}}</li>
 </ul>
 </p>
-{% regroup application.Property.photo_set.all by main_photo as sorted_photos %}
+{% regroup price_change.Property.photo_set.all by main_photo as sorted_photos %}
 {% for photo_list in sorted_photos %}
   {% if photo_list.grouper %}
     {% for photo in photo_list.list %}
