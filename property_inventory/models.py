@@ -234,6 +234,21 @@ class yard_sign(models.Model):
     def __unicode__(self):
         return u'{0} - {1} - {2}'.format(self.Property, self.date_time, self.note[:20])
 
+class lockbox(models.Model):
+    Property = models.ForeignKey(Property, related_name='lockbox')
+    date_time = models.DateTimeField(auto_now_add=True)
+    code = models.CharField(max_length=10, blank=True)
+    note = models.CharField(max_length=1024, blank=True)
+    removed_date_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'lockbox'
+        verbose_name_plural = 'lockboxes'
+
+    def __unicode__(self):
+        return u'{0} - {1} - {2}'.format(self.Property, self.code, self.note[:20])
+
+
 class take_back(models.Model):
     Property = models.ForeignKey(Property, related_name='take_back')
     take_back_date = models.DateField(blank=False)

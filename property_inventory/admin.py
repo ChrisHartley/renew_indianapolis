@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
-from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign, take_back
+from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign, take_back, lockbox
 from applications.models import Application
 from photos.models import photo
 from applications.admin import PriceChangeMeetingLinkInline
@@ -40,7 +40,8 @@ class PropertyStatusListFilter(SimpleListFilter):
             ('available','Available'),
             ('sold', 'Sold'),
             ('approved', 'Received Final Approval'),
-            ('consideration', 'Application under consideration')
+            ('consideration', 'Application under consideration'),
+            ('bep', 'BEP demolition slatted'),
         )
 
     def queryset(self, request, queryset):
@@ -52,12 +53,19 @@ class PropertyStatusListFilter(SimpleListFilter):
             return queryset.filter( ( Q(status__contains='Sale approved by MDC') & Q(renew_owned__exact=False) ) | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=True)) )
         if self.value() == 'consideration':
             return queryset.filter( Q(status__contains='Sale approved by Review Committee') | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=False)))
+        if self.value() == 'bep':
+            return queryset.filter(status__contains='BEP demolition slated')
         return queryset
 
 class NoteInlineAdmin(regular_admin.TabularInline):
     model = featured_property
     fields = ('Property', 'start_date', 'end_date', 'note')
     #readonly_fields=('created','modified',  'Property')
+    extra = 0
+
+class lockboxInlineAdmin(regular_admin.TabularInline):
+    model = lockbox
+    fields = ('Property', 'code', 'note')
     extra = 0
 
 class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
@@ -71,7 +79,7 @@ class PropertyAdmin(admin.OSMGeoAdmin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name')
     list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status')
     list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active')
-    inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin]
+    inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin, lockboxInlineAdmin]
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
@@ -179,6 +187,10 @@ class yard_signAdmin(admin.OSMGeoAdmin):
 class take_backAdmin(admin.OSMGeoAdmin):
     raw_id_fields = ('application',)
 
+class lockboxAdmin(admin.OSMGeoAdmin):
+    search_fields = ('Property__streetAddress','Property__parcel',)
+
+
 
 admin.site.register(price_change, price_changeAdmin)
 admin.site.register(Property, PropertyAdmin)
@@ -189,3 +201,4 @@ admin.site.register(ContextArea, ContextAreaAdmin)
 admin.site.register(featured_property)
 admin.site.register(blc_listing, blc_listingAdmin)
 admin.site.register(yard_sign, yard_signAdmin)
+admin.site.register(lockbox, lockboxAdmin)
