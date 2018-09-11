@@ -180,6 +180,8 @@ class ClosingAdmin(admin.ModelAdmin):
             ))
 
     def print_deposit_slip(self, obj):
+        if obj.id is None:
+            return '-'
         closing_deposit_link = '<a target="_blank" href="{}">{}</a>'.format(
             reverse("closing_deposit_slip", args=(obj.id,)), "Print deposit sheet")
         return mark_safe(closing_deposit_link)
