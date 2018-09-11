@@ -409,7 +409,7 @@ class MeetingLink(models.Model):
             prop.save()
             schedule_next_meeting = False
 
-        if self.meeting_type == Meeting.PROCESSING:
+        if self.meeting.meeting_type == Meeting.PROCESSING:
             schedule_next_meeting = False
 
         if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS):
