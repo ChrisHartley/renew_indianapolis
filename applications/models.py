@@ -329,12 +329,14 @@ class Meeting(models.Model):
     BOARD_OF_DIRECTORS = 2
     MDC = 3
     RFP_COMMITTEE = 4
+    PROCESSING = 5
 
     MEETING_TYPE_CHOICES = (
         (REVIEW_COMMITTEE, 'Review Committee'),
         (BOARD_OF_DIRECTORS, 'Board of Directors'),
         (MDC, 'Metropolitan Development Commission'),
         (RFP_COMMITTEE, 'RFP Committee'),
+        (PROCESSING, '**Vetted**'),
     )
 
     meeting_date = models.DateField()
@@ -407,6 +409,9 @@ class MeetingLink(models.Model):
             prop.save()
             schedule_next_meeting = False
 
+        if self.meeting_type == Meeting.PROCESSING:
+            schedule_next_meeting = False
+
         if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS):
             notes = 'made by robot'
             # Tabled status means it goes back on the agenda for the next occurance of the same meeting
@@ -420,6 +425,8 @@ class MeetingLink(models.Model):
                     meeting_type = Meeting.BOARD_OF_DIRECTORS
                 if self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS:
                     meeting_type = Meeting.MDC
+                if self.meeting.meeting_type == Meeting.PROCESSING:
+                    meeting_type = Meeting.PROCESSING # users shouldn't use any status except scheduled for this fake meeting type.
                 if self.meeting.meeting_type == Meeting.MDC:
                     # We should never get here since approval stops at MDC
                     pass
