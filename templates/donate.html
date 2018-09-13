@@ -1,5 +1,5 @@
 {% extends 'allauth-base.html' %}
-
+{% block head_title %}Donate :: Renew Indianapolis{% endblock head_title %}
 
 {% block content%}
 <h1>donate to renew indianapolis</h1>
@@ -28,21 +28,21 @@ Our unique partnership with the City has also allowed Renew to step into the ind
 However, most of the property that is owned by Renew was acquired with funding that currently pays for maintenance, insurance and real estate taxes. The City of Indianapolis will celebrate its Bicentennial in the year 2020, which is also the year that this funding will most likely end. Renew operates as a nimble organization with a small operating and acquisition budget based in residential, and soon to be industrial and commercial, transactions. A donation to Renew Indianapolis ensures we can continue our mission of being a transparent, reliable and efficient organization that conveys vacant, abandoned, and at-risk properties to partners committed to blight elimination and neighborhood revitalization.
 </p>
 <p>
-Our fundraising efforts provide a long-term, dedicated funding source for property upkeep and maintenance. I hope that you will help revive growth and opportunity in the neighborhoods of Indianapolis by making a donation to our efforts today! A tax-deductible gift that can be made online via the link below.
+Our fundraising efforts provide a long-term, dedicated funding source for property upkeep and maintenance. I hope that you will help revive growth and opportunity in the neighborhoods of Indianapolis by making a donation to our efforts today! You can get started with your tax-deductible gift with the the form below.
 </p>
+<p>&nbsp;</p>
 <p>
-<div class='row'>
-  <div class='col-sm-4 col-md-4 col-lg-4 col-sm-offset-2 col-md-offset-2 col-md-offset-2'>
-    <div class="input-group input-group-md">
-      <span class="input-group-addon">$</span>
-      <input id='amount' type="text" class="form-control" aria-label="Amount">
-        <span class="input-group-btn">
-          <button class="btn btn-primary" id="donateButton">Donate</button>
-        </span>
-    </div>
+<div class='center-text'>
+  <div class="input-group input-group-md">
+    <span class="input-group-addon">$</span>
+    <input id='amount' type="text" class="form-control" aria-label="Amount">
+      <span class="input-group-addon">.00</span>
+      <span class="input-group-btn">
+        <button class="btn btn-primary" id="donateButton">Donate</button>
+      </span>
   </div>
 </div>
-
+</p>
 <script src="https://checkout.stripe.com/checkout.js"></script>
 
 
@@ -57,16 +57,18 @@ Our fundraising efforts provide a long-term, dedicated funding source for proper
   });
 
   document.getElementById('donateButton').addEventListener('click', function(e) {
+    if (parseInt(document.getElementById('amount').value) == NaN){ alert("Please enter an amount"+document.getElementById('amount').value)}
+    else{
     // Open Checkout with further options:
     handler.open({
       name: 'Renew Indianapolis',
       description: 'Donation',
       zipCode: true,
       image: '/static/renew-logo-small.png',
-      amount: document.getElementById('amount').value+'00'
+      amount: parseInt(document.getElementById('amount').value)*100
     });
     e.preventDefault();
-  });
+  } });
 
   // Close Checkout on page navigation:
   window.addEventListener('popstate', function() {
