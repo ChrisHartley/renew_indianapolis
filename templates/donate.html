@@ -1,0 +1,76 @@
+{% extends 'allauth-base.html' %}
+
+
+{% block content%}
+<h1>donate to renew indianapolis</h1>
+<dl>
+<dt>Blight</dt> noun \ ˈblīt \
+<dd>
+1 something that frustrates plans or hopes
+</dd>
+<dd>
+2 something that impairs or destroys
+</dd>
+<dd>
+3 a deteriorated condition
+</dd>
+</dl>
+<p>
+No matter the definition you choose, Renew Indianapolis is very familiar. Each day, a small staff of four works toward eliminating blight in Indianapolis neighborhoods, eradicating abandoned and at-risk houses and revitalizing neighborhoods across the city.
+</p>
+<p>
+Managing and marketing the sale of the City of Indianapolis’ Lank Bank inventory is no easy task. Since 2014, Renew has worked closely with the City to develop a thoughtful marketing program, informative website, effective disposition policies and a review committee with members from a wide cross section of real estate experts, community development leaders and representatives of the local philanthropic and government sectors.
+</p>
+<p>
+Our unique partnership with the City has also allowed Renew to step into the industrial and commercial real estate sectors, facilitating connections with the many organizations working in that area and offering services that will bring some of those abandoned properties back into productive use. The abandoned industrial sites across the city’s landscape are a tough sell for redevelopment—often hindered by expensive environmental cleanup costs and other challenges. Entry into this industrial market represents a shift in category and scale of development and potential role in the re-use or redevelopment process.
+</p>
+<p>
+However, most of the property that is owned by Renew was acquired with funding that currently pays for maintenance, insurance and real estate taxes. The City of Indianapolis will celebrate its Bicentennial in the year 2020, which is also the year that this funding will most likely end. Renew operates as a nimble organization with a small operating and acquisition budget based in residential, and soon to be industrial and commercial, transactions. A donation to Renew Indianapolis ensures we can continue our mission of being a transparent, reliable and efficient organization that conveys vacant, abandoned, and at-risk properties to partners committed to blight elimination and neighborhood revitalization.
+</p>
+<p>
+Our fundraising efforts provide a long-term, dedicated funding source for property upkeep and maintenance. I hope that you will help revive growth and opportunity in the neighborhoods of Indianapolis by making a donation to our efforts today! A tax-deductible gift that can be made online via the link below.
+</p>
+<p>
+<div class='row'>
+  <div class='col-sm-4 col-md-4 col-lg-4 col-sm-offset-2 col-md-offset-2 col-md-offset-2'>
+    <div class="input-group input-group-md">
+      <span class="input-group-addon">$</span>
+      <input id='amount' type="text" class="form-control" aria-label="Amount">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" id="donateButton">Donate</button>
+        </span>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+
+<script>
+  var handler = StripeCheckout.configure({
+    key: '{{STRIPE_API_KEY}}',
+    image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+    locale: 'auto',
+    token: function(token) {
+
+    }
+  });
+
+  document.getElementById('donateButton').addEventListener('click', function(e) {
+    // Open Checkout with further options:
+    handler.open({
+      name: 'Renew Indianapolis',
+      description: 'Donation',
+      zipCode: true,
+      image: '/static/renew-logo-small.png',
+      amount: document.getElementById('amount').value+'00'
+    });
+    e.preventDefault();
+  });
+
+  // Close Checkout on page navigation:
+  window.addEventListener('popstate', function() {
+    handler.close();
+  });
+</script>
+{% endblock content %}

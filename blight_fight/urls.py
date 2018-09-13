@@ -22,7 +22,7 @@ from epp_connector.views import fetch_epp_inventory
 from neighborhood_notifications.views import update_registered_organizations
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
 from property_condition.views import view_or_create_condition_report
-
+from utils.views import DonateView
 
 admin.site.site_header = 'Blight Fight administration'
 
@@ -236,8 +236,8 @@ urlpatterns = [
         url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx'),
 
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
-        url(r'pi_cluster/$', IdentifyClusters.as_view(), name='identify_pi_clusters'),
-
+#        url(r'pi_cluster/$', IdentifyClusters.as_view(), name='identify_pi_clusters'),
+        url(r'donate/$', DonateView.as_view()),
 
 
     ]
