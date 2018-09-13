@@ -66,7 +66,7 @@ class OrganizationForm(forms.ModelForm):
                 Field('sos_business_entity_report'),
                 #Field('irs_determination_letter'),
                 #Field('most_recent_financial_statement'),
-                HTML('<div class="form-group"><div class="control-label col-lg-4">Attach a file</div><div id="file-uploader" class="form-control-static col-lg-6">Drop your file here to upload</div>'),
+                #HTML('<div class="form-group"><div class="control-label col-lg-4">Attach a file</div><div id="file-uploader" class="form-control-static col-lg-6">Drop your file here to upload</div>'),
                 css_class='well'
             ),
             FormActions(
@@ -139,7 +139,7 @@ class ApplicantProfileForm(forms.ModelForm):
 
     class Meta:
         model = ApplicantProfile
-        exclude = ['user']
+        exclude = ['user', 'external_system_id']
 
     def __init__(self, *args, **kwargs):
         super(ApplicantProfileForm, self).__init__(*args, **kwargs)
