@@ -149,7 +149,7 @@ class closing(models.Model):
             if self.closed == False and self.assigned_city_staff is not None and self.application and settings.SEND_CLOSING_ASSIGNMENT_EMAILS:
                 if orig_closing.assigned_city_staff != self.assigned_city_staff:
                     subject = 'New closing assigned - {0} {1}'.format(self.application.Property, self.date_time)
-                    message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://www.renewindianapolis.org/map{3}'.format(self.application.Property, self.date_time, self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
+                    message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://build.renewindianapolis.org{3}'.format(self.application.Property, self.date_time, self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
                     from_email = 'info@renewindianapolis.org'
                     send_mail(subject, message, from_email, [self.assigned_city_staff.email,settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']])
 

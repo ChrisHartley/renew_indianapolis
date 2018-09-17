@@ -265,8 +265,6 @@
             <span class="icon-bar"></span>
             </button>
             <a class='navbar-brand'><img alt='Renew Indianapolis logo' class="navbar-brand" src="https://www.renewindianapolis.org/wp-content/uploads/RenewIndpl4C-NO-CITY-WEB.png"></a>
-            <a class="navbar-brand" href="#">Renew Indianapolis</a>
-
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -762,7 +760,7 @@
                   '<li>Vetted: '+parcel.vetted+'</li>'+
                   '<li>Vetting Notes: '+parcel.vetting_notes+'</li>'+
                   '<li>End Use: '+parcel.intended_end_use+'</li>'+
-                  '<li>Condition Report: <a href="{% if not debug %}http://www.renewindianapolis.org{%else%}http://localhost:8000{%endif%}/map/admin/condition_report_admin/'+parcel.parcel_number+'" target="_blank">View or create report</a></li></ul>'+
+                  '<li>Condition Report: <a href="{% if not debug %}https://build.renewindianapolis.org{%else%}http://localhost:8000{%endif%}/admin/condition_report_admin/'+parcel.parcel_number+'" target="_blank">View or create report</a></li></ul>'+
                   iframe;
                 $("#property_info_address").html(parcel.street_address+' (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel_number+'">'+parcel.parcel_number+'</a>)')
                 $('#properties').html(html);

@@ -83,7 +83,7 @@ var table = jQuery('#search_results').DataTable({
               "render": function(data){ return "<a href='http://maps.indy.gov/AssessorPropertyCards.Reports.Service/ReportPage.aspx?ParcelNumber="+data+"' target='_blank'>Link</a>";}
             },
             {"data": "properties.parcel",
-              "render": function(data){ return "<a href='https://www.renewindianapolis.org/map/property/"+data+"/photos/' target='_blank'>View Photos</a>";}
+              "render": function(data){ return "<a href='https://build.renewindianapolis.org/property/"+data+"/photos/' target='_blank'>View Photos</a>";}
             },
 
 

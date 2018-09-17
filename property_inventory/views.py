@@ -86,6 +86,7 @@ def showApplications(request):
         status__istartswith='Sold').order_by('status', 'applicant')
     approvedProperties = Property.objects.all().filter(
         status__istartswith='Sale').order_by('status', 'applicant')
+        #status__istartswith='Sale').order_by('-buyer_application__meeting__meeting__meeting_date')
 
     next_rc_meeting = Meeting.objects.filter(Q(meeting_type=Meeting.REVIEW_COMMITTEE)&Q(meeting_date__gte=datetime.date.today())).order_by('meeting_date').first()
     if next_rc_meeting is not None:
@@ -182,7 +183,7 @@ def propertyPopup(request):
     object_list = Property.objects.get(parcel__exact=request.GET['parcel'])
 #	json = serializers.serialize('json', object_list)
     content = "<div style='font-size:.8em'>Parcel: " + str(object_list.parcel) + "<br/>Address: " + str(object_list.streetAddress) + "<br/>Status: " + str(object_list.status) + "<br/>Structure Type: " + str(
-        object_list.structureType) + "<br/>Side lot Eligible: " + str(object_list.sidelot_eligible) + "<br/>Homestead only: " + str(object_list.homestead_only) + "<br/><a href='http://maps.indy.gov/AssessorPropertyCards.Reports.Service/ReportPage.aspx?ParcelNumber="+str(object_list.parcel)+"' target='_blank'>Assessor's Property Report Card</a></br><a target='_blank' href='https://www.renewindianapolis.org/map/property/"+str(object_list.parcel)+"/photos/'>View Photos</a></div>"
+        object_list.structureType) + "<br/>Side lot Eligible: " + str(object_list.sidelot_eligible) + "<br/>Homestead only: " + str(object_list.homestead_only) + "<br/><a href='http://maps.indy.gov/AssessorPropertyCards.Reports.Service/ReportPage.aspx?ParcelNumber="+str(object_list.parcel)+"' target='_blank'>Assessor's Property Report Card</a></br><a target='_blank' href='https://build.renewindianapolis.org/property/"+str(object_list.parcel)+"/photos/'>View Photos</a></div>"
     return HttpResponse(content, content_type='text/plain; charset=utf8')
 #	return HttpResponse(json, content_type='application/json')
 

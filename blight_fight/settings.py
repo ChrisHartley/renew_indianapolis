@@ -159,9 +159,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-LOGIN_URL = '/map/accounts/login'
-LOGIN_REDIRECT_URL = '/map/accounts/profile'
-LOGOUT_URL = '/map/accounts/logout'
+LOGIN_URL = '/accounts/login'
+LOGIN_REDIRECT_URL = '/accounts/profile'
+LOGOUT_URL = '/accounts/logout'
 #AUTH_USER_MODEL = 'applicants.ApplicantUser'
 AUTH_PROFILE_MODULE = 'applicants.ApplicantProfile'
 

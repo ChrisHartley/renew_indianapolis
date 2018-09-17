@@ -317,7 +317,7 @@ CSS loading animation.
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class='navbar-brand'><img alt='Renew Indianapolis logo' class="navbar-brand" src="https://www.renewindianapolis.org/wp-content/uploads/RenewIndpl4Cawd.png"></a>
+            <a class='navbar-brand'><img alt='Renew Indianapolis logo' class="navbar-brand" src="https://build.renewindianapolis.org/static/logo.png"></a>
             <!-- <a class="navbar-brand" href="#">Renew Indianapolis</a> -->
 
           </div>
@@ -339,9 +339,9 @@ CSS loading animation.
             </ul>
             <ul class="nav navbar-nav navbar-right">
               {% if user.is_authenticated %}
-                <li><a href="/map/accounts/logout/?next={{request.path}}">Logout</a></li>
+                <li><a href="/accounts/logout/?next={{request.path}}">Logout</a></li>
               {%else%}
-                <li><a href="/map/accounts/login/?next={{request.path}}">Login</a></li>
+                <li><a href="/accounts/login/?next={{request.path}}">Login</a></li>
               {%endif%}
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Download <b class="caret"></b></a>

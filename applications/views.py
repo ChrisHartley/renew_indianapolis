@@ -396,7 +396,7 @@ class MONCSVResponseMixin(object):
                     sidelot_text = 'Since this is a sidelot or vacant lot program application you have the option of closing directly with Renew Indianapolis, rather than with a title company.'
                 try:
                     pf = processing_fee.objects.get(closing__application__exact=application)
-                    pf_link = 'https://www.renewindianapolis.org{0}'.format(
+                    pf_link = 'https://build.renewindianapolis.org{0}'.format(
                         reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)),)
                 except processing_fee.DoesNotExist:
                     pf_link = ''

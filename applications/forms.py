@@ -65,7 +65,7 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Third Party Authorization Form</div><div id="3rd-party-authorization-file-uploader" class="form-control-static col-lg-6">Drop your third party authorization form file here to upload</div>'),
                 HTML("""<div class="help-block col-lg-6 col-lg-offset-4">
                             If someone is completing this application on your behalf, such as a Realtor&trade;, a translator, a family member, or a friend then you and they will need to complete
-                            a <a href="https://www.renewindianapolis.org/wp-content/uploads/Third-Party-Authorization.pdf" target="_blank">Third Party Authorization Form (pdf)</a> and upload the completed, signed form here.
+                            a <a href="https://build.renewindianapolis.org/static/Third-Party-Authorization.pdf" target="_blank">Third Party Authorization Form (pdf)</a> and upload the completed, signed form here.
                             </div>
                         """),
 
@@ -138,7 +138,7 @@ class ApplicationForm(forms.ModelForm):
 
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Scope of Work</div><div id="sow-file-uploader" class="form-control-static col-lg-6">Drop your scope of work file here to upload</div>'),
-                HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://www.renewindianapolis.org/wp-content/uploads/Scope-of-Work-Template.xls" target="_blank">spreadsheet</a> or <a href="http://www.renewindianapolis.org/wp-content/uploads/Scope-of-Work-Template.pdf" target="_blank">printable template</a> as a starting point.</div></div>'),
+                HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://build.renewindianapolis.org/static/Scope-of-Work-Template.xls" target="_blank">spreadsheet</a> or <a href="https://build.renewindianapolis.org/static/Scope-of-Work-Template.pdf" target="_blank">printable template</a> as a starting point.</div></div>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Elevation View</div><div id="elevation-file-uploader" class="form-control-static col-lg-6">Drop your elevation view file here to upload</div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Site Plan</div><div id="siteplan-file-uploader" class="form-control-static col-lg-6">Drop your site plan file here to upload</div>'),
@@ -154,13 +154,13 @@ class ApplicationForm(forms.ModelForm):
                             <ol>
                             <li>Rehabilitation projects, including homes for rental or for sale projects, must
                                 show acceptable proof of funds for 75-100% of the total project costs less any
-                                materials on hand.  An <a href="http://www.renewindianapolis.org/wp-content/uploads/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
+                                materials on hand.  An <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
                                 project costs.</li>
                             <li>Homestead (owner occupied) rehabilitation projects may demonstrate 100% of funds through an
-                                <a href="http://www.renewindianapolis.org/wp-content/uploads/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF).</li>
+                                <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF).</li>
 
                             <li>All proposed new construction projects require proof of funds for 75% of the
-                                total project costs.  An <a href="http://www.renewindianapolis.org/wp-content/uploads/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
+                                total project costs.  An <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
                                 project costs.</li>
                             </ol></div></div>"""
                      ),
