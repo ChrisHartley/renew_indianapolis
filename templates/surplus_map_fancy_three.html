@@ -264,7 +264,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class='navbar-brand'><img alt='Renew Indianapolis logo' class="navbar-brand" src="https://www.renewindianapolis.org/wp-content/uploads/RenewIndpl4C-NO-CITY-WEB.png"></a>
+            <a class='navbar-brand'><img alt='Renew Indianapolis logo' class="navbar-brand" src="https://build.renewindianapolis.org/static/logo.png"></a>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -559,7 +559,7 @@
           //minResolution: '.25',
           style: styles['polygon'],
           source: new ol.source.Vector({
-            url: '/map/surplus/search/?geometry_type=polgyon',
+            url: '/surplus/search/?geometry_type=polgyon',
             format: new ol.format.GeoJSON()
           }),
         });
@@ -579,7 +579,7 @@
           projection: 'EPSG:2965',
           minResolution: '3',
           source: new ol.source.Vector({
-            url: '/map/surplus/search/?geometry_type=centroid&report=true',
+            url: '/surplus/search/?geometry_type=centroid&report=true',
             format: new ol.format.GeoJSON()
           }),
           style: completedStyle,
@@ -590,7 +590,7 @@
             projection: 'EPSG:2965',
             minResolution: '3',
             source: new ol.source.Vector({
-              url: '/map/surplus/search/?geometry_type=centroid&report=false',
+              url: '/surplus/search/?geometry_type=centroid&report=false',
               format: new ol.format.GeoJSON()
             }),
             style: styleFunction,
