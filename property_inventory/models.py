@@ -50,6 +50,8 @@ class ContextArea(Overlay):
 class MVAClassifcation(Overlay):
     mva_cat = models.CharField(max_length=10)
 
+class census_tract(Overlay):
+    pass
 ### The Property model is the heart of blight_fight. A Property is a parcel of land with a unique identifier, the
 ### parcel number. It has various attributes, including geometry, and can fall within a Overlay geometry (above).
 ###

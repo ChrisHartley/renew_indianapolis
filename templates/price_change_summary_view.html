@@ -28,6 +28,35 @@
     {{price_change.notes}}
   </p>
 <p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Number of sales</th>
+        <th>Average</th>
+        <th>Median</th>
+        <th>Minimum</th>
+        <th>Maximum</th>
+        <th>Top 10%</th>
+        <th>Bottom 10%</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for summary in tract_summary %}
+        <tr>
+          <td>{{summary.get_with_improvements_display}}</td>
+          <td>{{summary.number_qualifying_sales|intcomma}}</td>
+          <td>{{summary.average|intcomma}}</td>
+          <td>{{summary.median|intcomma}}</td>
+          <td>{{summary.minimum|intcomma}}</td>
+          <td>{{summary.maximum|intcomma}}</td>
+          <td>{{summary.top_90_percent|intcomma}}</td>
+          <td>{{summary.bottom_10_percent|intcomma}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</p><p>
   <ul>
   <li>Lot Size: {{price_change.Property.area}} sqft</li>
   <li>Land current cost per square foot:  ${{current_lot_price_per_square_foot|intcomma}}</li>
