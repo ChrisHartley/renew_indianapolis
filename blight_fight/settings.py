@@ -62,6 +62,7 @@ INSTALLED_APPS = (
     #'debug_toolbar',
     #'expense_tracking',
     #'work_orders',
+    'market_activity',
 )
 
 MIDDLEWARE_CLASSES = (
