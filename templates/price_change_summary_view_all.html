@@ -6,61 +6,13 @@
   Price Change Proposals<br/>
   {{meeting}}
 </p>
-</div>
-</div>
+
 {% for meeting_link in meeting.price_change_meeting_link.all|dictsort:"price_change.Property.zipcode" %}
 {% with price_change=meeting_link.price_change%}
 {% if forloop.first %} &nbsp; {% else %}
 <div class="page-break"></div>
 {% endif %}
-<div class="row">
-<div class='col-md-8 col-xs-8'>
-  <h3>{{price_change.Property}}</h3>
-  <span class='hidden-print'><a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/{{price_change.Property.parcel}}" target="_blank">PRC</a></span>
-  <ul class="list-group">
-    <li class="list-group-item"><strong>Proposed price change</strong>: ${{price_change.Property.price|intcomma}} <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> ${{price_change.proposed_price|intcomma}},</li>
-  </ul>
-  <ul class="list-unstyled">
-    <li>Applications: {{price_change.Property.application_set.count}}</li>
-    <ul>
-    {% for app in price_change.Property.application_set.all %}
-      <li>{{app.user.first_name}} {{app.user.last_name}} ({{app.organization}}) - {% if app.status == 4%} (complete){% else %}(incomplete){% endif %}, created {{app.created|date:"Y/m/d"}}</li>
-    {% endfor %}
-    </ul>
-    {% if price_change.Property.structureType != 'Vacant Lot' %}
-      <li>Property inquiries received: {{price_change.Property.propertyinquiry_set.count}}</li>
-      <li>Inquiries in the past 30, 60, 90, 180 days: {{price_change.inquiries_previous_30_days}}, {{price_change.inquiries_previous_60_days}}, {{price_change.inquiries_previous_90_days}}, {{price_change.inquiries_previous_180_days}}</li>
-    {% endif %}
-
-    </ul>
-  </ul>
-  <p>
-    {{price_change.notes}}
-  </p>
-
-<p>
-  <ul>
-  <li>Lot Size: {{price_change.Property.area}} sqft</li>
-  <li>Assessed Land Value: ${{price_change.assessed_land_value|intcomma}}</li>
-  <li>Assessed Improvement Value: ${{price_change.assessed_improvement_value|intcomma}}</li>
-</ul>
-</p>
-{% regroup price_change.Property.photo_set.all by main_photo as sorted_photos %}
-{% for photo_list in sorted_photos %}
-  {% if photo_list.grouper %}
-    {% for photo in photo_list.list %}
-      <img src="/media/{{ photo.image }}" class="img-thumbnail" width=400/>
-      <div class="caption">{{photo.created}}</div>
-    {% endfor %}
-  {% endif %}
-  {% empty %}
-    <img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{price_change.Property.streetAddress}}, Indianapolis, IN" class="img-thumbnail"/>
-  &nbsp;
-
-{% endfor %}<img src="https://build.renewindianapolis.org/static/inventory_maps/parcel_{{price_change.Property.parcel}}.jpg" class="img-thumbnail" width="200"/>
-
-</div>
-</div>
+{% include 'price_change_stub.html' %}
 {% endwith %}
 {% endfor %}
 

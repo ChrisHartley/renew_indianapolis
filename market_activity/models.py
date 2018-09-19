@@ -8,7 +8,7 @@ from property_inventory.models import census_tract
 # for the past 12 months. Should be updated monthly.
 class tract_sdf_summary(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    census_tract = models.ForeignKey(census_tract)
+    census_tract = models.ForeignKey(census_tract, related_name='sdf_summary')
     bottom_10_percent = models.DecimalField(max_digits=15, decimal_places=2)
     top_90_percent = models.DecimalField(max_digits=15, decimal_places=2)
     median = models.DecimalField(max_digits=15, decimal_places=2)

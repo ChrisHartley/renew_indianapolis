@@ -88,6 +88,8 @@ class Property(models.Model):
         Neighborhood, blank=True, null=True, help_text="The neighborhood the property is in")
     zipcode = models.ForeignKey(
         Zipcode, blank=True, null=True, help_text="The zipcode of the property")
+    census_tract = models.ForeignKey(
+        census_tract, blank=True, null=True, help_text="The Census Tract of the property")
     urban_garden = models.BooleanField(
         default=False, help_text="If the property is currently licensed as an urban garden through the Office of Sustainability")
     status = models.CharField(max_length=255, null=True, blank=True,

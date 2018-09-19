@@ -266,9 +266,6 @@ class PriceChangeSummaryView(DetailView):
             end_day = datetime.date.today()
             start_day = end_day - datetime.timedelta(duration)
             context['{0}dayinquiries'.format(duration,)] = propertyInquiry.objects.filter(Property=self.object.Property).filter(timestamp__range=(start_day, end_day)).count()
-        #tract = census_tract.objects.filter(geometry__contains)
-        tract_summary = tract_sdf_summary.objects.filter(census_tract__geometry__contains=self.object.Property.geometry)
-        context['tract_summary'] = tract_summary
         context['current_lot_price_per_square_foot'] = round(self.object.Property.price / Decimal(self.object.Property.area), 2)
         context['proposed_lot_price_per_square_foot'] = round(self.object.proposed_price / Decimal(self.object.Property.area), 2)
         return context
