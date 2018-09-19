@@ -78,7 +78,7 @@ class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
 class PropertyAdmin(admin.OSMGeoAdmin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name')
     list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status')
-    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active')
+    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition')
     inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin, lockboxInlineAdmin]
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
