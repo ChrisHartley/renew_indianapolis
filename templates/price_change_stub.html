@@ -1,4 +1,4 @@
-{% load humanize %}
+{% load humanize market_tags %}
 
 <div class="row">
 <div class='col-md-8 col-xs-8'>
@@ -27,7 +27,7 @@
   </p>
 
 <p>
-  <table class="table">
+  <table class="table table-condensed">
     <caption>12 Month Sales Summary</caption>
     <thead>
       <tr>
@@ -40,6 +40,12 @@
         <th>Maximum</th>
         <th>Top 10%</th>
         <th>Bottom 10%</th>
+        <th>Average Per Lot SqFt</th>
+        <th>Median Per Lot SqFt</th>
+        <th>Minimum Per Lot SqFt</th>
+        <th>Maximum Per Lot SqFt</th>
+        <th>Top 10% Per Lot SqFt</th>
+        <th>Bottom 10% Per Lot SqFt</th>
       </tr>
     </thead>
     <tbody>
@@ -54,6 +60,13 @@
           <td>${{summary.maximum|floatformat:"0"|intcomma}}</td>
           <td>${{summary.top_90_percent|floatformat:"0"|intcomma}}</td>
           <td>${{summary.bottom_10_percent|floatformat:"0"|intcomma}}</td>
+          <td>${{summary.average_per_sq_ft|floatformat:"3"|intcomma}}</td>
+          <td>${{summary.median_per_sq_ft|floatformat:"3"|intcomma}}</td>
+          <td>${{summary.minimum_per_sq_ft|floatformat:"3"|intcomma}}</td>
+          <td>${{summary.maximum_per_sq_ft|floatformat:"3"|intcomma}}</td>
+          <td>${{summary.top_90_percent_per_sq_ft|floatformat:"3"|intcomma}}</td>
+          <td>${{summary.bottom_10_percent_per_sq_ft|floatformat:"3"|intcomma}}</td>
+
         </tr>
       {% endfor %}
     </tbody>
@@ -62,6 +75,7 @@
 
   <ul>
   <li>Lot Size: {{price_change.Property.area}} sqft</li>
+  <li>Proposed Lot Price per SqFt: ${{price_change.proposed_price|divide_by:price_change.Property.area|floatformat:"3"|intcomma}} 
   <li>Assessed Land Value: ${{price_change.assessed_land_value|intcomma}}</li>
   <li>Assessed Improvement Value: ${{price_change.assessed_improvement_value|intcomma}}</li>
 </ul>
