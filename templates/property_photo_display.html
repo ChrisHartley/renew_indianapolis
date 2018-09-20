@@ -1,13 +1,13 @@
-{% extends 'wp-template-header.html' %}
+{% extends 'allauth-base.html' %}
 {% load humanize %}
 {% load application_custom_tags %}
-{% block wpwrap-content%}
+{% block content%}
 <h1>photos</h1>
 <h2>{{photos.first.prop}}</h2>
 {% regroup photos by main_photo as sorted_photos %}
 {% for photo_list in sorted_photos %}
     {% for photo in photo_list.list %}
-      <img src="/media/{{ photo.image }}" class="img-thumbnail"/>
+      <img src="https://build.renewindianapolis.org/media/{{ photo.image }}" class="img-thumbnail"/>
       <div class="caption">{{photo.created}}</div>
     {% endfor %}
   {% empty %}
@@ -15,4 +15,4 @@
 {% endfor %}
 
 
-{% endblock wpwrap-content%}
+{% endblock content%}

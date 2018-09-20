@@ -3,8 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block head_title %}{% endblock %}</title>
-    {% block extra_head %}
-    {% endblock %}
+
     <!-- Bootstrap -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
@@ -19,7 +18,8 @@
     <script src="{{ STATIC_URL }}admin/js/vendor/jquery/jquery.min.js"></script>
     <script src="{{ STATIC_URL }}admin/js/jquery.init.js"></script>
     <script src="{{ STATIC_URL }}admin/js/admin/RelatedObjectLookups.js"></script>
-
+    {% block extra_head %}
+    {% endblock %}
   </head>
   <body>
     {% block body %}

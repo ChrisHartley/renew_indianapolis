@@ -1,9 +1,6 @@
 {% extends 'allauth-base.html' %}
 {% load humanize %}
-{% block extra-head %}
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+{% block extra_head %}
 <link rel="stylesheet" href="https://openlayers.org/en/v4.1.0/css/ol.css" type="text/css">
 
 <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/css/lightslider.css"/>
@@ -66,7 +63,7 @@
 
 
 </style>
-{% endblock extra-head %}
+{% endblock extra_head %}
 
 {% block content %}
 <div class="row">
@@ -169,8 +166,8 @@
 
 </div> <!-- end row -->
 <script type="text/javascript">
-  jQuery(document).ready(function() {
-    jQuery("#lightSlider").lightSlider({
+  $(document).ready(function() {
+    $("#lightSlider").lightSlider({
       verticalHeight:500,
       item:1,
       auto:true,
