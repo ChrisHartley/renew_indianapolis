@@ -5,9 +5,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from arcgis import ArcGIS
 from .models import registered_organization
+from property_inventory.models import Property
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.gdal.error import GDALException
 from django.db import IntegrityError
+from django.views.generic.base import TemplateView
+
+
 
 # Pull updated list of registered organizations from the city's public list
 def update_registered_organizations(request):
@@ -48,3 +52,13 @@ def update_registered_organizations(request):
             number_errors = number_errors + 1
             print "IntegrityError on ", record['properties']['ORG_NAME']
     return HttpResponse('<html><body><ul><li>Number deleted: {0}</li><li>Number created: {1}</li><li>Number errors: {2}</li></ul></body></html>'.format(number_deleted[0], number_created, number_errors))
+
+
+class RelevantOrganizationsView(TemplateView):
+    template_name = "relevant_organizations.html"
+    def get_context_data(self, **kwargs):
+        context = super(RelevantOrganizationsView, self).get_context_data(**kwargs)
+        parcel = self.kwargs['parcel']
+        prop = Property.objects.get(parcel=parcel)
+        context['orgs'] = registered_organization.objects.filter(geometry__contains=prop.geometry).exclude(email='n/a').order_by('-geometry')
+        return context

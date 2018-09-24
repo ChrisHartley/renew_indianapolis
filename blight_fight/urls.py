@@ -6,7 +6,6 @@ from django.views.static import serve
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 
-from neighborhood_associations.views import get_relevant_neighborhood_assocations
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
@@ -19,7 +18,7 @@ from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, Clos
 from property_condition.views import submitConditionReport, send_cr_file
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 from epp_connector.views import fetch_epp_inventory
-from neighborhood_notifications.views import update_registered_organizations
+from neighborhood_notifications.views import update_registered_organizations, RelevantOrganizationsView
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
 from property_condition.views import view_or_create_condition_report
 from utils.views import DonateView
@@ -40,10 +39,8 @@ urlpatterns = [
         url(r'property_inquiry/$', submitPropertyInquiry,
            name='submit_property_inquiry'),
 
-        url(r'search-neighborhood-association/$',
-           get_relevant_neighborhood_assocations.as_view()),
         url(r'search-neighborhood-association/(?P<parcel>[0-9]{7})/$',
-           get_relevant_neighborhood_assocations.as_view()),
+           RelevantOrganizationsView.as_view()),
 
         url(r'application_status/$',
            showApplications),
