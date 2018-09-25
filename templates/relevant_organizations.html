@@ -1,19 +1,14 @@
 {% extends 'allauth-base.html' %}
 {% block content %}
-<table>
-  <thead>
-    <tr>
-      <td>Organization</td>
-      <td>Email</td>
-    </tr>
-  </thead>
-  <tbody>
-    {% for org in orgs %}
-    <tr>
-      <td>{{org.name}}</td>
-      <td>{{org.email}}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<p>
+{% for org in organizations %}
+{{org}},
+{% endfor %}
+</p>
+<p>
+{% for recipient in recipients %}
+{{recipient}},
+{% endfor %}
+</p>
+
 {% endblock content %}

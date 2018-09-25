@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
 from arcgis import ArcGIS
-from .models import registered_organization
+from .models import registered_organization, blacklisted_emails
 from property_inventory.models import Property
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.gdal.error import GDALException
@@ -60,5 +60,17 @@ class RelevantOrganizationsView(TemplateView):
         context = super(RelevantOrganizationsView, self).get_context_data(**kwargs)
         parcel = self.kwargs['parcel']
         prop = Property.objects.get(parcel=parcel)
-        context['orgs'] = registered_organization.objects.filter(geometry__contains=prop.geometry).exclude(email='n/a').order_by('-geometry')
+        orgs = registered_organization.objects.filter(geometry__contains=prop.geometry).exclude(email='n/a').order_by('-geometry')
+
+        recipient = []
+        org_names = []
+        for o in orgs:
+            if o.email and blacklisted_emails.objects.filter(email=o.email).count() == 0: # check if email exists in blacklist (bounces, opt-out, etc)
+                recipient.append(o.email)
+                org_names.append(o.name)
+            else:
+                pass
+        context['recipients'] =  recipient
+        context['organizations'] = org_names
+
         return context
