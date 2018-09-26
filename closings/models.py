@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 import uuid
 from datetime import timedelta, date, datetime
+from django.utils.timezone import localtime
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -149,8 +150,8 @@ class closing(models.Model):
         else:
             if self.closed == False and self.assigned_city_staff is not None and self.application and settings.SEND_CLOSING_ASSIGNMENT_EMAILS:
                 if orig_closing.assigned_city_staff != self.assigned_city_staff:
-                    subject = 'New closing assigned - {0} {1}'.format(self.application.Property, datetime.strftime(self.date_time, "%A %B %d at %-I:%M %p"))
-                    message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://build.renewindianapolis.org{3}'.format(self.application.Property, datetime.strftime(self.date_time, "%A %B %d at %-I:%M %p"), self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
+                    subject = 'New closing assigned - {0} {1}'.format(self.application.Property, datetime.strftime(localtime(self.date_time), "%A %B %d at %-I:%M %p"))
+                    message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://build.renewindianapolis.org{3}'.format(self.application.Property, datetime.strftime(localtime(self.date_time), "%A %B %d at %-I:%M %p"), self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
                     from_email = 'info@renewindianapolis.org'
                     send_mail(subject, message, from_email, [self.assigned_city_staff.email,settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']])
 
