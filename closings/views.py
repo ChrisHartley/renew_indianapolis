@@ -6,6 +6,7 @@ from django.views.generic import DetailView, View
 import stripe
 from decimal import *
 from datetime import date
+from django.utils.timezone import localdate
 from applications.models import Application
 from .models import processing_fee, title_company, closing
 from .forms import TitleCompanyChooser
@@ -37,12 +38,11 @@ class ProcessingFeePaymentPage(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProcessingFeePaymentPage, self).get_context_data(**kwargs)
         context['form'] = TitleCompanyChooser
+        if self.object.due_date is not None and self.object.due_date < localdate():
+            context['expired'] = True
+        else:
+            context['expired'] = False
 
-        #context['creditCardFees'] = (int(self.object.amount_due)*settings.COMPANY_SETTINGS['CREDIT_CARD_PERCENTAGE_FEE'])+settings.COMPANY_SETTINGS['CREDIT_CARD_FLAT_FEE']*100
-        #context['creditCardFees'] = settings.STRIPE_FEES[self.object.amount_due]
-
-        #print context['creditCardFees'], context['amountForStripe']
-        #context['amountForStripe']
         if self.object.amount_due == settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']:
             context['creditCardFees'] = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_STRIPE_FEE']
         elif self.object.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
@@ -78,6 +78,7 @@ class ProcessingFeePaidPage(View):
                 currency="usd",
                 description="Processing fee - {0}".format(obj.closing.application.Property),
                 source=token,
+                receipt_email="{0}".format(obj.closing.application.user.email,),
                 metadata={"property_slug": obj.slug},
             )
         except stripe.error.CardError as e:

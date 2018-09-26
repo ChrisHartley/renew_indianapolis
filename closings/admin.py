@@ -10,6 +10,9 @@ from .forms import ClosingAdminForm, ClosingScheduleAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
 
+class ProcessingFeeAdmin(admin.ModelAdmin):
+    search_fields = ['closing__application__Property__streetAddress']
+
 class PurchaseOptionInline(admin.TabularInline):
     model = purchase_option
     fields = ('date_purchased', 'date_expiring', 'amount_paid', )
@@ -352,4 +355,4 @@ admin.site.register(title_company)
 admin.site.register(closing, ClosingAdmin)
 admin.site.register(closing_proxy, ClosingScheduleViewAdmin)
 admin.site.register(closing_proxy2, ClosingDistributionAdmin)
-admin.site.register(processing_fee)
+admin.site.register(processing_fee, ProcessingFeeAdmin)

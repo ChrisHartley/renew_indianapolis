@@ -6,7 +6,7 @@ from property_inventory.models import Property
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 import uuid
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -73,6 +73,7 @@ class processing_fee(models.Model):
     stripe_token = models.CharField(max_length=30, blank=True, editable=False)
     paid = models.BooleanField(default=False)
     date_paid = models.DateField(blank=True, null=True)
+    due_date = models.DateField(blank=True, null=True)
     amount_due = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     amount_received = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     check_number = models.CharField(max_length=255, blank=True, help_text="If a buyer pays the processing fee with a cashier's check then the check number is entered manually by staff")
@@ -148,8 +149,8 @@ class closing(models.Model):
         else:
             if self.closed == False and self.assigned_city_staff is not None and self.application and settings.SEND_CLOSING_ASSIGNMENT_EMAILS:
                 if orig_closing.assigned_city_staff != self.assigned_city_staff:
-                    subject = 'New closing assigned - {0} {1}'.format(self.application.Property, self.date_time)
-                    message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://build.renewindianapolis.org{3}'.format(self.application.Property, self.date_time, self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
+                    subject = 'New closing assigned - {0} {1}'.format(self.application.Property, datetime.strftime(self.date_time, "%A %B %d at %-I:%M %p"))
+                    message = 'Hello, the closing for {0} has been assigned to you, scheduled for {1} with {2}. Details and documents: https://build.renewindianapolis.org{3}'.format(self.application.Property, datetime.strftime(self.date_time, "%A %B %d at %-I:%M %p"), self.title_company, reverse('admin:closings_closing_proxy_change', args=(self.pk,)))
                     from_email = 'info@renewindianapolis.org'
                     send_mail(subject, message, from_email, [self.assigned_city_staff.email,settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']])
 
@@ -172,7 +173,7 @@ class closing(models.Model):
                     amount = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']
                 else:
                     amount = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']
-                fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property))
+                fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property), due_date=datetime.now()+timedelta(days=9))
                 fee.save()
 
             # Change the status of the property to 'Sold mm/dd/yyyy' based on the closing date, if it isn't already.
