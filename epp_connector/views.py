@@ -20,7 +20,7 @@ def fetch_epp_inventory(request):
     ### chris.hartley@renewindianapolis.org
 
     FILENAME = '/tmp/inventory.xlsx'
-    REFRESH_SECONDS = 0
+    REFRESH_SECONDS = 300
     # Define the fields to write to the spreadsheet.
     # Column name, field name from response json.
     fields = (
