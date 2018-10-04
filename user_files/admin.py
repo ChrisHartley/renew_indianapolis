@@ -10,6 +10,8 @@ class UploadedFileAdmin(admin.ModelAdmin):
     readonly_fields = ('file_download',)
 
     def file_download(self, obj):
+        if obj is None:
+            return '-'
         return mark_safe('<a href="{}">{}</a>'.format(
             reverse("download_file", kwargs={'id':obj.id}),
                 "Download"
