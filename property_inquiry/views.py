@@ -23,7 +23,7 @@ from django.views import View
 from django.conf import settings
 from django.contrib import messages
 import datetime
-
+from django.utils import timezone # timezone aware now()
 
 # Displays form template for property inquiry submissions, and saves those
 # submissions
@@ -42,11 +42,11 @@ def submitPropertyInquiry(request):
         form = PropertyInquiryForm()
 
     if request.method == 'POST':
-        previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=datetime.datetime.now()-datetime.timedelta(hours=48)).count()
+        previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=timezone.now()-datetime.timedelta(hours=48)).count()
 
         #print "Previous PI count:", previousPIcount
         form = PropertyInquiryForm(request.POST)
-        duplicate_pi = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=datetime.datetime.now()-datetime.timedelta(hours=72)).filter(Property=request.POST['Property']).count()
+        duplicate_pi = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=timezone.now()-datetime.timedelta(hours=72)).filter(Property=request.POST['Property']).count()
         if duplicate_pi > 0:
             form.add_error(None, "You submitted a request for this property within the past 72 hours. Due to volume it may take 5+ business days to schedule your inquiry, there is no need to re-submit.")
         if previousPIcount >= 3: # limit number of requests per time period
