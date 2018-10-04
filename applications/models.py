@@ -9,7 +9,7 @@ from django.conf import settings
 
 import datetime
 from dateutil.rrule import *
-
+from django.utils import timezone # use this for timezone aware times
 
 @deconstructible
 class UploadToApplicationDir(object):
@@ -306,7 +306,7 @@ class Application(models.Model):
             else:
                 self.price_at_time_of_submission = self.Property.price
         if self.status == self.COMPLETE_STATUS and self.submitted_timestamp is None:
-            self.submitted_timestamp = datetime.datetime.now()
+            self.submitted_timestamp = timezone.now()
         super(Application, self).save(*args, **kwargs)
 
     def __unicode__(self):

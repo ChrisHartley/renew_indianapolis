@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 import uuid
 from datetime import timedelta, date, datetime
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, now
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -174,7 +174,7 @@ class closing(models.Model):
                     amount = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']
                 else:
                     amount = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']
-                fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property), due_date=datetime.now()+timedelta(days=9))
+                fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property), due_date=now()+timedelta(days=9))
                 fee.save()
 
             # Change the status of the property to 'Sold mm/dd/yyyy' based on the closing date, if it isn't already.
