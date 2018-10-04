@@ -70,6 +70,8 @@ class annual_report(models.Model):
     other_picture = models.ImageField(
         upload_to=content_file_name, blank=True, help_text='Project photo of your choice (optional)')
 
+    def __unicode__(self):
+        return u'{0} - {1} - {2}'.format(self.Property, self.created, self.certificate_of_completion_ready)
 
 
 #    def image_tag(self):
