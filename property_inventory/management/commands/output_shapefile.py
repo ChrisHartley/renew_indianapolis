@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
             check_call(['pgsql2shp',  '-u', user, '-P', pw, '-f', '{0}/renew_inventory.shp'.format(tmp_dir,), db, query])
         except CalledProcessError:
-            raise CalledProcessError
+            raise CalledProcessError()
             # sigh I don't know, it just seemed like we shoudl acknowledge the error, even if we want to freak out about it
 
         #check_call(['zip', '-D', '/tmp/renew_inventory.zip', '/tmp/renew_inventory.dbf','/tmp/renew_inventory.prj','/tmp/renew_inventory.shp', '/tmp/renew_inventory.shx', '/tmp/renew_inventory.cpg'])
