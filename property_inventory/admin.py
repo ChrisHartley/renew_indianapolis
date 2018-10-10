@@ -42,6 +42,7 @@ class PropertyStatusListFilter(SimpleListFilter):
             ('approved', 'Received Final Approval'),
             ('consideration', 'Application under consideration'),
             ('bep', 'BEP demolition slatted'),
+            ('newinventory', 'New Inventory'),
         )
 
     def queryset(self, request, queryset):
@@ -55,6 +56,8 @@ class PropertyStatusListFilter(SimpleListFilter):
             return queryset.filter( Q(status__contains='Sale approved by Review Committee') | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=False)))
         if self.value() == 'bep':
             return queryset.filter(status__contains='BEP demolition slated')
+        if self.value() == 'newinventory':
+            return queryset.filter(status__contains='New Inventory')
         return queryset
 
 class NoteInlineAdmin(regular_admin.TabularInline):
