@@ -2,12 +2,14 @@ from django.contrib import admin
 from .models import Application, Meeting, MeetingLink, NeighborhoodNotification, PriceChangeMeetingLink, ApplicationMeetingSummary
 from neighborhood_associations.models import Neighborhood_Association
 from user_files.models import UploadedFile
+from .forms import ScheduleInlineForm
 
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from import_export.admin import ExportMixin
 from functools import partial
-
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 
 class UploadedFileInline(admin.TabularInline):
     model = UploadedFile
@@ -87,7 +89,12 @@ class MeetingScheduledFilter(admin.SimpleListFilter):
         if self.value() == 'false':
             return queryset.filter(meeting__isnull=True)
 
+
+
+
+
 class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
+
     list_display = ('modified','submitted_timestamp','Property', 'property_status', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type', MeetingScheduledFilter)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
@@ -113,7 +120,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     )
     inlines = [ UploadedFileInline, MeetingLinkInline ]
     list_select_related = True
-
+    actions = ['batch_schedule_action',]
     def application_summary_page(self, obj):
         summary_link = '<a target="_blank" href="{}">{}</a>'.format(
             reverse("application_summary_page", args=(obj.id,)), "View Summary Page")
@@ -177,6 +184,40 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
         return mark_safe(summary_link)
 
     num_scheduled_apps.short_description = 'Number of completed, schedule apps'
+
+    def batch_schedule_action(self, request, queryset):
+        if 'schedule' in request.POST:
+            print request.POST
+            form = ScheduleInlineForm(request.POST)
+            if form.is_valid():
+                meeting = form.cleaned_data['meeting']
+                meeting_outcome = form.cleaned_data['meeting_outcome']
+                for app in queryset:
+                    ml = MeetingLink(application=app, meeting=meeting, meeting_outcome=meeting_outcome)
+                    ml.save()
+                if queryset.count() == 1:
+                    message_bit = '1 application was'
+                else:
+                    message_bit = '{0} applications were'.format(queryset.count(),)
+                self.message_user(request, "{0} successfully scheduled for {1}.".format(message_bit, meeting) )
+
+            return HttpResponseRedirect(request.get_full_path())
+        else:
+            form = ScheduleInlineForm()
+
+        return render(
+            request,
+            'admin/batch_schedule_intermediary.html',
+            context={
+                'objects': queryset,
+                'form': form,
+            }
+        )
+
+    batch_schedule_action.short_description = "Schedule for meeting"
+
+
+
 
 class MeetingAdmin(admin.ModelAdmin):
     model = Meeting

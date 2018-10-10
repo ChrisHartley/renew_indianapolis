@@ -4,12 +4,17 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, ButtonHolder, Div, Button, MultiField, Field, HTML, Div
 from crispy_forms.bootstrap import FormActions, InlineRadios, PrependedAppendedText, InlineField
 from user_files.models import UploadedFile
-from .models import Application
+from .models import Application, MeetingLink, Meeting
 from property_inventory.models import Property
 from applicants.models import Organization
 from django.forms.models import inlineformset_factory
 from applicants.widgets import AddAnotherWidgetWrapper
 from django.core.exceptions import ValidationError
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
+
+class ScheduleInlineForm(forms.Form):
+    meeting = forms.ModelChoiceField(Meeting.objects.all())
+    meeting_outcome = forms.ChoiceField(choices=MeetingLink.STATUS_CHOICES, initial=MeetingLink.SCHEDULED_STATUS)
 
 class ApplicationForm(forms.ModelForm):
     Property = forms.ModelChoiceField(
