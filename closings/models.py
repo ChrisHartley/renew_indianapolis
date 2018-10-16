@@ -11,6 +11,8 @@ from django.utils.timezone import localtime, now
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.utils import timezone # use this for timezone aware times
+
 
 class location(models.Model):
     name = models.CharField(max_length=254)
@@ -184,6 +186,16 @@ class closing(models.Model):
                 prop.buyer_application = self.application
                 prop.save()
 
+            if self.archived == True and orig_closing.archived != True:
+                prop = self.application.Property
+                prop.status = 'Available'
+                prop.applicant = ''
+                prop.buyer_application = None
+                prop.save()
+                app = self.application
+                app.status = Application.WITHDRAWN_STATUS
+                app.staff_notes = 'Application marked as withdrawn when closing archived - {0}\n{1}'.format(timezone.now(),app.staff_notes)
+                app.save()
 
     def __unicode__(self):
             if self.application:

@@ -376,74 +376,76 @@ class MeetingLink(models.Model):
         return u'%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     def save(self, *args, **kwargs):
-        schedule_next_meeting = True # We want to put the app on the agenda of the next appropriate meeting unless it receives final approval.
-        if self.meeting_outcome == self.APPROVED_STATUS:
-            prop = self.application.Property
-            body = self.meeting.get_meeting_type_display()
-            if body == 'Metropolitan Development Commission':
-                body = 'MDC'
-            date = self.meeting.meeting_date
-            prop.status = 'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
-            prop.buyer_application = self.application
-            if self.application.organization:
-                prop.applicant = '{0} {1} - {2}'.format(self.application.user.first_name, self.application.user.last_name, self.application.organization)
-            else:
-                prop.applicant = '{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
-            prop.save()
-            if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
-                # Final approval received
-                schedule_next_meeting = False
-                closing = apps.get_model('closings', 'closing')
-                # No closing created yet
-                if closing.objects.filter(application=self.application).count()==0:
-                    new_closing = closing(application=self.application)
-                    new_closing.save()
-                    # email applicant with congratulatory email and URL to pay processing fee
+        if self.application.status != Application.WITHDRAWN_STATUS: # If an application is withdrawn then don't update meetings, etc even if it was approved. 
 
-        # If application is rejected at the Board or MDC level then change the status to Available.
-        # If we were to use this logic at the Review Committee level where there could be competing applications
-        # then it will do bad things.
-        if self.meeting_outcome == self.NOT_APPROVED_STATUS and (self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS or self.meeting.meeting_type == Meeting.MDC):
-            prop = self.application.Property
-            prop.status = 'Available'
-            prop.save()
-            schedule_next_meeting = False
-
-        if self.meeting.meeting_type == Meeting.PROCESSING:
-            schedule_next_meeting = False
-
-        if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS):
-            notes = 'made by robot'
-            # Tabled status means it goes back on the agenda for the next occurance of the same meeting
-            if self.meeting_outcome == self.TABLED_STATUS:
-                meeting_type = self.meeting.meeting_type
-                notes = 'Tabled from {0}'.format(self.meeting.meeting_date,)
-            # Approved means it goes on the agenda of the next occurance of the next level meeting
+            schedule_next_meeting = True # We want to put the app on the agenda of the next appropriate meeting unless it receives final approval.
             if self.meeting_outcome == self.APPROVED_STATUS:
-                notes = 'Promoted from {0}'.format(self.meeting.meeting_date,)
-                if self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE:
-                    meeting_type = Meeting.BOARD_OF_DIRECTORS
-                if self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS:
-                    meeting_type = Meeting.MDC
-                if self.meeting.meeting_type == Meeting.PROCESSING:
-                    meeting_type = Meeting.PROCESSING # users shouldn't use any status except scheduled for this fake meeting type.
-                if self.meeting.meeting_type == Meeting.MDC:
-                    # We should never get here since approval stops at MDC
-                    pass
+                prop = self.application.Property
+                body = self.meeting.get_meeting_type_display()
+                if body == 'Metropolitan Development Commission':
+                    body = 'MDC'
+                date = self.meeting.meeting_date
+                prop.status = 'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
+                prop.buyer_application = self.application
+                if self.application.organization:
+                    prop.applicant = '{0} {1} - {2}'.format(self.application.user.first_name, self.application.user.last_name, self.application.organization)
+                else:
+                    prop.applicant = '{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
+                prop.save()
+                if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
+                    # Final approval received
+                    schedule_next_meeting = False
+                    closing = apps.get_model('closings', 'closing')
+                    # No closing created yet
+                    if closing.objects.filter(application=self.application).count()==0:
+                        new_closing = closing(application=self.application)
+                        new_closing.save()
+                        # email applicant with congratulatory email and URL to pay processing fee
+
+            # If application is rejected at the Board or MDC level then change the status to Available.
+            # If we were to use this logic at the Review Committee level where there could be competing applications
+            # then it will do bad things.
+            if self.meeting_outcome == self.NOT_APPROVED_STATUS and (self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS or self.meeting.meeting_type == Meeting.MDC):
+                prop = self.application.Property
+                prop.status = 'Available'
+                prop.save()
+                schedule_next_meeting = False
+
+            if self.meeting.meeting_type == Meeting.PROCESSING:
+                schedule_next_meeting = False
+
+            if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS):
+                notes = 'made by robot'
+                # Tabled status means it goes back on the agenda for the next occurance of the same meeting
+                if self.meeting_outcome == self.TABLED_STATUS:
+                    meeting_type = self.meeting.meeting_type
+                    notes = 'Tabled from {0}'.format(self.meeting.meeting_date,)
+                # Approved means it goes on the agenda of the next occurance of the next level meeting
+                if self.meeting_outcome == self.APPROVED_STATUS:
+                    notes = 'Promoted from {0}'.format(self.meeting.meeting_date,)
+                    if self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE:
+                        meeting_type = Meeting.BOARD_OF_DIRECTORS
+                    if self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS:
+                        meeting_type = Meeting.MDC
+                    if self.meeting.meeting_type == Meeting.PROCESSING:
+                        meeting_type = Meeting.PROCESSING # users shouldn't use any status except scheduled for this fake meeting type.
+                    if self.meeting.meeting_type == Meeting.MDC:
+                        # We should never get here since approval stops at MDC
+                        pass
 
 
-            next_meeting = Meeting.objects.filter(meeting_type__exact=meeting_type).filter(meeting_date__gt=self.meeting.meeting_date).order_by('meeting_date').first()
-            if next_meeting is None:
-                if meeting_type == Meeting.REVIEW_COMMITTEE:
-                    meeting_date = rrule(MONTHLY, count=1, byweekday=TH(4), dtstart=self.meeting.meeting_date)[0].date()
-                if meeting_type == Meeting.BOARD_OF_DIRECTORS:
-                    meeting_date = rrule(MONTHLY, count=1, byweekday=TH(1), dtstart=self.meeting.meeting_date)[0].date()
-                if meeting_type == Meeting.MDC:
-                    meeting_date = rrule(MONTHLY, count=1, byweekday=WE(3), dtstart=self.meeting.meeting_date)[0].date()
-                next_meeting = Meeting(meeting_type=meeting_type, meeting_date=meeting_date)
-                next_meeting.save()
-            next_meeting_link = MeetingLink(application=self.application, meeting=next_meeting, notes=notes, schedule_weight=self.schedule_weight)
-            next_meeting_link.save()
+                next_meeting = Meeting.objects.filter(meeting_type__exact=meeting_type).filter(meeting_date__gt=self.meeting.meeting_date).order_by('meeting_date').first()
+                if next_meeting is None:
+                    if meeting_type == Meeting.REVIEW_COMMITTEE:
+                        meeting_date = rrule(MONTHLY, count=1, byweekday=TH(4), dtstart=self.meeting.meeting_date)[0].date()
+                    if meeting_type == Meeting.BOARD_OF_DIRECTORS:
+                        meeting_date = rrule(MONTHLY, count=1, byweekday=TH(1), dtstart=self.meeting.meeting_date)[0].date()
+                    if meeting_type == Meeting.MDC:
+                        meeting_date = rrule(MONTHLY, count=1, byweekday=WE(3), dtstart=self.meeting.meeting_date)[0].date()
+                    next_meeting = Meeting(meeting_type=meeting_type, meeting_date=meeting_date)
+                    next_meeting.save()
+                next_meeting_link = MeetingLink(application=self.application, meeting=next_meeting, notes=notes, schedule_weight=self.schedule_weight)
+                next_meeting_link.save()
         super(MeetingLink, self).save(*args, **kwargs)
 
     class Meta:
