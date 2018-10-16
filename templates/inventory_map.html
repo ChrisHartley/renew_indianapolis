@@ -329,10 +329,10 @@ CSS loading animation.
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications and Viewings <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="https://www.renewindianapolis.org/map/accounts/profile">Manage Applications</a></li>
-                  <li><a href="https://www.renewindianapolis.org/map/application/new/">Start a new application</a></li>
+                  <li><a href="https://build.renewindianapolis.org/accounts/profile">Manage Applications</a></li>
+                  <li><a href="https://build.renewindianapolis.org/application/new/">Start a new application</a></li>
                   <li class="divider"></li>
-                  <li><a href="https://www.renewindianapolis.org/map/property_inquiry/">Schedule a property viewing</a></li>
+                  <li><a href="https://build.renewindianapolis.org/property_inquiry/">Schedule a property viewing</a></li>
                 </ul>
               </li>
 
@@ -637,10 +637,10 @@ CSS loading animation.
 
       $(document).ready(function(){
         // In the event the city's server is unreliable we could switch to http://maps.indiana.edu/arcgis/rest/services/Basemaps/Best_Available_Imagery_Hybrid/MapServer/WMTS/1.0.0/WMTSCapabilities.xml
-        $.get('/static/WMTSCapabilities.xml', function(text){
+        $.get('/static/WMTSCapabilities2018.xml', function(text){
           var result = parser.read(text);
           var options = ol.source.WMTS.optionsFromCapabilities(result, {
-            layer: '2017FallPhotography_Labels', matrixSet: 'default028mm'
+            layer: 'Imagery_2018Photography_Labels', matrixSet: 'default028mm'
           });
 
           /**
@@ -741,7 +741,7 @@ CSS loading animation.
                 img_url = data[0].fields.image;
 //                img_object = '<img class="img-responsive img-rounded" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
 
-                img_object = '<img class="img-rounded no-vertical-align" width="200" alt="Renew Indianapolis provided photo of the property" src="https://www.renewindianapolis.org/media/'+img_url+'"/>'
+                img_object = '<img class="img-rounded no-vertical-align" width="200" alt="Renew Indianapolis provided photo of the property" src="https://build.renewindianapolis.org/media/'+img_url+'"/>'
               }
               else{
                 // or if we want a static google street view image:
