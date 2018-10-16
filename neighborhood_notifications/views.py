@@ -15,7 +15,7 @@ from django.views.generic.base import TemplateView
 
 # Pull updated list of registered organizations from the city's public list
 def update_registered_organizations(request):
-    URL = 'http://imaps.indy.gov/arcgis/rest/services/RegisteredOrganizations/MapServer/'
+    URL = 'http://xmaps.indy.gov/arcgis/rest/services/RegisteredOrganizations/RegisteredOrganizations/MapServer'
     LAYER = 0
 
     # clear out the db of previous registered organizations
