@@ -4,7 +4,7 @@ from django.forms import ModelForm, ModelChoiceField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-from property_inquiry.models import propertyInquiry
+from property_inquiry.models import propertyInquiry, propertyShowing
 from property_inventory.models import Property
 
 
@@ -34,3 +34,14 @@ class PropertyInquiryForm(ModelForm):
         model = propertyInquiry
         fields = ['Property',]
         #exclude = ['user', 'showing_scheduled', 'applicant_ip_address', ]
+
+class propertyShowingAdminForm(ModelForm):
+    class Meta:
+        model = propertyShowing
+        exclude = []
+
+
+    def __init__(self, *args, **kwargs):
+        super(propertyShowingAdminForm, self).__init__(*args, **kwargs)
+        if self.instance.pk is not None:
+            self.fields['inquiries'].queryset = propertyInquiry.objects.filter(Property=self.instance.Property).order_by('-status')

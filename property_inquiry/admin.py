@@ -1,12 +1,13 @@
 from django.contrib import admin
-from .models import propertyInquiry, PropertyInquirySummary #, PropertyInquiryMapProxy
+from .models import propertyInquiry, PropertyInquirySummary, propertyShowing, PropertyInquiryMapProxy
+from .forms import propertyShowingAdminForm
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.contrib.admin import SimpleListFilter
 
 from property_condition.models import ConditionReport
 from applications.models import Application
-
+from property_inventory.models import Property
 
 # add additional filter, year, and allow null status filter
 class PropertyInquiryYearListFilter(SimpleListFilter):
@@ -42,7 +43,12 @@ custom_batch_editing__admin_action.short_description = "Batch Update"
 
 class propertyInquiryAdmin(admin.ModelAdmin):
     list_display = ('Property', 'renew_owned', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
-    fields = ('Property', 'user_name', 'user_phone','applicant_ip_address','showing_scheduled', 'timestamp', 'status', 'notes', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
+    fields = (
+        'Property', 'user_name', 'user_phone','applicant_ip_address',
+        'showing_scheduled', 'timestamp', 'status', 'notes',
+        'number_of_pictures', 'condition_report_link',
+        'number_completed_apps',
+    )
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
     readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
     list_filter = ['status', 'Property__renew_owned', PropertyInquiryYearListFilter]
@@ -86,14 +92,39 @@ class propertyInquiryAdmin(admin.ModelAdmin):
         return obj.user.profile.phone_number
 
 
-# class PropertyInquiryMapAdmin(propertyInquiryAdmin):
-#
-#     def changelist_view(self, request, extra_context=None):
-#         extra_context = extra_context or {}
-#         extra_context['centroids'] = propertyInquiry.objects.filter(status__isnull=True)
-#         return super(PropertyInquiryMapAdmin,
-#                      self).changelist_view(request,
-#                                            extra_context=extra_context)
+class PropertyInquiryMapAdmin(propertyInquiryAdmin):
+    change_list_template = 'admin/property_inquiry/change_list_map.html'
+
+    # def get_osm_info(self):
+    #     print(self)
+    #     return self
+    #
+    # def changelist_view(self, request, extra_context=None):
+    #     extra_context = extra_context or {}
+    #     extra_context['props'] = Property.objects.filter(id=27327)
+    #     extra_context['osm_data'] = self.get_osm_info()
+    #     return super(PropertyInquiryMapAdmin,
+    #                  self).changelist_view(request,
+    #                                        extra_context=extra_context)
+
+
+
+from icalendar import Calendar, Event, vCalAddress, vText
+from datetime import timedelta
+class propertyShowingAdmin(admin.ModelAdmin):
+    search_fields = ('Property__streetAddress', 'Property__parcel',)
+    readonly_fields = ('create_ics',)
+    form = propertyShowingAdminForm
+
+    def create_ics(self, obj):
+        if obj.pk is None:
+            return '-'
+        return mark_safe(
+            '<a target="_blank" href="{}">{}</a>'.format(
+                reverse('property_inquiry_create_showing_ics', kwargs={'id': obj.pk}),
+                'Generate Calendar Event')
+            )
+
 
 from django.db.models import Count, Sum, Min, Max
 from django.db.models.functions import Trunc
@@ -177,5 +208,6 @@ class PropertyInquirySummaryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PropertyInquirySummary, PropertyInquirySummaryAdmin)
-#admin.site.register(PropertyInquiryMapProxy, PropertyInquiryMapAdmin)
+admin.site.register(PropertyInquiryMapProxy, PropertyInquiryMapAdmin)
 admin.site.register(propertyInquiry, propertyInquiryAdmin)
+admin.site.register(propertyShowing, propertyShowingAdmin)

@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from property_inventory.models import Property
-
+from datetime import datetime
 
 class propertyInquiry(models.Model):
 
@@ -11,6 +12,7 @@ class propertyInquiry(models.Model):
     timestamp = models.DateTimeField(
         auto_now_add=True, verbose_name="Time/Date")
     showing_scheduled = models.DateTimeField(blank=True, null=True)
+#    showing = models.ForeignKey('propertyShowing', blank=True, null=True, related_name='showing_set')
     applicant_ip_address = models.GenericIPAddressField(blank=True, null=True)
 
     NULL_STATUS = None
@@ -41,7 +43,29 @@ class propertyInquiry(models.Model):
         verbose_name_plural = "property inquiries"
 
     def __unicode__(self):
-        return u'%s - %s' % (self.Property, self.user.email)
+        return u'{0} - {1} - {2}'.format(self.Property, self.user.email, self.get_status_display())
+
+
+class propertyShowing(models.Model):
+    Property = models.ForeignKey(Property, blank=False, null=False)
+    datetime = models.DateTimeField(verbose_name="Time/Date")
+    notes = models.CharField(blank=True, max_length=1024)
+    inquiries = models.ManyToManyField(
+        propertyInquiry,
+        blank=True,
+    )
+    class Meta:
+        verbose_name_plural = "property showings"
+
+    def save(self, *args, **kwargs):
+        # Create or update calendar event, publish, invite outstanding inquiries
+#                super(MeetingLink, self).save(*args, **kwargs)
+
+        super(propertyShowing, self).save(*args, **kwargs)
+
+
+    def __unicode__(self):
+        return '{0} - {1}'.format(self.Property, datetime.strftime(self.datetime, '%x, %-I:%M%p') )
 
 class PropertyInquirySummary(propertyInquiry):
     class Meta:
@@ -49,8 +73,8 @@ class PropertyInquirySummary(propertyInquiry):
         verbose_name = 'Property Inquiry Summary'
         verbose_name_plural = 'Property Inquiry Summaries'
 
-#class PropertyInquiryMapProxy(propertyInquiry):
-#    class Meta:
-#        proxy = True
-#        verbose_name = 'Property Inquiry Map Summary'
-#        verbose_name_plural = 'Property Inquiry Map Summaries'
+class PropertyInquiryMapProxy(propertyInquiry):
+   class Meta:
+       proxy = True
+       verbose_name = 'Property Inquiry Map'
+       verbose_name_plural = 'Property Inquiries Map'

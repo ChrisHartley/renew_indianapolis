@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import user_passes_test
@@ -12,11 +12,12 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from ipware.ip import get_real_ip
 
-from property_inquiry.models import propertyInquiry
+from property_inquiry.models import propertyInquiry, propertyShowing
 from property_inventory.models import Property
 from property_inquiry.filters import PropertyInquiryFilters
 from property_inquiry.tables import PropertyInquiryTable
 from property_inquiry.forms import PropertyInquiryForm
+from applicants.models import ApplicantProfile
 
 from django.views import View
 
@@ -99,3 +100,41 @@ class IdentifyClusters(View):
             pi.save()
             messages.info(request, '{} updated'.format(pi,))
         return HttpResponseRedirect(reverse('identify_pi_clusters'))
+
+from icalendar import Calendar, Event, vCalAddress, vText
+from datetime import timedelta
+from django.utils.timezone import now
+from django.utils.text import slugify
+@method_decorator(staff_member_required, name='dispatch')
+class CreateIcsFromShowing(View):
+    def get(self, request, id):
+        obj = propertyShowing.objects.get(pk=id)
+        c = Calendar()
+        e = Event()
+        c.add('prodid', '-//Renew Indianapolis//Property Showings//EN')
+        c.add('version', '2.0')
+        e.add('summary', 'Property Showing for {}'.format(obj.Property,) )
+        e.add('uid', obj.id)
+        e.add('dtstart', obj.datetime)
+        e.add('dtend', obj.datetime+timedelta(minutes=30))
+        e.add('dtstamp', now())
+        e.add('location', '{0}, Indianapolis, IN {1}'.format(obj.Property.streetAddress, obj.Property.zipcode))
+        people = []
+        organizer = vCalAddress('MAILTO:{}'.format(request.user.email,))
+        organizer.params['cn'] = vText('{} {}'.format(request.user.first_name, request.user.last_name))
+        e.add('organizer', organizer, encode=0)
+        for showing in obj.inquiries.all():
+            u = showing.user
+            try:
+                people.append('{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
+            except ApplicantProfile.DoesNotExist:
+                people.append('{} {} - {}'.format(u.first_name, u.last_name, u.email))
+            attendee = vCalAddress('MAILTO:{}'.format(u.email,))
+            attendee.params['cn'] = vText('{} {}'.format(u.first_name, u.last_name))
+            e.add('attendee', attendee, encode=0)
+        e.add('description', ', '.join(people) )
+        c.add_component(e)
+        print(c.to_ical())
+        response = HttpResponse(c.to_ical(), content_type="text/calendar")
+        response['Content-Disposition'] = 'attachment; filename={0}.ics'.format(slugify(obj),)
+        return response

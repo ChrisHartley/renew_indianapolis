@@ -1,0 +1,150 @@
+{% extends "admin/change_list.html" %}
+{% block extrahead %}
+{{block.super}}
+<link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+<link rel="stylesheet" href="/static/ol_popup.css" type="text/css">
+
+{% endblock extrahead %}
+{% block content %}
+{% load staticfiles %}
+    <script src="https://openlayers.org/en/v4.6.5/build/ol-debug.js"></script>
+    <div id="map" class="map"></div>
+    <div id="popup" class="ol-popup">
+      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+      <div id="popup-content"></div>
+    </div>
+    <button onclick="toggleMap()">Toggle Map</button>
+    <p>&nbsp;</p>
+<script>
+
+var collection = new ol.Collection()
+
+{% regroup cl.result_list|dictsort:"Property.streetAddress" by Property as props %}
+
+{% for prop, inquiries in props%}
+collection.push(
+  new ol.Feature({
+         geometry: new ol.geom.Point([{{prop.centroid_geometry.0}}, {{prop.centroid_geometry.1}}]),
+         name: "{{prop}}",
+         count: "{{inquiries|length}}",
+         id: "{{prop.pk}}",
+       }) );
+{% endfor %}
+
+var vectorSource = new ol.source.Vector({
+  features: collection,
+  wrapX: false,
+
+});
+
+/* Thanks Thomas Gratier https://bl.ocks.org/ThomasG77/c7d1d5ae918f168323f6b5c82059608c */
+const radiusCalculation = (val, coeff) => {
+  return (val / Math.PI) ** 0.5 * coeff;
+};
+const fillCircle = new ol.style.Fill({
+  color: 'rgba(125, 125, 125, 0.6)'
+});
+const strokeCircle = new ol.style.Stroke({
+  color: '#ffffff',
+  width: 1
+});
+
+const styleProportionalCircle = (feature, resolution) => {
+  const extent = feature.getGeometry().getExtent();
+  const center = ol.extent.getCenter(extent);
+  const geom = new ol.geom.Point(center);
+  return new ol.style.Style({
+    geometry: geom,
+    image: new ol.style.Circle({
+      stroke: strokeCircle,
+      fill: fillCircle,
+      radius: radiusCalculation(feature.get('count'), 10)
+    }),
+//    zIndex: feature.get('rank')
+  });
+};
+
+
+var vector = new ol.layer.Vector({
+  source: vectorSource,
+  projection: 'EPSG:4326',
+  style: styleProportionalCircle,
+});
+
+
+/**
+ * Elements that make up the popup.
+ */
+var container = document.getElementById('popup');
+var content = document.getElementById('popup-content');
+var closer = document.getElementById('popup-closer');
+
+
+/**
+ * Create an overlay to anchor the popup to the map.
+ */
+var overlay = new ol.Overlay({
+  element: container,
+  autoPan: true,
+  autoPanAnimation: {
+    duration: 250
+  }
+});
+
+
+/**
+ * Add a click handler to hide the popup.
+ * @return {boolean} Don't follow the href.
+ */
+closer.onclick = function() {
+  overlay.setPosition(undefined);
+  closer.blur();
+  return false;
+};
+
+
+var map = new ol.Map({
+  layers: [
+    new ol.layer.Tile({
+      source: new ol.source.OSM()
+    }),
+    vector,
+  ],
+  target: 'map',
+  overlays: [overlay],
+  controls: ol.control.defaults({ attribution: false }),
+  view: new ol.View({
+    center: [-86.15804, 39.76838],
+    zoom: 13,
+    maxZoom: 21,
+    minZoom: 2,
+    projection: 'EPSG:4326'
+  }),
+  logo: false,
+
+});
+
+/**
+ * Add a click handler to the map to render the popup.
+ */
+map.on('singleclick', function(evt) {
+  var features = map.getFeaturesAtPixel(evt.pixel);
+  details = features[0].getProperties()
+  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries</p><p><a href="/admin/property_inquiry/propertyshowing/add/?id_Property='+details['id']+'">Create a property showing.</a></p>'
+  overlay.setPosition(evt.coordinate);
+});
+
+
+function toggleMap() {
+    var x = document.getElementById("map");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+
+
+</script>
+
+{{block.super}} {% endblock %}

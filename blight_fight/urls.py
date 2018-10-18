@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
-from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, IdentifyClusters
+from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, IdentifyClusters, CreateIcsFromShowing
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
@@ -38,6 +38,9 @@ urlpatterns = [
            property_inquiry_confirmation, name='property_inquiry_confirmation'),
         url(r'property_inquiry/$', submitPropertyInquiry,
            name='submit_property_inquiry'),
+
+        url(r'property_inquiry/create_ics/(?P<id>[0-9])/$', CreateIcsFromShowing.as_view(),
+           name='property_inquiry_create_showing_ics'),
 
         url(r'search-neighborhood-association/(?P<parcel>[0-9]{7})/$',
            RelevantOrganizationsView.as_view()),
