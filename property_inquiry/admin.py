@@ -95,25 +95,12 @@ class propertyInquiryAdmin(admin.ModelAdmin):
 class PropertyInquiryMapAdmin(propertyInquiryAdmin):
     change_list_template = 'admin/property_inquiry/change_list_map.html'
 
-    # def get_osm_info(self):
-    #     print(self)
-    #     return self
-    #
-    # def changelist_view(self, request, extra_context=None):
-    #     extra_context = extra_context or {}
-    #     extra_context['props'] = Property.objects.filter(id=27327)
-    #     extra_context['osm_data'] = self.get_osm_info()
-    #     return super(PropertyInquiryMapAdmin,
-    #                  self).changelist_view(request,
-    #                                        extra_context=extra_context)
-
-
 
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
 class propertyShowingAdmin(admin.ModelAdmin):
     search_fields = ('Property__streetAddress', 'Property__parcel',)
-    readonly_fields = ('create_ics','create_email')
+    readonly_fields = ('create_ics','create_email_template')
     form = propertyShowingAdminForm
 
     def create_ics(self, obj):
@@ -124,7 +111,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
                 reverse('property_inquiry_create_showing_ics', kwargs={'id': obj.pk}),
                 'Generate Calendar Event')
             )
-    def create_email(self, obj):
+    def create_email_template(self, obj):
         if obj.pk is None:
             return '-'
         return mark_safe(

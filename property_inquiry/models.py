@@ -58,10 +58,12 @@ class propertyShowing(models.Model):
         verbose_name_plural = "property showings"
 
     def save(self, *args, **kwargs):
-        # Create or update calendar event, publish, invite outstanding inquiries
-#                super(MeetingLink, self).save(*args, **kwargs)
-
+        # Update inquiries, if they are initial status set them to contacted user to schedule
         super(propertyShowing, self).save(*args, **kwargs)
+        for inquiry in self.inquiries.all():
+            if inquiry.status == propertyInquiry.NULL_STATUS:
+                inquiry.status = propertyInquiry.USER_CONTACTED_STATUS
+                inquiry.save()
 
 
     def __unicode__(self):
