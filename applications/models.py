@@ -19,7 +19,7 @@ class UploadToApplicationDir(object):
         self.sub_path = sub_path
 
     def __call__(self, instance, filename):
-        return "applicants/{0}/{1}{2}".format(instance.user.email, self.sub_path, filename)
+        return u'applicants/{0}/{1}{2}'.format(instance.user.email, self.sub_path, filename)
 
 
 class Application(models.Model):
@@ -376,21 +376,21 @@ class MeetingLink(models.Model):
         return u'%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     def save(self, *args, **kwargs):
-        if self.application.status != Application.WITHDRAWN_STATUS: # If an application is withdrawn then don't update meetings, etc even if it was approved. 
+        if self.application.status != Application.WITHDRAWN_STATUS: # If an application is withdrawn then don't update meetings, etc even if it was approved.
 
             schedule_next_meeting = True # We want to put the app on the agenda of the next appropriate meeting unless it receives final approval.
             if self.meeting_outcome == self.APPROVED_STATUS:
                 prop = self.application.Property
                 body = self.meeting.get_meeting_type_display()
                 if body == 'Metropolitan Development Commission':
-                    body = 'MDC'
+                    body = u'MDC'
                 date = self.meeting.meeting_date
-                prop.status = 'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
+                prop.status = u'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
                 prop.buyer_application = self.application
                 if self.application.organization:
-                    prop.applicant = '{0} {1} - {2}'.format(self.application.user.first_name, self.application.user.last_name, self.application.organization)
+                    prop.applicant = u'{0} {1} - {2}'.format(self.application.user.first_name, self.application.user.last_name, self.application.organization)
                 else:
-                    prop.applicant = '{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
+                    prop.applicant = u'{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
                 prop.save()
                 if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
                     # Final approval received
