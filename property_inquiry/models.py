@@ -57,13 +57,8 @@ class propertyShowing(models.Model):
         verbose_name_plural = "property showings"
 
     def save(self, *args, **kwargs):
-        # Update inquiries, if they are initial status set them to contacted user to schedule
         super(propertyShowing, self).save(*args, **kwargs)
-        for inquiry in self.inquiries.all():
-            if inquiry.status == propertyInquiry.NULL_STATUS:
-                inquiry.status = propertyInquiry.USER_CONTACTED_STATUS
-                inquiry.showing_scheduled = self.datetime
-                inquiry.save()
+
 
 
     def __unicode__(self):

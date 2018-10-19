@@ -121,16 +121,16 @@ class CreateIcsFromShowing(View):
         e.add('location', '{0}, Indianapolis, IN {1}'.format(obj.Property.streetAddress, obj.Property.zipcode))
         people = []
         organizer = vCalAddress('MAILTO:{}'.format(request.user.email,))
-        organizer.params['cn'] = vText('{} {}'.format(request.user.first_name, request.user.last_name))
+        organizer.params['cn'] = vText(u'{} {}'.format(request.user.first_name, request.user.last_name))
         e.add('organizer', organizer, encode=0)
         for showing in obj.inquiries.all():
             u = showing.user
             try:
-                people.append('{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
+                people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
             except ApplicantProfile.DoesNotExist:
-                people.append('{} {} - {}'.format(u.first_name, u.last_name, u.email))
+                people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
             attendee = vCalAddress('MAILTO:{}'.format(u.email,))
-            attendee.params['cn'] = vText('{} {}'.format(u.first_name, u.last_name))
+            attendee.params['cn'] = vText(u'{} {}'.format(u.first_name, u.last_name))
             e.add('attendee', attendee, encode=0)
         e.add('description', ', '.join(people) )
         c.add_component(e)

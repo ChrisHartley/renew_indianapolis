@@ -42,7 +42,7 @@ const radiusCalculation = (val, coeff) => {
   return (val / Math.PI) ** 0.5 * coeff;
 };
 const fillCircle = new ol.style.Fill({
-  color: 'rgba(125, 125, 125, 0.6)'
+  color: 'rgba(0, 0, 225, 0.6)'
 });
 const strokeCircle = new ol.style.Stroke({
   color: '#ffffff',
@@ -130,7 +130,7 @@ var map = new ol.Map({
 map.on('singleclick', function(evt) {
   var features = map.getFeaturesAtPixel(evt.pixel);
   details = features[0].getProperties()
-  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries</p><p><a href="/admin/property_inquiry/propertyshowing/add/?Property='+details['id']+'">Create a property showing.</a></p>'
+  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries</p><p><a target="_blank" href="/admin/property_inquiry/propertyshowing/add/?Property='+details['id']+'">Create a property showing.</a></p>'
   overlay.setPosition(evt.coordinate);
 });
 
