@@ -113,7 +113,7 @@ from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
 class propertyShowingAdmin(admin.ModelAdmin):
     search_fields = ('Property__streetAddress', 'Property__parcel',)
-    readonly_fields = ('create_ics',)
+    readonly_fields = ('create_ics','create_email')
     form = propertyShowingAdminForm
 
     def create_ics(self, obj):
@@ -124,6 +124,15 @@ class propertyShowingAdmin(admin.ModelAdmin):
                 reverse('property_inquiry_create_showing_ics', kwargs={'id': obj.pk}),
                 'Generate Calendar Event')
             )
+    def create_email(self, obj):
+        if obj.pk is None:
+            return '-'
+        return mark_safe(
+            '<a target="_blank" href="{}">{}</a>'.format(
+                reverse('property_inquiry_showing_email', kwargs={'pk': obj.pk}),
+                'Generate Showing Email Template')
+            )
+
 
 
 from django.db.models import Count, Sum, Min, Max

@@ -138,3 +138,9 @@ class CreateIcsFromShowing(View):
         response = HttpResponse(c.to_ical(), content_type="text/calendar")
         response['Content-Disposition'] = 'attachment; filename={0}.ics'.format(slugify(obj),)
         return response
+
+from django.views.generic import DetailView
+@method_decorator(staff_member_required, name='dispatch')
+class propertyShowingEmailTemplateView(DetailView):
+    template_name = "email/property_inquiry_showing_schedule.txt"
+    model = propertyShowing

@@ -33,15 +33,15 @@ class PropertyInquiryForm(ModelForm):
     class Meta:
         model = propertyInquiry
         fields = ['Property',]
-        #exclude = ['user', 'showing_scheduled', 'applicant_ip_address', ]
 
 class propertyShowingAdminForm(ModelForm):
     class Meta:
         model = propertyShowing
         exclude = []
 
-
     def __init__(self, *args, **kwargs):
         super(propertyShowingAdminForm, self).__init__(*args, **kwargs)
         if self.instance.pk is not None:
             self.fields['inquiries'].queryset = propertyInquiry.objects.filter(Property=self.instance.Property).order_by('-status')
+        elif self.initial:
+            self.fields['inquiries'].queryset = propertyInquiry.objects.filter(Property__pk=self.get_initial_for_field(self, 'Property')).order_by('-status')

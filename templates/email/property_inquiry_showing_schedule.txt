@@ -1,0 +1,28 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{%block center%}
+<code>
+{% for inquiry in object.inquiries.all%}{{inquiry.user.email}}, {% endfor %}
+</code>
+<p>
+Renew Indianapolis Property Showing - {{object.Property.streetAddress}} @ {{object.datetime|date:"SHORT_DATETIME_FORMAT"}}
+</p>
+<p>
+Greetings, thank you for your recent inquiry regarding {{object.Property}}.
+</p>
+<p>
+We are showing this property next {{object.datetime|date:"l, F jS"}} at {{object.datetime|date:"P"}} and would like to invite you to join us.
+</p>
+<p>
+Please let me know if you will be able to attend as I may cancel the showing if I don't hear from you.
+</p>
+<p>
+Here are the details for the property:
+<ul class="list-unstyled">
+<li>{{object.Property.streetAddress}} Indianapolis, IN {{object.Property.zipcode}}</li>
+<li>Parcel: {{object.Property.parcel}}</li>
+<li>Price: ${{object.Property.price|intcomma}}</li>
+</ul>
+Thank you,
+</p>
+{%endblock%}
