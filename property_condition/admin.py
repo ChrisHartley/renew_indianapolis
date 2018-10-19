@@ -168,6 +168,13 @@ class ConditionReportAdmin(admin.ModelAdmin):
 
     )
 
+
+#class PhotoInline(admin.StackedInline):
+#    model = Photo
+    #fields = ('date_purchased', 'date_expiring', 'amount_paid', )
+    #readonly_fields=('closing',)
+#    extra = 3
+
 class ConditionReportProxyAdmin(admin.ModelAdmin):
     readonly_fields = ('upload_photo_page', 'pic_download',)
     def upload_photo_page(self, obj):
