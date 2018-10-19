@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from property_inventory.models import Property
 from datetime import datetime
-
+from django.utils.timezone import localtime
 class propertyInquiry(models.Model):
 
 
@@ -62,7 +62,7 @@ class propertyShowing(models.Model):
 
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.Property, datetime.strftime(self.datetime, '%x, %-I:%M%p') )
+        return u'{0} - {1}'.format(self.Property, datetime.strftime(localtime(self.datetime), '%x, %-I:%M%p') )
 
 class PropertyInquirySummary(propertyInquiry):
     class Meta:
