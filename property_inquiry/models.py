@@ -12,7 +12,6 @@ class propertyInquiry(models.Model):
     timestamp = models.DateTimeField(
         auto_now_add=True, verbose_name="Time/Date")
     showing_scheduled = models.DateTimeField(blank=True, null=True)
-#    showing = models.ForeignKey('propertyShowing', blank=True, null=True, related_name='showing_set')
     applicant_ip_address = models.GenericIPAddressField(blank=True, null=True)
 
     NULL_STATUS = None
@@ -68,7 +67,7 @@ class propertyShowing(models.Model):
 
 
     def __unicode__(self):
-        return '{0} - {1}'.format(self.Property, datetime.strftime(self.datetime, '%x, %-I:%M%p') )
+        return u'{0} - {1}'.format(self.Property, datetime.strftime(self.datetime, '%x, %-I:%M%p') )
 
 class PropertyInquirySummary(propertyInquiry):
     class Meta:

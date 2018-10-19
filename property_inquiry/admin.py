@@ -34,9 +34,7 @@ def custom_batch_editing__admin_action(self, request, queryset):
         model_admin=self,
         request=request,
         queryset=queryset,
-        # this is the name of the field on the YourModel model
         field_names=['showing_scheduled','status','notes'],
-        #exclude_field_names=['parcel', 'street_address']
     )
 custom_batch_editing__admin_action.short_description = "Batch Update"
 
@@ -61,7 +59,7 @@ class propertyInquiryAdmin(admin.ModelAdmin):
     def number_of_pictures(self, obj):
         url = reverse('property_photos', kwargs={'parcel':obj.Property.parcel,})
         count = obj.Property.photo_set.get_queryset().count()
-        link = '<a href="{}">{}</a>'.format(url,count)
+        link = u'<a href="{}">{}</a>'.format(url,count)
         return mark_safe(link)
     number_of_pictures.short_description = 'Number of photos of property in BlightFight'
 
@@ -69,10 +67,10 @@ class propertyInquiryAdmin(admin.ModelAdmin):
         cr = ConditionReport.objects.filter(Property__exact=obj.Property).order_by('timestamp').first()
         if cr is not None:
             url = reverse('admin:property_condition_conditionreport_change', args=(cr.id,))
-            name_link = '<a href="{}">{}</a>'.format(url,cr.timestamp)
+            name_link = u'<a href="{}">{}</a>'.format(url,cr.timestamp)
         else:
             url = reverse('admin:property_condition_conditionreport_add')
-            name_link = '<a href="{}">{}</a>'.format(url,'Add')
+            name_link = u'<a href="{}">{}</a>'.format(url,'Add')
         return mark_safe(name_link)
     condition_report_link.short_description = 'Condition Report'
 
@@ -80,8 +78,7 @@ class propertyInquiryAdmin(admin.ModelAdmin):
         return Application.objects.filter(Property=obj.Property).filter(status=Application.COMPLETE_STATUS).count()
 
     def user_name(self, obj):
-#        email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
-        email_link = ''
+        email_link = u'<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
         name_link = u'<a href="{}">{}</a>'.format(
              reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
                  obj.user.first_name + ' ' + obj.user.last_name
@@ -108,7 +105,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
         if obj.pk is None:
             return '-'
         return mark_safe(
-            '<a target="_blank" href="{}">{}</a>'.format(
+            u'<a target="_blank" href="{}">{}</a>'.format(
                 reverse('property_inquiry_create_showing_ics', kwargs={'id': obj.pk}),
                 'Generate Calendar Event')
             )
@@ -116,12 +113,19 @@ class propertyShowingAdmin(admin.ModelAdmin):
         if obj.pk is None:
             return '-'
         return mark_safe(
-            '<a target="_blank" href="{}">{}</a>'.format(
+            u'<a target="_blank" href="{}">{}</a>'.format(
                 reverse('property_inquiry_showing_email', kwargs={'pk': obj.pk}),
                 'Generate Showing Email Template')
             )
 
-
+    def save_related(self, request, form, formsets, change):
+        super(propertyShowingAdmin, self).save_related(request, form, formsets, change)
+        # Update inquiries, if they are initial status set them to contacted user to schedule
+        for inquiry in form.instance.inquiries.all():
+            if inquiry.status == propertyInquiry.NULL_STATUS:
+                inquiry.status = propertyInquiry.USER_CONTACTED_STATUS
+                inquiry.showing_scheduled = form.instance.datetime
+                inquiry.save()
 
 from django.db.models import Count, Sum, Min, Max
 from django.db.models.functions import Trunc
