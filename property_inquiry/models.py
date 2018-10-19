@@ -43,7 +43,7 @@ class propertyInquiry(models.Model):
         verbose_name_plural = "property inquiries"
 
     def __unicode__(self):
-        return u'{0} - {1} - {2}'.format(self.Property, self.user.email, self.get_status_display())
+        return u'{0} - {1} - {2} - {3}'.format(self.Property, self.user.email, self.timestamp.strftime('%x'), self.get_status_display())
 
 
 class propertyShowing(models.Model):
@@ -63,6 +63,7 @@ class propertyShowing(models.Model):
         for inquiry in self.inquiries.all():
             if inquiry.status == propertyInquiry.NULL_STATUS:
                 inquiry.status = propertyInquiry.USER_CONTACTED_STATUS
+                inquiry.showing_scheduled = self.datetime
                 inquiry.save()
 
 
