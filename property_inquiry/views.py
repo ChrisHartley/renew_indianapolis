@@ -158,6 +158,6 @@ class propertyShowingEmailTemplateView(DetailView):
 
 from django.views.generic import ListView
 @method_decorator(staff_member_required, name='dispatch')
-class propertyShowingEmailTemplateView(ListView):
+class propertyShowingListEmailTemplateView(ListView):
     template_name = "property_inquiry/property_showing_schedule_email_list.txt"
     model = propertyShowing
