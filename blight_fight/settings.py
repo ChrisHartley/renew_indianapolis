@@ -223,6 +223,11 @@ COMPANY_SETTINGS = {
     'STANDARD_PROCESSING_FEE': 200,
     'STANDARD_PROCESSING_STRIPE_FEE': 481, # new based on non-profit 2.2% + $0.30 rate
     'SIDELOT_PRICE': 750.00, # Regular sidelot price
+    'city_staff': (
+        {'name': 'Mickey Rogers', 'email': 'Michael.Rogers2@indy.gov'},
+        {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
+        {'name': 'Gib Crabill', 'email': 'gib.crabill@indy.gov'},
+        )
 }
 
 # This setting determins if property inquiries are allowed to be submitted
