@@ -106,7 +106,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
             return '-'
         return mark_safe(
             u'<a target="_blank" href="{}">{}</a>'.format(
-                reverse('property_inquiry_create_showing_ics', kwargs={'id': obj.pk}),
+                reverse('property_inquiry_create_showing_ics', kwargs={'pk': obj.pk}),
                 'Generate Calendar Event')
             )
     def create_email_template(self, obj):

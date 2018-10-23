@@ -105,15 +105,16 @@ from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
 from django.utils.timezone import now
 from django.utils.text import slugify
+from django.contrib.auth.models import User
 @method_decorator(staff_member_required, name='dispatch')
 class CreateIcsFromShowing(View):
-    def get(self, request, id):
-        obj = propertyShowing.objects.get(pk=id)
+    def get(self, request, pk):
+        obj = propertyShowing.objects.get(pk=pk)
         c = Calendar()
         e = Event()
         c.add('prodid', '-//Renew Indianapolis//Property Showings//EN')
         c.add('version', '2.0')
-        e.add('summary', 'Property Showing for {}'.format(obj.Property,) )
+        e.add('summary', 'Proposed Property Showing for {}'.format(obj.Property,).title() )
         e.add('uid', obj.id)
         e.add('dtstart', obj.datetime)
         e.add('dtend', obj.datetime+timedelta(minutes=30))
@@ -131,8 +132,18 @@ class CreateIcsFromShowing(View):
                 people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
             attendee = vCalAddress('MAILTO:{}'.format(u.email,))
             attendee.params['cn'] = vText(u'{} {}'.format(u.first_name, u.last_name))
-            e.add('attendee', attendee, encode=0)
-        e.add('description', ', '.join(people) )
+    #        e.add('attendee', attendee, encode=0)
+
+        for staff in settings.COMPANY_SETTINGS['city_staff']:
+        #for staff in User.objects.filter(group__exact='City Staff'):
+        #   a = vCalAddress('MAILTO:{}'.format(staff.email,))
+        #   a.params['cn'] = vText('{} {}'.format(staff.first_name, staff.last_name) )
+            a = vCalAddress('MAILTO:{}'.format(staff['email'],))
+            a.params['cn'] = vText(staff['name'])
+            e.add('attendee', a, encode=0)
+        description = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'property': obj.Property, 'inquiries': obj.inquiries.all()})
+        e.add('description', description )
+        e.add('status', 'TENTATIVE')
         c.add_component(e)
         print(c.to_ical())
         response = HttpResponse(c.to_ical(), content_type="text/calendar")
@@ -142,5 +153,11 @@ class CreateIcsFromShowing(View):
 from django.views.generic import DetailView
 @method_decorator(staff_member_required, name='dispatch')
 class propertyShowingEmailTemplateView(DetailView):
-    template_name = "email/property_inquiry_showing_schedule.txt"
+    template_name = "property_inquiry/property_showing_schedule_email.txt"
+    model = propertyShowing
+
+from django.views.generic import ListView
+@method_decorator(staff_member_required, name='dispatch')
+class propertyShowingEmailTemplateView(ListView):
+    template_name = "property_inquiry/property_showing_schedule_email_list.txt"
     model = propertyShowing

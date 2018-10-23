@@ -1,0 +1,14 @@
+Property information:
+* {{property.streetAddress}}, Indianapolis, IN {{property.zipcode}}
+** List Price: ${{property.price}}
+** Parcel: {{property.parcel}}
+** Quiet Title: {{property.quiet_title_complete}}
+** Homestead Only: {{property.homestead_only}}
+** Acquisition Date: {{property.acquisition_date}}
+** Renew Owned: {{property.renew_owned}}
+** Photo link: {{ request.scheme }}://{{ request.get_host }}{% url 'property_photos' parcel=property.parcel %}
+
+Requestors:
+{% for inquiry in inquiries %}
+* {{inquiry.user.first_name}} {{inquiry.user.last_name}} - {{inquiry.user.email}} {{inquiry.user.profile.phone_number}}
+{% endfor %}

@@ -2,7 +2,7 @@
 {% load humanize %}
 {%block center%}
 <code>
-{% for inquiry in object.inquiries.all%}{{inquiry.user.email}}, {% endfor %}
+{% for inquiry in object.inquiries.all%}{{inquiry.user.email}}; {% endfor %}
 </code>
 <p>
 Renew Indianapolis Property Showing - {{object.Property.streetAddress}} @ {{object.datetime|date:"SHORT_DATETIME_FORMAT"}}
@@ -11,7 +11,7 @@ Renew Indianapolis Property Showing - {{object.Property.streetAddress}} @ {{obje
 Greetings, thank you for your recent inquiry regarding {{object.Property}}.
 </p>
 <p>
-We are showing this property next {{object.datetime|date:"l, F jS"}} at {{object.datetime|date:"P"}} and would like to invite you to join us.
+We are showing this property {{object.datetime|date:"l, F jS"}} at {{object.datetime|date:"P"}} and would like to invite you to join us.
 </p>
 <p>
 Please let me know if you will be able to attend as I may cancel the showing if I don't hear from you.

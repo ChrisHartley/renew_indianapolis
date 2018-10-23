@@ -39,10 +39,10 @@ urlpatterns = [
         url(r'property_inquiry/$', submitPropertyInquiry,
            name='submit_property_inquiry'),
 
-        url(r'property_inquiry/create_ics/(?P<id>[0-9])+/$', CreateIcsFromShowing.as_view(),
+        url(r'property_inquiry/create_ics/(?P<pk>[0-9]+)/$', CreateIcsFromShowing.as_view(),
            name='property_inquiry_create_showing_ics'),
 
-        url(r'property_inquiry/showing_email/(?P<pk>[0-9])+/$', propertyShowingEmailTemplateView.as_view(),
+        url(r'property_inquiry/showing_email/(?P<pk>[0-9]+)/$', propertyShowingEmailTemplateView.as_view(),
            name='property_inquiry_showing_email'),
 
 
