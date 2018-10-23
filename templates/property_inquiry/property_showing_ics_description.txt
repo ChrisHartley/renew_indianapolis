@@ -6,7 +6,7 @@ Property information:
 ** Homestead Only: {{property.homestead_only}}
 ** Acquisition Date: {{property.acquisition_date}}
 ** Renew Owned: {{property.renew_owned}}
-** Photo link: {{ request.scheme }}://{{ request.get_host }}{% url 'property_photos' parcel=property.parcel %}
+** Photo link: https://build.renewindianapolis.org{% url 'property_photos' parcel=property.parcel %}
 
 Requestors:
 {% for inquiry in inquiries %}
