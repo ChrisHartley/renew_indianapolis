@@ -10,9 +10,10 @@ import xlsxwriter
 import zipfile
 import datetime
 
-last_import = datetime.datetime(2017, 12, 12)
+last_import = datetime.datetime(2018, 01, 01)
 
-props = Property.objects.exclude(structureType__exact='Vacant Lot').order_by('parcel')
+#props = Property.objects.exclude(structureType__exact='Vacant Lot').order_by('parcel')
+props = Property.objects.filter(acquisition_date__gte='2018-10-01').order_by('parcel')
 #for p in props:
 #    print p
 header = ['Parcel Number', 'Sequence Number', 'Caption', 'Image Path']
