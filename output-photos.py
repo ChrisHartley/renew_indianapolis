@@ -16,7 +16,7 @@ last_import = datetime.datetime(2018, 01, 01)
 props = Property.objects.filter(acquisition_date__gte='2018-10-01').order_by('parcel')
 #for p in props:
 #    print p
-header = ['Parcel Number', 'Sequence Number', 'Caption', 'Image Path']
+header = ['Parcel Number', 'Sequence Number', 'Caption', 'Image Path', 'Publish']
 props_paginator = Paginator(props, 75)
 
 for indx in props_paginator.page_range:
