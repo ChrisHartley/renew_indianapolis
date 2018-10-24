@@ -36,8 +36,9 @@ for indx in props_paginator.page_range:
                 print indx, p, photo
                 worksheet.write(i, 0, p.parcel)
                 worksheet.write(i, 1, seq)
-                worksheet.write(i, 2, photo.created.strftime('%Y-%m-%d %I:%M'))
+                worksheet.write(i, 2, photo.created.strftime('%Y-%m-%d %I:%M')) # Caption
                 worksheet.write(i, 3, photo.image.path)
+                worksheet.write(i, 4, 'Y') # published
                 myzip.write(photo.image.path)
                 seq = seq+1
                 i=i+1
