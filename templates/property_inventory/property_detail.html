@@ -106,13 +106,12 @@
     <tr><td>Property Demolished through Hardest Hit Fund/Blight Elimination Program</td><td>{{property.hhf_demolition|yesno|capfirst}}</td></tr>
   </table>
 </div>
- <!-- <div class="ribbon ribbon-top-left"><span>Apply Now!</span></div> -->
  <div class="col-md-6 col-lg-6">
    <div class="row">
     <ul id="lightSlider">
         {% for photo in photos %}
           <li>
-            <a href="https://build.renewindianapolis.org/media/{{ photo.image }}"><img src="https://build.renewindianapolis.org/media/{{ photo.image }}"/></a>
+            <a href="https://build.renewindianapolis.org/media/{{ photo.image }}"><img src="https://build.renewindianapolis.org/media/{{ photo.image }}"/ class="img-responsive"></a>
           <div class="caption"><p>{{photo.created}}</p></div>
           </li>
         {% empty %}
@@ -168,11 +167,10 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $("#lightSlider").lightSlider({
-      verticalHeight:500,
       item:1,
       auto:true,
       pauseOnHover:true,
-      loop:false,
+      loop:true,
       keyPress:true,
     });
   });
