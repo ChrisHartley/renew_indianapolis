@@ -12,6 +12,7 @@
     <div id="popup" class="ol-popup">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
+      <div id="popup-content-image"></div>
     </div>
     <button onclick="toggleMap()">Toggle Map</button>
     <p>&nbsp;</p>
@@ -26,8 +27,10 @@ collection.push(
   new ol.Feature({
          geometry: new ol.geom.Point([{{prop.centroid_geometry.0}}, {{prop.centroid_geometry.1}}]),
          name: "{{prop}}",
+         parcel: "{{prop.parcel}}",
          count: "{{inquiries|length}}",
          id: "{{prop.pk}}",
+         max_age: "{%with obj=inquiries|dictsort:'timestamp'|first%}{{obj.timestamp}}{%endwith%}"
        }) );
 {% endfor %}
 
@@ -41,9 +44,17 @@ var vectorSource = new ol.source.Vector({
 const radiusCalculation = (val, coeff) => {
   return (val / Math.PI) ** 0.5 * coeff;
 };
-const fillCircle = new ol.style.Fill({
-  color: 'rgba(0, 0, 225, 0.6)'
-});
+
+function shadeRGBColor(color, percent) {
+    var f=color.split(","),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=parseInt(f[0].slice(4)),G=parseInt(f[1]),B=parseInt(f[2]);
+    return "rgb("+(Math.round((t-R)*p)+R)+","+(Math.round((t-G)*p)+G)+","+(Math.round((t-B)*p)+B)+")";
+}
+
+function fillCircle(age){
+  return new ol.style.Fill({
+    color: 'rgba(0, 0, 225,0.6)'
+  });
+}
 const strokeCircle = new ol.style.Stroke({
   color: '#ffffff',
   width: 1
@@ -57,7 +68,7 @@ const styleProportionalCircle = (feature, resolution) => {
     geometry: geom,
     image: new ol.style.Circle({
       stroke: strokeCircle,
-      fill: fillCircle,
+      fill: fillCircle(Date.parse(feature.get('max_age'))-Date.now()),
       radius: radiusCalculation(feature.get('count'), 10)
     }),
 //    zIndex: feature.get('rank')
@@ -78,7 +89,7 @@ var vector = new ol.layer.Vector({
 var container = document.getElementById('popup');
 var content = document.getElementById('popup-content');
 var closer = document.getElementById('popup-closer');
-
+var content_image = document.getElementById('popup-content-image');
 
 /**
  * Create an overlay to anchor the popup to the map.
@@ -130,7 +141,26 @@ var map = new ol.Map({
 map.on('singleclick', function(evt) {
   var features = map.getFeaturesAtPixel(evt.pixel);
   details = features[0].getProperties()
-  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries</p><p><a target="_blank" href="/admin/property_inquiry/propertyshowing/add/?Property='+details['id']+'">Create a property showing.</a></p>'
+  var img_object =''
+  fetch('/property/'+details["parcel"]+'/photos/?format=json&number=1').then(function(response){ return response.json(); }).then(function(data){
+    console.log(data)
+    console.log(data.length)
+    if (data.length > 0){
+      img_url = data[0].fields.image;
+      console.log(img_url)
+      img_object = '<img class="img-rounded no-vertical-align" width="200" alt="Renew Indianapolis provided photo of the property" src="https://build.renewindianapolis.org/media/'+img_url+'"/>'
+    }
+    else{
+      // or if we want a static google street view image:
+      //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
+      img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small><br/><iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="250" width="429">';
+    }
+    //return img_object;
+    content_image.innerHTML = img_object
+
+  });
+  console.log(img_object)
+  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries<br/>'+details['max_age']+'</p><p><a target="_blank" href="/admin/property_inquiry/propertyshowing/add/?Property='+details['id']+'">Create a property showing.</a></p>'
   overlay.setPosition(evt.coordinate);
 });
 
