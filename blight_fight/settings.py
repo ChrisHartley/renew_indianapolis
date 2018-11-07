@@ -213,6 +213,12 @@ EXCEL_SUPPORT = 'xlwt'
 STRIPE_PUBLIC_API_KEY = ""
 STRIPE_SECRET_API_KEY = ""
 
+# mailchimp api settings
+# These key values are really set in settings_testing.py or settings_production.py
+MAILCHIMP_USERNAME = ''
+MAILCHIMP_API_KEY = ''
+MAILCHIMP_NEWSLETTER_ID = ''
+
 #
 COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
