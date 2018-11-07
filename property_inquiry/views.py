@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from ipware.ip import get_real_ip
+from ipware import get_client_ip
 
 from property_inquiry.models import propertyInquiry, propertyShowing
 from property_inventory.models import Property
@@ -54,7 +54,7 @@ def submitPropertyInquiry(request):
             form.add_error(None, "You can not submit more than 3 property inquiries every 48 hours. Please try again later.")
         if form.is_valid():
             form_saved = form.save(commit=False)
-            form_saved.applicant_ip_address = get_real_ip(request)
+            form_saved.applicant_ip_address = get_client_ip(request)[0]
             form_saved.user = request.user
             form_saved.save()
             message_body = render_to_string('email/property_inquiry_confirmation.txt', {'Property': form_saved.Property })

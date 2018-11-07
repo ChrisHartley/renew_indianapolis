@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 #from allauth.accounts.forms import SignupForm
 #from allauth.account.forms import SignupForm as allauthSignupForm
 #from allauth import accounts
@@ -10,6 +11,9 @@ from passwords.fields import PasswordField
 from localflavor.us.forms import USPhoneNumberField, USZipCodeField, USPSSelect, USStateField, USStateSelect
 
 from .widgets import AddAnotherWidgetWrapper
+from mailchimp3 import MailChimp
+from django.utils.timezone import now
+from ipware import get_client_ip
 
 
 class OrganizationForm(forms.ModelForm):
@@ -92,6 +96,13 @@ class SignupForm(forms.Form):
     mailing_address_state = USStateField(
         widget=USStateSelect, required=True, label='Mailing Address State')
     mailing_address_zip = USZipCodeField(required=True, label='Zipcode')
+    opt_in_newsletter = forms.BooleanField(
+        required=False,
+        #default=True,
+        widget=forms.widgets.CheckboxInput(attrs={'checked' : 'checked'}),
+        label='Subscribe to the Renew Indianapolis email newsletter',
+        help_text='Stay up to date with our email newsletter'
+    )
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -105,10 +116,30 @@ class SignupForm(forms.Form):
             _("An account already exists with this e-mail address."
               " Please sign in to that account."))
 
+
+
+    def subscribe_to_newsletter(self, request, user, opt_in):
+        client = MailChimp(mc_api=settings.MAILCHIMP_API_KEY, mc_user=settings.MAILCHIMP_USERNAME)
+        user_ip, is_routable = get_client_ip(request)
+        if opt_in:
+            status = 'subscribed'
+        else:
+            status = 'unsubscribed'
+        return client.lists.members.create(settings.MAILCHIMP_NEWSLETTER_ID, {
+            'email_address': user.email,
+            'status': status,
+            'merge_fields': {
+                'FNAME': user.first_name,
+                'LNAME': user.last_name,
+            },
+            'ip_signup': user_ip,
+            })
+
+
     def signup(self, request, user):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
-        #user.username = user.email # username is 30 characters, email is 254. Switching to 254 or 150 or something in Django 1.9
+        user.username = user.email # username is 30 characters, email is 254. Switching to 254 or 150 or something in Django 1.9
         user.save()
         profile = ApplicantProfile()
         profile.phone_number = self.cleaned_data['phone_number']
@@ -125,6 +156,8 @@ class SignupForm(forms.Form):
         profile.mailing_address_zip = self.cleaned_data['mailing_address_zip']
         profile.user = user
         profile.save()
+        # This is where we would push signup to MailChimp
+        attempt_subscribe = self.subscribe_to_newsletter(request, user, self.cleaned_data['opt_in_newsletter'])
 
 
 class ApplicantProfileForm(forms.ModelForm):
