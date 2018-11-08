@@ -157,8 +157,10 @@ class SignupForm(forms.Form):
         profile.user = user
         profile.save()
         # This is where we would push signup to MailChimp
-        attempt_subscribe = self.subscribe_to_newsletter(request, user, self.cleaned_data['opt_in_newsletter'])
-
+        try:
+            attempt_subscribe = self.subscribe_to_newsletter(request, user, self.cleaned_data['opt_in_newsletter'])
+        except:
+            pass
 
 class ApplicantProfileForm(forms.ModelForm):
         # organization = forms.ModelChoiceField(
