@@ -112,6 +112,8 @@ class Organization(models.Model):
     def __unicode__(self):
         return u'{0}'.format(self.name)
 
+
     class Meta:
         verbose_name = "Organization or Third Party"
         verbose_name_plural = "Organizations or Third Parties"
+        ordering = ['name']
