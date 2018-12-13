@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Application, Meeting, MeetingLink, NeighborhoodNotification, PriceChangeMeetingLink, ApplicationMeetingSummary
 from neighborhood_associations.models import Neighborhood_Association
 from user_files.models import UploadedFile
+from property_inquiry.models import propertyInquiry
 from .forms import ScheduleInlineForm
 
 from django.utils.safestring import mark_safe
@@ -98,10 +99,14 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     list_display = ('modified','submitted_timestamp','Property', 'property_status', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type', MeetingScheduledFilter)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
-    readonly_fields = ('created', 'modified', 'user_readable', 'property_type', 'property_status','property_vacant_lot','property_sidelot','scheduled_meeting','application_summary_page','application_detail_page','n_notification', 'submitted_timestamp', 'price_at_time_of_submission')
+    readonly_fields = ('created', 'modified', 'user_readable', 'property_type',
+        'property_status','property_vacant_lot','property_sidelot',
+        'scheduled_meeting','application_summary_page','application_detail_page',
+        'n_notification', 'submitted_timestamp', 'price_at_time_of_submission',
+        'property_inquiry_count')
     fieldsets = (
         (None, {
-            'fields': ( ('user','user_readable','organization'), ('created', 'modified', 'submitted_timestamp'), ('Property', 'property_type','property_status','property_vacant_lot','property_sidelot'), 'status', ('application_summary_page','application_detail_page'))
+            'fields': ( ('user','user_readable','organization'), ('created', 'modified', 'submitted_timestamp'), ('Property', 'property_type','property_status','property_vacant_lot','property_sidelot'), ('status', 'property_inquiry_count'), ('application_summary_page','application_detail_page'))
 
         }),
         ('Qualifying Questions', {
@@ -149,14 +154,25 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
 
     def property_vacant_lot(self, obj):
         return obj.Property.vacant_lot_eligible
+    property_vacant_lot.short_description = 'Vacant Lot Program eligible'
+    property_vacant_lot.boolean = True
 
     def property_sidelot(self, obj):
         return obj.Property.sidelot_eligible
+    property_sidelot.short_description = 'Sidelot Program eligible'
+    property_sidelot.boolean = True
 
     def property_status(self, obj):
         if obj.Property is None:
             return '-'
         return obj.Property.status
+
+    def property_inquiry_count(self, obj):
+        if obj.Property is None:
+            return False
+        return propertyInquiry.objects.filter(Property__exact=obj.Property).filter(user__exact=obj.user).exclude(status__exact=None).count() > 0
+    property_inquiry_count.short_description = 'Property Shown to Applicant'
+    property_inquiry_count.boolean = True
 
     def user_link(self, obj):
        return mark_safe(u'<a href="{}">{}</a>'.format(
@@ -224,6 +240,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting_type',)
     list_display = ('meeting_type', 'meeting_date')
     inlines = [MeetingLinkInline, PriceChangeMeetingLinkInline]
+    ordering = ('-meeting_date',)
     readonly_fields = ('agenda', 'applications', 'create_mdc_spreadsheet', 'create_packet', 'create_packet_support_documents', 'price_change_summary_page','price_change_CMA_zip','price_change_csv', 'create_meeting_outcome_notification_spreadsheet', 'create_epp_update_spreadsheet', 'create_epp_party_spreadsheet', 'generate_neighborhood_notifications')
 #    list_select_related = True
 
