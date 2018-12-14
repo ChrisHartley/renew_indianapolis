@@ -141,6 +141,8 @@ class closing(models.Model):
     city_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for the City of Indianapolis", blank=False, default=0)
     city_loan_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount due to the City of Indianapolis, but not paid at closing", blank=False, default=0)
     ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, default=0)
+    ri_closing_fee = models.DecimalField(max_digits=10, decimal_places=2, help_text="Renew Indianapolis Closing Fee", blank=True, default=0)
+
 
     archived = models.BooleanField(default=False, help_text="Closing did not occur and should be archived.")
 
@@ -167,7 +169,7 @@ class closing(models.Model):
                 from_email = 'info@renewindianapolis.org'
                 send_mail(subject, message, from_email, recipient,)
 
-            if self.closed == True and orig_closing.closed == False and self.application and self.application.Property.blc_listing and settings.SEND_BLC_CLOSED_NOTIFICATION_EMAIL:
+            if self.closed == True and orig_closing.closed == False and self.application and self.application.Property.blc_listing is not None and settings.SEND_BLC_CLOSED_NOTIFICATION_EMAIL:
                 subject = 'BLC listed property closed - {0}'.format(self.application.Property,)
                 message = 'This is a courtesy notification that the BLC property at {0} was sold, please update your files as necessary.'.format(self.application.Property,)
                 recipient = [settings.BLC_MANAGER_EMAIL,]

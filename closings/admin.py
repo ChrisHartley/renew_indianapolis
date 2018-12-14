@@ -60,7 +60,7 @@ def custom_batch_editing__admin_action(self, request, queryset):
         request=request,
         queryset=queryset,
         # this is the name of the field on the YourModel model
-        field_names=['closed', 'notes', 'city_proceeds', 'city_loan_proceeds', 'ri_proceeds', 'archived', 'date_time', 'location', 'title_company'],
+        field_names=['closed', 'notes', 'city_proceeds', 'city_loan_proceeds', 'ri_proceeds', 'ri_closing_fee', 'archived', 'date_time', 'location', 'title_company'],
         #exclude_field_names=['parcel', 'street_address']
     )
 custom_batch_editing__admin_action.short_description = "Batch Update"
