@@ -174,7 +174,7 @@ class ApplicantProfileForm(forms.ModelForm):
 
     class Meta:
         model = ApplicantProfile
-        exclude = ['user', 'external_system_id']
+        exclude = ['user', 'external_system_id', 'staff_notes']
 
     def __init__(self, *args, **kwargs):
         super(ApplicantProfileForm, self).__init__(*args, **kwargs)
@@ -183,7 +183,7 @@ class ApplicantProfileForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.field_class = 'col-lg-4'
         self.helper.label_class = 'col-lg-2'
-        self.helper.render_unmentioned_fields = True
+        self.helper.render_unmentioned_fields = False
         self.helper.layout = Layout(
             Fieldset(
                 'Add Details',

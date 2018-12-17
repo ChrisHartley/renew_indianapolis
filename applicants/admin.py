@@ -28,7 +28,7 @@ class ApplicantProfileAdmin(admin.ModelAdmin):
     model = ApplicantProfile
     readonly_fields = ('user_email', 'user_first_name', 'user_last_name', 'count_applications', 'external_system_id')
     list_display = ('user_email', 'user_first_name', 'user_last_name', 'phone_number', 'mailing_address_line1', 'mailing_address_line2', 'mailing_address_line3', 'mailing_address_city', 'mailing_address_state', 'mailing_address_zip', 'count_applications')
-    fields = ('user_email', 'user_first_name', 'user_last_name', 'phone_number', 'mailing_address_line1', 'mailing_address_line2', 'mailing_address_line3', 'mailing_address_city', 'mailing_address_state', 'mailing_address_zip', 'count_applications', 'external_system_id')
+    fields = ('user_email', 'user_first_name', 'user_last_name', 'phone_number', 'mailing_address_line1', 'mailing_address_line2', 'mailing_address_line3', 'mailing_address_city', 'mailing_address_state', 'mailing_address_zip', 'staff_notes', 'count_applications', 'external_system_id')
     search_fields = ('user__email', 'phone_number', 'user__first_name', 'user__last_name', 'external_system_id', 'mailing_address_city')
 
     #inlines = [OrganizationInline]

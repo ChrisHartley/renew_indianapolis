@@ -26,6 +26,8 @@ class ApplicantProfile(models.Model):
 
     external_system_id = models.CharField(max_length=100, blank=True)
 
+    staff_notes = models.CharField(max_length=1024, blank=True)
+
     def save(self, *args, **kwargs):
         super(ApplicantProfile, self).save(*args, **kwargs)
         if self.user.username == '' and self.user.email !='':
