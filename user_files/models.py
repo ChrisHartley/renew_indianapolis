@@ -87,6 +87,9 @@ class UploadedFile(models.Model):
 
     @receiver(file_uploaded, sender=AjaxFileUploader)
     def create_on_upload(sender, backend, request, **kwargs):
+        if not request.user.is_authenticated(): # if the user isn't logged in
+            return
+
         if virus_scan(backend.path):
             # should delete or otherwise quarantine uploaded file
             print 'returning in virus_scan called from create_on_upload'
@@ -95,7 +98,6 @@ class UploadedFile(models.Model):
         app = None
         if 'application' in request.GET:
             app_id = request.GET['application']
-            print 'app_id:',app_id
             if app_id is not u'':
                 try:
                     app = Application.objects.get(id=app_id)
