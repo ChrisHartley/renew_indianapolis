@@ -169,7 +169,7 @@ class closing(models.Model):
                 from_email = 'info@renewindianapolis.org'
                 send_mail(subject, message, from_email, recipient,)
 
-            if self.closed == True and orig_closing.closed == False and self.application and self.application.Property.blc_listing is not None and settings.SEND_BLC_CLOSED_NOTIFICATION_EMAIL:
+            if self.closed == True and orig_closing.closed == False and self.application and self.application.Property.blc_listing.count() > 0 and settings.SEND_BLC_CLOSED_NOTIFICATION_EMAIL:
                 subject = 'BLC listed property closed - {0}'.format(self.application.Property,)
                 message = 'This is a courtesy notification that the BLC property at {0} was sold, please update your files as necessary.'.format(self.application.Property,)
                 recipient = [settings.BLC_MANAGER_EMAIL,]
