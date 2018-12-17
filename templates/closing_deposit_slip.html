@@ -14,7 +14,7 @@
       <dt>Buyer(s)</dt><dd>{{closing.application.user.first_name}} {{closing.application.user.last_name}} / {{closing.application.organization}}</dd>
       <dt>Title co.</dt><dd>{{closing.title_company}}</dd>
       <dt>Date of closing</dt><dd>{{closing.date_time|date:"M d, Y"}}</dd>
-      <dt>Disbursements</dt><dd>Renew: ${{closing.ri_proceeds|default:0|intcomma}} City POC: ${{closing.city_loan_proceeds|default:0|intcomma}} City: ${{closing.city_proceeds|default:0|intcomma}}</dd>
+      <dt>Disbursements</dt><dd>Renew: ${{closing.ri_proceeds|default:0|intcomma}} Renew Processing Fee: ${{closing.ri_closing_fee|default:0|intcomma}} City POC: ${{closing.city_loan_proceeds|default:0|intcomma}} City: ${{closing.city_proceeds|default:0|intcomma}}</dd>
     </dl>
   </div>
 
