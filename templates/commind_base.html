@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block head_title %}{% endblock head_title %}</title>
+    <!-- jQuery and UI-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	  <script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+
+  	<!-- Bootstrap -->
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    {% block header %} {% endblock header %}
+
+	    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+      <style>
+      .ri_footer {
+        background-color: rgb(0,86,150)
+      }
+      </style>
+  </head>
+  <body>
+  	<div class="container-fluid">
+      <div class="page-header">
+        <div class="row">
+          <div class='col-xs-10 cols-xs-offset-2 col-sm-4 col-sm-offset-2 col-md-3 col-md-offset-2 col-lg-2 col-lg-offset-2'>
+            <img src="https://static.wixstatic.com/media/133fcd_994244a0a8f342518dbe9aaf048a5785~mv2.png/v1/fill/w_215,h_86,al_c,usm_0.66_1.00_0.01/RenewIndpl4C%20(NO%20CITY%20-%20WEB).png" alt='Renew Logo'/>
+          </div>
+          <div class="'col-xs-12 col-sm-6 col-md-7 col-lg-8'>">
+            <h1 class="text-center">Commercial-Industrial Program</h1>
+          </div>
+        </div>
+      </div>
+
+
+    {% block content %}
+    {% endblock content %}
+    {% block extra_body%}
+    {% endblock extra_body %}
+  </div> <!-- End main content container -->
+
+    <div class="footer ri_footer">
+      <div class="container">
+         <h2 class="text-center">&copy; Renew Indianapolis 2018</h2>
+      </div>
+    </div>
+  </body>
+</html>

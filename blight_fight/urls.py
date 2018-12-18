@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
-from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, IdentifyClusters, CreateIcsFromShowing, propertyShowingEmailTemplateView
+from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingEmailTemplateView
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
@@ -22,6 +22,7 @@ from neighborhood_notifications.views import update_registered_organizations, Re
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
 from property_condition.views import view_or_create_condition_report
 from utils.views import DonateView
+from commind.views import view_document, CommIndApplicationFormView, PropertyListView, CommIndApplicationSuccessView
 
 admin.site.site_header = 'Blight Fight administration'
 
@@ -104,8 +105,6 @@ urlpatterns = [
         url(r'accounts/organization$', show_organizations,
            name='applicants_organization'),
 
-        # url(r'map/accounts/', include('allauth.urls')),
-        # #django all-auth
         # django all-auth
         url(r'accounts/', include('allauth.urls')),
 
@@ -196,7 +195,7 @@ urlpatterns = [
             staff_member_required(PriceChangeSummaryView.as_view()),
             name='price_change_summary_view'),
 
-        url(r'application/(?P<action>\w+)/$',
+        url(r'^application/(?P<action>\w+)/$',
            process_application, name='process_application'),
         url(r'application/(?P<action>\w+)/(?P<id>[0-9]+)/$',
            process_application, name='process_application'),
@@ -241,8 +240,14 @@ urlpatterns = [
         url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx'),
 
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
-#        url(r'pi_cluster/$', IdentifyClusters.as_view(), name='identify_pi_clusters'),
         url(r'donate/$', DonateView.as_view()),
+
+        # commind - Commercial Industrial URLS
+        url(r'^media/documents/(?P<filename>.*)', view_document, name='view_commind_document'),
+        url(r'^commercial_industrial/application/$', CommIndApplicationFormView.as_view(), name='commind_application'),
+        url(r'^commercial_industrial/application/(?P<parcel>[0-9]+)/', CommIndApplicationFormView.as_view(), name='commind_application_parcel'),
+        url(r'^commercial_industrial/success/$', CommIndApplicationSuccessView.as_view(), name='commind_application_success'),
+        url(r'^commercial_industrial/list/$', PropertyListView.as_view())
 
 
     ]
@@ -252,6 +257,5 @@ if settings.DEBUG:
     urlpatterns += [
                         url(r'^media/(?P<path>.*)$', serve, {
                             'document_root': settings.MEDIA_ROOT})
-                        #url(r'^media/(?P<category>[-\w\d]+)/(?P<filename>.*)$', meta_send_file),
-
                     ]
+#urlpatterns += [        ]

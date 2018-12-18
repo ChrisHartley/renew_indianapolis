@@ -1,0 +1,43 @@
+Name of person completing application
+	- first name, last name, mailing address, email, phone
+
+Name of entity that will take title, if known
+Contact information for entity
+- address
+- email
+- phone
+
+Date & place of creation of entity, which secretary of state is it registered with
+Current and/or future owners of entity at time of closing
+Owner names, addresses, titles, nature and extent of interest 
+
+
+Board conflict
+Tax status
+Tax foreclosure history
+
+
+Short narrative description of proposed project
+
+Sources of financing
+
+Grants or public funding?
+More details or attach 
+
+
+Entity "Must be formed prior to closing" 
+"Check box if entity has not yet been formed"
+- Principals - related to entity
+- -- Name, Title, Contact info (address, phone, email)
+
+
+Properties - 
+3949 MEADOWS DR - old daycare
+3950 MEADOWS DR - old bank
+4025 MEADWOWS PKWY - light industrial with trucks
+2350 TURNER AVE 
+Carier Bryant 1139 W 23rd, 1100 W 21st
+1544 SAMOA
+1106 edgemont ave (all parcels)
+
+

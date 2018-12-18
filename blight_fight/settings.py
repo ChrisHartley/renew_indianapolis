@@ -63,7 +63,7 @@ INSTALLED_APPS = (
     #'expense_tracking',
     #'work_orders',
     'market_activity',
-    #'commind',
+    'commind',
 )
 
 MIDDLEWARE_CLASSES = (
