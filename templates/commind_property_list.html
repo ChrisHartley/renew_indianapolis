@@ -17,8 +17,6 @@
           <a href="/media/{{phot.file.name}}"><img src="/media/{{phot.file.name}}" alt='image' width='200px' class="img-rounded pull-right"/></a>
 
           {%endfor %}
-
-          <img src="http://localhost:8000/media/documents/2018/12/05/Pic_1.jpeg" width='200px', alt="Photo of {{property.street_address}}" class="img-rounded pull-right"/>
           {% if property.status == 'Available' %}
           <p>&nbsp;</p><p><a class="btn btn-primary" href="/commercial_industrial/application/{{property.parcel}}" role="button">Start An Application</a></p>
           {% else %}
