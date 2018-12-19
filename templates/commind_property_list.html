@@ -48,7 +48,7 @@
         <ul>
           {% for doc in property.documents.all %}
           {% if doc.publish %}
-          <li><a href="/media/{{doc.file}}">{%if doc.file_purpose = ''%}{{doc.file}}{%else%}{{doc.file_purpose}}{%endif%}</a></li>
+          <li><a href="/media/{{doc.file}}">{%if doc.file_purpose == ''%}{{doc.file}}{%else%}{{doc.file_purpose}}{%endif%}</a></li>
           {% endif %}
           {% endfor %}
         </ul>
