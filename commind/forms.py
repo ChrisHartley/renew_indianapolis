@@ -110,11 +110,11 @@ class NoteInlineForm(forms.ModelForm):
         exclude = ['user',]
 
 class CommIndApplicationForm(forms.ModelForm):
-    Properties = forms.ModelMultipleChoiceField(
-        queryset=Property.objects.all().order_by('street_address'),
-        help_text='Select the property or properties you are applying for.',
-        required=False
-    )
+    # Properties = forms.ModelMultipleChoiceField(
+    #     queryset=Property.objects.all().order_by('street_address'),
+    #     help_text='Select the property or properties you are applying for.',
+    #     required=False
+    # )
 
     status = forms.IntegerField(
         required=False
@@ -356,7 +356,7 @@ class CommIndApplicationForm(forms.ModelForm):
                     css_class='well'),
             FormActions(
                 #Button('cancel', 'Cancel'),
-                Submit('save_for_later', 'Save Application'),
+    #            Submit('save_for_later', 'Save Application'),
                 Submit('save', 'Validate and Submit Application'),
             )
         )

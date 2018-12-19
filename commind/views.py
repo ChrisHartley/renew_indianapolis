@@ -75,10 +75,11 @@ class CommIndApplicationFormView(FormView):
                             nature_extent_of_interest = form.cleaned_data['principal_{}_ownership_share'.format(cnt,)],
                         )
                         person.save()
-
             self.object = form.save(commit=False)
             self.object.user = self.request.user
             self.object.entity = entity
+            self.object.save() # to get id so ModelMultipleChoiceField can be saved
+            self.object.Properties = form.cleaned_data['Properties']
             self.object.save()
 
             budget_and_financing_file = Document(

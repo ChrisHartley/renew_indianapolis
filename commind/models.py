@@ -408,4 +408,4 @@ class Application(models.Model):
         super(Application, self).save(*args, **kwargs)
 
     def __str__(self):
-        return '{} - {}'.format(self.Properties, self.user)
+        return '{} - {}'.format(self.created, self.user)
