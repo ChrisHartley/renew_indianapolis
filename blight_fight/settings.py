@@ -206,6 +206,9 @@ PASSWORD_COMPLEXITY = {  # You can omit any or all of these for no limit for tha
 MEDIA_ROOT = '/home/chris/Projects/geodjango/blight_fight/media/'
 MEDIA_URL = '/media/'
 
+FILE_UPLOAD_PERMISSIONS = 0o644
+
+
 # for django-tables2-reports
 EXCEL_SUPPORT = 'xlwt'
 
