@@ -1,28 +1,26 @@
 {% extends 'commind_base.html' %}
 {% load humanize %}
 {% block head_title %}Commercial Industrial Properties :: Renew Indianapolis{% endblock %}
+{% block header %}
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/css/lightslider.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.js"></script>
+{% endblock %}
 
 {% block content %}
 
-<div class="row">
 {% for property in object_list %}
+<div class="row">
+
+{%if property.published%}
   <div class='col-md-5 col-md-offset-2'>
     <div class="panel panel-default">
       <div class="panel-heading">{{property.property_name}}
         <div class="pull-right">Parcel {{property.parcel}}</div>
       </div>
       <div class="panel-body">
-        <div class="pull-right">
-          {% for phot in property.photos.all %}
-          <a href="/media/{{phot.file.name}}"><img src="/media/{{phot.file.name}}" alt='image' width='200px' class="img-rounded pull-right"/></a>
+        <div class="row">
+          <div class="col-md-6">
 
-          {%endfor %}
-          {% if property.status == 'Available' %}
-          <p>&nbsp;</p><p><a class="btn btn-primary" href="/commercial_industrial/application/{{property.parcel}}" role="button">Start An Application</a></p>
-          {% else %}
-          <p>&nbsp;</p><p><button type="button" class="btn btn-default btn-lg" disabled="disabled">{{property.status}}</button></p>
-          {% endif %}
-        </div>
         <dl>
           <dt>Address</dt>
           <dd>{{property.street_address}}, Indianapolis, IN</dd>
@@ -44,18 +42,51 @@
           <dd>{{property.property_notes}}</dd>
         </dl>
       </div>
+      <div class="col-md-6">
+        <ul class="lightSlider">
+      {% for phot in property.photos.all %}
+        <li><a href="/media/{{phot.file.name}}"><img src="/media/{{phot.file.name}}" alt='image' width='200px' class="img-rounded pull-right"/></a></li>
+      {%endfor %}
+      </ul>
+
+      {% if property.status == 'Available' %}
+      <p>&nbsp;</p><p><a class="btn btn-primary" href="/commercial_industrial/application/{{property.parcel}}" role="button">Start An Application</a></p>
+      {% else %}
+      <p>&nbsp;</p><p><button type="button" class="btn btn-default btn-lg" disabled="disabled">{{property.status}}</button></p>
+      {% endif %}
+      </div>
+
+      </div>
+    </div>
       <div class="panel-footer">Documents:
         <ul>
           {% for doc in property.documents.all %}
           {% if doc.publish %}
-          <li><a href="/media/{{doc.file}}">{%if doc.file_purpose == ''%}{{doc.file}}{%else%}{{doc.file_purpose}}{%endif%}</a></li>
+          <li><a target="_blank" href="/media/{{doc.file}}">{%if doc.file_purpose == ''%}{{doc.file}}{%else%}{{doc.file_purpose}}{%endif%}</a></li>
           {% endif %}
           {% endfor %}
         </ul>
       </div>
     </div>
   </div>
-{% endfor %}
+  {%else%}
+  {%endif%}
 </div> <!-- end row !-->
 
+{% endfor %}
+<script type="text/javascript">
+  $(document).ready(function() {
+    $(".lightSlider").lightSlider({
+      item:1 ,
+      auto:true,
+      pauseOnHover:true,
+      pause: 5000,
+      loop:true,
+      keyPress:false,
+      thumbItem:10,
+
+    });
+
+  });
+</script>
 {% endblock content %}
