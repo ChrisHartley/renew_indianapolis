@@ -32,6 +32,7 @@
     <thead>
       <tr>
         <th>Census Tract</th>
+        <th>Created</th>
         <th>Type</th>
         <th>Number of sales</th>
         <th>Average</th>
@@ -49,9 +50,10 @@
       </tr>
     </thead>
     <tbody>
-      {% for summary in price_change.Property.census_tract.sdf_summary.all %}
+      {% for summary in price_change.Property.census_tract.sdf_summary.all|dictsortreversed:"get_with_improvements_display"|dictsortreversed:"created" %}
         <tr>
           <td>{{summary.census_tract}}</td>
+          <td>{{summary.created}}</td>
           <td>{{summary.get_with_improvements_display}}</td>
           <td>{{summary.number_qualifying_sales|intcomma}}</td>
           <td>${{summary.average|floatformat:"0"|intcomma}}</td>
@@ -75,7 +77,7 @@
 
   <ul>
   <li>Lot Size: {{price_change.Property.area}} sqft</li>
-  <li>Proposed Lot Price per SqFt: ${{price_change.proposed_price|divide_by:price_change.Property.area|floatformat:"3"|intcomma}} 
+  <li>Proposed Lot Price per SqFt: ${{price_change.proposed_price|divide_by:price_change.Property.area|floatformat:"3"|intcomma}}
   <li>Assessed Land Value: ${{price_change.assessed_land_value|intcomma}}</li>
   <li>Assessed Improvement Value: ${{price_change.assessed_improvement_value|intcomma}}</li>
 </ul>
