@@ -45,8 +45,6 @@ def fetch_epp_inventory(request):
     tdelta = datetime.datetime.now() - datetime.datetime.fromtimestamp(mtime)
 
     if tdelta.total_seconds() > REFRESH_SECONDS:
-        print('File stale, re-fetching')
-
         workbook = xlsxwriter.Workbook(FILENAME)
         worksheet = workbook.add_worksheet('Available Landbank Inventory')
         sold_worksheet = workbook.add_worksheet('Sold Properties - Not Available')
@@ -77,7 +75,6 @@ def fetch_epp_inventory(request):
             pending_counter = 1
             bep_counter = 1
             for row,record in enumerate(json_obj['rows'], start=1):
-                print(record['currentStatus'])
                 if record['currentStatus'] == 'Available':
                     counter = available_counter
                     available_counter = available_counter + 1
