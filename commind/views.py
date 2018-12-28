@@ -129,3 +129,8 @@ class CommIndApplicationSuccessView(TemplateView):
 class PropertyListView(ListView):
     model = Property
     template_name = 'commind_property_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PropertyListView, self).get_context_data(**kwargs)
+        context['published_property_county'] = Property.objects.filter(published=True).count()
+        return context

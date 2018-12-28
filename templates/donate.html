@@ -2,6 +2,8 @@
 {% block head_title %}Donate :: Renew Indianapolis{% endblock head_title %}
 
 {% block content%}
+<div id="messages"></div>
+<div id="solicitation">
 <h1>donate to renew indianapolis</h1>
 <dl>
 <dt>Blight</dt> noun \ ˈblīt \
@@ -36,23 +38,69 @@ Our fundraising efforts provide a long-term, dedicated funding source for proper
   <div class="input-group input-group-md">
     <span class="input-group-addon">$</span>
     <input id='amount' type="text" class="form-control" aria-label="Amount">
-      <span class="input-group-addon">.00</span>
       <span class="input-group-btn">
         <button class="btn btn-primary" id="donateButton">Donate</button>
       </span>
   </div>
 </div>
 </p>
-<script src="https://checkout.stripe.com/checkout.js"></script>
 
+</div>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+{% csrf_token %}
+<script type="text/javascript">
+// using jQuery
+var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+</script>
 
 <script>
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+function update_messages(messages){
+  $("#messages").html("");
+  lvl = ''
+  $.each(messages, function (i, m) {
+    if (m.level == '25' ){
+      lvl = 'success'
+      $('#solicitation').hide(500)
+    }
+    else {
+      lvl = 'danger'
+    }
+    $("#messages").append("<div class='alert alert-"+lvl+"''>"+m.message+"</div>");
+  });
+}
+
   var handler = StripeCheckout.configure({
     key: '{{STRIPE_API_KEY}}',
     image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
     locale: 'auto',
     token: function(token) {
-
+      // call server with token,
+      $.ajax({
+        type: "POST",
+        url: "{% url 'donate' %}",
+        data: {
+          token: token.id,
+          amount: parseFloat(document.getElementById('amount').value)*100
+        },
+        success: function(data){
+          update_messages(data)
+        },
+        //dataType: dataType
+      });
     }
   });
 
@@ -65,7 +113,7 @@ Our fundraising efforts provide a long-term, dedicated funding source for proper
       description: 'Donation',
       zipCode: true,
       image: '/static/renew-logo-small.png',
-      amount: parseInt(document.getElementById('amount').value)*100
+      amount: parseFloat(document.getElementById('amount').value)*100
     });
     e.preventDefault();
   } });

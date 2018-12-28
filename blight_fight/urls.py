@@ -240,7 +240,8 @@ urlpatterns = [
         url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx'),
 
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
-        url(r'donate/$', DonateView.as_view()),
+        url(r'donate/$', DonateView.as_view(), name='donate'),
+
 
         # commind - Commercial Industrial URLS
         url(r'^media/documents/(?P<filename>.*)', view_document, name='view_commind_document'),
