@@ -247,8 +247,8 @@ SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
 CITY_URBAN_GARDENING_MANAGER_EMAIL = 'matt.mosier@indy.gov' # notified in closings app if city owned urban garden license property sells
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
-BLC_MANAGER_EMAIL = 'chris.hartley@renewindianapolis.org'
-SEND_BLC_CLOSED_NOTIFICATION_EMAIL = True
+BLC_MANAGER_EMAIL = 'chris.hartley@renewindianapolis.org, o.brownlee@renewindianapolis.org'
+SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL = True
 
 # Production settings are kept in a separate file, settings_production.py
 # which overrides db, email, secret key, etc with production values
