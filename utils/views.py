@@ -10,7 +10,6 @@ from django.http import JsonResponse
 
 class DonateView(TemplateView):
     template_name = 'donate.html'
-#    http_method_names = ['post','get']
 
     def get_context_data(self, **kwargs):
         context = super(DonateView, self).get_context_data(**kwargs)
@@ -21,8 +20,6 @@ class DonateView(TemplateView):
         token = request.POST.get('token')
         amount = request.POST.get('amount')
         stripe.api_key = settings.STRIPE_SECRET_API_KEY
-
-        print("Amount: {}".format(amount,))
         try:
         # Use Stripe's library to make requests...
             charge = stripe.Charge.create(
