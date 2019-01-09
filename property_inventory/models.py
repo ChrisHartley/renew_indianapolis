@@ -117,10 +117,13 @@ class Property(models.Model):
     hhf_demolition = models.BooleanField(default=False, help_text="Property was demolished through Hardest Hit Funds/Blight Elimination Program, and may have restrictions on end use.",
         verbose_name="Property was demolished through Hardest Hit Funds/Blight Elimination Program")
     vacant_lot_eligible = models.BooleanField(default=False, help_text="Property is eligible for sale through the vacant lot program.")
+    future_development_program_eligible = models.BooleanField(default=False, help_text="Property is eligible for sale through the Future Development Lot program.")
+
     short_legal_description = models.CharField(max_length=2048, blank=True)
     #slug = AutoSlugField(always_update=True, unique=True, populate_from=lambda instance: instance.streetAddress + instance.parcel)
 
     acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired')
+    renew_acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired by Renew')
     buyer_application = models.ForeignKey('applications.Application', null=True, blank=True, help_text='The final buyer application.')
 
     property_inspection_group = models.CharField(blank=True, max_length=10)

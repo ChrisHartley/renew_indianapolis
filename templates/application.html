@@ -40,12 +40,6 @@ function numberWithCommas(x) {
 }
 
 function check_homestead_only_property(){
-	if ($('#id_application_type').val() != '4'){
-		$('#vacant_lot_coming_soon').show();
-	}
-	else{
-		$('#vacant_lot_coming_soon').hide();
-	}
 	if ($('#id_application_type').val() != '1'){
 			if ( $('#homestead_only').text() == 'Yes'){
 				$('#homestead_only_warning').show();
@@ -87,6 +81,8 @@ function get_property_attributions(){
 			$( "#status" ).text(data[0].fields.status);
 			$( "#sidelot_eligible" ).text(boolean_to_yesno(data[0].fields.sidelot_eligible));
 			$( "#vacant_lot_eligible" ).text(boolean_to_yesno(data[0].fields.vacant_lot_eligible));
+			$( "#fdl_eligible" ).text(boolean_to_yesno(data[0].fields.future_development_program_eligible));
+
 			$( "#homestead_only" ).text(boolean_to_yesno(data[0].fields.homestead_only));
 			$( "#price" ).text('$'+numberWithCommas(data[0].fields.price));
 		//	$( "#nsp_boolean" ).text(boolean_to_yesno(data[0].fields.nsp));
@@ -94,18 +90,6 @@ function get_property_attributions(){
 			check_homestead_only_property();
 			check_bep_sidelot();
 
-/*
-			if (data[0].fields.nsp == true) {
-				$( "#nsp" ).show();
-				if ($('#id_is_rental').val() == 'True'){
-					//$('#div_id_nsp_income_qualifier').show(400);
-				}
-			}
-			else {
-				$( "#nsp" ).hide();
-				$('#div_id_nsp_income_qualifier').hide();
-			}
-			*/
 		});
 	}
 }
@@ -116,31 +100,44 @@ function showAppropriateSections(value){
 		$('.standard-app').hide(400);
 		$('.homestead-app').hide(400);
 		$('.vacantlot-app').hide(400);
+		$('.fdl-app').hide(400);
 		$('.sidelot-app').show(400);
 	}
 	if (value === '2') { // 2 = standard app
 		$('.homestead-app').hide(400);
 		$('.sidelot-app').hide(400);
 		$('.vacantlot-app').hide(400);
+		$('.fdl-app').hide(400);
 		$('.standard-app').show(400);
 	}
 	if (value === '1') { // 1 = homestead app
 		$('.standard-app').hide(400);
 		$('.sidelot-app').hide(400);
 		$('.vacantlot-app').hide(400);
+		$('.fdl-app').hide(400);
 		$('.homestead-app').show(400);
 	}
 	if (value === '4') { // 4 = vacant lot app
-		$('.standard-app').hide();
-		$('.homestead-app').hide();
-		$('.sidelot-app').hide();
+		$('.standard-app').hide(400);
+		$('.homestead-app').hide(400);
+		$('.sidelot-app').hide(400);
+		$('.fdl-app').hide(400);
 		$('.vacantlot-app').show(400);
+	}
+	if (value === '5') { // 5 = Future Development Lot (FDL) app
+		$('.standard-app').hide(400);
+		$('.homestead-app').hide(400);
+		$('.sidelot-app').hide(400);
+		$('.vacantlot-app').hide(400);
+		$('.fdl-app').show(400);
+
 	}
 	if (value === '') { // initial default
 		$('.standard-app').hide();
 		$('.homestead-app').hide();
 		$('.sidelot-app').hide();
 		$('.vacantlot-app').hide();
+		$('.fdl-app').hide();
 		}
 
 
@@ -166,9 +163,7 @@ $(function() {
 
 $(function(){
 	showAppropriateSections($('#id_application_type').val());
-//	$('#div_id_nsp_income_qualifier').hide();
 	get_property_attributions();
-//	check_homestead_only_property();
 });
 
 
@@ -180,23 +175,8 @@ $('#id_application_type').change(function() {
 
 $('#id_Property').change(function(){
 	get_property_attributions();
-	//check_bep_property();
-	//check_homestead_only_property();
 
 });
-// If a property is a rental and NSP then we need to show income qualification question.
-/*
-$('#id_is_rental').change(function(){
-	if ($('#id_is_rental').val() == 'True'){
-		if ( $( "#nsp" ).is(":visible") ){
-		//	$('#div_id_nsp_income_qualifier').show(400);
-		}
-	}
-	else{
-		$('#div_id_nsp_income_qualifier').hide(400);
-	}
-});
-*/
 
 $('#id_Property').select2({
 	placeholder: "Enter address, street name, parcel number or select from dropdown"

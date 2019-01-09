@@ -77,7 +77,6 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
     renew_owned_properties = django_filters.MultipleChoiceFilter(choices=BOOL_CHOICES, label='Exclude Renew Owned Properties', method="filter_renew_owned_properties")
     hhf_properties = django_filters.MultipleChoiceFilter(choices=BOOL_CHOICES, label='Exclude Hardist Hit Fund Demolition properties', method="filter_hhf_properties")
 
-
 # new vs old inventory
 # duplex vs sfr vs other
 

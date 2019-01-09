@@ -47,6 +47,13 @@ class ApplicationForm(forms.ModelForm):
         super(ApplicationForm, self).__init__(*args, **kwargs)
         self.fields['organization'].queryset = Organization.objects.filter(
             user=user).order_by('name')
+
+        valid_application_types = ((None, '---------'),)
+        for app_type,description in Application.APPLICATION_TYPES:
+            if app_type in Application.ACTIVE_APPLICATION_TYPES:
+                valid_application_types = valid_application_types + ((app_type,description),)
+        self.fields['application_type'].choices = valid_application_types
+
         self.helper = FormHelper()
         self.helper.form_id = 'ApplicationForm'
         self.helper.form_class = 'form-horizontal'
@@ -83,25 +90,23 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Structure Type: </div><div id="structureType" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Sidelot Eligible: </div><div id="sidelot_eligible" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Vacant Lot Eligible: </div><div id="vacant_lot_eligible" class="form-control-static col-lg-6"></div></div>'),
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Future Development Lot Sales Program Eligible: </div><div id="fdl_eligible" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Price: </div><div id="price" class="form-control-static col-lg-6"></div></div>'),
-                #HTML('<div class="form-group"><div class="control-label col-lg-4">NSP: </div><div id="nsp_boolean" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Homestead Only: </div><div id="homestead_only" class="form-control-static col-lg-6"></div></div>'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Blight Elimination Program (demolition): </div><div id="bep_property" class="form-control-static col-lg-6"></div></div>'),
-                #HTML('<div id="nsp" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">NSP</h3></div><div class="panel-body">This property is a Neighborhood Stabilization Program (NSP) property. NSP properties were originally purchased by the City using special federal funds and thus development of these properties carry additional requirements. You can find out more about these requirements, and how and when to submit the required documents <a href="//www.renewindianapolis.org/nsp-requirements/" target="_blank">here</a>. Additionally, per City of Indianapolis policy, NSP properties may not be used for rental.</div></div>'),
                 css_class='well'
             ),
             Fieldset(
                 'Application Type',
                 Div('application_type'),
                 HTML('<div id="homestead_only_warning" class="panel panel-danger" style="display:none"><div class="panel-heading"><h3 class="panel-title">Homesead Only</h3></div><div class="panel-body">The property you selected is only available for homestead (owner occupant) applications.</div></div>'),
-                HTML('<div id="bep_explanation" class="panel panel-warning" style="display:none"><div class="panel-heading"><h3 class="panel-title">Blight Elimination Program Sidelot Moratorium</h3></div><div class="panel-body">This property is owned by Renew Indianapolis through the Blight Elimination Program. The Renew Indianapolis Board of Directors decided at their September 7th, 2017 program to put a temporary moratorium on the sale of BEP lots through the sidelot program. Please check back in Spring, 2018 for an update on this program.</div></div>'),
+                HTML('<div id="bep_explanation" class="panel panel-warning" style="display:none"><div class="panel-heading"><h3 class="panel-title">Blight Elimination Program Sidelot Moratorium</h3></div><div class="panel-body">This property is owned by Renew Indianapolis through the Blight Elimination Program. The Renew Indianapolis Board of Directors decided at their September 7th, 2017 program to put a temporary moratorium on the sale of BEP lots through the sidelot program. Please check back for an update on this program.</div></div>'),
                 css_class='well'
             ),
             Fieldset(
                 'Ownership and Use',
                 Field('long_term_ownership'),
                 Field('is_rental'),
-                #Field('nsp_income_qualifier'),
                 css_class='standard-app well'
             ),
             Fieldset(
@@ -127,28 +132,24 @@ class ApplicationForm(forms.ModelForm):
                 Field('vacant_lot_end_use'),
                 css_class='vacantlot-app well'
             ),
+            Fieldset(
+                'Future Development Lot Application Questions',
+            #    Field('vacant_lot_end_use'),
+                css_class='fdl-app well'
+            ),
 
             Fieldset(
                 'Uploaded Files',
                 HTML('<p>Before your application can be submitted for review you must attach both a scope of work and proof of funds, as referenced earlier. You can upload those files here.</p>'),
 
-                HTML("""<p>Previously uploaded files:<ul>
-                        {% for file in uploaded_files_all %}
-                            <li>{{ file }} <img src="{{STATIC_URL}}admin/img/icon-deletelink.svg" id='uploadedfile_{{ file.id }}' class='uploaded_file_delete' alt='[X]'></img></li>
-                            {% empty %}
-                                <li>No files are associated with this application.</li>
-                        {% endfor%}
-                        </ul>
-                    </p>"""),
-
-
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Scope of Work</div><div id="sow-file-uploader" class="form-control-static col-lg-6">Drop your scope of work file here to upload</div>'),
                 HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://build.renewindianapolis.org/static/Scope-of-Work-Template.xls" target="_blank">spreadsheet</a> or <a href="https://build.renewindianapolis.org/static/Scope-of-Work-Template.pdf" target="_blank">printable template</a> as a starting point.</div></div>'),
 
-                HTML('<div class="form-group"><div class="control-label col-lg-4">Elevation View</div><div id="elevation-file-uploader" class="form-control-static col-lg-6">Drop your elevation view file here to upload</div>'),
-                HTML('<div class="form-group"><div class="control-label col-lg-4">Site Plan</div><div id="siteplan-file-uploader" class="form-control-static col-lg-6">Drop your site plan file here to upload</div>'),
-                HTML('<div class="form-group"><div class="control-label col-lg-4">Floor Plan</div><div id="floorplan-file-uploader" class="form-control-static col-lg-6">Drop your floor plan file here to upload</div>'),
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Elevation View</div><div id="elevation-file-uploader" class="form-control-static col-lg-6">Drop your elevation view file here to upload</div></div>'),
 
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Site Plan</div><div id="siteplan-file-uploader" class="form-control-static col-lg-6">Drop your site plan file here to upload</div></div>'),
+
+                HTML('<div class="form-group"><div class="control-label col-lg-4">Floor Plan</div><div id="floorplan-file-uploader" class="form-control-static col-lg-6">Drop your floor plan file here to upload</div>'),
                 HTML('<div class="help-block col-lg-6 col-lg-offset-4">If you are proposing new construction on a vacant lot you must upload an site plan, elevation view and floor plan of your proposed construction.</div></div>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Proof of Funds</div><div id="pof-file-uploader" class="form-control-static col-lg-6">Drop your proof of funds file here to upload</div>'),
@@ -170,6 +171,15 @@ class ApplicationForm(forms.ModelForm):
                             </ol></div></div>"""
                      ),
                 HTML('<p>To delete an uploaded file, click "Save Application", then scroll down and click the red "X" after the file name.</p>'),
+
+                HTML("""<p>Previously uploaded files:<ul>
+                        {% for file in uploaded_files_all %}
+                            <li>{{ file }} <img src="{{STATIC_URL}}admin/img/icon-deletelink.svg" id='uploadedfile_{{ file.id }}' class='uploaded_file_delete' alt='[X]'></img></li>
+                            {% empty %}
+                                <li>No files are associated with this application.</li>
+                        {% endfor%}
+                        </ul>
+                    </p>"""),
                 css_class='standard-app homestead-app well'),
             FormActions(
                 #Button('cancel', 'Cancel'),
@@ -205,7 +215,6 @@ class ApplicationForm(forms.ModelForm):
 
         long_term_ownership = cleaned_data.get('long_term_ownership')
         is_rental = cleaned_data.get('is_rental')
-        #nsp_income_qualifier = cleaned_data.get('nsp_income_qualifier')
         property_selected = cleaned_data.get('Property')
         proof_of_funds = cleaned_data.get('proof_of_funds')
         sidelot_eligible = cleaned_data.get('sidelot_eligible', None)
@@ -294,16 +303,36 @@ class ApplicationForm(forms.ModelForm):
             else:
                 if property_selected is not None and property_selected.vacant_lot_eligible != True:
                     self.add_error('application_type', ValidationError(
-                        'The property you have selected is not eligible for the '+
-                        'vacant lot program. Properties in some locations are '+
-                        'not eligible for sale under the vacant lot program. '+
-                        'These properties are available for development under our '+
-                        'standard or homestead programs.'))
+                    """
+                        The property you have selected is not eligible for the
+                        vacant lot program. Properties in some locations are
+                        not eligible for sale under the vacant lot program.
+                        These properties are available for development under our
+                        standard or homestead programs.
+                        """))
                 else:
                     if vacant_lot_end_use == '':
                         self.add_error('vacant_lot_end_use', ValidationError(
                         'Please answer this question.'
                         ))
+
+        if Application.FDL == application_type:
+            if property_selected is not None and property_selected.structureType != "Vacant Lot":
+                self.add_error('application_type', ValidationError(
+                    'The property you have selected is not a vacant lot and hence is ineligible for our future development lot sales program.'))
+            else:
+                if property_selected is not None and property_selected.future_development_program_eligible != True:
+                    self.add_error('application_type', ValidationError(
+                    """
+                        The property you have selected is not eligible for the
+                        Future Development Lot (FDL) sales program. Properties in
+                        some locations are not eligible for sale under the
+                        Future Development Lot (FDL) sales program.
+                        These properties are available for development under our
+                        standard or homestead programs."""
+                        ))
+                else:
+                    pass
 
         if Application.HOMESTEAD == application_type or Application.STANDARD == application_type:
             msg = "This is a required field."
@@ -346,8 +375,8 @@ class ApplicationForm(forms.ModelForm):
                 #if is_rental and property_selected and property_selected.nsp:
                 #    self.add_error('is_rental', ValidationError(
                 #        "Per City of Indianapolis policy, NSP properties may not be used as rental properties."))
-                #if property_selected is not None and property_selected.homestead_only:
-                #    self.add_error('application_type', ValidationError(
-                #        'The property you have selected is marked "homestead only" but you indicated a Standard application.'))
+                if property_selected is not None and property_selected.homestead_only:
+                   self.add_error('application_type', ValidationError(
+                       'The property you have selected is marked "homestead only" but you indicated a Standard application. This property can only be sold to an owner occupant.'))
 
         return len(self.errors) == 0

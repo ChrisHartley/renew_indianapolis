@@ -10,6 +10,8 @@ from django.conf import settings
 import datetime
 from dateutil.rrule import *
 from django.utils import timezone # use this for timezone aware times
+from django.core.mail import send_mail
+
 
 @deconstructible
 class UploadToApplicationDir(object):
@@ -37,13 +39,19 @@ class Application(models.Model):
     STANDARD = 2
     SIDELOT = 3
     VACANT_LOT = 4
+    FDL = 5
 
     APPLICATION_TYPES = (
         (HOMESTEAD, 'Homestead - Applicants will use this property as their primary residence.'),
         (STANDARD, 'Standard - Applicants intend to rent or sell the property after completing the proposed project.'),
         (SIDELOT, 'Sidelot - lot is adjacent to owner occupied property'),
-        (VACANT_LOT, 'Vacant Lot - Properties that have been in city inventory for an extended period of time; no requirement to build.')
+        (VACANT_LOT, 'Vacant Lot - Properties that have been in city inventory for an extended period of time; no requirement to build.'),
+        (FDL, 'Future Development Lot - Vacant lots with no requirement for immediate development.')
     )
+
+
+    # Application types to show to the user as active choices
+    ACTIVE_APPLICATION_TYPES = (HOMESTEAD, STANDARD, FDL)
 
     WITHDRAWN_STATUS = 1
     HOLD_STATUS = 2
@@ -93,7 +101,12 @@ class Application(models.Model):
         verbose_name='Application Type',
         null=True,
         blank=True,
-        help_text="If you will live in this property as your primary residence chose Homestead, if you will rent or sell chose Standard. If this is a vacant lot and you have no immediate plans for development then chose Vacant Lot. If you are applying through our sidelot program as an adjoining neighbor then chose Sidelot."
+        help_text="""If you will live in this property as your primary
+            residence chose Homestead, if you will rent or sell chose Standard.
+            Some, but not all, of our vacant lots are available through the
+            Future Development Lot sales program, which does not require
+            immediate development. The sidelot and vacant lot sales programs are
+            no longer available."""
     )
 
     status = models.IntegerField(
@@ -401,6 +414,11 @@ class MeetingLink(models.Model):
                         new_closing = closing(application=self.application)
                         new_closing.save()
                         # email applicant with congratulatory email and URL to pay processing fee
+
+                # If a property is listed in BLC, notify BLC manager if necessary to mark sale pending.
+                if prop.blc_listing.count() > 0 and self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
+                        send_mail('BLC listed property pending - {}'.format(prop,), 'Property {} is BLC listed and was approved at the Review Committee. Update BLC as necessary.'.format(prop,), 'info@renewindianapolis.org',
+                    [settings.BLC_MANAGER_EMAIL], fail_silently=False)
 
             # If application is rejected at the Board or MDC level then change the status to Available.
             # If we were to use this logic at the Review Committee level where there could be competing applications
