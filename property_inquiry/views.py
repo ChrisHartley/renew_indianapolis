@@ -76,31 +76,6 @@ def property_inquiry_confirmation(request, id):
         'Property': inquiry.Property,
     })
 
-@method_decorator(staff_member_required, name='dispatch')
-class IdentifyClusters(View):
-    template_name = 'property_inquiry/clusters.html'
-    def get(self, request):
-        params = {
-            'distance': int(request.GET.get('distance', 2640)),
-            'age': int(request.GET.get('age', 90)),
-            'min_points': int(request.GET.get('min_points', 1)),
-        }
-        p_clusters = propertyInquiry.objects.raw("""select pi.*, st_clusterdbscan(st_transform(geometry,2965), eps:=%(distance)s, minPoints :=%(min_points)s) over () as cid from property_inventory_property p left join property_inquiry_propertyinquiry pi on pi."Property_id" = p.id where pi.status is null and timestamp >= now() - interval '%(age)s days' order by cid""", params)
-
-        return render(request, self.template_name, {'clusters':p_clusters, 'params': params})
-
-    def post(self, request):
-        ids = request.POST.get('pi_ids').split()
-        date = request.POST.get('date')
-        time = request.POST.get('time')
-        for id in ids:
-            pi = propertyInquiry.objects.get(id=id)
-            pi.status = propertyInquiry.USER_CONTACTED_STATUS
-            pi.showing_scheduled = datetime.datetime.strptime('{} {}'.format(date,time), "%Y-%m-%d %H:%M")
-            pi.save()
-            messages.info(request, '{} updated'.format(pi,))
-        return HttpResponseRedirect(reverse('identify_pi_clusters'))
-
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
 from django.utils.timezone import now
@@ -114,7 +89,7 @@ class CreateIcsFromShowing(View):
         e = Event()
         c.add('prodid', '-//Renew Indianapolis//Property Showings//EN')
         c.add('version', '2.0')
-        e.add('summary', 'Proposed Property Showing for {}'.format(obj.Property,).title() )
+        e.add('summary', '{} - Proposed Property Showing'.format(obj.Property.streetAddress,).title() )
         e.add('uid', obj.id)
         e.add('dtstart', obj.datetime)
         e.add('dtend', obj.datetime+timedelta(minutes=30))

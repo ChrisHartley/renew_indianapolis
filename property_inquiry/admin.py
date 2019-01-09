@@ -21,6 +21,8 @@ class PropertyInquiryYearListFilter(SimpleListFilter):
             ('2016','2016'),
             ('2017','2017'),
             ('2018','2018'),
+            ('2019','2019'),
+
         )
     def queryset(self, request, queryset):
         if self.value():
@@ -92,14 +94,35 @@ class propertyInquiryAdmin(admin.ModelAdmin):
 
 class PropertyInquiryMapAdmin(propertyInquiryAdmin):
     change_list_template = 'admin/property_inquiry/change_list_map.html'
+    def changelist_view(self, request, extra_context=None):
+            extra_context = extra_context or {}
+            #response.context_data['cl'].queryset
+            extra_context['popup_link'] = """<a target="_blank" href="/admin/property_inquiry/propertyshowing/add/?Property='+details['id']+'">Create a property showing.</a>"""
+            return super(PropertyInquiryMapAdmin, self).changelist_view(
+                request, extra_context=extra_context
+            )
 
+
+def batch_schedule_email_template__admin_action(self, request, queryset):
+
+
+    return batch_update_view(
+        model_admin=self,
+        request=request,
+        queryset=queryset,
+        field_names=['showing_scheduled','status','notes'],
+    )
+batch_schedule_email_template__admin_action.short_description = "Batch Schedule Email Template"
 
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
 class propertyShowingAdmin(admin.ModelAdmin):
     search_fields = ('Property__streetAddress', 'Property__parcel',)
-    readonly_fields = ('create_ics','create_email_template')
+    readonly_fields = ('create_ics','create_email_template', 'property_status')
     form = propertyShowingAdminForm
+
+    def property_status(self, obj):
+        return obj.Property.status
 
     def create_ics(self, obj):
         if obj.pk is None:
