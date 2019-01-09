@@ -127,14 +127,14 @@ class ApplicationForm(forms.ModelForm):
                 Field('sidelot_eligible'),
                 css_class='sidelot-app well'
             ),
-            Fieldset(
-                'Vacant Lot End Use',
-                Field('vacant_lot_end_use'),
-                css_class='vacantlot-app well'
-            ),
+            # Fieldset(
+            #     'Vacant Lot End Use',
+            #     Field('vacant_lot_end_use'),
+            #     css_class='vacantlot-app well'
+            # ),
             Fieldset(
                 'Future Development Lot Application Questions',
-            #    Field('vacant_lot_end_use'),
+                Field('vacant_lot_end_use'),
                 css_class='fdl-app well'
             ),
 
