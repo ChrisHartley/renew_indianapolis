@@ -60,6 +60,7 @@ class propertyShowing(models.Model):
     signin_sheet = models.FileField(
         upload_to=save_location,
         max_length=512,
+        blank=True,
     )
 
     class Meta:
