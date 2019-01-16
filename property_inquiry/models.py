@@ -63,8 +63,11 @@ class propertyShowing(models.Model):
         blank=True,
     )
 
+    google_calendar_event_id = models.CharField(blank=True, null=True, max_length=1024, help_text='Google Calendar Event ID, if created')
+
     class Meta:
         verbose_name_plural = "property showings"
+        ordering = ['-datetime']
 
     def save(self, *args, **kwargs):
         super(propertyShowing, self).save(*args, **kwargs)

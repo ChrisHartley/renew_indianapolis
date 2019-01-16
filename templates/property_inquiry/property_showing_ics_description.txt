@@ -1,4 +1,5 @@
 Property information:
+{% for property in properties %}
 * {{property.streetAddress}}, Indianapolis, IN {{property.zipcode}}
 ** List Price: ${{property.price}}
 ** Parcel: {{property.parcel}}
@@ -7,8 +8,8 @@ Property information:
 ** Acquisition Date: {{property.acquisition_date}}
 ** Renew Owned: {{property.renew_owned}}
 ** Photo link: https://build.renewindianapolis.org{% url 'property_photos' parcel=property.parcel %}
-
+{% endfor %}
 Requestors:
-{% for inquiry in inquiries %}
-* {{inquiry.user.first_name}} {{inquiry.user.last_name}} - {{inquiry.user.email}} {{inquiry.user.profile.phone_number}}
+{% for user in users %}
+* {{user.first_name}} {{user.last_name}} - {{user.email}} {{user.profile.phone_number}}
 {% endfor %}

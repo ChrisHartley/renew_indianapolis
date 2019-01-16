@@ -1,0 +1,42 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{%block center%}
+<code>
+{% for object in object_list %}
+  {% for inquiry in object.inquiries.all%}{{inquiry.user.email}}; {% endfor %}
+{% endfor %}
+</code>
+<p>
+{% for object in object_list%}{{object.Property.streetAddress}}{% if not forloop.last%}, {%endif%}{%endfor%}
+- Proposed Property Showing on {% for object in object_list %} {% if forloop.first %}{{object.datetime|date:"SHORT_DATE_FORMAT"}}{%endif%}{%endfor%}
+</p>
+<p>
+Greetings, thank you for your recent inquiry regarding
+{% if object_list.count > 1 %}one or more of the properties{%else%}this property{%endif%}
+at {% for object in object_list%}{{object.Property.streetAddress}}{% if not forloop.last%}, {%endif%}{%endfor%}.
+</p>
+<p>
+We are showing {% if object_list.count > 1 %}these properties{%else%}this property{%endif%}
+{% for object in object_list %} {% if forloop.first %} {{object.datetime|date:"l, F jS"}}{%endif%}{%endfor%}
+and would like to invite you to join us.
+</p>
+<p>
+Please let me know if you will be able to attend as I may cancel the showing if I don't hear from you.
+</p>
+<p>
+Here are the details:
+<ol>
+{% for object in object_list%}
+  <li><ul class="list-unstyled">
+
+    <li><strong>{{object.Property.streetAddress}} Indianapolis, IN {{object.Property.zipcode}}</strong></li>
+    <li>{{object.datetime}}</li>
+    <li>Parcel: {{object.Property.parcel}}</li>
+    <li>Price: ${{object.Property.price|intcomma}}</li>
+    {% if object.Property.homestead_only%}<li>Restricted to owner occupants only</li> {% endif %}
+  </ul></li>
+{% endfor %}
+</ol>
+Thank you,
+</p>
+{%endblock%}

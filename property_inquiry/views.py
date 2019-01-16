@@ -76,31 +76,96 @@ def property_inquiry_confirmation(request, id):
         'Property': inquiry.Property,
     })
 
+
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from httplib2 import Http
+from oauth2client import file, client, tools
+import logging
+def publish_to_public_calendar(event, pk):
+    calendar_id = 'renewindianapolis.org_pmmt30l2g1lm606tl88gt6sc04@group.calendar.google.com'
+    e = {
+        'summary': event['summary'],
+        'location': event['location'],
+#        'description': event['description'], # not published because it includes contact information
+        'start': {
+            'dateTime': event['dtstart'].dt.isoformat(),
+            'timeZone': '',
+        },
+        'end': {
+            'dateTime': event['dtend'].dt.isoformat(),
+            'timeZone': '',
+        }
+
+    }
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+    store = file.Storage('blight_fight/token.json')
+    creds = store.get()
+    logger = logging.getLogger(__name__)
+
+    if not creds or creds.invalid:
+        # this obviously won't work since there is no browser to open. Need
+        # to log as an error
+#        flow = client.flow_from_clientsecrets('blight_fight/google_api_credentials.json', SCOPES)
+#        creds = tools.run_flow(flow, store)
+        logger.error('Error with Google API token.json - creds not found or invalid')
+    for i in range(5):
+        try:
+            service = build('calendar', 'v3', http=creds.authorize(Http()))
+            e = service.events().insert(calendarId=calendar_id, body=e).execute()
+        except HttpError as e:
+            time.sleep(2)
+            logger.warning('HttpError calling Google Calendar API')
+            continue
+        else:
+            ps = propertyShowing.objects.get(id=pk)
+            ps.google_calendar_event_id = e.get('id')
+            ps.save()
+        break
+
+
+
+
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
+from operator import itemgetter, attrgetter
+from itertools import groupby
 from django.utils.timezone import now
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 @method_decorator(staff_member_required, name='dispatch')
 class CreateIcsFromShowing(View):
     def get(self, request, pk):
+
         obj = propertyShowing.objects.get(pk=pk)
+        data = sorted(obj.inquiries.all(), key=attrgetter('user'))
+        props = []
+        props_addresses = []
+        for k,g in groupby(data, attrgetter('Property')):
+            props.append(k)
+            props_addresses.append(k.streetAddress)
+        data = sorted(obj.inquiries.all(), key=attrgetter('user'))
+        users = []
+        for k,g in groupby(data, attrgetter('user')):
+            users.append(k)
+
         c = Calendar()
         e = Event()
         c.add('prodid', '-//Renew Indianapolis//Property Showings//EN')
         c.add('version', '2.0')
-        e.add('summary', '{} - Proposed Property Showing'.format(obj.Property.streetAddress,).title() )
+        e.add('summary', '{} - Property Showing'.format(','.join(props_addresses),).title() )
         e.add('uid', obj.id)
         e.add('dtstart', obj.datetime)
         e.add('dtend', obj.datetime+timedelta(minutes=30))
         e.add('dtstamp', now())
-        e.add('location', '{0}, Indianapolis, IN {1}'.format(obj.Property.streetAddress, obj.Property.zipcode))
+        e.add('location', '{0}, Indianapolis, IN'.format(','.join(props_addresses),))
         people = []
         organizer = vCalAddress('MAILTO:{}'.format(request.user.email,))
         organizer.params['cn'] = vText(u'{} {}'.format(request.user.first_name, request.user.last_name))
         e.add('organizer', organizer, encode=0)
-        for showing in obj.inquiries.all():
-            u = showing.user
+
+
+        for u in users:
             try:
                 people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
             except ApplicantProfile.DoesNotExist:
@@ -110,29 +175,46 @@ class CreateIcsFromShowing(View):
     #        e.add('attendee', attendee, encode=0)
 
         for staff in settings.COMPANY_SETTINGS['city_staff']:
-        #for staff in User.objects.filter(group__exact='City Staff'):
-        #   a = vCalAddress('MAILTO:{}'.format(staff.email,))
-        #   a.params['cn'] = vText('{} {}'.format(staff.first_name, staff.last_name) )
             a = vCalAddress('MAILTO:{}'.format(staff['email'],))
             a.params['cn'] = vText(staff['name'])
             e.add('attendee', a, encode=0)
-        description = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'property': obj.Property, 'inquiries': obj.inquiries.all()})
+        description = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': props, 'users': users})
         e.add('description', description )
         e.add('status', 'TENTATIVE')
+
         c.add_component(e)
-        print(c.to_ical())
+        #print(c.to_ical())
+        if obj.google_calendar_event_id == '' or obj.google_calendar_event_id is None:
+            publish_to_public_calendar(e, pk)
         response = HttpResponse(c.to_ical(), content_type="text/calendar")
         response['Content-Disposition'] = 'attachment; filename={0}.ics'.format(slugify(obj),)
         return response
 
-from django.views.generic import DetailView
-@method_decorator(staff_member_required, name='dispatch')
-class propertyShowingEmailTemplateView(DetailView):
-    template_name = "property_inquiry/property_showing_schedule_email.txt"
-    model = propertyShowing
+
 
 from django.views.generic import ListView
 @method_decorator(staff_member_required, name='dispatch')
 class propertyShowingListEmailTemplateView(ListView):
     template_name = "property_inquiry/property_showing_schedule_email_list.txt"
     model = propertyShowing
+    def get_queryset(self):
+        pks = self.kwargs['pks'].split(',')
+        return propertyShowing.objects.filter(pk__in=pks).order_by('datetime')
+
+    def get_context_data(self, **kwargs):
+        context = super(propertyShowingListEmailTemplateView, self).get_context_data(**kwargs)
+        context['title'] = 'Showing Email'
+        return context
+
+
+
+from django.views.generic import DetailView
+@method_decorator(staff_member_required, name='dispatch')
+class propertyShowingReleaseView(DetailView):
+    template_name = "property_inquiry/release.html"
+    model = propertyShowing
+    context_object_name = 'showing'
+    def get_context_data(self, **kwargs):
+        context = super(propertyShowingReleaseView, self).get_context_data(**kwargs)
+        context['title'] = 'Showing Release'
+        return context

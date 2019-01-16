@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+{% block breadcrumbs %}{{ block.super }}{% endblock breadcrumbs%}
+{% block content %}
+<p>
+<ul>
+{% for object in objects %}
+<li>{{object}} <a href="{% url 'property_inquiry_create_showing_ics' object.pk %}">Add to Calendar</a> </li>
+{% endfor %}
+</ul>
+</p>
+<p>
+Invitation Email Template
+<a target="_blank" href="{% url 'property_inquiry_showing_emails' object_pks %}">Show template</a>
+</p>
+{% endblock content %}

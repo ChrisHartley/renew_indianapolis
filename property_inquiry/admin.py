@@ -116,10 +116,13 @@ batch_schedule_email_template__admin_action.short_description = "Batch Schedule 
 
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
+from django.shortcuts import render
+
 class propertyShowingAdmin(admin.ModelAdmin):
     search_fields = ('Property__streetAddress', 'Property__parcel',)
-    readonly_fields = ('create_ics','create_email_template', 'property_status')
+    readonly_fields = ('create_ics','create_email_template', 'property_status', 'google_calendar_event_id', 'show_release_template')
     form = propertyShowingAdminForm
+    actions = ['batch_calendar_and_email',]
 
     def property_status(self, obj):
         return obj.Property.status
@@ -130,16 +133,25 @@ class propertyShowingAdmin(admin.ModelAdmin):
         return mark_safe(
             u'<a target="_blank" href="{}">{}</a>'.format(
                 reverse('property_inquiry_create_showing_ics', kwargs={'pk': obj.pk}),
-                'Generate Calendar Event')
+                'Add to Calendar and Publish')
             )
     def create_email_template(self, obj):
         if obj.pk is None:
             return '-'
         return mark_safe(
             u'<a target="_blank" href="{}">{}</a>'.format(
-                reverse('property_inquiry_showing_email', kwargs={'pk': obj.pk}),
+                reverse('property_inquiry_showing_emails', args={obj.pk}),
                 'Generate Showing Email Template')
             )
+
+    def show_release_template(self, obj):
+        if obj.pk is None:
+            return '-'
+        return mark_safe(
+            u'<a target="_blank" href="{}">{}</a>'.format(
+                reverse('property_inquiry_showing_release', args={obj.pk}),
+                'Generate Sign-in Sheet and Release')
+        )
 
     def save_related(self, request, form, formsets, change):
         super(propertyShowingAdmin, self).save_related(request, form, formsets, change)
@@ -149,6 +161,19 @@ class propertyShowingAdmin(admin.ModelAdmin):
                 inquiry.status = propertyInquiry.USER_CONTACTED_STATUS
                 inquiry.showing_scheduled = form.instance.datetime
                 inquiry.save()
+
+
+    def batch_calendar_and_email(self, request, queryset):
+        return render(
+            request,
+            'admin/property_inquiry/showing_batch_calendar_and_email.html',
+            context={
+                'objects': queryset,
+                'object_pks': ','.join(str(e) for e in list(queryset.values_list('id', flat=True))),
+            }
+        )
+
+    batch_calendar_and_email.short_description = 'Create calendar and email invites'
 
 from django.db.models import Count, Sum, Min, Max
 from django.db.models.functions import Trunc

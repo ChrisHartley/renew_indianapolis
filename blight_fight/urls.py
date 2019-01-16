@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
-from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingEmailTemplateView
+from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingReleaseView, propertyShowingListEmailTemplateView
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
@@ -42,9 +42,10 @@ urlpatterns = [
 
         url(r'property_inquiry/create_ics/(?P<pk>[0-9]+)/$', CreateIcsFromShowing.as_view(),
            name='property_inquiry_create_showing_ics'),
-
-        url(r'property_inquiry/showing_email/(?P<pk>[0-9]+)/$', propertyShowingEmailTemplateView.as_view(),
-           name='property_inquiry_showing_email'),
+        url(r'property_inquiry/showing_emails/(?P<pks>(\d+(,\d+)*))/$', propertyShowingListEmailTemplateView.as_view(),
+           name='property_inquiry_showing_emails'),
+        url(r'property_inquiry/release_template/(?P<pk>[0-9]+)/$', propertyShowingReleaseView.as_view(),
+           name='property_inquiry_showing_release'),
 
 
 

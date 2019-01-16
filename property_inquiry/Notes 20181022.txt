@@ -1,0 +1,33 @@
+Remove end user rquestors from calendar invitation
+Add :
+Michelle,
+Mickey,
+Gib
+As attendees
+
+
+Property details to include in calendar invite:
+Quiet title complete
+Available sale program
+Link to pictures
+Acquisition date
+
+
+Change status to "Tenative" from BUSY
+
+
+Email:
+
+Generate email from batch process
+Separate email addresses by semi-colons on the notification email copy and paste field
+Show street addresses in Title Case
+Calibre font
+
+Show unique email addresses only, no duplicates, when doing batch email
+
+Remove "next" from date text so not "next Tuesday"
+
+Color code dots based on age
+Add satellite view option to map
+Add property photo to popup on map
+
