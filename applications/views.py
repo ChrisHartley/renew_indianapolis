@@ -323,7 +323,8 @@ class MDCCSVResponseMixin(object):
             writer.writerow(header)
             # Write the data from the context somehow
             #from applications.models import MeetingLink.APPROVED_STATUS
-            for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type').filter(application__Property__renew_owned__exact=False).filter(meeting_outcome=MeetingLink.SCHEDULED_STATUS):
+
+            for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type', 'application__Property__streetAddress', 'application__staff_sidelot_waiver_required').filter(application__Property__renew_owned__exact=False).filter(meeting_outcome=MeetingLink.SCHEDULED_STATUS):
                 application = meeting_link.application
 
                 # Price is locked at time of submission, but older apps might
