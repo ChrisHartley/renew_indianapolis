@@ -194,9 +194,19 @@ class lockboxAdmin(admin.OSMGeoAdmin):
     search_fields = ('Property__streetAddress','Property__parcel',)
 
 
+class PropertyMapAdmin(PropertyAdmin):
+    change_list_template = 'admin/property_inventory/change_list_map.html'
+    def changelist_view(self, request, extra_context=None):
+            extra_context = extra_context or {}
+            #response.context_data['cl'].queryset
+            #extra_context['popup_link'] = """<a target="_blank" href="/admin/property_inquiry/propertyshowing/add/?Property='+details['id']+'">Create a property showing.</a>"""
+            return super(PropertyMapAdmin, self).changelist_view(
+                request, extra_context=extra_context
+            )
+
 
 admin.site.register(price_change, price_changeAdmin)
-admin.site.register(Property, PropertyAdmin)
+#admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
 admin.site.register(take_back, take_backAdmin)
@@ -205,3 +215,4 @@ admin.site.register(featured_property)
 admin.site.register(blc_listing, blc_listingAdmin)
 admin.site.register(yard_sign, yard_signAdmin)
 admin.site.register(lockbox, lockboxAdmin)
+admin.site.register(Property, PropertyMapAdmin)

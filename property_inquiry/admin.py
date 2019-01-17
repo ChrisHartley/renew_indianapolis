@@ -8,6 +8,7 @@ from django.contrib.admin import SimpleListFilter
 from property_condition.models import ConditionReport
 from applications.models import Application
 from property_inventory.models import Property
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 # add additional filter, year, and allow null status filter
 class PropertyInquiryYearListFilter(SimpleListFilter):
@@ -114,6 +115,12 @@ def batch_schedule_email_template__admin_action(self, request, queryset):
     )
 batch_schedule_email_template__admin_action.short_description = "Batch Schedule Email Template"
 
+# class propertyInquiryInlineAdmin(admin.StackedInline):
+#         model = propertyInquiry.showings.through
+#         fields =  ('propertyinquiry',)
+#         exclude = ()
+#         extra = 0
+
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
 from django.shortcuts import render
@@ -123,7 +130,8 @@ class propertyShowingAdmin(admin.ModelAdmin):
     readonly_fields = ('create_ics','create_email_template', 'property_status', 'google_calendar_event_id', 'show_release_template')
     form = propertyShowingAdminForm
     actions = ['batch_calendar_and_email',]
-
+#    inlines = [propertyInquiryInlineAdmin,]
+    #exclude = ('inquiries',)
     def property_status(self, obj):
         return obj.Property.status
 
@@ -132,7 +140,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
             return '-'
         return mark_safe(
             u'<a target="_blank" href="{}">{}</a>'.format(
-                reverse('property_inquiry_create_showing_ics', kwargs={'pk': obj.pk}),
+                reverse('property_inquiry_create_showing_ics', kwargs={'pks': obj.pk}),
                 'Add to Calendar and Publish')
             )
     def create_email_template(self, obj):
@@ -140,7 +148,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
             return '-'
         return mark_safe(
             u'<a target="_blank" href="{}">{}</a>'.format(
-                reverse('property_inquiry_showing_emails', args={obj.pk}),
+                reverse('property_inquiry_showing_emails', args={obj.pks}),
                 'Generate Showing Email Template')
             )
 

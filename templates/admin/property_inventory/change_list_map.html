@@ -1,0 +1,144 @@
+{% extends "admin/change_list.html" %}
+{% block extrahead %}
+{{block.super}}
+<link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+<link rel="stylesheet" href="/static/ol_popup.css" type="text/css">
+
+{% endblock extrahead %}
+{% block content %}
+{% load staticfiles %}
+    <script src="https://openlayers.org/en/v4.6.5/build/ol-debug.js"></script>
+    <div id="map" style="display: 'none'" class="map"></div>
+    <div id="popup" class="ol-popup">
+      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+      <div id="popup-content"></div>
+      <div id="popup-content-extra"></div>
+      <div id="popup-content-image"></div>
+    </div>
+    <button onclick="toggleMap()">Toggle Map</button>
+    <p>&nbsp;</p>
+<script>
+
+var collection = new ol.Collection()
+
+{% for prop in cl.result_list%}
+collection.push(
+  new ol.Feature({
+         geometry: new ol.geom.Point([{{prop.centroid_geometry.0}}, {{prop.centroid_geometry.1}}]),
+         name: "{{prop}}",
+         parcel: "{{prop.parcel}}",
+         street_address: "{{prop.streetAddress}}",
+         structure_type: "{{prop.structureType}}",
+         status: "{{prop.status}}",
+         price: "{{prop.price}}",
+         id: "{{prop.pk}}",
+       }) );
+{% endfor %}
+
+var vectorSource = new ol.source.Vector({
+  features: collection,
+  wrapX: false,
+
+});
+
+
+var vector = new ol.layer.Vector({
+  source: vectorSource,
+  projection: 'EPSG:4326',
+//  style: styleProportionalCircle,
+});
+
+
+/**
+ * Elements that make up the popup.
+ */
+var container = document.getElementById('popup');
+var content = document.getElementById('popup-content');
+var closer = document.getElementById('popup-closer');
+var content_image = document.getElementById('popup-content-image');
+var popup_content_extra = document.getElementById('popup-content-extra');
+
+/**
+ * Create an overlay to anchor the popup to the map.
+ */
+var overlay = new ol.Overlay({
+  element: container,
+  autoPan: true,
+  autoPanAnimation: {
+    duration: 250
+  }
+});
+
+
+/**
+ * Add a click handler to hide the popup.
+ * @return {boolean} Don't follow the href.
+ */
+closer.onclick = function() {
+  overlay.setPosition(undefined);
+  closer.blur();
+  return false;
+};
+
+
+var map = new ol.Map({
+  layers: [
+    new ol.layer.Tile({
+      source: new ol.source.OSM()
+    }),
+    vector,
+  ],
+  target: 'map',
+  overlays: [overlay],
+  controls: ol.control.defaults({ attribution: false }),
+  view: new ol.View({
+    center: [-86.15804, 39.76838],
+    zoom: 13,
+    maxZoom: 21,
+    minZoom: 2,
+    projection: 'EPSG:4326'
+  }),
+  logo: false,
+
+});
+
+/**
+ * Add a click handler to the map to render the popup.
+ */
+map.on('singleclick', function(evt) {
+  var features = map.getFeaturesAtPixel(evt.pixel);
+  details = features[0].getProperties()
+  var img_object =''
+  content_image.innerHTML = ''
+  fetch('/property/'+details["parcel"]+'/photos/?format=json&number=1').then(function(response){ return response.json(); }).then(function(data){
+    if (data.length > 0){
+      img_url = data[0].fields.image;
+      img_object = '<img class="img-rounded no-vertical-align" width="200" alt="Renew Indianapolis provided photo of the property" src="https://build.renewindianapolis.org/media/'+img_url+'"/>'
+    }
+    else{
+      // or if we want a static google street view image:
+      //image = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location='+parcel.streetAddress+', Indianapolis, IN" width=300 height=300/>&nbsp;<br/><small>Image may not be accurate or current.</small>'
+      img_object = '<small>Google Streetview (Camera may need to be re-positioned to view property, and imagery may not be accurate)</small><br/><iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+evt.coordinate[1] + ','+evt.coordinate[0]+'" allowfullscreen="" height="250" width="429">';
+    }
+    content_image.innerHTML = img_object
+
+  });
+  content.innerHTML = '<h1>' + details['name'] + '</h1><p>'+details['structure_type']+'<br/>'+details['status']+'<br/>$'+details['price']+'<br/></p>'
+  popup_content_extra.innerHTML = '<p>{{popup_link|safe}}</p>'
+  overlay.setPosition(evt.coordinate);
+});
+
+
+function toggleMap() {
+    var x = document.getElementById("map");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+
+
+</script>
+
+{{block.super}} {% endblock %}
