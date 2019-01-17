@@ -24,6 +24,22 @@ and would like to invite you to join us.
 Please let me know if you will be able to attend as I may cancel the showing if I don't hear from you.
 </p>
 <p>
+Please Note - These are vacant and abandoned houses which may expose you both
+known and unanticipated risks. You will be required to read and sign a
+waiver of liability form prior to entering these houses. <br/>
+Waiver of Liability Form &lt;https://docs.wixstatic.com/ugd/63018e_8612b3b132074031826fb17c79a839f3.pdf&gt;
+</p>
+<p>
+Showing Recommendations:
+<ul>
+<li>Arrive at the meeting location (noted below) at the designated time.</li>
+<li>Wear sturdy shoes or boots to protect your feet from broken glass and nails.</li>
+<li>Bring a flashlight to light dark rooms, corridors and basements.</li>
+<li>Use a camera or camera phone to take pictures or video for future reference.</li>
+<li>Print and take notes on the scope of work form. &lt;http://build.renewindianapolis.org/static/Scope-of-Work-Template.xls&gt; </li>
+</ul>
+</p>
+<p>
 Here are the details:
 <ol>
 {% for object in object_list%}
@@ -37,6 +53,16 @@ Here are the details:
   </ul></li>
 {% endfor %}
 </ol>
-Thank you,
+</p>
+<p>
+More Information:
+<ul>
+<li>Renew Indianapolis Website - &lt;https://www.renewindianapolis.org&gt;</li>
+<li>Land Bank Inventory - &lt;https://public-indy.epropertyplus.com/landmgmtpub/app/base/landing&gt;</li>
+<li>Application Process & Timeline - &lt;https://www.renewindianapolis.org/application-process-timeline&gt;</li>
+<li>Policies & Procedures - &lt;https://docs.wixstatic.com/ugd/133fcd_26846a11e69d423d98653e4fa5c7d055.pdf&gt;</li>
+<li>Application & Sale Activity - &lt;https://build.renewindianapolis.org/application_status/&gt;</li>
+<li>New Application - &lt;https://build.renewindianapolis.org/application/new/&gt;</li>
+</ul>
 </p>
 {%endblock%}

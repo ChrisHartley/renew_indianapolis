@@ -82,12 +82,12 @@ from googleapiclient.errors import HttpError
 from httplib2 import Http
 from oauth2client import file, client, tools
 import logging
-def publish_to_public_calendar(event, pk):
-    calendar_id = 'renewindianapolis.org_pmmt30l2g1lm606tl88gt6sc04@group.calendar.google.com'
+def publish_to_calendar(event, pk, calendar_id, sharing, event_id=None):
     e = {
         'summary': event['summary'],
         'location': event['location'],
-#        'description': event['description'], # not published because it includes contact information
+        'description': 'If no one RSVPs to this showing it may be cancelled',
+        #'description': event['description'], # not published because it includes contact information
         'start': {
             'dateTime': event['dtstart'].dt.isoformat(),
             'timeZone': '',
@@ -98,6 +98,9 @@ def publish_to_public_calendar(event, pk):
         }
 
     }
+    if sharing == 'private':
+        e['description'] = event['description']
+
     SCOPES = 'https://www.googleapis.com/auth/calendar'
     store = file.Storage('blight_fight/token.json')
     creds = store.get()
@@ -112,7 +115,11 @@ def publish_to_public_calendar(event, pk):
     for i in range(5):
         try:
             service = build('calendar', 'v3', http=creds.authorize(Http()))
-            e = service.events().insert(calendarId=calendar_id, body=e).execute()
+            if event_id is not None:
+                e = service.events().update(calendarId=calendar_id, eventId=event_id, body=e).execute()
+            else:
+                e = service.events().insert(calendarId=calendar_id, body=e).execute()
+
         except HttpError as e:
             time.sleep(2)
             logger.warning('HttpError calling Google Calendar API')
@@ -135,59 +142,64 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 @method_decorator(staff_member_required, name='dispatch')
 class CreateIcsFromShowing(View):
-    def get(self, request, pk):
-
-        obj = propertyShowing.objects.get(pk=pk)
-        data = sorted(obj.inquiries.all(), key=attrgetter('user'))
-        props = []
-        props_addresses = []
-        for k,g in groupby(data, attrgetter('Property')):
-            props.append(k)
-            props_addresses.append(k.streetAddress)
-        data = sorted(obj.inquiries.all(), key=attrgetter('user'))
-        users = []
-        for k,g in groupby(data, attrgetter('user')):
-            users.append(k)
+    def get(self, request, pks):
 
         c = Calendar()
-        e = Event()
         c.add('prodid', '-//Renew Indianapolis//Property Showings//EN')
         c.add('version', '2.0')
-        e.add('summary', '{} - Property Showing'.format(','.join(props_addresses),).title() )
-        e.add('uid', obj.id)
-        e.add('dtstart', obj.datetime)
-        e.add('dtend', obj.datetime+timedelta(minutes=30))
-        e.add('dtstamp', now())
-        e.add('location', '{0}, Indianapolis, IN'.format(','.join(props_addresses),))
-        people = []
-        organizer = vCalAddress('MAILTO:{}'.format(request.user.email,))
-        organizer.params['cn'] = vText(u'{} {}'.format(request.user.first_name, request.user.last_name))
-        e.add('organizer', organizer, encode=0)
+        for pk in pks.split(','):
+
+            obj = propertyShowing.objects.get(pk=pk)
+            data = sorted(obj.inquiries.all(), key=attrgetter('user'))
+            props = []
+            props_addresses = []
+            for k,g in groupby(data, attrgetter('Property')):
+                props.append(k)
+                props_addresses.append(k.streetAddress)
+            data = sorted(obj.inquiries.all(), key=attrgetter('user'))
+            users = []
+            for k,g in groupby(data, attrgetter('user')):
+                users.append(k)
+
+            e = Event()
+            e.add('summary', '{} - Property Showing'.format(','.join(props_addresses),).title() )
+            e.add('uid', obj.id)
+            e.add('dtstart', obj.datetime)
+            e.add('dtend', obj.datetime+timedelta(minutes=30))
+            e.add('dtstamp', now())
+            e.add('location', '{0}, Indianapolis, IN'.format(','.join(props_addresses),))
+            people = []
+            organizer = vCalAddress('MAILTO:{}'.format(request.user.email,))
+            organizer.params['cn'] = vText(u'{} {}'.format(request.user.first_name, request.user.last_name))
+            e.add('organizer', organizer, encode=0)
 
 
-        for u in users:
-            try:
-                people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
-            except ApplicantProfile.DoesNotExist:
-                people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
-            attendee = vCalAddress('MAILTO:{}'.format(u.email,))
-            attendee.params['cn'] = vText(u'{} {}'.format(u.first_name, u.last_name))
-    #        e.add('attendee', attendee, encode=0)
+            for u in users:
+                try:
+                    people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
+                except ApplicantProfile.DoesNotExist:
+                    people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
+                attendee = vCalAddress('MAILTO:{}'.format(u.email,))
+                attendee.params['cn'] = vText(u'{} {}'.format(u.first_name, u.last_name))
+        #        e.add('attendee', attendee, encode=0)
 
-        for staff in settings.COMPANY_SETTINGS['city_staff']:
-            a = vCalAddress('MAILTO:{}'.format(staff['email'],))
-            a.params['cn'] = vText(staff['name'])
-            e.add('attendee', a, encode=0)
-        description = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': props, 'users': users})
-        e.add('description', description )
-        e.add('status', 'TENTATIVE')
+            for staff in settings.COMPANY_SETTINGS['city_staff']:
+                a = vCalAddress('MAILTO:{}'.format(staff['email'],))
+                a.params['cn'] = vText(staff['name'])
+                e.add('attendee', a, encode=0)
+            description = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': props, 'users': users})
+            e.add('description', description )
+            e.add('status', 'TENTATIVE')
 
-        c.add_component(e)
-        #print(c.to_ical())
-        if obj.google_calendar_event_id == '' or obj.google_calendar_event_id is None:
-            publish_to_public_calendar(e, pk)
+            c.add_component(e)
+
+            for calendar_id in settings.PROPERTY_SHOWING_CALENDARS:
+                if getattr(obj, 'google_{}_calendar_event_id'.format(calendar_id['sharing'],) ) == '' or getattr(obj, 'google_{}_calendar_event_id'.format(calendar_id['sharing'],) ) is None:
+                    publish_to_calendar(e, pk, calendar_id['id'], calendar_id['sharing'])
+                else:
+                    publish_to_calendar(e, pk, calendar_id['id'], calendar_id['sharing'], google_calendar_event_id)
         response = HttpResponse(c.to_ical(), content_type="text/calendar")
-        response['Content-Disposition'] = 'attachment; filename={0}.ics'.format(slugify(obj),)
+        response['Content-Disposition'] = 'attachment; filename=showings.ics'
         return response
 
 
@@ -210,11 +222,22 @@ class propertyShowingListEmailTemplateView(ListView):
 
 from django.views.generic import DetailView
 @method_decorator(staff_member_required, name='dispatch')
-class propertyShowingReleaseView(DetailView):
+class propertyShowingReleaseView(ListView):
     template_name = "property_inquiry/release.html"
     model = propertyShowing
-    context_object_name = 'showing'
+    context_object_name = 'showings'
+
+    def get_queryset(self):
+        pks = self.kwargs['pks'].split(',')
+        return propertyShowing.objects.filter(pk__in=pks).order_by('datetime')
+
     def get_context_data(self, **kwargs):
         context = super(propertyShowingReleaseView, self).get_context_data(**kwargs)
         context['title'] = 'Showing Release'
+        requestors = []
+
+        for ps in self.get_queryset():
+            for i in ps.inquiries.all():
+                requestors.append('{} {}'.format(i.user.first_name, i.user.last_name))
+        context['requestors'] = set(requestors)
         return context

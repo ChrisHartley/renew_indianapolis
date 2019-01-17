@@ -12,6 +12,7 @@
     <div id="popup" class="ol-popup">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
+      <div id="popup-content-extra"></div>
       <div id="popup-content-image"></div>
     </div>
     <button onclick="toggleMap()">Toggle Map</button>
@@ -90,6 +91,7 @@ var container = document.getElementById('popup');
 var content = document.getElementById('popup-content');
 var closer = document.getElementById('popup-closer');
 var content_image = document.getElementById('popup-content-image');
+var popup_content_extra = document.getElementById('popup-content-extra');
 
 /**
  * Create an overlay to anchor the popup to the map.
@@ -142,6 +144,7 @@ map.on('singleclick', function(evt) {
   var features = map.getFeaturesAtPixel(evt.pixel);
   details = features[0].getProperties()
   var img_object =''
+  content_image.innerHTML = ''
   fetch('/property/'+details["parcel"]+'/photos/?format=json&number=1').then(function(response){ return response.json(); }).then(function(data){
     console.log(data)
     console.log(data.length)
@@ -160,7 +163,8 @@ map.on('singleclick', function(evt) {
 
   });
   console.log(img_object)
-  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries<br/>'+details['max_age']+'</p><p><a target="_blank" href="/admin/property_inquiry/propertyshowing/add/?Property='+details['id']+'">Create a property showing.</a></p>'
+  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries<br/>'+details['max_age']+'</p>'
+  popup_content_extra.innerHTML = '<p>{{popup_link|safe}}</p>'
   overlay.setPosition(evt.coordinate);
 });
 

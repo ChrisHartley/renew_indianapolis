@@ -56,6 +56,7 @@ class propertyShowing(models.Model):
     inquiries = models.ManyToManyField(
         propertyInquiry,
         blank=True,
+        related_name='showings',
     )
     signin_sheet = models.FileField(
         upload_to=save_location,
@@ -63,7 +64,9 @@ class propertyShowing(models.Model):
         blank=True,
     )
 
-    google_calendar_event_id = models.CharField(blank=True, null=True, max_length=1024, help_text='Google Calendar Event ID, if created')
+    google_public_calendar_event_id = models.CharField(blank=True, null=True, max_length=1024, help_text='Google Public Calendar Event ID, if created')
+    google_private_calendar_event_id = models.CharField(blank=True, null=True, max_length=1024, help_text='Google Private Calendar Event ID, if created')
+
 
     class Meta:
         verbose_name_plural = "property showings"

@@ -127,7 +127,8 @@ from django.shortcuts import render
 
 class propertyShowingAdmin(admin.ModelAdmin):
     search_fields = ('Property__streetAddress', 'Property__parcel',)
-    readonly_fields = ('create_ics','create_email_template', 'property_status', 'google_calendar_event_id', 'show_release_template')
+    #readonly_fields = ('create_ics','create_email_template', 'property_status', 'google_private_calendar_event_id', 'google_public_calendar_event_id' 'show_release_template')
+    readonly_fields = ('create_ics', 'create_email_template', 'property_status', 'show_release_template', 'google_public_calendar_event_id', 'google_private_calendar_event_id')
     form = propertyShowingAdminForm
     actions = ['batch_calendar_and_email',]
 #    inlines = [propertyInquiryInlineAdmin,]
@@ -148,7 +149,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
             return '-'
         return mark_safe(
             u'<a target="_blank" href="{}">{}</a>'.format(
-                reverse('property_inquiry_showing_emails', args={obj.pks}),
+                reverse('property_inquiry_showing_emails', args={obj.pk}),
                 'Generate Showing Email Template')
             )
 

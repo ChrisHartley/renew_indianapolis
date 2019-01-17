@@ -40,11 +40,11 @@ urlpatterns = [
         url(r'property_inquiry/$', submitPropertyInquiry,
            name='submit_property_inquiry'),
 
-        url(r'property_inquiry/create_ics/(?P<pk>[0-9]+)/$', CreateIcsFromShowing.as_view(),
+        url(r'property_inquiry/create_ics/(?P<pks>(\d+(,\d+)*))/$', CreateIcsFromShowing.as_view(),
            name='property_inquiry_create_showing_ics'),
         url(r'property_inquiry/showing_emails/(?P<pks>(\d+(,\d+)*))/$', propertyShowingListEmailTemplateView.as_view(),
            name='property_inquiry_showing_emails'),
-        url(r'property_inquiry/release_template/(?P<pk>[0-9]+)/$', propertyShowingReleaseView.as_view(),
+        url(r'property_inquiry/release_template/(?P<pks>(\d+(,\d+)*))/$', propertyShowingReleaseView.as_view(),
            name='property_inquiry_showing_release'),
 
 

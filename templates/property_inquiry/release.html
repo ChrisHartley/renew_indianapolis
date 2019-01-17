@@ -9,7 +9,7 @@
 In consideration of my participation in <strong>a City of Indianapolis Land Bank Properties Site Visit</strong> and any activity or event thereof (hereinafter the “Event”), I (the “Participant”) hereby release and discharge the City of Indianapolis, Department of Metropolitan Development, Metropolitan Development Commission, and their officers, members, boards, directors, agents, employees, and contractors (hereinafter collectively the “City”), from any and all claims, demands, or actions for personal injury, property damage, or any other damage or loss which may arise out of my participation in the Event. For myself, my heirs, executors, administrators, legal representatives, assignees, and successors in interest <strong>I HEREBY PROMISE NOT TO SUE THE CITY, TO WAIVE ANY RIGHTS,  AND TO RELEASE, DISCHARGE, HOLD HARMLESS, AND TO INDEMNIFY THE CITY FROM ANY AND ALL  CLAIMS, INCLUDING CLAIMS ARISING FROM THE CITY’S OWN NEGLIGENCE, ACTS, OR OMISSIONS,</strong> which I have or which may hereafter accrue to me and from any and all damages which may be sustained by me directly or indirectly in connection with, or arising out of, my participation in or association with the Event, or travel to or return from the Event. I acknowledge that by signing this document, I am assuming risks, agreeing to indemnify, not to sue and to release from liability the City and that I am giving up substantial legal rights. This Release and Waiver of Liability is a contract with legal and binding consequences and it applies to all events and activities on the property located at:
 
 <ol>
-{% regroup showing.inquiries.all by Property as inquiries %}
+{% regroup showings by Property as inquiries %}
 {% for Property in inquiries %}
 <li>{{Property.grouper.streetAddress}}</li>
 {% endfor %}
@@ -19,7 +19,7 @@ In consideration of my participation in <strong>a City of Indianapolis Land Bank
 Indianapolis, Indiana (the “Property”). I attest and verify that I am physically and medically fit and in good health, and further that I have received sufficient instruction to participate in this Event.  I understand and acknowledge that participating in the Event may expose me to dangers from both known and unanticipated risks, whether existing because of negligence or otherwise and specifically waive any and all claims arising out of such conditions. I acknowledge that the condition of the Property may be extremely dangerous, and I fully realize the dangers of participating in this Event and fully assume the risks associated with such participation. In signing this release, I fully recognize that if I am injured or suffer any other loss as a result of participating in the Event, I will have no right to make any claim or file any lawsuit against the City. <strong>I HAVE CAREFULLY READ THIS RELEASE AND WAIVER OF LIABILITY, AND VOLUNTARILY AND KNOWINGLY AGREE TO ITS TERMS.</strong>
 </p>
 <p>
-{% regroup showing.inquiries.all by user as inquiries %}
+{% regroup showings.inquiries.all by user as inquiries %}
 <table class="table">
   <thead>
     <tr>
@@ -27,10 +27,10 @@ Indianapolis, Indiana (the “Property”). I attest and verify that I am physic
     </tr>
   </thead>
   <tbody>
-{% for user in inquiries %}
+{% for user in requestors %}
 
   <tr>
-    <td>{{showing.datetime|date:'m/d/Y'}}</td><td>{{user.list.0.user.first_name}} {{user.list.0.user.last_name}}</td><td>&nbsp;</td>
+    <td>{{showings.0.datetime|date:'m/d/Y'}}</td><td>{{user}}</td><td>&nbsp;</td>
   </tr>
 {% endfor %}
 {% for i in "1234"%}
