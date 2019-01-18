@@ -8,7 +8,7 @@
 {% block content %}
 {% load staticfiles %}
     <script src="https://openlayers.org/en/v4.6.5/build/ol-debug.js"></script>
-    <div id="map" style="display: 'none'" class="map"></div>
+    <div id="map" class="map"></div>
     <div id="popup" class="ol-popup">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
@@ -138,7 +138,7 @@ function toggleMap() {
     }
 }
 
-
+document.getElementById("map").style.display = "none";
 </script>
 
 {{block.super}} {% endblock %}
