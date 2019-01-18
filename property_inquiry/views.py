@@ -102,7 +102,7 @@ def publish_to_calendar(event, pk, calendar_id, sharing, event_id=None):
         e['description'] = event['description']
 
     SCOPES = 'https://www.googleapis.com/auth/calendar'
-    store = file.Storage('blight_fight/token.json')
+    store = file.Storage('/home/django/blight_fight/blight_fight/token.json')
     creds = store.get()
     logger = logging.getLogger(__name__)
 
