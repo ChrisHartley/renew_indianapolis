@@ -114,7 +114,8 @@ def publish_to_calendar(event, pk, calendar_id, sharing, event_id=None):
         logger.error('Error with Google API token.json - creds not found or invalid')
     for i in range(5):
         try:
-            service = build('calendar', 'v3', http=creds.authorize(Http()))
+            http = creds.authorize(Http())
+            service = build('calendar', 'v3', http=http)
             if event_id is not None:
                 e = service.events().update(calendarId=calendar_id, eventId=event_id, body=e).execute()
             else:
