@@ -223,6 +223,10 @@ MAILCHIMP_USERNAME = ''
 MAILCHIMP_API_KEY = ''
 MAILCHIMP_NEWSLETTER_ID = ''
 
+# google api settings
+# These key values are really set in settings_testing.py or settings_production.py
+GOOGLE_API_TOKEN_LOCATION = ''
+
 #
 COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',

@@ -102,20 +102,16 @@ def publish_to_calendar(event, pk, calendar_id, sharing, event_id=None):
         e['description'] = event['description']
 
     SCOPES = 'https://www.googleapis.com/auth/calendar'
-    store = file.Storage('/home/django/blight_fight/blight_fight/token.json')
+    store = file.Storage(settings.GOOGLE_API_TOKEN_LOCATION)
     creds = store.get()
     logger = logging.getLogger(__name__)
 
     if not creds or creds.invalid:
-        # this obviously won't work since there is no browser to open. Need
-        # to log as an error
-#        flow = client.flow_from_clientsecrets('blight_fight/google_api_credentials.json', SCOPES)
-#        creds = tools.run_flow(flow, store)
         logger.error('Error with Google API token.json - creds not found or invalid')
+        return
     for i in range(5):
         try:
-            http = creds.authorize(Http())
-            service = build('calendar', 'v3', http=http)
+            service = build('calendar', 'v3', http=creds.authorize(Http()))
             if event_id is not None:
                 e = service.events().update(calendarId=calendar_id, eventId=event_id, body=e).execute()
             else:
