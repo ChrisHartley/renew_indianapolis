@@ -129,7 +129,7 @@ def publish_to_calendar(event, pk, calendar_id, sharing, event_id=None):
 
 
 
-
+from django.contrib import messages
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
 from operator import itemgetter, attrgetter
@@ -195,9 +195,11 @@ class CreateIcsFromShowing(View):
                     publish_to_calendar(e, pk, calendar_id['id'], calendar_id['sharing'])
                 else:
                     publish_to_calendar(e, pk, calendar_id['id'], calendar_id['sharing'], google_calendar_event_id)
-        response = HttpResponse(c.to_ical(), content_type="text/calendar")
-        response['Content-Disposition'] = 'attachment; filename=showings.ics'
-        return response
+        messages.add_message(self.request, messages.INFO, 'Calendar events added.')
+        return HttpResponseRedirect(reverse("admin:property_inquiry_propertyshowing_changelist"))
+        #response = HttpResponse(c.to_ical(), content_type="text/calendar")
+        #response['Content-Disposition'] = 'attachment; filename=showings.ics'
+        #return response
 
 
 
