@@ -65,7 +65,7 @@
 {% endif %}
 {% else %}
 <p class="lead">
-Please <a href='{%url 'account_login'%}'>log in or create an account</a> to submit a property inquiry.
+Please <a href='{%url 'account_login'%}?next={%url 'submit_property_inquiry' %}'>log in or create an account</a> to submit a property inquiry.
 </p>
 {% endif %}
 
