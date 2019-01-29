@@ -12,7 +12,7 @@
 {% if not form_enabled %}
 
 <div class="row">
-	<p class="lead">Property inquiries are temporarily unavailable.  Requests will resume on August 6, 2018 at 8:00 a.m.</p>
+	<p class="lead">Property inquiries are temporarily unavailable.</p>
 </div>
 
 {% endif %}
@@ -46,7 +46,7 @@
 
 </div>
 <div class="row">&nbsp;</div>
-
+{% if user.is_authenticated %}
 {% if form_enabled %}
 	<div class="row">
 		<div class="col-md-7">
@@ -63,7 +63,11 @@
 		</div>
 	</div>
 {% endif %}
-
+{% else %}
+<p class="lead">
+Please <a href='{%url 'account_login'%}'>log in or create an account</a> to submit a property inquiry.
+</p>
+{% endif %}
 
 <script>
 

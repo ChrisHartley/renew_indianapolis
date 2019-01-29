@@ -28,7 +28,6 @@ from django.utils import timezone # timezone aware now()
 
 # Displays form template for property inquiry submissions, and saves those
 # submissions
-@login_required
 def submitPropertyInquiry(request):
     parcel = request.GET.get('parcel', None)
     if parcel:
@@ -42,7 +41,7 @@ def submitPropertyInquiry(request):
     else:
         form = PropertyInquiryForm()
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_authenticated:
         previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=timezone.now()-datetime.timedelta(hours=48)).count()
 
         #print "Previous PI count:", previousPIcount
