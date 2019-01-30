@@ -21,9 +21,13 @@ class SurplusParcelFilter(django_filters.FilterSet):
     improved_value = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder': '$'}))
     interesting = django_filters.BooleanFilter()
     classification = django_filters.ChoiceFilter(choices=Parcel.CLASSIFICATION_CHOICES)
-    demolition_order = django_filters.BooleanFilter()
-    repair_order = django_filters.BooleanFilter()
+    #demolition_order = django_filters.BooleanFilter()
+    #repair_order = django_filters.BooleanFilter()
     condition_report_exists = django_filters.BooleanFilter()
+    #demolition_order_count = django_filters.RangeFilter()
+    #vbo_count = django_filters.RangeFilter()
+#    repair_order_count = django_filters.RangeFilter()
+
     #rc = Parcel.objects.order_by('requested_from_commissioners_date').distinct(
     #    'requested_from_commissioners_date').values_list('requested_from_commissioners_date', flat=True)
 
@@ -52,7 +56,7 @@ class SurplusParcelFilter(django_filters.FilterSet):
     #    choices=rc_dates, label='Date requested from commissioners', lookup_expr='exact')
     #requested_from_commissioners = django_filters.DateFilter()
 
-    big_ask = django_filters.BooleanFilter(method='big_ask_filter', label='Coming from the big ask')
+#    big_ask = django_filters.BooleanFilter(method='big_ask_filter', label='Coming from the big ask')
 
     def general_search_filter(self, queryset, name, value):
         return queryset.filter(

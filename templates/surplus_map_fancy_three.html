@@ -269,7 +269,7 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-              <li class="dropdown">
+              <!-- <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="#">Action</a></li>
@@ -280,7 +280,7 @@
                   <li class="divider"></li>
                   <li><a href="#">One more separated link</a></li>
                 </ul>
-              </li>
+              </li> -->
             </ul>
             <form class="navbar-form navbar-left" role="search" id="top-search-box">
               <div class="form-group">
@@ -350,7 +350,7 @@
       {% load crispy_forms_tags %}
       <div style="display:none">{% crispy filter.form filter.form.helper %}</div>
       <div class="row main-row">
-        <!-- <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
+        <div class="col-sm-4 col-md-3 sidebar sidebar-left pull-left">
           <div class="panel-group sidebar-body" id="accordion-left">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -367,14 +367,14 @@
               <div id="layers" class="panel-collapse collapse in">
                 <div class="panel-body list-group">
 
-                  {% crispy filter.form filter.form.helper %}
+                  {% crispy filter.form  %}
 
                 </div>
               </div>
             </div>
 
           </div>
-        </div> -->
+        </div>
         <div class="col-sm-4 col-md-6 mid"></div>
         <!-- <div class="col-sm-4 col-md-3 sidebar sidebar-right pull-right">
           <div class="panel-group sidebar-body" id="accordion-right">
@@ -424,12 +424,12 @@
             </div>
             <div class="modal-body">
               <p>
-                <div id="properties">
-                <form action="" method="POST" id="updateForm"/>
-                <div id='filter'></div>
+                <form action="{% url 'surplus_property_update' %}" method="POST" id="updateForm"/>
+                <div id="properties"></div>
+                  <!-- <div id='filter'></div> -->
                 </form>
-                <table id="search_results_short" class="table table-responsive table-condensed"></table>
-                </div>
+                <!-- <table id="search_results_short" class="table table-responsive table-condensed"></table> -->
+
 
               </p>
             </div>
@@ -582,7 +582,7 @@
             url: '/surplus/search/?geometry_type=centroid&report=true',
             format: new ol.format.GeoJSON()
           }),
-          style: completedStyle,
+          style: styleFunction,
         });
 
         var surplusCentroidsNoReport = new ol.layer.Vector({
@@ -599,10 +599,10 @@
 
 
       $(document).ready(function(){
-        $.get('/static/WMTSCapabilities.xml', function(text){
+        $.get('/static/WMTSCapabilities2018.xml', function(text){
           var result = parser.read(text);
           var options = ol.source.WMTS.optionsFromCapabilities(result, {
-            layer: '2017FallPhotography_Labels', matrixSet: 'default028mm'
+            layer: 'Imagery_2018Photography_Labels', matrixSet: 'default028mm'
           });
 
           var view = new ol.View({
@@ -714,7 +714,7 @@
               surplusPolygons,
               surplusCentroids,
               searchPolygons,
-              surplusCentroidsNoReport,
+            //  surplusCentroidsNoReport,
             ],
           //  overlays: [overlay],
             target: 'map',
@@ -754,13 +754,14 @@
                   '<li>Area: '+parcel.area+' Township: '+parcel.township+'</li>'+
                   '<li>Residential: '+parcel.assessor_classification+' Source: '+parcel.classification+'</li>'+
                   '<li>Has building: '+parcel.has_building+' Zoning: '+parcel.zoning+'</li>'+
-                  '<li>Demo order: '+parcel.demolition_order+' Repair Order: '+parcel.repair_order+'</li>'+
+                  '<li>Demo order: '+parcel.demolition_order_count+' Repair Order: '+parcel.repair_order_count+' VBO Order: '+parcel.vbo_count+'</li>'+
                   '<li>Requested From Commissioners: '+parcel.requested_from_commissioners+' Notes: '+parcel.notes+'</li>'+
                   '<li>Interesting: '+parcel.interesting+'</li>'+
                   '<li>Vetted: '+parcel.vetted+'</li>'+
                   '<li>Vetting Notes: '+parcel.vetting_notes+'</li>'+
                   '<li>End Use: '+parcel.intended_end_use+'</li>'+
-                  '<li>Condition Report: <a href="{% if not debug %}https://build.renewindianapolis.org{%else%}http://localhost:8000{%endif%}/admin/condition_report_admin/'+parcel.parcel_number+'" target="_blank">View or create report</a></li></ul>'+
+                  '<li>Condition Report: <a href="{% if not debug %}https://build.renewindianapolis.org{%else%}http://localhost:8000{%endif%}/admin/condition_report_admin/'+parcel.parcel_number+'" target="_blank">View or create report</a></li>'+
+                  '</ul><div id="filter"></div>'+
                   iframe;
                 $("#property_info_address").html(parcel.street_address+' (<a href="http://maps.indy.gov/AssessorPropertyCards.Reports.Service/Service.svc/PropertyCard/'+parcel.parcel_number+'">'+parcel.parcel_number+'</a>)')
                 $('#properties').html(html);
@@ -824,9 +825,11 @@
                 { "title": 'Interesting',
                   "data": "properties.interesting" },
                 { "title": 'Demolition Order',
-                  "data": "properties.demolition_order" },
+                  "data": "properties.demolition_order_count" },
                 { "title": 'Repair Order',
-                  "data": "properties.repair_order" },
+                  "data": "properties.repair_order_count" },
+                { "title": 'VBO Order',
+                  "data": "properties.vbo_count" },
                 { "title": 'Notes',
                   "data": "properties.notes" },
                 { "title": 'Vetting Notes',
@@ -878,6 +881,8 @@
       searchPolygons.getSource().clear();
       $('#id_general_search').val($('#query').val()); //copy search value from top box to hidden element on form
       $('#id_geometry_type').val('centroid'); // search results return centroids
+      console.log($('#SurplusSearchForm').serialize());
+      console.log($('#id_demolition_order_count'));
       $.ajax({
         url: '{% url "surplus_search" %}',
         type: "GET",

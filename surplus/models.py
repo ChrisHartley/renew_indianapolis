@@ -95,6 +95,10 @@ class Parcel(models.Model):
     demolition_order = models.BooleanField(default=False)
     repair_order = models.BooleanField(default=False)
 
+    demolition_order_count = models.IntegerField(default=0)
+    repair_order_count = models.IntegerField(default=0)
+    vbo_count = models.IntegerField(default=0)
+
     interesting = models.NullBooleanField(default=None)
     notes = models.CharField(max_length=2048, blank=True)
 

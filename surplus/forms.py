@@ -14,7 +14,22 @@ class SurplusSearchForm(forms.ModelForm):
     class Meta:
         model = Parcel
         exclude = []
-        fields = ['geometry_type','general_search','has_building', 'township', 'notes', 'interesting', 'classification', 'demolition_order', 'repair_order','requested_from_commissioners', 'previously_held_gateway_area', 'vetted', 'vetting_notes']
+        fields = [
+            'geometry_type',
+            'general_search',
+            'has_building',
+            'township',
+            'notes',
+            'interesting',
+            'classification',
+            'demolition_order_count',
+            'repair_order_count',
+            'vbo_count',
+        #    'requested_from_commissioners',
+        #    'previously_held_gateway_area',
+            'vetted',
+            'vetting_notes'
+            ]
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
@@ -36,14 +51,18 @@ class SurplusSearchForm(forms.ModelForm):
             Field('interesting', css_class='input-sm'),
             #Field('area', css_class='input-sm'),
             Field('has_building', css_class='input-sm'),
-            Field('big_ask', css_class='input-sm'),
+    #        Field('big_ask', css_class='input-sm'),
             Field('township', css_class='input-sm'),
             #Field('land_value', css_class='input-sm'),
             #Field('improved_value', css_class='input-sm'),
-            Field('classification', css_class='input-sm'),
-            Field('demolition_order', css_class='input-sm'),
-            Field('repair_order', css_class='input-sm'),
-            Field('requested_from_commissioners', css_class='input-sm'),
-            Field('previously_held_gateway_area', css_class='input-sm'),
+        #    Field('classification', css_class='input-sm'),
+    #        Field('demolition_order', css_class='input-sm'),
+    #        Field('repair_order', css_class='input-sm'),
+            # Field('repair_order_count', css_class='input-sm'),
+            # Field('demolition_order_count', css_class='input-sm'),
+            # Field('vbo_count', css_class='input-sm'),
+
+        #    Field('requested_from_commissioners', css_class='input-sm'),
+        #    Field('previously_held_gateway_area', css_class='input-sm'),
             Field('notes', css_class='input-sm'),
         )

@@ -96,7 +96,7 @@ class ParcelDetailView(JSONResponseMixin, DetailView):
                               fields = ('parcel_number','street_address', 'zipcode', 'zoning',
                                   'township', 'has_building', 'land_value', 'improved_value',
                                   'area', 'assessor_classification', 'classification',
-                                  'demolition_order', 'repair_order', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', 'intended_end_use'),
+                                  'demolition_order', 'repair_order', 'vbo_count', 'repair_order_count', 'demolition_order_count', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', 'intended_end_use'),
                               use_natural_foreign_keys=True,
                               )
         return HttpResponse(s, content_type='application/json')
@@ -125,12 +125,13 @@ import pprint
 @ensure_csrf_cookie
 def searchSurplusProperties(request):
     properties_with_reports = ConditionReport.objects.filter(quick_condition__isnull=False).values_list('Property__parcel', flat=True)
-    if request.GET.get('report') == 'false':
-        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).exclude(parcel_number__in=properties_with_reports).exclude(intended_end_use='BEP')
-    elif request.GET.get('report') == 'true':
-        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).filter(parcel_number__in=properties_with_reports).exclude(intended_end_use='BEP')
-    else:
-        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).exclude(intended_end_use='BEP')
+#    if request.GET.get('report') == 'false':
+#        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).exclude(parcel_number__in=properties_with_reports).exclude(intended_end_use='BEP')
+#    elif request.GET.get('report') == 'true':
+#        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).filter(parcel_number__in=properties_with_reports).exclude(intended_end_use='BEP')
+#    else:
+#        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).exclude(intended_end_use='BEP')
+    qs = Parcel.objects.filter(classification=1)
     f = SurplusParcelFilter(request.GET, queryset=qs)
     geom = 'geometry'
     fields = ('parcel_number', 'has_building', geom)
@@ -139,7 +140,7 @@ def searchSurplusProperties(request):
         fields = ('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
             'area', 'assessor_classification', 'classification',
-            'demolition_order', 'repair_order', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', geom)
+            'demolition_order_count', 'repair_order_count', 'vbo_count', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', geom)
 
     s = serializers.serialize('geojson',
         f.qs,
