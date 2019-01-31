@@ -76,58 +76,6 @@ def property_inquiry_confirmation(request, id):
     })
 
 
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from httplib2 import Http
-from oauth2client import file, client, tools
-import logging
-def publish_to_calendar(event, pk, calendar_id, sharing, event_id=None):
-    e = {
-        'summary': event['summary'],
-        'location': event['location'],
-        'description': 'If no one RSVPs to this showing it may be cancelled',
-        #'description': event['description'], # not published because it includes contact information
-        'start': {
-            'dateTime': event['dtstart'].dt.isoformat(),
-            'timeZone': '',
-        },
-        'end': {
-            'dateTime': event['dtend'].dt.isoformat(),
-            'timeZone': '',
-        }
-
-    }
-    if sharing == 'private':
-        e['description'] = event['description']
-
-    SCOPES = 'https://www.googleapis.com/auth/calendar'
-    store = file.Storage(settings.GOOGLE_API_TOKEN_LOCATION)
-    creds = store.get()
-    logger = logging.getLogger(__name__)
-
-    if not creds or creds.invalid:
-        logger.error('Error with Google API token.json - creds not found or invalid')
-        return
-    for i in range(5):
-        try:
-            service = build('calendar', 'v3', http=creds.authorize(Http()))
-            if event_id is not None:
-                e = service.events().update(calendarId=calendar_id, eventId=event_id, body=e).execute()
-            else:
-                e = service.events().insert(calendarId=calendar_id, body=e).execute()
-
-        except HttpError as e:
-            time.sleep(2)
-            logger.warning('HttpError calling Google Calendar API')
-            continue
-        else:
-            ps = propertyShowing.objects.get(id=pk)
-            ps.google_calendar_event_id = e.get('id')
-            ps.save()
-        break
-
-
-
 from django.contrib import messages
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
@@ -189,16 +137,9 @@ class CreateIcsFromShowing(View):
 
             c.add_component(e)
 
-            for calendar_id in settings.PROPERTY_SHOWING_CALENDARS:
-                if getattr(obj, 'google_{}_calendar_event_id'.format(calendar_id['sharing'],) ) == '' or getattr(obj, 'google_{}_calendar_event_id'.format(calendar_id['sharing'],) ) is None:
-                    publish_to_calendar(e, pk, calendar_id['id'], calendar_id['sharing'])
-                else:
-                    publish_to_calendar(e, pk, calendar_id['id'], calendar_id['sharing'], google_calendar_event_id)
-        messages.add_message(self.request, messages.INFO, 'Calendar events added.')
-        return HttpResponseRedirect(reverse("admin:property_inquiry_propertyshowing_changelist"))
-        #response = HttpResponse(c.to_ical(), content_type="text/calendar")
-        #response['Content-Disposition'] = 'attachment; filename=showings.ics'
-        #return response
+        response = HttpResponse(c.to_ical(), content_type="text/calendar")
+        response['Content-Disposition'] = 'attachment; filename=showings.ics'
+        return response
 
 
 

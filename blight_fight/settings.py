@@ -254,6 +254,32 @@ SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
 BLC_MANAGER_EMAIL = 'chris.hartley@renewindianapolis.org, o.brownlee@renewindianapolis.org'
 SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL = True
 
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        },
+         'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'WARNING'
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console','mail_admins'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}
+
+
 # Production settings are kept in a separate file, settings_production.py
 # which overrides db, email, secret key, etc with production values
 # Testing values are kept in settings_testing.py, for example stripe test api keys

@@ -2,8 +2,20 @@ from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
 from property_inventory.models import Property
-from datetime import datetime
+from datetime import datetime, timedelta
+from time import sleep
 from django.utils.timezone import localtime
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils import timezone # timezone aware now()
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from httplib2 import Http
+from oauth2client import file, client, tools
+import logging
+from operator import itemgetter, attrgetter
+from itertools import groupby
+from applicants.models import ApplicantProfile
 
 class propertyInquiry(models.Model):
     user = models.ForeignKey(User)
@@ -74,6 +86,101 @@ class propertyShowing(models.Model):
 
     def save(self, *args, **kwargs):
         super(propertyShowing, self).save(*args, **kwargs)
+        for calendar in settings.PROPERTY_SHOWING_CALENDARS:
+            e = {
+                'summary': '{} - Property Showing'.format(self.Property.streetAddress,).title(),
+                'location': '{0}, Indianapolis, IN'.format(self.Property.streetAddress,),
+                'description': 'If no one RSVPs to this showing it may be cancelled - Contact Matt Hostetler Matthew.Hostetler@indy.gov if you plan on attending.',
+                'start': {
+                    'dateTime': self.datetime.isoformat(),
+                    'timeZone': '',
+                },
+                'end': {
+                    'dateTime': (self.datetime+timedelta(minutes=30)).isoformat(),
+                    'timeZone': '',
+                }
+
+            }
+            if calendar['sharing'] == 'private':
+                data = sorted(self.inquiries.all(), key=attrgetter('user'))
+                users = []
+                people = []
+                for k,g in groupby(data, attrgetter('user')):
+                    users.append(k)
+                for u in users:
+                    try:
+                        people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
+                    except ApplicantProfile.DoesNotExist:
+                        people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
+                #for inq in self.inquiries.all():
+
+                e['description'] = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': Property.objects.filter(pk=self.Property.pk), 'users': users})
+
+            SCOPES = 'https://www.googleapis.com/auth/calendar'
+            store = file.Storage(settings.GOOGLE_API_TOKEN_LOCATION)
+            creds = store.get()
+            logger = logging.getLogger(__name__)
+
+            if not creds or creds.invalid:
+                logger.error('Error with Google API token.json - creds not found or invalid')
+                return
+            for i in range(5):
+                try:
+                    service = build('calendar', 'v3', http=creds.authorize(Http()), cache_discovery=False)
+                    if calendar['sharing'] == 'public':
+                        if self.google_public_calendar_event_id is not None:
+                            e = service.events().update(calendarId=calendar['id'], eventId=self.google_public_calendar_event_id, body=e).execute()
+                        else:
+                            e = service.events().insert(calendarId=calendar['id'], body=e).execute()
+                    if calendar['sharing'] == 'private':
+                        if self.google_private_calendar_event_id is not None:
+                            e = service.events().update(calendarId=calendar['id'], eventId=self.google_private_calendar_event_id, body=e).execute()
+                        else:
+                            e = service.events().insert(calendarId=calendar['id'], body=e).execute()
+
+                except HttpError as e:
+                    sleep(2)
+                    logger.warning('HttpError calling Google Calendar API')
+                    continue
+                else:
+                    if calendar['sharing'] == 'public':
+                        self.google_public_calendar_event_id = e.get('id')
+                    if calendar['sharing'] == 'private':
+                        self.google_private_calendar_event_id = e.get('id')
+                    break
+        super(propertyShowing, self).save(*args, **kwargs)
+
+
+    def delete(self):
+        if self.google_public_calendar_event_id is not None or self.google_private_calendar_event_id is not None:
+            for calendar in settings.PROPERTY_SHOWING_CALENDARS:
+
+                SCOPES = 'https://www.googleapis.com/auth/calendar'
+                store = file.Storage(settings.GOOGLE_API_TOKEN_LOCATION)
+                creds = store.get()
+                logger = logging.getLogger(__name__)
+
+                if not creds or creds.invalid:
+                    logger.error('Error with Google API token.json - creds not found or invalid')
+                    return
+                for i in range(5):
+                    try:
+                        service = build('calendar', 'v3', http=creds.authorize(Http()), cache_discovery=False)
+                        if calendar['sharing'] == 'public':
+                            if self.google_public_calendar_event_id is not None:
+                                e = service.events().delete(calendarId=calendar['id'], eventId=self.google_public_calendar_event_id).execute()
+                        if calendar['sharing'] == 'private':
+                            if self.google_private_calendar_event_id is not None:
+                                e = service.events().delete(calendarId=calendar['id'], eventId=self.google_private_calendar_event_id).execute()
+                    except HttpError as e:
+                        sleep(2)
+                        print(e)
+                        logger.warning('HttpError calling Google Calendar API')
+                        continue
+                    else:
+                        break
+        super(propertyShowing, self).delete()
+
 
     def __unicode__(self):
         return u'{0} - {1}'.format(self.Property, datetime.strftime(localtime(self.datetime), '%x, %-I:%M%p') )
