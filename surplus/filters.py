@@ -24,9 +24,9 @@ class SurplusParcelFilter(django_filters.FilterSet):
     #demolition_order = django_filters.BooleanFilter()
     #repair_order = django_filters.BooleanFilter()
     condition_report_exists = django_filters.BooleanFilter()
-    #demolition_order_count = django_filters.RangeFilter()
-    #vbo_count = django_filters.RangeFilter()
-#    repair_order_count = django_filters.RangeFilter()
+    demolition_order_count = django_filters.RangeFilter(widget=RangeWidget())
+    vbo_count = django_filters.RangeFilter()
+    repair_order_count = django_filters.RangeFilter()
 
     #rc = Parcel.objects.order_by('requested_from_commissioners_date').distinct(
     #    'requested_from_commissioners_date').values_list('requested_from_commissioners_date', flat=True)
