@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import propertyInquiry, PropertyInquirySummary, propertyShowing, PropertyInquiryMapProxy
 from .forms import propertyShowingAdminForm
+from .views import send_signin_sheet
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.contrib.admin import SimpleListFilter
@@ -128,7 +129,7 @@ from django.shortcuts import render
 class propertyShowingAdmin(admin.ModelAdmin):
     search_fields = ('Property__streetAddress', 'Property__parcel',)
     #readonly_fields = ('create_ics','create_email_template', 'property_status', 'google_private_calendar_event_id', 'google_public_calendar_event_id' 'show_release_template')
-    readonly_fields = ('create_ics', 'create_email_template', 'property_status', 'show_release_template', 'google_public_calendar_event_id', 'google_private_calendar_event_id')
+    readonly_fields = ('create_ics', 'create_email_template', 'property_status', 'show_release_template', 'google_public_calendar_event_id', 'google_private_calendar_event_id', 'download_signin_sheet')
     form = propertyShowingAdminForm
     actions = ['batch_calendar_and_email',]
 #    inlines = [propertyInquiryInlineAdmin,]
@@ -161,6 +162,15 @@ class propertyShowingAdmin(admin.ModelAdmin):
                 reverse('property_inquiry_showing_release', args={obj.pk}),
                 'Generate Sign-in Sheet and Release')
         )
+
+    def download_signin_sheet(self, obj):
+        if obj.pk is None:
+            return '-'
+        url = reverse('property_inquiry_showing_scan', kwargs={'pk':obj.pk,})
+        link = u'<a href="{}">Download</a>'.format(url,)
+        return mark_safe(link)
+    download_signin_sheet.short_description = 'Download Signin Sheet'
+
 
     def save_related(self, request, form, formsets, change):
         super(propertyShowingAdmin, self).save_related(request, form, formsets, change)
