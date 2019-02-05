@@ -26,6 +26,7 @@ class PropertyStatusYearListFilter(SimpleListFilter):
             ('2016','2016'),
             ('2017','2017'),
             ('2018','2018'),
+            ('2019','2019'),
         )
     def queryset(self, request, queryset):
         if self.value():
