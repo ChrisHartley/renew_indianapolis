@@ -167,8 +167,8 @@ class CommIndApplicationForm(forms.ModelForm):
 
     development_plan_file = forms.FileField(
         required=True,
-        label='Application Qualification &amp; Development Plan',
-        help_text='Please review our template as a reference point for what must be included',
+        label='Development Plan',
+        help_text='Please review <a href="/static/Development_Plan_20190204.pdf">our template</a> as a reference point for what must be included',
     )
     balance_sheet_file = forms.FileField(
         required=True,
@@ -176,7 +176,7 @@ class CommIndApplicationForm(forms.ModelForm):
     )
     budget_and_financing_file = forms.FileField(
         required=True,
-        label='Budget and Financing',
+        label='Proof of Funds',
     )
 
     class Meta:
@@ -203,11 +203,11 @@ class CommIndApplicationForm(forms.ModelForm):
                     city-owned properties and the board of Directors for
                     Renew-owned properties), Buyer(s) will submit a
                     non-refundable $500 processing fee.</li>
-                    <li>Depending on the proposal, the Sale may require a Project
-                    Agreement, which shall set forth the nature of any development
-                    of the Property. If so, buyer shall execute such an agreement
+                    <li>The Sale will require a Project
+                    Agreement which shall set forth the nature of any development
+                    of the Property. The buyer shall execute such an agreement
                     with the Department of Metropolitan Development ("the DMD")
-                    on behalf of Renew Indianapolis, with sixty (60) days of the
+                    on behalf of Renew Indianapolis, within sixty (60) days of the
                     acceptance of the application. Renew Indianapolis and the
                     Applicant will work in tandem to determine the specifics of
                     the Project Agreement.</li>
@@ -288,16 +288,26 @@ class CommIndApplicationForm(forms.ModelForm):
 
             ),
 
-
+            Fieldset(
+                'Applicant Questions',
+                Field('applicant_work_character'),
+                Field('applicant_experience'),
+                Field('applicant_brownfield_experience'),
+                #Field('applicant_similar_experience'),
+                Field('applicant_joint_venture'),
+                Field('applicant_partnerships'),
+                css_class='well',
+            ),
             Fieldset(
                 'Project Description',
-                Field('narrative_description'),
+                Field('applicant_offer_price'),
+                Field('proposed_end_use'),
                 css_class='well'
             ),
 
 
             Fieldset(
-                'Budget and Funding',
+                'Proof of Funds',
                 HTML("""<p>
                     Please keep in mind that the guidelines below are a bare
                     minimum. We recommend providing proof of funds above the
@@ -306,7 +316,7 @@ class CommIndApplicationForm(forms.ModelForm):
                     <li>All proposed new construction and rehabilitation
                     projects require 100% proof of funds for the total
                     project's costs. The following are acceptable forms of
-                    proof of funds and should be attached at the end of the
+                    proof of funds and should be attached to the
                     application:
                     <ul><li>Signed Balance sheet</li>
                     <li>Pre-Approval Letter from Lender</li>
@@ -317,25 +327,24 @@ class CommIndApplicationForm(forms.ModelForm):
                     with the lender at the time of closing; or close on
                     the loan prior to closing.</p>
                 """),
-                Field('source_of_financing'),
+                #Field('source_of_financing'),
+                Field('budget_and_financing_file'),
                 css_class='well'
             ),
             Fieldset(
-                'Uploaded Files',
+                'Development Plan',
                 HTML("""<p>Before your application can be submitted for review
-                    you must complete and attach Applicant Qualification &amp;
-                    Development Plan, pre-approval letter from applicant's
-                    lender (if applicable). Please attach all above-mentioned
-                    files to this application when submitting to Renew
-                    Indianapolis</p>
-                    <p>A template for the Applicant Qualifiction &amp;
-                    Development Plan and balance sheet are attached to this
+                    you must complete and attach a
+                    Development Plan and proof of funds (see above for acceptable forms).
+                    Please attach all above-mentioned files to this application
+                    when submitting to Renew Indianapolis</p>
+                    <p>A template for the Development Plan is attached to this
                     application.</p>
 
                     """),
                 Field('development_plan_file'),
-                Field('balance_sheet_file'),
-                Field('budget_and_financing_file'),
+#                Field('balance_sheet_file'),
+#                Field('budget_and_financing_file'),
                 #HTML('<div class="form-group"><div class="control-label col-lg-4">Applicant Qualifiction &amp; Development Plan</div><div id="developmentplan-file-uploader" class="form-control-static col-lg-6">Drop your scope of work file here to upload</div>'),
                 #HTML('<div class="help-block col-lg-6 col-lg-offset-4">Please review our <a href="http://build.renewindianapolis.org/static/Scope-of-Work-Template.xls" target="_blank">template</a> as a reference point for what must be included.</div></div>'),
 
@@ -377,7 +386,7 @@ class CommIndApplicationForm(forms.ModelForm):
         prior_tax_foreclosure = cleaned_data.get('prior_tax_foreclosure', None)
         active_citations = cleaned_data.get('active_citations', None)
 
-        planned_improvements = cleaned_data.get('planned_improvements')
+        #planned_improvements = cleaned_data.get('planned_improvements')
         timeline = cleaned_data.get('timeline')
         estimated_cost = cleaned_data.get('estimated_cost')
         source_of_financing = cleaned_data.get('source_of_financing')

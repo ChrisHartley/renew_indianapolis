@@ -90,6 +90,7 @@ class Document(models.Model):
     )
 
     publish = models.BooleanField(default=False)
+    is_photo = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         super(Document, self).save(*args, **kwargs)
@@ -111,10 +112,11 @@ class Document(models.Model):
             send_mail('Django Virus Found', 'Virus found in file uploaded', 'info@renewindianapolis.org',
         ['chris.hartley@renewindianapolis.org'], fail_silently=False)
             return True
-        else:
 #            super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
-            try:
-                im = Image.open(self.file.path)
+        try:
+            im = Image.open(self.file.path)
+            if im.verify() == True:
+                self.is_photo = True
                 # image rotation code from http://stackoverflow.com/a/11543365/2731298
                 e = None
                 if hasattr(im, '_getexif'): # only present in JPEGs
@@ -129,9 +131,9 @@ class Document(models.Model):
                     elif orientation == 6: im = im.transpose(Image.ROTATE_270)
                     elif orientation == 8: im = im.transpose(Image.ROTATE_90)
     #            im.thumbnail((1024,1024))
-                im.save(self.image.path)
-            except:
-                return False
+                im.save(self.file.path)
+        except:
+            return False
 
     def __str__(self):
         return '{} - {}'.format(basename(self.file.name), self.file_purpose[:20] )
@@ -322,13 +324,57 @@ class Application(models.Model):
         blank=False
     )
 
-    # price_at_time_of_submission = models.DecimalField(
-    #     max_digits=8,
-    #     decimal_places=2,
-    #     help_text="The price of the property at time of submission",
-    #     null=True,
-    #     blank=True,
+    applicant_offer_price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        help_text="The price of the property offered by the applicant",
+        null=False,
+        blank=False,
+    )
+
+    proposed_end_use = models.CharField(
+        max_length=512,
+        blank=False,
+        help_text="What is the proposed end use of the property?",
+    )
+
+
+    applicant_work_character = models.CharField(
+        max_length=512,
+        blank=False,
+        help_text="Describe the general character of work usually performed by the applicant",
+    )
+
+    applicant_experience = models.CharField(
+        max_length=512,
+        blank=False,
+        help_text="Describe the experience of applicant in projects similar to the proposed project including experience in design and construction of facilities similar to the proposed project",
+    )
+
+    applicant_brownfield_experience= models.CharField(
+        max_length=512,
+        blank=False,
+        help_text="Does the applicant have experience with brownfield projects? If so, please give further details",
+    )
+
+    # applicant_similar_experience = models.CharField(
+    #     max_length=512,
+    #     blank=False,
+    #     help_text="Does the applicant have experience in design and construction of facilities similar to the proposed project? If so, please describe",
     # )
+
+    applicant_joint_venture = models.CharField(
+        max_length=512,
+        blank=False,
+        help_text="Does the applicant intend to joint venture and/or subcontract with other firms, and, if so, list the names and qualifications of such firms",
+    )
+
+    applicant_partnerships = models.CharField(
+        max_length=512,
+        blank=False,
+        help_text="List any current community, neighborhood and/or charitable partnerships in relation to this project",
+    )
+
 
 
     documents = GenericRelation(Document, related_query_name='application')
