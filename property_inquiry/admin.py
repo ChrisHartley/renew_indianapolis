@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from .models import propertyInquiry, PropertyInquirySummary, propertyShowing, PropertyInquiryMapProxy
 from .forms import propertyShowingAdminForm
 from .views import send_signin_sheet
@@ -116,6 +116,13 @@ def batch_schedule_email_template__admin_action(self, request, queryset):
     )
 batch_schedule_email_template__admin_action.short_description = "Batch Schedule Email Template"
 
+
+def admin_really_delete(self, request, queryset):
+    for obj in queryset:
+        obj.delete()
+    messages.add_message(request, messages.INFO, '{} objects deleted.'.format(queryset.count(),))
+admin_really_delete.short_description = 'Delete selected showings'
+
 # class propertyInquiryInlineAdmin(admin.StackedInline):
 #         model = propertyInquiry.showings.through
 #         fields =  ('propertyinquiry',)
@@ -131,7 +138,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
     #readonly_fields = ('create_ics','create_email_template', 'property_status', 'google_private_calendar_event_id', 'google_public_calendar_event_id' 'show_release_template')
     readonly_fields = ('create_ics', 'create_email_template', 'property_status', 'show_release_template', 'google_public_calendar_event_id', 'google_private_calendar_event_id', 'download_signin_sheet')
     form = propertyShowingAdminForm
-    actions = ['batch_calendar_and_email',]
+    actions = ['batch_calendar_and_email'] #admin_really_delete, removed
 #    inlines = [propertyInquiryInlineAdmin,]
     #exclude = ('inquiries',)
     def property_status(self, obj):
@@ -193,6 +200,14 @@ class propertyShowingAdmin(admin.ModelAdmin):
         )
 
     batch_calendar_and_email.short_description = 'Create calendar and email invites'
+
+
+
+    def get_actions(self, request):
+        actions = super(propertyShowingAdmin, self).get_actions(request)
+        #print actions
+        del actions['delete_selected']
+        return actions
 
 from django.db.models import Count, Sum, Min, Max
 from django.db.models.functions import Trunc
