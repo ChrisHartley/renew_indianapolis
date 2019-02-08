@@ -241,7 +241,7 @@ class Application(models.Model):
     landlord_registry = models.IntegerField(
         choices=YESNONA_TYPES,
         verbose_name="Are your rental properties registered in the Landlord Registry?",
-        help_text="<a href='https://www.municode.com/library/in/indianapolis_-_marion_county/codes/code_of_ordinances?nodeId=TITIVBUCORELI_CH851INLAREPR&showChanges=true' target='_blank'>Chapter 851</a> of the Marion County Code of Ordinances requires that landlords register rental properties in the <a href='http://www.indy.gov/eGov/City/DCE/Licenses/Pages/Home.aspx' target='_blank'>Landlord Registry</a>",
+        help_text="<a href='https://www.municode.com/library/in/indianapolis_-_marion_county/codes/code_of_ordinances?nodeId=TITIVBUCORELI_CH851INLAREPR&showChanges=true' target='_blank'>Chapter 851</a> of the Marion County Code of Ordinances requires that landlords register rental properties in the <a href='https://www.indy.gov/activity/landlord-registration-program' target='_blank'>Landlord Registry</a>",
         blank=True,
         null=True,
     )
