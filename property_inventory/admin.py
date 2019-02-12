@@ -14,6 +14,8 @@ from applications.admin import PriceChangeMeetingLinkInline
 from property_inquiry.models import propertyInquiry
 from property_condition.models import ConditionReport
 import datetime
+from django.utils.timezone import now
+#import pytz
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'
@@ -119,8 +121,10 @@ class PropertyAdmin(admin.OSMGeoAdmin):
     def number_of_inquiries(self, obj):
         inquiries = {}
         for duration in (30,60,90,180):
-            end_day = datetime.date.today()
+            end_day = now().date()
             start_day = end_day - datetime.timedelta(duration)
+            #print(pytz.utc.localize(start_day))
+            #print(start_day)
             inquiries['previous {0} days'.format(duration,)] = propertyInquiry.objects.filter(Property=obj).filter(timestamp__range=(start_day, end_day)).count()
         inquiries['all time'] = propertyInquiry.objects.filter(Property=obj).count()
         return inquiries
@@ -184,6 +188,12 @@ class price_changeAdmin(admin.OSMGeoAdmin):
 
 class blc_listingAdmin(admin.OSMGeoAdmin):
     search_fields = ('Property__streetAddress','Property__parcel', 'blc_id')
+    list_display = ('Property', 'get_property_status', 'blc_id', 'active', 'date_time')
+    readonly_fields = ['get_property_status',]
+    def get_property_status(self, obj):
+        if obj.Property:
+            return '{}'.format(obj.Property.status,)
+        return '-'
 
 class yard_signAdmin(admin.OSMGeoAdmin):
     search_fields = ('Property__streetAddress','Property__parcel', 'note')
