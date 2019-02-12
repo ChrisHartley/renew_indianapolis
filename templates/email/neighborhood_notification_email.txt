@@ -14,7 +14,7 @@ Parcel: {{application.Property.parcel}}
 {{application.user.first_name}} {{application.user.last_name}}{% if application.organization %} ({{application.organization}}){% endif %} intends to {% if application.application_type == 1 %}{% if application.Property.structureType == 'Vacant Lot' %}build a new home for themselves.{% else %}rehab the home to live in themselves.{% endif %}
 They intend to invest ${{application.staff_sow_total|default:0|intcomma}} in the home. A copy of the scope of work is attached to this email.{% endif %}{% if application.application_type == 2 %}{% if application.Property.structureType == 'Vacant Lot' %}build a new home{% else %}rehab the home{% endif %}{%if application.is_rental == True %} as a rental.{% else %} for sale.{% endif %}
 They intend to invest ${{application.staff_sow_total|default:0|intcomma}} in
-the home. A copy of the scope of work is attached to this email.{% endif %}{% if application.application_type == 3 %}use the property as a sidelot.{% endif %}{% if application.application_type == 4 %}maintain the lot but will have no obligation to build or restrictions on re-sale.
+the home. A copy of the scope of work is attached to this email.{% endif %}{% if application.application_type == 3 %}use the property as a sidelot.{% endif %}{% if application.application_type == 4 or application.application_type == 5 %}maintain the lot but will have no obligation to build or restrictions on re-sale.
 {% endif %}
 
 If you have any questions for the applicant you can contact them
