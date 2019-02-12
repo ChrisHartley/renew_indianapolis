@@ -315,6 +315,8 @@ class PropertyInventoryList(ListView):
             bep_worksheet = workbook.add_worksheet('Demolition Pending Properties')
             currency_format = workbook.add_format()
             boolean_format =  workbook.add_format()
+            regular_format = workbook.add_format()
+            regular_format.set_num_format(0x00)
             currency_format.set_num_format(0x05) # references a built in excel format for US currency
             boolean_format.set_num_format('"Y";;"N";')
 
@@ -339,6 +341,7 @@ class PropertyInventoryList(ListView):
                 sheet[0].set_column(5,5,None,currency_format) # Price is 6th field, format as US currency
                 sheet[0].set_column(8,8,None,boolean_format) # FDL boolean is 7th field, format as Y/N boolean
                 sheet[0].set_column(9,9,None,boolean_format) # Homestead Only boolean is 8th field, format as Y/N boolean
+                sheet[0].set_row(0, None, regular_format)
 
                 props = Property.objects.filter(status__istartswith=sheet[1]).filter(is_active=True).values_list(
                     'parcel',
