@@ -9,18 +9,18 @@ from django.contrib.auth.decorators import login_required
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
+from property_inventory.views import PropertyInventoryList
 from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingReleaseView, propertyShowingListEmailTemplateView, send_signin_sheet
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
 from user_files.views import delete_uploaded_file, import_uploader, send_file
 from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, ClosingDepositSlipDetailView
-from property_condition.views import submitConditionReport, send_cr_file
+from property_condition.views import submitConditionReport, send_cr_file, view_or_create_condition_report
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 from epp_connector.views import fetch_epp_inventory
 from neighborhood_notifications.views import update_registered_organizations, RelevantOrganizationsView
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
-from property_condition.views import view_or_create_condition_report
 from utils.views import DonateView
 from commind.views import view_document, CommIndApplicationFormView, PropertyListView, CommIndApplicationSuccessView
 
@@ -238,7 +238,9 @@ urlpatterns = [
             staff_member_required(ClosingDepositSlipDetailView.as_view()),
             name='closing_deposit_slip'),
 
-        url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx'),
+    #    url(r'epp/inventory.xlsx$', fetch_epp_inventory, name='epp_inventory_xlsx'),
+        url(r'epp/inventory.xlsx$', PropertyInventoryList.as_view(), name='bf_inventory_xlsx'),
+
 
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
         url(r'donate/$', DonateView.as_view(), name='donate'),

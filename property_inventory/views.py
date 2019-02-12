@@ -269,3 +269,101 @@ class PriceChangeSummaryView(DetailView):
         context['current_lot_price_per_square_foot'] = round(self.object.Property.price / Decimal(self.object.Property.area), 2)
         context['proposed_lot_price_per_square_foot'] = round(self.object.proposed_price / Decimal(self.object.Property.area), 2)
         return context
+
+
+import xlsxwriter
+from os.path import getmtime, getsize, basename
+from os import chmod
+import datetime
+from wsgiref.util import FileWrapper
+import mimetypes
+
+class PropertyInventoryList(ListView):
+    model = Property
+    def render_to_response(self, context, **response_kwargs):
+        FILENAME = '/tmp/inventory.xlsx'
+        REFRESH_SECONDS = 0
+        # Define the fields to write to the spreadsheet.
+        # Column name, field name from response json.
+        fields = (
+            ('Parcel', 'parcel'),
+            ('Street Address', 'streetAddress'),
+            ('ZIP Code','zipcode__name'),
+            ('Property Class','structureType'),
+            ('Neighborhood', 'neighborhood__name'),
+            ('Price', 'price'),
+            ('Zoning','zone__name'),
+            ('Parcel Size','area'),
+            ('Future Development Lot Program Eligible','s_custom_0001'),
+            ('Homestead (Owner Occupant) Program Only','s_custom_0001'),
+            ('Status','status'),
+            #('Vacant Lot Program Eligible',''),
+            #('Property ID', 'id'),
+        )
+
+        try:
+            mtime = getmtime(FILENAME)
+        except OSError:
+            mtime = 0
+        tdelta = datetime.datetime.now() - datetime.datetime.fromtimestamp(mtime)
+
+        if tdelta.total_seconds() > REFRESH_SECONDS:
+            workbook = xlsxwriter.Workbook(FILENAME)
+            worksheet = workbook.add_worksheet('Available Landbank Inventory')
+            sold_worksheet = workbook.add_worksheet('Sold Properties - Not Available')
+            pending_worksheet = workbook.add_worksheet('Sale Pending Properties')
+            bep_worksheet = workbook.add_worksheet('Demolition Pending Properties')
+            currency_format = workbook.add_format()
+            boolean_format =  workbook.add_format()
+            currency_format.set_num_format(0x05) # references a built in excel format for US currency
+            boolean_format.set_num_format('"Y";;"N";')
+
+            sheets = (
+                (worksheet, 'Available'),
+                (sold_worksheet, 'Sold'),
+                (pending_worksheet, 'Sale'),
+                (bep_worksheet, 'BEP'),
+            )
+
+
+
+            for sheet in sheets:
+
+                # Write column names across the first row.
+                for indx,field in enumerate(fields):
+                    sheet[0].write(0, indx, field[0])
+
+                sheet[0].set_column(1, 1, 25) #set wider width for streetAddress
+                sheet[0].set_column(3, 3, 25) #set wider width for structureType
+                sheet[0].set_column(10, 10, 35) #set wider width for status
+                sheet[0].set_column(5,5,None,currency_format) # Price is 6th field, format as US currency
+                sheet[0].set_column(8,8,None,boolean_format) # FDL boolean is 7th field, format as Y/N boolean
+                sheet[0].set_column(9,9,None,boolean_format) # Homestead Only boolean is 8th field, format as Y/N boolean
+
+                props = Property.objects.filter(status__istartswith=sheet[1]).filter(is_active=True).values_list(
+                    'parcel',
+                    "streetAddress",
+                    "zipcode__name",
+                    "structureType",
+                    "neighborhood__name",
+                    "price",
+                    "zone__name",
+                    "area",
+                    "future_development_program_eligible",
+                    "homestead_only",
+                    "status"
+                ).order_by("zipcode__name", "streetAddress", "structureType")
+
+                for counter,prop in enumerate(props, start=1):
+                    sheet[0].write_row(counter, 0, prop)
+
+            workbook.close()
+            chmod(FILENAME, 0o777)
+        else:
+            print('File cached, not re-fetching.')
+        wrapper = FileWrapper(open(FILENAME,'rb'))
+        content_type = mimetypes.MimeTypes().guess_type(FILENAME)[0]
+        response = HttpResponse(wrapper, content_type=content_type)
+        response['Content-Length'] = getsize(FILENAME)
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(basename(FILENAME))
+        return response
