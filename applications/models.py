@@ -304,6 +304,7 @@ class Application(models.Model):
         default=None,
         verbose_name='Staff field, if a waiver is required with the sidelot application',
     )
+    staff_intent_neighborhood_notification = models.CharField(blank=True, max_length=10240)
     neighborhood_notification_details = models.CharField(blank=True, max_length=10240)
     neighborhood_notification_feedback = models.CharField(blank=True, max_length=10240)
 

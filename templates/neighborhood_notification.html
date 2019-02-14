@@ -21,7 +21,7 @@ Parcel: {{application.Property.parcel}}</br>
 </p>
 <p>
 {{application.user.first_name}} {{application.user.last_name}} {% if application.organization %} ({{application.organization}}) {% endif %} intends to
-{% if application.application_type == 1 %}
+{% if application.staff_intent_neighborhood_notification != ''%}{{application.staff_intent_neighborhood_notification}}{%else%}{{application.staff_intent_neighborhood_notification}}
   {% if application.Property.structureType == 'Vacant Lot' %}
   build a new home for themselves.
   {% else %}
@@ -44,7 +44,6 @@ use property as a sidelot.
 {% if application.application_type == 4 or application.application_type == 5%}
 maintain the lot but will have no obligation to build or restrictions on re-sale.
 {% endif %}
-
 </p>
 <p>
 If you have any questions for the applicant you can contact them directly at {{application.user.email}} or reply to this email and I will ask for you.
