@@ -30,6 +30,8 @@ from django.utils import timezone # timezone aware now()
 # submissions
 def submitPropertyInquiry(request):
     parcel = request.GET.get('parcel', None)
+    rsvpId = request.GET.get('rsvpId', None)
+
     if parcel:
         try:
             prop = Property.objects.filter(status__contains='Available').exclude(
@@ -56,6 +58,16 @@ def submitPropertyInquiry(request):
             form_saved.applicant_ip_address = get_client_ip(request)[0]
             form_saved.user = request.user
             form_saved.save()
+            if rsvpId is not None:
+                try:
+                    ps = propertyShowing.objects.get(id=rsvpId)
+                    form_saved.status = propertyInquiry.SCHEDULED_STATUS
+                    form_saved.save()
+                    ps.inquiries.add(form_saved)
+                    ps.save()
+                except propertyShowing.DoesNotExist:
+                    messages.add_message(request, messages.ERROR, 'The requested property showing could not be found, your inquiry has been submitted.')
+                # add inquiry to showing
             message_body = render_to_string('email/property_inquiry_confirmation.txt', {'Property': form_saved.Property })
             message_subject = 'Inquiry Received - {0}'.format(form_saved.Property)
             send_mail(message_subject, message_body, 'info@renewindianapolis.org', [form_saved.user.email,], fail_silently=False)
@@ -177,7 +189,7 @@ class propertyShowingReleaseView(ListView):
 
         for ps in self.get_queryset():
             for i in ps.inquiries.all():
-                requestors.append('{} {}'.format(i.user.first_name, i.user.last_name))
+                requestors.append(u'{} {}'.format(i.user.first_name, i.user.last_name))
         context['requestors'] = set(requestors)
         return context
 

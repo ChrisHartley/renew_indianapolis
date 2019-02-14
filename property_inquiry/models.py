@@ -142,6 +142,10 @@ class propertyShowing(models.Model):
                     sleep(2)
                     logger.warning('HttpError calling Google Calendar API')
                     continue
+                except TypeError as e:
+                    sleep(2)
+                    logger.warning('TypeError calling Google Calendar API, most likely event not found resulting in JSON not serializable.')
+                    continue
                 else:
                     if calendar['sharing'] == 'public':
                         self.google_public_calendar_event_id = e.get('id')

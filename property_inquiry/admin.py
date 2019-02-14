@@ -185,8 +185,9 @@ class propertyShowingAdmin(admin.ModelAdmin):
         for inquiry in form.instance.inquiries.all():
             if inquiry.status == propertyInquiry.NULL_STATUS:
                 inquiry.status = propertyInquiry.USER_CONTACTED_STATUS
+            if inquiry.showing_scheduled is None or inquiry.showing_scheduled.date() < form.instance.datetime.date():
                 inquiry.showing_scheduled = form.instance.datetime
-                inquiry.save()
+            inquiry.save()
 
 
     def batch_calendar_and_email(self, request, queryset):
