@@ -132,5 +132,5 @@ class PropertyListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(PropertyListView, self).get_context_data(**kwargs)
-        context['published_property_county'] = Property.objects.filter(published=True).count()
+        context['published_property_count'] = Property.objects.filter(published=True).count()
         return context

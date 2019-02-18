@@ -8,6 +8,22 @@
 
 {% block content %}
 
+{% if published_property_count == 0 %}
+<div class="row">
+  <div class='col-md-5 col-md-offset-2'>
+    <div class="panel panel-info">
+      <div class="panel-heading">Coming Soon</div>
+
+      <div class="panel-body">Please check back for a complete list of available
+        commercial/industrial properties.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endif %}
+
 {% for property in object_list %}
 <div class="row">
 
@@ -47,6 +63,12 @@
       {% for phot in property.photos.all %}
         <li><a href="/media/{{phot.file.name}}"><img src="/media/{{phot.file.name}}" alt='image' width='200px' class="img-rounded pull-right"/></a></li>
       {%endfor %}
+      {% for phot in property.documents.all %}
+        {% if phot.is_photo %}
+          <li><a href="/media/{{phot.file.name}}"><img src="/media/{{phot.file.name}}" alt='image' width='200px' class="img-rounded pull-right"/></a></li>
+        {% endif %}
+      {%endfor %}
+
       </ul>
 
       {% if property.status == 'Available' %}
