@@ -168,7 +168,7 @@ class CommIndApplicationForm(forms.ModelForm):
     development_plan_file = forms.FileField(
         required=True,
         label='Development Plan',
-        help_text='Please review <a href="/static/Development_Plan_20190204.pdf">our template</a> as a reference point for what must be included',
+        help_text='Please review <a href="/static/Development-Plan-2019-02-18.pdf">our template</a> as a reference point for what must be included',
     )
     balance_sheet_file = forms.FileField(
         required=True,
@@ -338,8 +338,7 @@ class CommIndApplicationForm(forms.ModelForm):
                     Development Plan and proof of funds (see above for acceptable forms).
                     Please attach all above-mentioned files to this application
                     when submitting to Renew Indianapolis</p>
-                    <p>A template for the Development Plan is attached to this
-                    application.</p>
+                    <p>A template for the Development Plan is <a href="/static/Development-Plan-2019-02-18.pdf">available here.</a></p>
 
                     """),
                 Field('development_plan_file'),
