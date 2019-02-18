@@ -83,7 +83,7 @@
       <div class="panel-footer">Documents:
         <ul>
           {% for doc in property.documents.all %}
-          {% if doc.publish %}
+          {% if doc.publish and not doc.is_photo%}
           <li><a target="_blank" href="/media/{{doc.file}}">{%if doc.file_purpose == ''%}{{doc.file}}{%else%}{{doc.file_purpose}}{%endif%}</a></li>
           {% endif %}
           {% endfor %}
