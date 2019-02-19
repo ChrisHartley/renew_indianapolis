@@ -205,6 +205,13 @@ class closing(models.Model):
                 app.status = Application.WITHDRAWN_STATUS
                 app.staff_notes = 'Application marked as withdrawn when closing archived - {0}\n{1}'.format(timezone.now(),app.staff_notes)
                 app.save()
+                if self.application.Property.blc_listing.count() > 0 and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
+                    subject = 'BLC listed property closing cancelled - {0}'.format(self.application.Property,)
+                    message = 'This is a courtesy notification that the closing on BLC property at {0} was cancelled. Please update your files as necessary.'.format(self.application.Property,)
+                    recipient = [settings.BLC_MANAGER_EMAIL,]
+                    from_email = 'info@renewindianapolis.org'
+                    send_mail(subject, message, from_email, recipient,)
+
 
     def __unicode__(self):
             if self.application:

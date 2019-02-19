@@ -72,7 +72,7 @@ class ClosingAdmin(admin.ModelAdmin):
     list_display = ['__unicode__','title_company','renew_owned', 'date_time', 'processing_fee_paid', 'assigned_city_staff']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__organization__name', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'application__Property__renew_owned', 'archived')
-    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid', 'print_deposit_slip','blc_listed')
+    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid', 'print_deposit_slip','blc_listed','blc_expiration')
     actions = [custom_batch_editing__admin_action]
     inlines = [PurchaseOptionInline,]
     raw_id_fields = ('application',)
@@ -205,7 +205,12 @@ class ClosingAdmin(admin.ModelAdmin):
         return None
     blc_listed.boolean = True
 
-
+    def blc_expiration(self, obj):
+        if obj.application is not None:
+            return blc_listing.objects.filter(Property=obj.application.Property).filter(active=True).first()
+        if obj.prop is not None:
+            return blc_listing.objects.filter(Property=obj.prop).filter(active=True).first()
+        return None
 
 class ClosingScheduleViewAdmin(ClosingAdmin):
     model = closing_proxy
