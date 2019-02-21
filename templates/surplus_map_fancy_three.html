@@ -744,9 +744,12 @@
               $.get('surplus/property/'+feature.get("parcel_number")+'/', function(data){
                 parcel = data.features[0].properties;
                 iframe = '<div class="google-maps"><iframe src="https://www.google.com/maps/embed/v1/streetview?&key=AIzaSyABkapFATusLHbmOnndPBjx-JsGiO5TDkM&location='+lon + ','+lat+'" allowfullscreen="" height="600" width="600"></div>';
-                checked = ''
-                if (parcel.interesting){ checked = 'checked=checked'; }
-                filter = 'Interesting? <input type="checkbox" name="interesting" '+checked+'/><br/>'+
+                interesting_checked = ''
+                vetted_checked = ''
+                if (parcel.interesting){ interesting_checked = 'checked=checked'; }
+                if (parcel.vetted){ vetted_checked = 'checked=checked'; }
+                filter = 'Interesting? <input type="checkbox" name="interesting" '+interesting_checked+'/>'+
+                  ' Vetted? <input type="checkbox" name="vetted" '+vetted_checked+'/><br/>'+
                   'Notes: <input type="text" name="notes" value="'+parcel.notes+'"/></br>'+
                   '<input type="hidden" name="parcel_number" value="'+parcel.parcel_number+'"/>'+
                   '<input type="submit" id="submit" value="Save"/>';
@@ -758,7 +761,6 @@
                   '<li>Requested From Commissioners: '+parcel.requested_from_commissioners+' Notes: '+parcel.notes+'</li>'+
                   '<li>Interesting: '+parcel.interesting+'</li>'+
                   '<li>Vetted: '+parcel.vetted+'</li>'+
-                  '<li>Vetting Notes: '+parcel.vetting_notes+'</li>'+
                   '<li>End Use: '+parcel.intended_end_use+'</li>'+
                   '<li>Condition Report: <a href="{% if not debug %}https://build.renewindianapolis.org{%else%}http://localhost:8000{%endif%}/admin/condition_report_admin/'+parcel.parcel_number+'" target="_blank">View or create report</a></li>'+
                   '</ul><div id="filter"></div>'+

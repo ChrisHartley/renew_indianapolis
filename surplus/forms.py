@@ -61,6 +61,8 @@ class SurplusSearchForm(forms.ModelForm):
             Field('repair_order_count', css_class='input-sm'),
             Field('demolition_order_count', css_class='input-sm'),
             Field('vbo_count', css_class='input-sm'),
+            Field('vetted', css_class='input-sm'),
+
 
         #    Field('requested_from_commissioners', css_class='input-sm'),
         #    Field('previously_held_gateway_area', css_class='input-sm'),

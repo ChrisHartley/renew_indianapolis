@@ -162,6 +162,10 @@ def surplusUpdateFieldsFromMap(request):
         prop.interesting = True
     else:
         prop.interesting = False
+    if request.POST.get('vetted', None) == 'on':
+        prop.vetted = True
+    else:
+        prop.vetted = False
     try:
         prop.save()
         return JsonResponse({'status': 'OK'})
