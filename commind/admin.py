@@ -58,18 +58,55 @@ class ApplicationAdmin(admin.OSMGeoAdmin):
         }),
         ('Qualifying Questions', {
             'fields': (
-                ('conflict_board_rc', 'conflict_board_rc_name', 'conflict_city', 'conflict_city_name',),
-                'active_citations', 'prior_tax_foreclosure', 'tax_status_of_properties_owned',)
+                (
+                    'conflict_board_rc',
+                    'conflict_board_rc_name',
+                    'conflict_city',
+                    'conflict_city_name',
+                ),
+                'active_citations',
+                'prior_tax_foreclosure',
+                'tax_status_of_properties_owned',)
         }),
         ('Entity', {
-            'fields': ('entity',)
+            'fields': (
+                'entity',
+            )
 
         }),
-        ('Sources of Finacing', {
-            'fields': ('source_of_financing',)
+        ('Other Questions', {
+            'fields': (
+                'applicant_work_character',
+                'applicant_experience',
+                'applicant_brownfield_experience',
+                'applicant_joint_venture',
+                'applicant_partnerships',
+            )
+        }),
+        ('Project Description', {
+            'fields': (
+                'applicant_offer_price',
+                'proposed_end_use',
+
+            )
         }),
         ('Staff fields', {
-            'fields': ('staff_summary','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen', ))
+            'fields': (
+                'staff_summary',
+                'neighborhood_notification_details',
+                'neighborhood_notification_feedback',
+                'staff_sow_total',
+                (
+                    'staff_pof_total',
+                    'staff_pof_description'
+                ),
+                (
+                    'staff_recommendation',
+                    'staff_recommendation_notes',
+                    'staff_points_to_consider',
+                    'frozen',
+                )
+            )
 
         })
 
