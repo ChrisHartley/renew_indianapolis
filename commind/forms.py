@@ -121,15 +121,15 @@ class CommIndApplicationForm(forms.ModelForm):
     )
     save_for_later = forms.CharField(required=False)
 
-    entity = forms.ModelChoiceField(
-        queryset=Entity.objects.all(),
-        widget=AddAnotherWidgetWrapper(
-            forms.Select(),
-            Entity,
-        ),
-        help_text='If you are applying on behalf of an organization or another individual please add or select. <b>The property can only be titled under either your name or the name of an organization/individual included here..</b>',
-        required=False
-    )
+    # entity = forms.ModelChoiceField(
+    #     queryset=Entity.objects.all(),
+    #     widget=AddAnotherWidgetWrapper(
+    #         forms.Select(),
+    #         Entity,
+    #     ),
+    #     help_text='If you are applying on behalf of an organization or another individual please add or select. <b>The property can only be titled under either your name or the name of an organization/individual included here..</b>',
+    #     required=False
+    # )
 
 
     entity_name = forms.CharField(required=False, help_text='Name of the entity that will take title, if known')
@@ -170,10 +170,10 @@ class CommIndApplicationForm(forms.ModelForm):
         label='Development Plan',
         help_text='Please review <a href="/static/Development-Plan-2019-02-18.pdf">our template</a> as a reference point for what must be included',
     )
-    balance_sheet_file = forms.FileField(
-        required=True,
-        label='Balance Sheet',
-    )
+    # balance_sheet_file = forms.FileField(
+    #     required=False,
+    #     label='Balance Sheet',
+    # )
     budget_and_financing_file = forms.FileField(
         required=True,
         label='Proof of Funds',

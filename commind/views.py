@@ -11,6 +11,8 @@ from django.urls import reverse
 from .models import Document, Application, Property
 from .forms import CommIndApplicationForm, EntityMemberFormSet, EntityForm
 #, CommIndDocumentFormset
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 # This function sends a Document to the user. Used instead of direct download so we can enforce
 # permissions. In the future use a library such as fleep or magic to determine the actual
@@ -28,6 +30,7 @@ def view_document(request, filename):
 
 from django.db import transaction
 from .models import Entity, Person
+@method_decorator(login_required, name='dispatch')
 class CommIndApplicationFormView(FormView):
     form_class = CommIndApplicationForm
     template_name = 'commind_application.html'
@@ -48,10 +51,16 @@ class CommIndApplicationFormView(FormView):
     #         data['entity_member_form'] = EntityMemberFormSet()
     #     return data
 
+
+    def form_invalid(self, form):
+        """If the form is invalid, render the invalid form."""
+        return self.render_to_response(self.get_context_data(form=form))
+
     def form_valid(self, form):
         #context = self.get_context_data()
         #entitymembers = context['entity_member_form']
     #
+        #print(self)
         if form.validate_for_submission():
             print "Form is valid"
             with transaction.atomic():
@@ -78,6 +87,7 @@ class CommIndApplicationFormView(FormView):
             self.object = form.save(commit=False)
             self.object.user = self.request.user
             self.object.entity = entity
+            self.object.status = Application.COMPLETE_STATUS
             self.object.save() # to get id so ModelMultipleChoiceField can be saved
             self.object.Properties = form.cleaned_data['Properties']
             self.object.save()
@@ -89,13 +99,13 @@ class CommIndApplicationFormView(FormView):
                 content_object = self.object,
             )
             budget_and_financing_file.save()
-            balance_sheet_file = Document(
-                user = self.request.user,
-                file = form.cleaned_data['balance_sheet_file'],
-                file_purpose = 'Balance Sheet',
-                content_object = self.object,
-            )
-            balance_sheet_file.save()
+            # balance_sheet_file = Document(
+            #     user = self.request.user,
+            #     file = form.cleaned_data['balance_sheet_file'],
+            #     file_purpose = 'Balance Sheet',
+            #     content_object = self.object,
+            # )
+            # balance_sheet_file.save()
             development_plan_file = Document(
                 user = self.request.user,
                 file = form.cleaned_data['development_plan_file'],

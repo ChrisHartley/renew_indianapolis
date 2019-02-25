@@ -10,6 +10,7 @@ from os.path import basename
 import pyclamd
 from django.core.mail import send_mail
 from PIL import Image, ExifTags
+from django.utils import timezone
 
 
 @python_2_unicode_compatible
@@ -310,7 +311,7 @@ class Application(models.Model):
             disposition after completion.
 
         """,
-        blank=False
+        blank=True
     )
 
     source_of_financing = models.TextField(
@@ -321,7 +322,7 @@ class Application(models.Model):
 			name of the grant and whether it is awarded, pending, or not yet
             submitted.
 		""",
-        blank=False
+        blank=True
     )
 
     applicant_offer_price = models.DecimalField(
@@ -379,7 +380,7 @@ class Application(models.Model):
 
     documents = GenericRelation(Document, related_query_name='application')
     notes = GenericRelation(Note, related_query_name='application_notes')
-    entity = models.ForeignKey(Entity)
+    entity = models.ForeignKey(Entity, null=True, blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     submitted_timestamp = models.DateTimeField(null=True, blank=True)
