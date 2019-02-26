@@ -11,5 +11,5 @@ Property information:
 {% endfor %}
 Requestors:
 {% for user in users %}
-* {{user.first_name}} {{user.last_name}} - {{user.email}} {{user.profile.phone_number}}
+* {{user}}
 {% endfor %}

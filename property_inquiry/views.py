@@ -63,10 +63,10 @@ def submitPropertyInquiry(request):
                     ps = propertyShowing.objects.get(id=rsvpId)
                     form_saved.status = propertyInquiry.SCHEDULED_STATUS
                     form_saved.save()
-                    ps.inquiries.add(form_saved)
+                    ps.inquiries.add(form_saved.id)
                     ps.save()
                 except propertyShowing.DoesNotExist:
-                    messages.add_message(request, messages.ERROR, 'The requested property showing could not be found, your inquiry has been submitted.')
+                    messages.add_message(request, messages.ERROR, 'The requested property showing could not be found, but your inquiry has been submitted.')
                 # add inquiry to showing
             message_body = render_to_string('email/property_inquiry_confirmation.txt', {'Property': form_saved.Property })
             message_subject = 'Inquiry Received - {0}'.format(form_saved.Property)

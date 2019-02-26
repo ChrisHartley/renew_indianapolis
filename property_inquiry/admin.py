@@ -136,7 +136,16 @@ from django.shortcuts import render
 class propertyShowingAdmin(admin.ModelAdmin):
     search_fields = ('Property__streetAddress', 'Property__parcel',)
     #readonly_fields = ('create_ics','create_email_template', 'property_status', 'google_private_calendar_event_id', 'google_public_calendar_event_id' 'show_release_template')
-    readonly_fields = ('create_ics', 'create_email_template', 'property_status', 'show_release_template', 'google_public_calendar_event_id', 'google_private_calendar_event_id', 'download_signin_sheet')
+    readonly_fields = (
+        'create_ics',
+        'create_email_template',
+        'property_status',
+        'show_release_template',
+        'google_public_calendar_event_id',
+        'google_private_calendar_event_id',
+        'download_signin_sheet',
+        'get_inquiry_rsvp_id'
+    )
     form = propertyShowingAdminForm
     actions = ['batch_calendar_and_email'] #admin_really_delete, removed
 #    inlines = [propertyInquiryInlineAdmin,]
@@ -209,6 +218,17 @@ class propertyShowingAdmin(admin.ModelAdmin):
         #print actions
         del actions['delete_selected']
         return actions
+
+    def get_inquiry_rsvp_id(self, obj):
+        #print self.request
+        #print(self.request.build_absolute_uri(reverse('submit_property_inquiry')))
+        if obj.id is not None and obj.Property is not None:
+           url = '{}?parcel={}&rsvpId={}'.format(reverse('submit_property_inquiry'), obj.Property.parcel, obj.id)
+        else:
+           return '-'
+        link = u'<a href="{}">Link</a>'.format(url,)
+        return mark_safe(link)
+    get_inquiry_rsvp_id.short_description = 'URL for inquiry with auto RSVP'
 
 from django.db.models import Count, Sum, Min, Max
 from django.db.models.functions import Trunc

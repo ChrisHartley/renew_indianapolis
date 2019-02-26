@@ -85,74 +85,91 @@ class propertyShowing(models.Model):
         ordering = ['-datetime']
 
     def save(self, *args, **kwargs):
-        super(propertyShowing, self).save(*args, **kwargs)
-        for calendar in settings.PROPERTY_SHOWING_CALENDARS:
-            e = {
-                'summary': '{} - Property Showing'.format(self.Property.streetAddress,).title(),
-                'location': '{0}, Indianapolis, IN'.format(self.Property.streetAddress,),
-                'description': 'If no one RSVPs to this showing it may be cancelled - Contact Matt Hostetler Matthew.Hostetler@indy.gov if you plan on attending.',
-                'start': {
-                    'dateTime': self.datetime.isoformat(),
-                    'timeZone': '',
-                },
-                'end': {
-                    'dateTime': (self.datetime+timedelta(minutes=30)).isoformat(),
-                    'timeZone': '',
-                }
+        try:
+            orig = propertyShowing.objects.get(pk=self.pk)
+        except propertyShowing.DoesNotExist:
+            super(propertyShowing, self).save(*args, **kwargs)
+            orig = None
+        finally:
+            if orig == None or (
+                self.google_public_calendar_event_id == None or
+                self.google_private_calendar_event_id == None or
+                orig.google_public_calendar_event_id != self.google_public_calendar_event_id or
+                orig.google_private_calendar_event_id != self.google_private_calendar_event_id or
+                orig.Property != self.Property or
+                orig.datetime != self.datetime or
+                orig.inquiries != self.inquiries
+                ): # if things have changed, need to re-update
+                super(propertyShowing, self).save(*args, **kwargs)
+                for calendar in settings.PROPERTY_SHOWING_CALENDARS:
+                    e = {
+                        'summary': '{} - Property Showing'.format(self.Property.streetAddress,).title(),
+                        'location': '{0}, Indianapolis, IN'.format(self.Property.streetAddress,),
+                        'description': 'If no one RSVPs to this showing it may be cancelled - Contact Matt Hostetler Matthew.Hostetler@indy.gov if you plan on attending.',
+                        'start': {
+                            'dateTime': self.datetime.isoformat(),
+                            'timeZone': '',
+                        },
+                        'end': {
+                            'dateTime': (self.datetime+timedelta(minutes=30)).isoformat(),
+                            'timeZone': '',
+                        }
 
-            }
-            if calendar['sharing'] == 'private':
-                data = sorted(self.inquiries.all(), key=attrgetter('user'))
-                users = []
-                people = []
-                for k,g in groupby(data, attrgetter('user')):
-                    users.append(k)
-                for u in users:
-                    try:
-                        people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
-                    except ApplicantProfile.DoesNotExist:
-                        people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
-                #for inq in self.inquiries.all():
-
-                e['description'] = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': Property.objects.filter(pk=self.Property.pk), 'users': users})
-
-            SCOPES = 'https://www.googleapis.com/auth/calendar'
-            store = file.Storage(settings.GOOGLE_API_TOKEN_LOCATION)
-            creds = store.get()
-            logger = logging.getLogger(__name__)
-
-            if not creds or creds.invalid:
-                logger.error('Error with Google API token.json - creds not found or invalid')
-                return
-            for i in range(5):
-                try:
-                    service = build('calendar', 'v3', http=creds.authorize(Http()), cache_discovery=False)
-                    if calendar['sharing'] == 'public':
-                        if self.google_public_calendar_event_id is not None:
-                            e = service.events().update(calendarId=calendar['id'], eventId=self.google_public_calendar_event_id, body=e).execute()
-                        else:
-                            e = service.events().insert(calendarId=calendar['id'], body=e).execute()
+                    }
                     if calendar['sharing'] == 'private':
-                        if self.google_private_calendar_event_id is not None:
-                            e = service.events().update(calendarId=calendar['id'], eventId=self.google_private_calendar_event_id, body=e).execute()
-                        else:
-                            e = service.events().insert(calendarId=calendar['id'], body=e).execute()
+                        data = sorted(self.inquiries.all(), key=attrgetter('user'))
+                        users = []
+                        people = []
+                        print(data)
+                        for k,g in groupby(data, attrgetter('user')):
+                            users.append(k)
+                        print (users)
+                        for u in users:
+                            try:
+                                people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
+                            except ApplicantProfile.DoesNotExist:
+                                people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
+                        #for inq in self.inquiries.all():
 
-                except HttpError as e:
-                    sleep(2)
-                    logger.warning('HttpError calling Google Calendar API')
-                    continue
-                except TypeError as e:
-                    sleep(2)
-                    logger.warning('TypeError calling Google Calendar API, most likely event not found resulting in JSON not serializable.')
-                    continue
-                else:
-                    if calendar['sharing'] == 'public':
-                        self.google_public_calendar_event_id = e.get('id')
-                    if calendar['sharing'] == 'private':
-                        self.google_private_calendar_event_id = e.get('id')
-                    break
-        super(propertyShowing, self).save(*args, **kwargs)
+                        e['description'] = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': Property.objects.filter(pk=self.Property.pk), 'users': people})
+
+                    SCOPES = 'https://www.googleapis.com/auth/calendar'
+                    store = file.Storage(settings.GOOGLE_API_TOKEN_LOCATION)
+                    creds = store.get()
+                    logger = logging.getLogger(__name__)
+
+                    if not creds or creds.invalid:
+                        logger.error('Error with Google API token.json - creds not found or invalid')
+                        return
+                    for i in range(5):
+                        try:
+                            service = build('calendar', 'v3', http=creds.authorize(Http()), cache_discovery=False)
+                            if calendar['sharing'] == 'public':
+                                if self.google_public_calendar_event_id is not None:
+                                    e = service.events().update(calendarId=calendar['id'], eventId=self.google_public_calendar_event_id, body=e).execute()
+                                else:
+                                    e = service.events().insert(calendarId=calendar['id'], body=e).execute()
+                            if calendar['sharing'] == 'private':
+                                if self.google_private_calendar_event_id is not None:
+                                    e = service.events().update(calendarId=calendar['id'], eventId=self.google_private_calendar_event_id, body=e).execute()
+                                else:
+                                    e = service.events().insert(calendarId=calendar['id'], body=e).execute()
+
+                        except HttpError as e:
+                            sleep(2)
+                            logger.warning('HttpError calling Google Calendar API')
+                            continue
+                        except TypeError as e:
+                            sleep(2)
+                            logger.warning('TypeError calling Google Calendar API, most likely event not found resulting in JSON not serializable.')
+                            continue
+                        else:
+                            if calendar['sharing'] == 'public':
+                                self.google_public_calendar_event_id = e.get('id')
+                            if calendar['sharing'] == 'private':
+                                self.google_private_calendar_event_id = e.get('id')
+                            break
+            super(propertyShowing, self).save(*args, **kwargs)
 
 
     def delete(self):
