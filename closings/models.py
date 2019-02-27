@@ -181,7 +181,7 @@ class closing(models.Model):
         if self.application:
             # create a new processing fee object with the correct price if necessary
             if not processing_fee.objects.filter(closing=self).exists():
-                if self.application.application_type == Application.SIDELOT or self.application.application_type == Application.VACANT_LOT:
+                if self.application.application_type == Application.SIDELOT or self.application.application_type == Application.VACANT_LOT or self.application.application_type == Application.FDL:
                     amount = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']
                 else:
                     amount = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']
