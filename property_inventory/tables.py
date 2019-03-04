@@ -9,7 +9,7 @@ class PropertyStatusTable(TableReport):
         model = Property
         attrs = {"class": "paleblue"}
         fields = ("parcel", "streetAddress", "zipcode",
-                  "structureType", "applicant", "status", )
+                  "structureType", "price", "applicant", "status", )
 
 class reviewPendingStatusTable(TableReport):
 
