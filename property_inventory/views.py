@@ -294,6 +294,7 @@ class PropertyInventoryList(ListView):
             ('Price', 'price'),
             ('Zoning','zone__name'),
             ('Parcel Size','area'),
+            ('Applicant/Buyer', 'applicant'),
             ('Future Development Lot Program Eligible','s_custom_0001'),
             ('Homestead (Owner Occupant) Program Only','s_custom_0001'),
             ('Status','status'),
@@ -339,8 +340,8 @@ class PropertyInventoryList(ListView):
                 sheet[0].set_column(3, 3, 25) #set wider width for structureType
                 sheet[0].set_column(10, 10, 35) #set wider width for status
                 sheet[0].set_column(5,5,None,currency_format) # Price is 6th field, format as US currency
-                sheet[0].set_column(8,8,None,boolean_format) # FDL boolean is 7th field, format as Y/N boolean
-                sheet[0].set_column(9,9,None,boolean_format) # Homestead Only boolean is 8th field, format as Y/N boolean
+                sheet[0].set_column(9,9,None,boolean_format) # FDL boolean is 7th field, format as Y/N boolean
+                sheet[0].set_column(10,10,None,boolean_format) # Homestead Only boolean is 8th field, format as Y/N boolean
                 sheet[0].set_row(0, None, regular_format)
 
                 props = Property.objects.filter(status__istartswith=sheet[1]).filter(is_active=True).values_list(
@@ -352,6 +353,7 @@ class PropertyInventoryList(ListView):
                     "price",
                     "zone__name",
                     "area",
+                    "applicant",
                     "future_development_program_eligible",
                     "homestead_only",
                     "status"
