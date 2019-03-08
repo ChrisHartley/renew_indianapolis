@@ -32,7 +32,7 @@ class PurchaseOptionFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'no':
-            return queryset.filter(Q(purchase_option__isnull=True) | Q(purchase_option__date_expiring__lt=date.today()) )
+            return queryset.filter(Q(purchase_option__isnull=True) | Q(purchase_option__date_expiring__lte=date.today()) ).exclude(purchase_option__date_expiring__gte=date.today())
         if self.value() == 'yes':
             return queryset.filter(purchase_option__date_expiring__gte=date.today())
 
