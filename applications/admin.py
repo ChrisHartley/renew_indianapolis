@@ -100,13 +100,19 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     list_filter = ('status','application_type', MeetingScheduledFilter)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name', 'organization__name')
     readonly_fields = ('created', 'modified', 'user_readable', 'property_type',
-        'property_status','property_vacant_lot','property_sidelot',
+        'property_status','property_fdl',
         'scheduled_meeting','application_summary_page','application_detail_page',
         'n_notification', 'submitted_timestamp', 'price_at_time_of_submission',
         'property_inquiry_count')
     fieldsets = (
         (None, {
-            'fields': ( ('user','user_readable','organization'), ('created', 'modified', 'submitted_timestamp'), ('Property', 'property_type','property_status','property_vacant_lot','property_sidelot'), ('status', 'property_inquiry_count'), ('application_summary_page','application_detail_page'))
+            'fields': (
+                ('user','user_readable','organization'),
+                ('created', 'modified', 'submitted_timestamp'),
+                ('Property', 'property_type','property_status','property_fdl',), 
+                ('status', 'property_inquiry_count'),
+                ('application_summary_page','application_detail_page')
+                )
 
         }),
         ('Qualifying Questions', {
@@ -152,15 +158,10 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
         return obj.meeting.latest('meeting')
     scheduled_meeting.admin_order_field = 'meeting'
 
-    def property_vacant_lot(self, obj):
-        return obj.Property.vacant_lot_eligible
-    property_vacant_lot.short_description = 'Vacant Lot Program eligible'
-    property_vacant_lot.boolean = True
-
-    def property_sidelot(self, obj):
-        return obj.Property.sidelot_eligible
-    property_sidelot.short_description = 'Sidelot Program eligible'
-    property_sidelot.boolean = True
+    def property_fdl(self, obj):
+        return obj.Property.future_development_program_eligible
+    property_fdl.short_description = 'Future Development Lot Program eligible'
+    property_fdl.boolean = True
 
     def property_status(self, obj):
         if obj.Property is None:
