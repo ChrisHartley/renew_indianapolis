@@ -1,6 +1,16 @@
 {% extends 'base-simple.html' %}
 {% load humanize %}
 {% load closings_extras %}
+{% block header %}
+<style>
+td{
+  border-top: 0px !important
+}
+td.underline {
+  border-bottom:1pt solid black
+}
+</style>
+{% endblock header %}
 {% block center %}
 <div class="pull-right">Revised 6.15.2018</div>
 <h1>RELEASE AND WAIVER OF LIABILITY</h1>
@@ -19,23 +29,31 @@ In consideration of my participation in <strong>a City of Indianapolis Land Bank
 Indianapolis, Indiana (the “Property”). I attest and verify that I am physically and medically fit and in good health, and further that I have received sufficient instruction to participate in this Event.  I understand and acknowledge that participating in the Event may expose me to dangers from both known and unanticipated risks, whether existing because of negligence or otherwise and specifically waive any and all claims arising out of such conditions. I acknowledge that the condition of the Property may be extremely dangerous, and I fully realize the dangers of participating in this Event and fully assume the risks associated with such participation. In signing this release, I fully recognize that if I am injured or suffer any other loss as a result of participating in the Event, I will have no right to make any claim or file any lawsuit against the City. <strong>I HAVE CAREFULLY READ THIS RELEASE AND WAIVER OF LIABILITY, AND VOLUNTARILY AND KNOWINGLY AGREE TO ITS TERMS.</strong>
 </p>
 <p>
-{% regroup showings.inquiries.all by user as inquiries %}
+  Showing Date: {{showings.0.datetime|date:'m/d/y'}}
+{% comment %}{% regroup showings.inquiries.all by user as inquiries %}{% endcomment %}
 <table class="table">
   <thead>
-    <tr>
-      <td>Date</td><td>Participant</td><td>Signature</td>
-    </tr>
+  <tr>
+    <td>&nbsp;</td><td>Property Number Visited</td><td>&nbsp;</td><td>&nbsp;</td>
+  </tr>
   </thead>
   <tbody>
 {% for user in requestors %}
 
   <tr>
-    <td>{{showings.0.datetime|date:'m/d/Y'}}</td><td>{{user}}</td><td>&nbsp;</td>
+    <td class="underline">{{user}}</td><td class="underline">{% for Property in inquiries %}&#9744; {{ forloop.counter }} {% endfor %}</td><td class="underline">&nbsp;</td><td class="underline">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Registrant</td><td>&nbsp;</td><td>Name of participant (please print)</td><td>Signature of participant</td>
   </tr>
 {% endfor %}
-{% for i in "1234"%}
+{% for i in "123456789"%}
 <tr>
-  <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+  <td class="underline">&nbsp</td>
+  <td class="underline">{% for Property in inquiries %}&#9744; {{ forloop.counter }}{% endfor %}</td><td class="underline">&nbsp;</td><td class="underline">&nbsp;</td>
+</tr>
+<tr>
+  <td>Registrant</td><td>&nbsp;</td><td>Name of participant (please print)</td><td>Signature of participant</td>
 </tr>
 {% endfor %}
 
