@@ -17,7 +17,13 @@
 </p>
 <p>
   If you have questions or would like to modify your application, please contact {{COMPANY_SETTINGS.APPLICATION_CONTACT_NAME}}, {{COMPANY_SETTINGS.APPLICATION_CONTACT_EMAIL}}.
-</p><p>
+</p>
+{% if Property.structureType == 'Residential Dwelling' %}
+<p>
+  If you have not already seen the interior of this property you can submit a request to view the property using <a href="{% url 'submit_property_inquiry'%}?parcel={{Property.parcel}}">this link</a>.
+</p>
+{% endif %}
+<p>
     Our applications go through a multi-step approval process:
 <ol>
   <li>Staff will review for the application for completeness and schedule it for the Review Committee (Review Committees occur on the fourth Thursday of each month)</li>
