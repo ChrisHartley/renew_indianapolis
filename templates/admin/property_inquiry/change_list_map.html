@@ -31,7 +31,7 @@ collection.push(
          parcel: "{{prop.parcel}}",
          count: "{{inquiries|length}}",
          id: "{{prop.pk}}",
-         max_age: "{%with obj=inquiries|dictsort:'timestamp'|first%}{{obj.timestamp}}{%endwith%}"
+         max_age: "{%with obj=inquiries|dictsort:'timestamp'|first%}{{obj.timestamp|date:"U"}}{%endwith%}"
        }) );
 {% endfor %}
 
@@ -52,9 +52,17 @@ function shadeRGBColor(color, percent) {
 }
 
 function fillCircle(age){
-  return new ol.style.Fill({
-    color: 'rgba(0, 0, 225,0.6)'
-  });
+  if (Date.now() - age > (86400000 * 7) ){ // if older than 7 days show as red
+    return new ol.style.Fill({
+      color: 'rgba(255, 0, 0,0.6)'
+    });
+
+  }
+  else{
+    return new ol.style.Fill({
+      color: 'rgba(0, 0, 225,0.6)'
+    });
+  }
 }
 const strokeCircle = new ol.style.Stroke({
   color: '#ffffff',
@@ -65,11 +73,12 @@ const styleProportionalCircle = (feature, resolution) => {
   const extent = feature.getGeometry().getExtent();
   const center = ol.extent.getCenter(extent);
   const geom = new ol.geom.Point(center);
+  //console.log(feature.get('max_age')-Date.now())
   return new ol.style.Style({
     geometry: geom,
     image: new ol.style.Circle({
       stroke: strokeCircle,
-      fill: fillCircle(Date.parse(feature.get('max_age'))-Date.now()),
+      fill: fillCircle(feature.get('max_age')*1000),
       radius: radiusCalculation(feature.get('count'), 10)
     }),
 //    zIndex: feature.get('rank')
@@ -146,11 +155,8 @@ map.on('singleclick', function(evt) {
   var img_object =''
   content_image.innerHTML = ''
   fetch('/property/'+details["parcel"]+'/photos/?format=json&number=1').then(function(response){ return response.json(); }).then(function(data){
-    console.log(data)
-    console.log(data.length)
     if (data.length > 0){
       img_url = data[0].fields.image;
-      console.log(img_url)
       img_object = '<img class="img-rounded no-vertical-align" width="150" alt="Renew Indianapolis provided photo of the property" src="https://build.renewindianapolis.org/media/'+img_url+'"/>'
     }
     else{
@@ -162,8 +168,7 @@ map.on('singleclick', function(evt) {
     content_image.innerHTML = img_object
 
   });
-  console.log(img_object)
-  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries<br/>'+details['max_age']+'</p>'
+  content.innerHTML = '<h1>' + details['name'] + '</h1><p>' +  details['count'] + ' inquiries<br/>Oldest Request: '+new Date(details['max_age']*1000).toDateString()+'</p>'
   popup_content_extra.innerHTML = '<p>{{popup_link|safe}}</p>'
   overlay.setPosition(evt.coordinate);
 });
