@@ -1,7 +1,12 @@
 from requests import Request, Session
-#from fr import quote
-from urllib import quote
+try:
+    from urllib.parse import quote
+except ImportError:
+    from six.moves.urllib.parse import quote 
 import json
+
+
+
 
 class ePPHelper(object):
     def __init__(self, sandbox=True, debug=False):
@@ -23,6 +28,7 @@ class ePPHelper(object):
             'Accept': 'application/json',
         }
         self.debug = debug
+        self.site_url = 'https://indy.epropertyplus.com'
         self.endpoint = API_ENDPOINT
         s = Session()
         s.headers.update(headers)
@@ -36,11 +42,14 @@ class ePPHelper(object):
             pp.pprint( 'Request Body: {0}'.format(r.request.body,))
             pp.pprint( 'Request URL: {0}'.format(r.url,))
             pp.pprint( 'Request Headers: {0}'.format(r.headers,))
-            pp.pprint( r.json())
+            #pp.pprint( r.json())
             #pp.pprint( r.text)
 
         if r.status_code <= 399:
-            return r.json()
+            try:
+                return r.json()
+            except ValueError:
+                return r.content
         # For 400+ errors we make our own JSON response, especially with
         # 500 errors which return text.
         if r.status_code >= 400:
@@ -74,6 +83,11 @@ class ePPHelper(object):
         r = self.session.get(URL)
         return self.parse_results(r)
 
+    def get_image(self, image_id):
+        api_resource = 'image/view/'
+        URL = '{0}{1}/{2}'.format(self.endpoint, api_resource, image_id)
+        r = self.session.get(URL)
+        return self.parse_results(r)
 
 
     def get_property_search(self, json_query, sort=''):
@@ -87,18 +101,6 @@ class ePPHelper(object):
             'sort': '[{"property":"postalCode","direction":"ASC"},{"property":"propertyAddress1","direction":"ASC"}]'
         }
         URL = '{0}{1}'.format(self.endpoint, api_resource)
-        r = self.session.post(URL, params=parameters)
-        return self.parse_results(r)
-
-    def get_published_available_properties(self):
-        URL = 'https://public-indy.epropertyplus.com/landmgmtpub/remote/public/property/getPublishedProperties'
-        parameters = {
-            'page': 1,
-            'limit': 5000,
-            'json':  '{"criterias":[{"name":"published","operator":"EQUALS","value":"Yes"},{"name":"currentStatus","operator":"EQUALS","value":"Available"}]}',
-            'sort': '[{"property":"postalCode","direction":"ASC"},{"property":"propertyAddress1","direction":"ASC"}]',
-        }
-
         r = self.session.post(URL, params=parameters)
         return self.parse_results(r)
 

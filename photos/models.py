@@ -43,5 +43,5 @@ class photo(models.Model):
             if orientation == 3:   im = im.transpose(Image.ROTATE_180)
             elif orientation == 6: im = im.transpose(Image.ROTATE_270)
             elif orientation == 8: im = im.transpose(Image.ROTATE_90)
-        im.thumbnail((1024,1024))
+        #im.thumbnail((1024,1024)) # don't resize images any more.
         im.save(self.image.path)
