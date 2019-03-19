@@ -16,6 +16,7 @@ import logging
 from operator import itemgetter, attrgetter
 from itertools import groupby
 from applicants.models import ApplicantProfile
+from django.core.urlresolvers import reverse
 
 class propertyInquiry(models.Model):
     user = models.ForeignKey(User)
@@ -101,11 +102,12 @@ class propertyShowing(models.Model):
                 orig.inquiries != self.inquiries
                 ): # if things have changed, need to re-update
                 super(propertyShowing, self).save(*args, **kwargs)
+                url = 'https://build.renewindianapolis.org/{}?parcel={}&rsvpId={}'.format(reverse('submit_property_inquiry'), self.Property.parcel, self.id)
                 for calendar in settings.PROPERTY_SHOWING_CALENDARS:
                     e = {
                         'summary': '{} - Property Showing'.format(self.Property.streetAddress,).title(),
                         'location': '{0}, Indianapolis, IN'.format(self.Property.streetAddress,),
-                        'description': 'If no one RSVPs to this showing it may be cancelled - Contact Matt Hostetler Matthew.Hostetler@indy.gov if you plan on attending.',
+                        'description': 'If no one RSVPs to this showing it may be cancelled - <a href="{}">RSVP here</a> if you plan on attending.'.format(url,),
                         'start': {
                             'dateTime': self.datetime.isoformat(),
                             'timeZone': '',

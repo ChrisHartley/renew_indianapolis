@@ -10,6 +10,7 @@ from property_condition.models import ConditionReport
 from applications.models import Application
 from property_inventory.models import Property
 from django.contrib.contenttypes.admin import GenericTabularInline
+from django.db.models import Q
 
 # add additional filter, year, and allow null status filter
 class PropertyInquiryYearListFilter(SimpleListFilter):
@@ -32,6 +33,21 @@ class PropertyInquiryYearListFilter(SimpleListFilter):
         return queryset
 
 
+class WorkQueueFilter(SimpleListFilter):
+    title = 'Outstanding Inquiries'
+    parameter_name = 'outstanding'
+    def lookups(self, request, model_admin):
+        return (
+            (True, 'Yes'),
+            (False, 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(Q(status=propertyInquiry.REQUESTED_ANOTHER_INVITATION) | Q(status__isnull=True))
+        else:
+            return queryset.exclude(Q(status=propertyInquiry.REQUESTED_ANOTHER_INVITATION) | Q(status__isnull=True))
+
 from utils.utils import batch_update_view
 def custom_batch_editing__admin_action(self, request, queryset):
     return batch_update_view(
@@ -53,7 +69,7 @@ class propertyInquiryAdmin(admin.ModelAdmin):
     )
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
     readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
-    list_filter = ['status', 'Property__renew_owned', PropertyInquiryYearListFilter]
+    list_filter = [WorkQueueFilter, 'status', 'Property__renew_owned', PropertyInquiryYearListFilter]
     actions = [custom_batch_editing__admin_action]
 
 

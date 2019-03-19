@@ -60,7 +60,7 @@ def submitPropertyInquiry(request):
             form_saved.save()
             if rsvpId is not None:
                 try:
-                    ps = propertyShowing.objects.get(id=rsvpId)
+                    ps = propertyShowing.objects.filter(id=rsvpId).filter(Property=request.POST['Property']).first()
                     form_saved.status = propertyInquiry.SCHEDULED_STATUS
                     form_saved.save()
                     ps.inquiries.add(form_saved.id)
