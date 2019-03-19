@@ -253,14 +253,14 @@ class PriceChangeCSVResponseMixin(object):
             response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'price-changes.csv')
             writer = csv.writer(response)
 
-            header = ['Property', 'Structure Type', 'Current Price', 'Proposed Price', 'Price Difference']
+            header = ['Property', 'Structure Type', 'Renew Owned?', 'Current Price', 'Proposed Price', 'Price Difference']
             writer.writerow(header)
             price_change_total = 0
             # Write the data from the context somehow
-            for price_change_link in context['meeting'].price_change_meeting_link.all():
+            for price_change_link in context['meeting'].price_change_meeting_link.all().order_by('price_change__Property__renew_owned'):
                 price_change = price_change_link.price_change.proposed_price - price_change_link.price_change.Property.price
                 price_change_total = price_change_total + price_change
-                row = [price_change_link.price_change.Property, price_change_link.price_change.Property.structureType, price_change_link.price_change.Property.price, price_change_link.price_change.proposed_price, price_change]
+                row = [price_change_link.price_change.Property, price_change_link.price_change.Property.structureType, price_change_link.price_change.Property.renew_owned, price_change_link.price_change.Property.price, price_change_link.price_change.proposed_price, price_change]
                 writer.writerow(row)
             writer.writerow(['Total Change', price_change_total])
             return response
@@ -423,7 +423,28 @@ class ePPPropertyUpdate(DetailView):
     template_name = 'price_change_summary_view_all.html'
 
     def render_to_response(self, context, **response_kwargs):
-        header = ['Parcel Number', 'Property Status', 'Property Class', 'Owner Party Number', 'Owner Party External System Id', 'Property Address.Address1', 'Property Address.Address2', 'Property Address.City', 'Property Address.County', 'Property Address.State', 'Property Address.Postal Code', 'Status Date', 'Property Manager Party Number', 'Property Manager Party External System Id', 'Update', 'Available', 'Foreclosure Year', 'Inventory Type', 'Legal Description', 'Listing Comments', 'Maintenance Manager Party External System Id', 'Maintenance Manager Party Number', 'Parcel Square Footage', 'Parcel Length', 'Parcel Width', 'Published', 'Tags', 'Latitude', 'Longitude', 'Parcel Boundary', 'Census Tract', 'Congressional District', 'Legislative District', 'Local District', 'Neighborhood', 'School District', 'Voting Precinct', 'Zoned As', 'Acquisition Amount', 'Acquisition Date', 'Acquisition Method', 'Sold Amount', 'Sold Date', 'Actual Disposition', 'Asking Price', 'Assessment Year', 'Current Assessment', 'Minimum Bid Amount', 'Block Condition', 'Brush Removal', 'Cleanup Assessment', 'Demolition Needed', 'Environmental Cleanup Needed', 'Market Condition', 'Potential Use', 'Property Condition', 'Property of Interest', 'Quiet Title', 'Rehab Candidate', 'Target Disposition', 'Trash Removal ', 'Custom.BEP Mortgage Expiration Date', 'Custom.BLC Number', 'Custom.CDC', 'Custom.Grant Program', 'Custom.Sales Program'
+        header = [
+            'Parcel Number', 'Property Status', 'Property Class', 'Owner Party Number',
+            'Owner Party External System Id', 'Property Address.Address1', 'Property Address.Address2',
+            'Property Address.City', 'Property Address.County', 'Property Address.State',
+            'Property Address.Postal Code', 'Status Date', 'Property Manager Party Number',
+            'Property Manager Party External System Id', 'Update', 'Available',
+            'Foreclosure Year', 'Inventory Type', 'Legal Description', 'Listing Comments',
+            'Maintenance Manager Party External System Id', 'Maintenance Manager Party Number',
+            'Parcel Square Footage', 'Parcel Length', 'Parcel Width', 'Published', 'Tags',
+            'Latitude', 'Longitude', 'Parcel Boundary', 'Census Tract', 'Congressional District',
+            'Legislative District', 'Local District', 'Neighborhood', 'School District',
+            'Voting Precinct', 'Zoned As', 'Acquisition Amount', 'Acquisition Date',
+            'Acquisition Method', 'Sold Amount', 'Sold Date', 'Actual Disposition',
+            'Asking Price', 'Assessment Year', 'Current Assessment', 'Minimum Bid Amount',
+            'Block Condition', 'Brush Removal', 'Cleanup Assessment', 'Demolition Needed',
+            'Environmental Cleanup Needed', 'Market Condition', 'Potential Use',
+            'Property Condition', 'Property of Interest', 'Quiet Title',
+            'Rehab Candidate', 'Target Disposition', 'Trash Removal ',
+            'Custom.BEP Mortgage Expiration Date', 'Custom.BLC Number',
+            'Custom.CDC', 'Custom.Grant Program', 'Custom.Mow List',
+            'Custom.Mow List Change Date','Custom.Mowing List Notes',
+            'Custom.Mowing Type', 'Custom.Sales Program'
         ]
 
         output = BytesIO()
@@ -440,6 +461,8 @@ class ePPPropertyUpdate(DetailView):
             worksheet.write(index, header.index('Parcel Number'), price_change.Property.parcel, text_format)
             worksheet.write(index, header.index('Update'), 'Y')
             worksheet.write(index, header.index('Asking Price'), price_change.proposed_price)
+            if price_change.make_fdl_eligible == True:
+                worksheet.write(index, header.index('Custom.Sales Program'), 'Homestead|Standard|Future Development Lot')
             max_index = index
 
             ## This changes the property status if approved to Sale Pending. This works at all stages b/c
