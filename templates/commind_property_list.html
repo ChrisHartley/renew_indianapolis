@@ -72,7 +72,9 @@
       </ul>
 
       {% if property.status == 'Available' %}
-      <p>&nbsp;</p><p><a class="btn btn-primary" href="/commercial_industrial/application/{{property.parcel}}" role="button">Start An Application</a></p>
+      <p>&nbsp;</p><p><a class="btn btn-primary" href="/commercial_industrial/application/{{property.parcel}}" role="button">Start An Application</a>
+      <a class="btn btn-info" href="mailto:commercial_showings@renewindianapolis.org?subject=Property Showing Reqest - {{property}}" role="button">Request A Showing</a></p>
+
       {% else %}
       <p>&nbsp;</p><p><button type="button" class="btn btn-default btn-lg" disabled="disabled">{{property.status}}</button></p>
       {% endif %}
