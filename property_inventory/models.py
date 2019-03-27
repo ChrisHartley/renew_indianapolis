@@ -175,6 +175,7 @@ class price_change(models.Model):
     assessed_land_value = models.IntegerField(null=True)
     assessed_improvement_value = models.IntegerField(null=True)
     cma = models.FileField(upload_to=price_change_directory_path, null=True, blank=True)
+    make_fdl_eligible = models.BooleanField(default=False)
 
     @property
     def inquiries_previous_30_days(self):
