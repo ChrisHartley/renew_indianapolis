@@ -147,7 +147,7 @@ class ContextAreaAdmin(admin.OSMGeoAdmin):
     modifiable = False
 
 
-class price_changeAdmin(admin.OSMGeoAdmin):
+class price_changeAdmin(regular_admin.ModelAdmin):
     search_fields = ('Property__streetAddress','Property__parcel')
     list_display = ('datestamp','Property', 'get_current_price', 'proposed_price', 'get_latest_approval_status')
     readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view')
