@@ -253,14 +253,14 @@ class PriceChangeCSVResponseMixin(object):
             response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'price-changes.csv')
             writer = csv.writer(response)
 
-            header = ['Property', 'Structure Type', 'Renew Owned?', 'Current Price', 'Proposed Price', 'Price Difference']
+            header = ['Property', 'Structure Type', 'Renew Owned?', 'Current Price', 'Proposed Price', 'Price Difference', 'Make FDL eligible']
             writer.writerow(header)
             price_change_total = 0
             # Write the data from the context somehow
             for price_change_link in context['meeting'].price_change_meeting_link.all().order_by('price_change__Property__renew_owned'):
                 price_change = price_change_link.price_change.proposed_price - price_change_link.price_change.Property.price
                 price_change_total = price_change_total + price_change
-                row = [price_change_link.price_change.Property, price_change_link.price_change.Property.structureType, price_change_link.price_change.Property.renew_owned, price_change_link.price_change.Property.price, price_change_link.price_change.proposed_price, price_change]
+                row = [price_change_link.price_change.Property, price_change_link.price_change.Property.structureType, price_change_link.price_change.Property.renew_owned, price_change_link.price_change.Property.price, price_change_link.price_change.proposed_price, price_change, price_change_link.price_change.make_fdl_eligible]
                 writer.writerow(row)
             writer.writerow(['Total Change', price_change_total])
             return response
