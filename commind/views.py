@@ -13,6 +13,9 @@ from .forms import CommIndApplicationForm, EntityMemberFormSet, EntityForm
 #, CommIndDocumentFormset
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.conf import settings
+
 
 # This function sends a Document to the user. Used instead of direct download so we can enforce
 # permissions. In the future use a library such as fleep or magic to determine the actual
@@ -91,6 +94,12 @@ class CommIndApplicationFormView(FormView):
             self.object.save() # to get id so ModelMultipleChoiceField can be saved
             self.object.Properties = form.cleaned_data['Properties']
             self.object.save()
+            send_mail(
+                'Commercial Application received: {0}'.format(form.cleaned_data['Properties'][0],),
+                "Application received in blight fight.",
+                'info@renewindianapolis.org',
+                [ settings.COMPANY_SETTINGS['COMMERCIAL_CONTACT_EMAIL'], ],
+            )
 
             budget_and_financing_file = Document(
                 user = self.request.user,
