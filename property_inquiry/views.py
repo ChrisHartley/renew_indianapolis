@@ -143,7 +143,7 @@ class CreateIcsFromShowing(View):
                 a = vCalAddress('MAILTO:{}'.format(staff['email'],))
                 a.params['cn'] = vText(staff['name'])
                 e.add('attendee', a, encode=0)
-            description = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': props, 'users': users})
+            description = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': self, 'properties': props, 'users': people})
             e.add('description', description )
             e.add('status', 'TENTATIVE')
 
