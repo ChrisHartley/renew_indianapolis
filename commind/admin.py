@@ -31,6 +31,9 @@ class EntityInline(GenericTabularInline):
 class DocumentInline(GenericTabularInline):
     model = Document
     extra = 2
+    def get_queryset(self, request):
+        qs = super(DocumentInline, self).get_queryset(request)
+        return qs.filter(photo__isnull=True)
 
 class PhotoInline(GenericTabularInline):
     model = Photo
