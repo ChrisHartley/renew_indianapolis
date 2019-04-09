@@ -1,15 +1,8 @@
-{% extends 'wp-template-header.html' %}
+{% extends 'allauth-base.html' %}
+{% block head_title %}Annual Report :: Renew Indianapolis{% endblock %}
 {% load crispy_forms_tags %}
-{% block wpwrap-header %}
-<!-- Bootstrap -->
-<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
-<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
-{% endblock wpwrap-header %}
-{% block wpwrap-content %}
+
+{% block content %}
 As part of the Project Agreement attached to each purchase from Renew Indianapolis,
 buyers agree to submit an annual, written report by April 1st detailing their progress
 on the purchased property. From Section 3(d) of Attachment A, Project Agreement:
@@ -41,4 +34,4 @@ $(function(){
 });
 </script>
 
-{% endblock wpwrap-content %}
+{% endblock content %}
