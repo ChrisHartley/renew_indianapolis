@@ -55,7 +55,7 @@ class ConditionReportAdmin(admin.ModelAdmin):
                     ('Property', 'get_condition_avg' ),
                     'general_property_notes',
                     ('picture','pic_download'),
-                    'upload_photo_page',
+                    ('upload_photo_page', 'timestamp'),
                     ('scope_of_work', 'scope_download',),
                     ('secure', 'occupied', 'major_structural_issues', 'quick_condition'),
                 )
