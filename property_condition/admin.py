@@ -176,7 +176,7 @@ class ConditionReportAdmin(admin.ModelAdmin):
 #    extra = 3
 
 class ConditionReportProxyAdmin(admin.ModelAdmin):
-    readonly_fields = ('upload_photo_page', 'pic_download',)
+    readonly_fields = ('upload_photo_page', 'pic_download', 'timestamp')
     def upload_photo_page(self, obj):
         upload_photo_page_link = '<a target="_blank" href="{}?Property={}">{}</a>'.format(
             reverse("admin_add_photos"), obj.Property.pk, "Add photos page")
