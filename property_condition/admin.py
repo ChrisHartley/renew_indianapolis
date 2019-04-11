@@ -12,7 +12,7 @@ class RoomInline(admin.StackedInline):
 
 class ConditionReportAdmin(admin.ModelAdmin):
     inlines = [RoomInline,]
-    readonly_fields = ('upload_photo_page', 'scope_download', 'pic_download', 'get_condition_avg')
+    readonly_fields = ('upload_photo_page', 'scope_download', 'pic_download', 'get_condition_avg', 'timestamp')
     search_fields = ('Property__parcel', 'Property__streetAddress')
 
 
@@ -204,7 +204,7 @@ class ConditionReportProxyAdmin(admin.ModelAdmin):
                     ('Property',),
                     'general_property_notes',
                     ('picture','pic_download'),
-                    'upload_photo_page',
+                    ('upload_photo_page', 'timestamp'),
                     ('secure', 'occupied', 'major_structural_issues', 'quick_condition'),
                 )
             }
