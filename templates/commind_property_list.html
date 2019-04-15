@@ -1,6 +1,6 @@
 {% extends 'commind_base.html' %}
 {% load humanize %}
-{% block head_title %}Commercial Industrial Properties :: Renew Indianapolis{% endblock %}
+{% block head_title %}Commercial Land Bank Program :: Renew Indianapolis{% endblock %}
 {% block header %}
 <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/css/lightslider.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.js"></script>
@@ -73,8 +73,9 @@
 
       {% if property.status == 'Available' %}
       <p>&nbsp;</p><p><a class="btn btn-primary" href="/commercial_industrial/application/{{property.parcel}}" role="button">Start An Application</a>
+        {% if property.has_improvement %}
       <a class="btn btn-info" href="mailto:commercial_showings@renewindianapolis.org?subject=Property Showing Reqest - {{property}}" role="button">Request A Showing</a></p>
-
+        {% endif %}
       {% else %}
       <p>&nbsp;</p><p><button type="button" class="btn btn-default btn-lg" disabled="disabled">{{property.status}}</button></p>
       {% endif %}
