@@ -55,18 +55,19 @@ INSTALLED_APPS = (
     'univiewer',
     'epp_connector',
     'neighborhood_notifications',
-    #'post_sale',
+    #'post_sale',#
     #'import_export',
     #'accella_records',
     'utils',
-    #'debug_toolbar',
-    #'expense_tracking',
-    #'work_orders',
+    #'debug_toolbar',#
+    #'expense_tracking',#
+    #'work_orders',#
     'market_activity',
     'commind',
 )
 
 MIDDLEWARE_CLASSES = (
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,7 +76,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_tables2_reports.middleware.TableReportMiddleware',
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'blight_fight.urls'
@@ -232,6 +232,9 @@ COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
     'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindianapolis.org',
     'APPLICATION_CONTACT_PHONE': '317-454-8528',
+    'COMMERCIAL_CONTACT_NAME':'Lily Smith',
+    'COMMERCIAL_CONTACT_EMAIL': 'lsmith@assemblerealestate.com',
+    'APPLICATION_CONTACT_PHONE': '',
     'SIDELOT_PROCESSING_FEE': 100,
     'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 200,
