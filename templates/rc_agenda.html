@@ -12,8 +12,10 @@
       <dt> <b>{{ ml.application.user.first_name }} {{ ml.application.user.last_name }}</br>
         {% if ml.application.organization %} {{ ml.application.organization }} </br> {% endif %}
         {{ ml.application.Property }}</b> ${{ml.application.price_at_time_of_submission|intcomma}}
-        {% for ml2 in meeting_link.list %}
-          {% if ml2.application.Property == ml.application.Property and ml.application.id != ml2.application.id %}({{ml2.application.user.last_name}}) {%endif%}
+        {% for x in meeting_links %}
+          {% for ml2 in x.list %}
+            {% if ml2.application.Property == ml.application.Property and ml.application.id != ml2.application.id %}({{ml2.application.user.last_name}}) {%endif%}
+          {% endfor %}
         {% endfor %}
         {% if ml.application.staff_sidelot_waiver_required %} (sidelot policy waiver required) {% endif %}
       </dt>
