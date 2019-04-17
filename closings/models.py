@@ -108,10 +108,10 @@ class purchase_option(models.Model):
 
     def save(self, *args, **kwargs):
         super(purchase_option, self).save(*args, **kwargs)
-        if self.date_expiring > date.today():
-            print self.closing.application.Property.status
-            self.closing.application.Property.status = 'this is fake!'
-            print self.closing.application.Property.status
+        #if self.date_expiring > date.today():
+        #    print self.closing.application.Property.status
+        #    self.closing.application.Property.status = 'this is fake!'
+        #    print self.closing.application.Property.status
 
     class Meta:
         verbose_name = "purchase option"
@@ -128,7 +128,12 @@ class closing(models.Model):
     title_commitment = models.FileField(upload_to=save_location, blank=True, null=True)
     closing_statement = models.FileField(upload_to=save_location, blank=True, null=True)
     deed = models.FileField(upload_to=save_location, blank=True, null=True)
+    recorded_city_deed = models.FileField(upload_to=save_location, blank=True, null=True)
+    recorded_city_deed_instrument_number = models.CharField(max_length=255, blank=True, default='')
     ri_deed = models.FileField(upload_to=save_location, blank=True, null=True)
+    recorded_ri_deed = models.FileField(upload_to=save_location, blank=True, null=True)
+    recorded_ri_deed_instrument_number = models.CharField(max_length=255, blank=True, default='')
+
     nsp_convenants = models.FileField(upload_to=save_location, blank=True, null=True)
     project_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     assignment_and_assumption_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
