@@ -41,9 +41,9 @@
     <dt>Parcel is Future Development Lot Program eligible</dt><dd>{{application.application.Property.future_development_program_eligible|yesno:"Yes,No,Error"}}</dd>
     <dt>Owned by Renew Indianapolis</dt><dd>{{application.application.Property.renew_owned|yesno:"Yes,No,Error"}}</dd>
     <dt>Neighborhood</dt><dd>{{application.application.Property.neighborhood}}</dd>
-    {% if application.application.user.propertyinquiry_set.all|length > 0 %}<dt>Property Showings</td><dd>{% for pi in application.application.user.propertyinquiry_set.all %}
+    <dt>Property Showings</td><dd>{% for pi in application.application.user.propertyinquiry_set.all %}
       {%if pi.Property == application.application.Property %} Showing request submitted {{pi.timestamp|date:"m/d"}} {{pi.get_status_display}}<br/>{%endif%}{%endfor%}
-    </dd>{%endif%}
+    </dd>
     <dt>Staff Summary</dt>
     <dd>
        {{application.application.staff_summary}}
