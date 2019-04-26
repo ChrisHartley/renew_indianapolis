@@ -45,8 +45,60 @@ class WorkQueueFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value() == 'True':
             return queryset.filter(Q(status=propertyInquiry.REQUESTED_ANOTHER_INVITATION) | Q(status__isnull=True))
-        else:
+        if self.value() == 'False':
             return queryset.exclude(Q(status=propertyInquiry.REQUESTED_ANOTHER_INVITATION) | Q(status__isnull=True))
+        return queryset
+
+class statusFilter(SimpleListFilter):
+    title = 'status filter'
+    parameter_name = 'status'
+    def lookups(self, request, model_admin):
+        ALL = 0
+        SOLD_STATUS = 1
+        USER_CANCELLED_STATUS = 2
+        USER_NON_RESPONSIVE_STATUS = 3
+        USER_CONTACTED_STATUS = 4
+        SCHEDULED_STATUS = 5
+        COMPLETED_STATUS = 6
+        DUPLICATE_REQUEST_STATUS = 7
+        USER_DID_NOT_SHOW = 8
+        REQUESTED_ANOTHER_INVITATION = 9
+        NULL_STATUS = 10
+
+        STATUS_CHOICES = (
+            #(ALL, 'All'),
+            (SOLD_STATUS,'Property was sold/pending after request submitted'),
+            (USER_CANCELLED_STATUS,'User cancelled request'),
+            (USER_NON_RESPONSIVE_STATUS,'User was unresponsive'),
+            (USER_CONTACTED_STATUS,'Contacted user to schedule'),
+            (SCHEDULED_STATUS,'Showing scheduled'),
+            (COMPLETED_STATUS,'Showing completed'),
+            (DUPLICATE_REQUEST_STATUS, 'Duplicate request'),
+            (USER_DID_NOT_SHOW, 'User did not appear at appointment'),
+            (REQUESTED_ANOTHER_INVITATION, 'User would like to be invited to subsequent showing'),
+            (NULL_STATUS, 'Initial Status'),
+        )
+        return STATUS_CHOICES
+
+
+
+    def queryset(self, request, queryset):
+        print len(queryset)
+        if self.value() == None:
+           return queryset
+        if self.value() == '10':
+            print('value is 10')
+            for q in queryset.filter(status__isnull=True):
+                print q.status
+            print queryset.filter(status__isnull=True).count()
+            print queryset.query
+            return queryset.filter(status__isnull=True)
+        if self.value() == '0':
+            return queryset
+        else:
+            qs = queryset.filter(status=int( self.value() ) )
+            print(qs.query)
+            return qs
 
 from utils.utils import batch_update_view
 def custom_batch_editing__admin_action(self, request, queryset):
@@ -69,7 +121,7 @@ class propertyInquiryAdmin(admin.ModelAdmin):
     )
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
     readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
-    list_filter = [WorkQueueFilter, 'status', 'Property__renew_owned', PropertyInquiryYearListFilter]
+    list_filter = [WorkQueueFilter, 'Property__renew_owned', PropertyInquiryYearListFilter]
     actions = [custom_batch_editing__admin_action]
 
 
