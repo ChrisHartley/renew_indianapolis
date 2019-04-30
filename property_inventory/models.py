@@ -283,8 +283,8 @@ class take_back(models.Model):
         return u'{0} - {1}'.format(self.Property, self.owner)
 
     def save(self, *args, **kwargs):
-        if self.application is not None:
-            self.owner = self.application.applicant
+        if self.application is not None and self.id is None:
+            self.owner = self.application.Property.applicant
         if self.application is None and self.owner == '':
             return
         super(take_back, self).save(*args, **kwargs)  # Call the "real" save() method.
