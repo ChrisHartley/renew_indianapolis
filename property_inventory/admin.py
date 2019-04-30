@@ -4,6 +4,8 @@ from django.contrib.admin import SimpleListFilter
 
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+from django.http import HttpResponse
+import csv
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
@@ -16,6 +18,24 @@ from property_condition.models import ConditionReport
 import datetime
 from django.utils.timezone import now
 #import pytz
+
+class ExportCsvMixin:
+    def export_as_csv(self, request, queryset):
+
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+        writer = csv.writer(response)
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            row = writer.writerow([getattr(obj, field) for field in field_names])
+
+        return response
+
+    export_as_csv.short_description = "Export Selected"
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'
@@ -81,7 +101,7 @@ class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
     extra = 0
 
 
-class PropertyAdmin(admin.OSMGeoAdmin):
+class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name')
     list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status')
     list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition')
@@ -90,6 +110,7 @@ class PropertyAdmin(admin.OSMGeoAdmin):
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
     readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary', 'condition_report_link')
+    actions = ["export_as_csv"]
 
     def main_photo(self, obj):
         ph = photo.objects.filter(prop=obj).filter(main_photo__exact=True).first()
