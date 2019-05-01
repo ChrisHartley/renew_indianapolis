@@ -11,6 +11,7 @@ from applications.models import Application
 from property_inventory.models import Property
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Q
+from utils.admin import ExportCsvMixin
 
 # add additional filter, year, and allow null status filter
 class PropertyInquiryYearListFilter(SimpleListFilter):
@@ -111,7 +112,7 @@ def custom_batch_editing__admin_action(self, request, queryset):
 custom_batch_editing__admin_action.short_description = "Batch Update"
 
 
-class propertyInquiryAdmin(admin.ModelAdmin):
+class propertyInquiryAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ('Property', 'renew_owned', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
     fields = (
         'Property', 'user_name', 'user_phone','applicant_ip_address',
@@ -122,7 +123,7 @@ class propertyInquiryAdmin(admin.ModelAdmin):
     search_fields = ('Property__parcel', 'Property__streetAddress', 'user__email', 'user__first_name', 'user__last_name')
     readonly_fields = ('applicant_ip_address','timestamp','user_name','user_phone','Property', 'number_of_pictures', 'condition_report_link', 'number_completed_apps')
     list_filter = [WorkQueueFilter, 'Property__renew_owned', PropertyInquiryYearListFilter]
-    actions = [custom_batch_editing__admin_action]
+    actions = [custom_batch_editing__admin_action, 'export_as_csv']
 
 
     def renew_owned(self, obj):
