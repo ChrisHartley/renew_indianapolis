@@ -4,8 +4,7 @@ from django.contrib.admin import SimpleListFilter
 
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse
-import csv
+
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
@@ -19,23 +18,7 @@ import datetime
 from django.utils.timezone import now
 #import pytz
 
-class ExportCsvMixin:
-    def export_as_csv(self, request, queryset):
-
-        meta = self.model._meta
-        field_names = [field.name for field in meta.fields]
-
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
-        writer = csv.writer(response)
-
-        writer.writerow(field_names)
-        for obj in queryset:
-            row = writer.writerow([getattr(obj, field) for field in field_names])
-
-        return response
-
-    export_as_csv.short_description = "Export Selected"
+from utils.admin import ExportCsvMixin
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'

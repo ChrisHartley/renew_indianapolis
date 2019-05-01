@@ -7,10 +7,10 @@ from .forms import ScheduleInlineForm
 
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
-from import_export.admin import ExportMixin
 from functools import partial
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from utils.admin import ExportCsvMixin
 
 class UploadedFileInline(admin.TabularInline):
     model = UploadedFile
@@ -28,7 +28,7 @@ class UploadedFileInline(admin.TabularInline):
 
 class MeetingLinkInline(admin.TabularInline):
     model = MeetingLink
-    fields = ('meeting', 'meeting_outcome', 'application_link', 'notes', 'schedule_weight' )
+    fields = ('meeting', 'meeting_outcome', 'application_link', 'conditional_approval', 'notes', 'schedule_weight' )
     readonly_fields=('application','application_link')
     extra = 1
 
@@ -94,7 +94,7 @@ class MeetingScheduledFilter(admin.SimpleListFilter):
 
 
 
-class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
+class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     list_display = ('modified','submitted_timestamp','Property', 'property_status', 'user_link', 'organization','application_type','scheduled_meeting', 'status')
     list_filter = ('status','application_type', MeetingScheduledFilter)
@@ -109,7 +109,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
             'fields': (
                 ('user','user_readable','organization'),
                 ('created', 'modified', 'submitted_timestamp'),
-                ('Property', 'property_type','property_status','property_fdl',), 
+                ('Property', 'property_type','property_status','property_fdl',),
                 ('status', 'property_inquiry_count'),
                 ('application_summary_page','application_detail_page')
                 )
@@ -131,7 +131,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportMixin):
     )
     inlines = [ UploadedFileInline, MeetingLinkInline ]
     list_select_related = True
-    actions = ['batch_schedule_action',]
+    actions = ['batch_schedule_action','export_as_csv']
     def application_summary_page(self, obj):
         summary_link = '<a target="_blank" href="{}">{}</a>'.format(
             reverse("application_summary_page", args=(obj.id,)), "View Summary Page")

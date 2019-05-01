@@ -59,15 +59,15 @@ def submitPropertyInquiry(request):
             form_saved.user = request.user
             form_saved.save()
             if rsvpId is not None:
-                try:
                     ps = propertyShowing.objects.filter(id=rsvpId).filter(Property=request.POST['Property']).first()
-                    form_saved.status = propertyInquiry.SCHEDULED_STATUS
-                    form_saved.save()
-                    ps.inquiries.add(form_saved.id)
-                    ps.save()
-                except propertyShowing.DoesNotExist:
-                    messages.add_message(request, messages.ERROR, 'The requested property showing could not be found, but your inquiry has been submitted.')
-                # add inquiry to showing
+                    if ps == None:
+                        messages.add_message(request, messages.ERROR, 'The requested property showing could not be found, but your inquiry has been submitted.')
+                    else:
+                        form_saved.status = propertyInquiry.SCHEDULED_STATUS
+                        form_saved.showing_scheduled = ps.datetime
+                        form_saved.save()
+                        ps.inquiries.add(form_saved.id)
+                        ps.save()
             message_body = render_to_string('email/property_inquiry_confirmation.txt', {'Property': form_saved.Property })
             message_subject = 'Inquiry Received - {0}'.format(form_saved.Property)
             send_mail(message_subject, message_body, 'info@renewindianapolis.org', [form_saved.user.email,], fail_silently=False)

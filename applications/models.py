@@ -7,10 +7,12 @@ from neighborhood_associations.models import Neighborhood_Association
 from django.utils.deconstruct import deconstructible
 from django.conf import settings
 
-import datetime
+from datetime import datetime, timedelta
 from dateutil.rrule import *
 from django.utils import timezone # use this for timezone aware times
 from django.core.mail import send_mail
+#from datetime import timedelta, date, datetime
+from django.utils.timezone import now
 
 
 @deconstructible
@@ -328,6 +330,10 @@ class Application(models.Model):
             return u'%s - %s - %s' % (self.organization.name, self.user.email, self.Property)
         return u'%s %s - %s - %s' % (self.user.first_name, self.user.last_name, self.user.email, self.Property)
 
+
+class TransferApplication(Application):
+    pass
+
 class NeighborhoodNotification(models.Model):
     application = models.ForeignKey(Application, related_name="notification")
     neighborhood = models.ForeignKey(Neighborhood_Association, null=False)
@@ -382,6 +388,8 @@ class MeetingLink(models.Model):
     notes = models.CharField(max_length=1024, blank=True, null=False)
     schedule_weight = models.IntegerField(default=0, null=False, blank=True)
 
+    conditional_approval = models.NullBooleanField(default=None)
+
     @property
     def meeting_date(self):
         return self.meeting.meeting_date
@@ -415,6 +423,12 @@ class MeetingLink(models.Model):
                         new_closing = closing(application=self.application)
                         new_closing.save()
                         # email applicant with congratulatory email and URL to pay processing fee
+                    else:
+                        old_closing = closing.objects.filter(application=self.application).ordery_by('datetime').first()
+                        pf = old_closing.processing_fee
+                        pf.due_date = now()+timedelta(days=9)
+                        pf.save()
+
 
                 # If a property is listed in BLC, notify BLC manager if necessary to mark sale pending.
                 if prop.blc_listing.count() > 0 and self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
@@ -450,6 +464,7 @@ class MeetingLink(models.Model):
                         meeting_type = Meeting.PROCESSING # users shouldn't use any status except scheduled for this fake meeting type.
                     if self.meeting.meeting_type == Meeting.MDC:
                         # We should never get here since approval stops at MDC
+                        # if a renew owned property goes to MDC we will get an error, need to catch that
                         pass
 
 
@@ -516,6 +531,8 @@ class PriceChangeMeetingLink(models.Model):
 
             prop = self.price_change.Property
             prop.price = self.price_change.proposed_price
+            if chng.make_fdl_eligible == True:
+                prop.future_development_program_eligible = True
             prop.save()
 
     class Meta:
