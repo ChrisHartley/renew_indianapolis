@@ -192,11 +192,6 @@ def admin_really_delete(self, request, queryset):
     messages.add_message(request, messages.INFO, '{} objects deleted.'.format(queryset.count(),))
 admin_really_delete.short_description = 'Delete selected showings'
 
-# class propertyInquiryInlineAdmin(admin.StackedInline):
-#         model = propertyInquiry.showings.through
-#         fields =  ('propertyinquiry',)
-#         exclude = ()
-#         extra = 0
 
 from icalendar import Calendar, Event, vCalAddress, vText
 from datetime import timedelta
@@ -216,7 +211,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
         'get_inquiry_rsvp_id'
     )
     form = propertyShowingAdminForm
-    actions = ['batch_calendar_and_email'] #admin_really_delete, removed
+    actions = ['batch_calendar_and_email', 'showing_batch_update__admin_action']
 #    inlines = [propertyInquiryInlineAdmin,]
     #exclude = ('inquiries',)
     def property_status(self, obj):
@@ -280,7 +275,14 @@ class propertyShowingAdmin(admin.ModelAdmin):
 
     batch_calendar_and_email.short_description = 'Create calendar and email invites'
 
-
+    def showing_batch_update__admin_action(self, request, queryset):
+        return batch_update_view(
+            model_admin=self,
+            request=request,
+            queryset=queryset,
+            field_names=['signin_sheet','notes',],
+        )
+    showing_batch_update__admin_action.short_description = "Batch Update"
 
     def get_actions(self, request):
         actions = super(propertyShowingAdmin, self).get_actions(request)
