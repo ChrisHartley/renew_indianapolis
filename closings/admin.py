@@ -11,7 +11,7 @@ from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
 
 class ProcessingFeeAdmin(admin.ModelAdmin):
-    search_fields = ['closing__application__Property__streetAddress']
+    search_fields = ['closing__application__Property__streetAddress', 'closing__application__Property__parcel', 'user__email','user__first_name', 'user__last_name']
 
 class PurchaseOptionInline(admin.TabularInline):
     model = purchase_option
