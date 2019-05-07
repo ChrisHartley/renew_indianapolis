@@ -81,8 +81,7 @@ class ClosingAdmin(admin.ModelAdmin):
     'project_agreement_download', 'assignment_and_assumption_agreement_download',
      'signed_purchase_agreement_download',
      'renew_sales_disclosure_form_download',
-     'city_sales_disclosure_form_download',
-     'scanned_receipt_download')
+     'city_sales_disclosure_form_download',)
     actions = [custom_batch_editing__admin_action]
     inlines = [PurchaseOptionInline,]
     raw_id_fields = ('application',)
@@ -255,13 +254,6 @@ class ClosingAdmin(admin.ModelAdmin):
                 "Download"
             ))
 
-
-    def scanned_receipt_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'scanned_receipt'}),
-                "Download"
-            ))
-
     def print_deposit_slip(self, obj):
         if obj.id is None:
             return '-'
@@ -310,7 +302,7 @@ class ClosingAdmin(admin.ModelAdmin):
         }),
         ('Distributions',{
             'fields': (
-                ('scanned_receipt', 'scanned_receipt_download', 'purchase_agreement'),
+                ('print_deposit_slip', 'purchase_agreement'),
                 ('city_proceeds', 'city_loan_proceeds'),
                 ('ri_proceeds', 'ri_closing_fee'),
             )
@@ -321,7 +313,8 @@ class ClosingAdmin(admin.ModelAdmin):
             ('closing_statement','closing_statement_download'),
             ('deed', 'deed_download',),
             ('recorded_city_deed', 'recorded_city_deed_download','recorded_city_deed_instrument_number',),
-            ('ri_deed','recorded_ri_deed', 'recorded_ri_deed_instrument_number',),
+            ('ri_deed', 'ri_deed_download'),
+            ('recorded_ri_deed', 'recorded_ri_deed_instrument_number',),
             ('nsp_convenants','nsp_convenants_download'),
             ('project_agreement','project_agreement_download'),
             ('assignment_and_assumption_agreement','assignment_and_assumption_agreement_download'),

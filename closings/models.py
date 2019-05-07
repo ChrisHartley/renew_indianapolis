@@ -148,7 +148,7 @@ class closing(models.Model):
     ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, default=0)
     ri_closing_fee = models.DecimalField(max_digits=10, decimal_places=2, help_text="Renew Indianapolis Closing Fee", blank=True, default=0)
 
-    scanned_receipt = models.FileField(upload_to=save_location, blank=True, null=True)
+    #scanned_receipt = models.FileField(upload_to=save_location, blank=True, null=True)
 
     archived = models.BooleanField(default=False, help_text="Closing did not occur and should be archived.")
 
