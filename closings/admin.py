@@ -319,7 +319,8 @@ class ClosingAdmin(admin.ModelAdmin):
             'fields': (
             ('title_commitment','title_commitment_download'),
             ('closing_statement','closing_statement_download'),
-            ('deed', 'deed_download', 'recorded_city_deed', 'recorded_city_deed_download','recorded_city_deed_instrument_number',),
+            ('deed', 'deed_download',),
+            ('recorded_city_deed', 'recorded_city_deed_download','recorded_city_deed_instrument_number',),
             ('ri_deed','recorded_ri_deed', 'recorded_ri_deed_instrument_number',),
             ('nsp_convenants','nsp_convenants_download'),
             ('project_agreement','project_agreement_download'),
