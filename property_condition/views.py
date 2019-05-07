@@ -20,30 +20,6 @@ from property_condition.filters import ConditionReportFilters
 from property_condition.tables import ConditionReportTable
 
 
-@staff_member_required
-def send_cr_file(request, id, file_type):
-    """
-    https://www.djangosnippets.org/snippets/365/
-    Send a file through Django without loading the whole file into
-    memory at once. The FileWrapper will turn the file object into an
-    iterator for chunks of 8KB.
-    """
-
-    if file_type == 'photo':
-            filename = get_object_or_404(ConditionReport, id=id).picture.name
-    if file_type == 'scope':
-        filename = get_object_or_404(ConditionReport, id=id).scope_of_work.name
-    print 'Filename is: {0}'.format(filename, )
-    if filename == '':
-        raise Http404("File does not exist")
-    if filename.startswith('/') != True:
-        filename = settings.MEDIA_ROOT+filename
-    wrapper = FileWrapper(open(filename,'rb'))
-    content_type = mimetypes.MimeTypes().guess_type(filename)[0]
-    response = HttpResponse(wrapper, content_type=content_type)
-    response['Content-Length'] = os.path.getsize(filename)
-    response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(filename))
-    return response
 
 
 # Displays form template for property condition submissions, and saves

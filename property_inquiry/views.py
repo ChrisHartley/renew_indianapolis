@@ -192,29 +192,3 @@ class propertyShowingReleaseView(ListView):
                 requestors.append(u'{} {}'.format(i.user.first_name, i.user.last_name))
         context['requestors'] = set(requestors)
         return context
-
-from django.contrib.admin.views.decorators import staff_member_required
-from wsgiref.util import FileWrapper
-from django.http import HttpResponse, Http404
-import mimetypes
-import os
-@staff_member_required
-def send_signin_sheet(request, pk):
-    """
-    https://www.djangosnippets.org/snippets/365/
-    Send a file through Django without loading the whole file into
-    memory at once. The FileWrapper will turn the file object into an
-    iterator for chunks of 8KB.
-    """
-    showing = get_object_or_404(propertyShowing, id=pk)
-    if showing.signin_sheet is None or showing.signin_sheet == '':
-        raise Http404("Sign in sheet does not exist")
-    filename = str(showing.signin_sheet.name)
-    if filename.startswith('/') != True:
-        filename = settings.MEDIA_ROOT+filename
-    wrapper = FileWrapper(open(filename,'rb'))
-    content_type = mimetypes.MimeTypes().guess_type(filename)[0]
-    response = HttpResponse(wrapper, content_type=content_type)
-    response['Content-Length'] = os.path.getsize(filename)
-    response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(filename))
-    return response

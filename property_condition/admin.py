@@ -29,7 +29,7 @@ class ConditionReportAdmin(admin.ModelAdmin):
         if obj.id is None:
             return '<none>'
         return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'scope'}),
+            reverse("send_class_file", kwargs={'app_name': 'property_condition', 'class_name': 'ConditionReport', 'pk':obj.id, 'field_name':'scope_of_work'}),
                 "Download"
             ))
 
@@ -37,7 +37,7 @@ class ConditionReportAdmin(admin.ModelAdmin):
         if obj.id is None:
             return '<none>'
         return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'photo'}),
+            reverse("send_class_file", kwargs={'app_name': 'property_condition', 'class_name': 'ConditionReport', 'pk':obj.id, 'field_name':'picture'}),
                 "Download"
             ))
 

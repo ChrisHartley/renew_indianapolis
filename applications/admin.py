@@ -22,7 +22,7 @@ class UploadedFileInline(admin.TabularInline):
         if obj.id is None:
             return '-'
         return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("download_file", kwargs={'id':obj.id}),
+            reverse("send_class_file", kwargs={'app_name': 'user_files', 'class_name': 'UploadedFile', 'pk':obj.id, 'field_name':'supporting_document'}),
                 "Download"
             ))
 

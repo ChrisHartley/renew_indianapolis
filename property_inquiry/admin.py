@@ -1,7 +1,6 @@
 from django.contrib import admin, messages
 from .models import propertyInquiry, PropertyInquirySummary, propertyShowing, PropertyInquiryMapProxy
 from .forms import propertyShowingAdminForm
-from .views import send_signin_sheet
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.contrib.admin import SimpleListFilter
@@ -173,19 +172,6 @@ class PropertyInquiryMapAdmin(propertyInquiryAdmin):
                 request, extra_context=extra_context
             )
 
-
-def batch_schedule_email_template__admin_action(self, request, queryset):
-
-
-    return batch_update_view(
-        model_admin=self,
-        request=request,
-        queryset=queryset,
-        field_names=['showing_scheduled','status','notes'],
-    )
-batch_schedule_email_template__admin_action.short_description = "Batch Schedule Email Template"
-
-
 def admin_really_delete(self, request, queryset):
     for obj in queryset:
         obj.delete()
@@ -246,7 +232,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
     def download_signin_sheet(self, obj):
         if obj.pk is None:
             return '-'
-        url = reverse('property_inquiry_showing_scan', kwargs={'pk':obj.pk,})
+        url = reverse("send_class_file", kwargs={'app_name': 'property_inquiry', 'class_name': 'propertyShowing', 'pk':obj.id, 'field_name':'signin_sheet'})
         link = u'<a href="{}">Download</a>'.format(url,)
         return mark_safe(link)
     download_signin_sheet.short_description = 'Download Signin Sheet'

@@ -10,13 +10,13 @@ from applications.views import ApplicationDetail, ApplicationDisplay, Applicatio
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
 from property_inventory.views import PropertyInventoryList
-from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingReleaseView, propertyShowingListEmailTemplateView, send_signin_sheet
+from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingReleaseView, propertyShowingListEmailTemplateView
 from applicants.views import edit_organization, profile_home, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
-from user_files.views import delete_uploaded_file, import_uploader, send_file
+from user_files.views import delete_uploaded_file, import_uploader
 from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, ClosingDepositSlipDetailView
-from property_condition.views import submitConditionReport, send_cr_file, view_or_create_condition_report
+from property_condition.views import submitConditionReport, view_or_create_condition_report
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 from epp_connector.views import fetch_epp_inventory
 from neighborhood_notifications.views import update_registered_organizations, RelevantOrganizationsView
@@ -46,8 +46,6 @@ urlpatterns = [
            name='property_inquiry_showing_emails'),
         url(r'property_inquiry/release_template/(?P<pks>(\d+(,\d+)*))/$', propertyShowingReleaseView.as_view(),
            name='property_inquiry_showing_release'),
-        url(r'property_inquiry/signin_scan/(?P<pk>[0-9]+)/$', send_signin_sheet,
-           name='property_inquiry_showing_scan'),
 
         url(r'search-neighborhood-association/(?P<parcel>[0-9]{7})/$',
            RelevantOrganizationsView.as_view()),
@@ -113,8 +111,6 @@ urlpatterns = [
            delete_uploaded_file, name='uploadedfile_delete'),
         url(r'utils/upload_file/$',
            import_uploader, name='my_ajax_upload'),
-        url(r'utils/download_file/(?P<id>\w+)$',
-           send_file, name='download_file'),
 
         url(r'application/thanks/(?P<id>[0-9]+)$',
            application_confirmation, name='application_confirmation'),
@@ -226,10 +222,7 @@ urlpatterns = [
         url(r'condition_report/$',
             submitConditionReport,
             name='submit_condition_report'),
-        url(r'condition_report/(?P<id>[0-9]+)/(?P<file_type>[a-z]+)$',
-            send_cr_file,
-            name='condition_report_file'
-        ),
+
         url(r'condition_report_admin/(?P<parcel>[0-9]+)$',
             view_or_create_condition_report,
             name="find_or_create_and_redirect_cr_admin"),
