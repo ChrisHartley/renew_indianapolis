@@ -1,11 +1,61 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.conf import settings
 import stripe
 from django.contrib import messages
 from django.http import JsonResponse
+
+class SendFile(View):
+
+# closing documents
+# photos
+# application files
+# condition reports
+# annual reports
+
+    def get(self, request, *args, **kwargs):
+        pass
+
+from django.contrib.admin.views.decorators import staff_member_required
+from wsgiref.util import FileWrapper
+from django.http import HttpResponse, Http404
+import mimetypes
+import os
+from django.apps import apps
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import FieldDoesNotExist
+@staff_member_required
+def send_class_file(request, app_name, class_name, pk, field_name):
+    """
+    https://www.djangosnippets.org/snippets/365/
+    Send a file through Django without loading the whole file into
+    memory at once. The FileWrapper will turn the file object into an
+    iterator for chunks of 8KB.
+    """
+    try:
+        obj_model = apps.get_model(app_name, class_name)
+    except LookupError:
+        raise Http404('Model does not exist')
+    object = get_object_or_404(obj_model, id=pk)
+    try:
+        field = object._meta.get_field(field_name)
+    except FieldDoesNotExist:
+        raise Http404('Field does not exist')
+    field_value = field.value_from_object(object)
+    if field_value is None or field_value == '':
+        raise Http404("File in field does not exist")
+    filename = str(field_value.name)
+
+    if filename.startswith('/') != True:
+        filename = settings.MEDIA_ROOT+filename
+    wrapper = FileWrapper(open(filename,'rb'))
+    content_type = mimetypes.MimeTypes().guess_type(filename)[0]
+    response = HttpResponse(wrapper, content_type=content_type)
+    response['Content-Length'] = os.path.getsize(filename)
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(filename))
+    return response
 
 
 class DonateView(TemplateView):

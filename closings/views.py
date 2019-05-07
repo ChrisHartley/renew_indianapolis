@@ -25,10 +25,7 @@ class ApplicationPurchaseAgreement(DetailView):
     context_object_name = 'application'
     template_name = 'purchase_agreement.html'
     def get_context_data(self, **kwargs):
-        #print "hello", self
         context = super(ApplicationPurchaseAgreement, self).get_context_data(**kwargs)
-        #print "hello", self
-        #self.object.meeting_set
         context['approval_date'] = self.object.meeting
         return context
 
@@ -42,7 +39,6 @@ class ProcessingFeePaymentPage(DetailView):
             context['expired'] = True
         else:
             context['expired'] = False
-
         if self.object.amount_due == settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']:
             context['creditCardFees'] = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_STRIPE_FEE']
         elif self.object.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
@@ -163,26 +159,3 @@ class ProcessingFeePaidPage(View):
         slug = slugify(prop)
         return HttpResponseRedirect(reverse('application_pay_processing_fee', kwargs={'id': kwargs['id'], 'slug': slug}))
         #return HttpResponse("Everything worked for {0}".format(obj.closing.application.Property))
-
-#
-# @staff_member_required
-# def send_file(request, category, filename):
-#     """
-#     https://www.djangosnippets.org/snippets/365/
-#     Send a file through Django without loading the whole file into
-#     memory at once. The FileWrapper will turn the file object into an
-#     iterator for chunks of 8KB.
-#     """
-#     #possible_closings = closing.objects.filter(application__Property=property)
-#     #requested_file = get_object_or_404(UploadedFile, id=id)
-#     #filename = str(requested_file.supporting_document.name)
-#     if category in('closings'):
-#         filename = settings.MEDIA_ROOT+category+'/'+filename
-#         with open(filename, 'rb') as f:
-#             wrapper = FileWrapper(f)
-#             content_type = mimetypes.MimeTypes().guess_type(filename)[0]
-#             response = HttpResponse(wrapper, content_type=content_type)
-#             response['Content-Length'] = os.path.getsize(filename)
-#             response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(filename))
-#             return response
-#     raise Http404

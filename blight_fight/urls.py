@@ -21,11 +21,11 @@ from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniM
 from epp_connector.views import fetch_epp_inventory
 from neighborhood_notifications.views import update_registered_organizations, RelevantOrganizationsView
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
-from utils.views import DonateView
+from utils.views import DonateView, send_class_file
 from commind.views import view_document, CommIndApplicationFormView, PropertyListView, CommIndApplicationSuccessView
 
 admin.site.site_header = 'Blight Fight administration'
-
+from django.conf.urls import include, url  # For django versions before 2.0
 urlpatterns = [
         url(r'admin/', include(admin.site.urls)),
         url(r'^favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico', permanent=True)),
@@ -244,7 +244,8 @@ urlpatterns = [
 
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
         url(r'donate/$', DonateView.as_view(), name='donate'),
-
+        url(r'file/(?P<app_name>.*)/(?P<class_name>.*)/(?P<pk>[0-9]+)/(?P<field_name>.*)/$', send_class_file, name='send_class_file'),
+#app_name, class_name, pk, field_name
 
         # commind - Commercial Industrial URLS
         url(r'^media/documents/(?P<filename>.*)', view_document, name='view_commind_document'),
@@ -257,9 +258,11 @@ urlpatterns = [
     ]
 
 if settings.DEBUG:
+    #import debug_toolbar
     # static files (images, css, javascript, etc.)
     urlpatterns += [
                         url(r'^media/(?P<path>.*)$', serve, {
-                            'document_root': settings.MEDIA_ROOT})
+                            'document_root': settings.MEDIA_ROOT}),
+                        url(r'^__debug__/', include(debug_toolbar.urls)),
                     ]
 #urlpatterns += [        ]
