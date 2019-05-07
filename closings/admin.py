@@ -81,7 +81,8 @@ class ClosingAdmin(admin.ModelAdmin):
     'project_agreement_download', 'assignment_and_assumption_agreement_download',
      'signed_purchase_agreement_download',
      'renew_sales_disclosure_form_download',
-     'city_sales_disclosure_form_download')
+     'city_sales_disclosure_form_download',
+     'scanned_receipt_download')
     actions = [custom_batch_editing__admin_action]
     inlines = [PurchaseOptionInline,]
     raw_id_fields = ('application',)
@@ -175,7 +176,7 @@ class ClosingAdmin(admin.ModelAdmin):
             reverse("application_purchase_agreement", args=(obj.application.id,)), "Purchase Agreement")
         return mark_safe(pa_link)
 
-    purchase_agreement.short_description = 'Purchase Agreement'
+    purchase_agreement.short_description = 'Generate Purchase Agreement'
 
     def processing_fee_url(self, obj):
         pf = processing_fee.objects.filter(closing=obj).first()
@@ -254,6 +255,13 @@ class ClosingAdmin(admin.ModelAdmin):
                 "Download"
             ))
 
+
+    def scanned_receipt_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'scanned_receipt'}),
+                "Download"
+            ))
+
     def print_deposit_slip(self, obj):
         if obj.id is None:
             return '-'
@@ -302,6 +310,7 @@ class ClosingAdmin(admin.ModelAdmin):
         }),
         ('Distributions',{
             'fields': (
+                ('scanned_receipt', 'scanned_receipt_download', 'purchase_agreement'),
                 ('city_proceeds', 'city_loan_proceeds'),
                 ('ri_proceeds', 'ri_closing_fee'),
             )
