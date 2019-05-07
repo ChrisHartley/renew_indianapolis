@@ -258,7 +258,7 @@ urlpatterns = [
     ]
 
 if settings.DEBUG:
-    #import debug_toolbar
+    import debug_toolbar
     # static files (images, css, javascript, etc.)
     urlpatterns += [
                         url(r'^media/(?P<path>.*)$', serve, {

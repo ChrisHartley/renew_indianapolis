@@ -72,7 +72,16 @@ class ClosingAdmin(admin.ModelAdmin):
     list_display = ['__unicode__','title_company','renew_owned', 'date_time', 'processing_fee_paid', 'assigned_city_staff']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__organization__name', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'application__Property__renew_owned', 'archived')
-    readonly_fields = ('purchase_agreement', 'nsp', 'processing_fee_url', 'processing_fee_paid', 'print_deposit_slip','blc_listed','blc_expiration')
+    readonly_fields = (
+        'purchase_agreement', 'nsp', 'processing_fee_url',
+        'processing_fee_paid', 'print_deposit_slip','blc_listed',
+        'blc_expiration', 'title_commitment_download', 'closing_statement_download',
+    'deed_download', 'recorded_city_deed_download', 'ri_deed_download',
+    'recorded_ri_deed_download', 'nsp_convenants_download',
+    'project_agreement_download', 'assignment_and_assumption_agreement_download',
+     'signed_purchase_agreement_download',
+     'renew_sales_disclosure_form_download',
+     'city_sales_disclosure_form_download')
     actions = [custom_batch_editing__admin_action]
     inlines = [PurchaseOptionInline,]
     raw_id_fields = ('application',)
@@ -176,9 +185,72 @@ class ClosingAdmin(admin.ModelAdmin):
             reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)), reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)))
         return mark_safe(pf_link)
 
-    def file_download(self, obj):
+    def closing_statement_download(self, obj):
         return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("download_file", kwargs={'id':obj.id}),
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'closing_statement'}),
+                "Download"
+            ))
+
+    def title_commitment_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'title_commitment'}),
+                "Download"
+            ))
+
+    def deed_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'deed'}),
+                "Download"
+            ))
+
+    def recorded_city_deed_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'recorded_city_deed'}),
+                "Download"
+            ))
+    def ri_deed_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'ri_deed'}),
+                "Download"
+            ))
+
+    def recorded_ri_deed_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'recorded_ri_deed'}),
+                "Download"
+            ))
+    def nsp_convenants_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'nsp_convenants'}),
+                "Download"
+            ))
+
+    def project_agreement_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'project_agreement'}),
+                "Download"
+            ))
+    def assignment_and_assumption_agreement_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'assignment_and_assumption_agreement'}),
+                "Download"
+            ))
+
+    def signed_purchase_agreement_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'signed_purchase_agreement'}),
+                "Download"
+            ))
+
+    def renew_sales_disclosure_form_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'renew_sales_disclosure_form'}),
+                "Download"
+            ))
+
+    def city_sales_disclosure_form_download(self, obj):
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'city_sales_disclosure_form'}),
                 "Download"
             ))
 
@@ -212,17 +284,61 @@ class ClosingAdmin(admin.ModelAdmin):
             return blc_listing.objects.filter(Property=obj.prop).filter(active=True).first()
         return None
 
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                ('application', 'prop'),
+                ('title_company', 'title_company_freeform'),
+                ('date_time', 'location', 'assigned_city_staff'),
+            )
+            }
+        ),
+        ('Status',{
+            'fields': (
+                ('closed','archived',),
+                'notes',
+            )
+        }),
+        ('Distributions',{
+            'fields': (
+                ('city_proceeds', 'city_loan_proceeds'),
+                ('ri_proceeds', 'ri_closing_fee'),
+            )
+        }),
+        ('Documents', {
+            'fields': (
+            ('title_commitment','title_commitment_download'),
+            ('closing_statement','closing_statement_download'),
+            ('deed', 'deed_download', 'recorded_city_deed', 'recorded_city_deed_download','recorded_city_deed_instrument_number',),
+            ('ri_deed','recorded_ri_deed', 'recorded_ri_deed_instrument_number',),
+            ('nsp_convenants','nsp_convenants_download'),
+            ('project_agreement','project_agreement_download'),
+            ('assignment_and_assumption_agreement','assignment_and_assumption_agreement_download'),
+            ('signed_purchase_agreement','signed_purchase_agreement_download'),
+            ('renew_sales_disclosure_form','renew_sales_disclosure_form_download'),
+            ('city_sales_disclosure_form','city_sales_disclosure_form_download'),
+            ),
+        }),
+    )
+
 class ClosingScheduleViewAdmin(ClosingAdmin):
     model = closing_proxy
     list_display = ['application', 'date_time', 'assigned_city_staff', 'title_company', 'title_commitment_in_place', 'all_documents_in_place', 'city_sales_disclosure_in_place']
     list_filter = ['assigned_city_staff', 'closed', PurchaseOptionFilter, 'archived']
     readonly_fields = ('all_documents_in_place', 'application', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'closed')
-    fields = ('application','assigned_city_staff', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'city_sales_disclosure_form', 'closed')
-#    form = ClosingScheduleAdminForm
     actions = None
 
-
     inlines = []
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'application', 'assigned_city_staff', 'title_company', 'location', 'date_time', 'deed_in_place','project_agreement_in_place', 'assignment_and_assumption_agreement_in_place', 'city_sales_disclosure_form', 'closed'
+            )
+        }),
+
+    )
 
     # This admin view is used by city employees so it shows a limited about of information and only properties owned by the city.
     def get_queryset(self, request):
