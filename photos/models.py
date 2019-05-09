@@ -1,6 +1,6 @@
 from django.db import models
-from property_inventory.models import Property as Property_inventory
-from ncst.models import Property as Property_ncst
+#from property_inventory.models import Property as Property_inventory
+#from ncst.models import Property as Property_ncst
 from django.utils.text import slugify
 from os.path import basename
 from django.utils.safestring import mark_safe
@@ -12,8 +12,8 @@ def save_location(instance, filename):
 
 
 class photo(models.Model):
-    prop = models.ForeignKey(Property_inventory, null=True)
-    prop_ncst = models.ForeignKey(Property_ncst, null=True)
+    prop = models.ForeignKey('property_inventory.Property', null=True, blank=True)
+    prop_ncst = models.ForeignKey('ncst.Property', null=True, blank=True)
     main_photo = models.BooleanField(null=False, default=False)
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to=save_location, max_length=512, blank=False, null=False)
