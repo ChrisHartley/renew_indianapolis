@@ -375,20 +375,33 @@ class MeetingLink(models.Model):
     NOT_APPROVED_STATUS = 2
     TABLED_STATUS = 3
     SCHEDULED_STATUS = 4
+    BACKUP_APPROVED_STATUS = 5
 
     STATUS_CHOICES = (
         (APPROVED_STATUS, 'Approved'),
         (NOT_APPROVED_STATUS, 'Not Approved'),
         (TABLED_STATUS, 'Tabled'),
         (SCHEDULED_STATUS, 'Scheduled'),
+        (BACKUP_APPROVED_STATUS, 'Approved - Backup'),
     )
+
+    NO_CONDITION = 1
+    CONDITION = 2
+    CONDITION_SATISFIED = 3
+
+    CONDITIONAL_CHOICES = (
+        (NO_CONDITION,'None'),
+        (CONDITION,'Approved with conditions'),
+        (CONDITION_SATISFIED,'Condition Satisfied'),
+    )
+
     meeting = models.ForeignKey(Meeting, related_name='meeting_link')
     meeting_outcome = models.IntegerField(choices=STATUS_CHOICES, null=False, default=SCHEDULED_STATUS)
     application = models.ForeignKey(Application, related_name='meeting')
     notes = models.CharField(max_length=1024, blank=True, null=False)
     schedule_weight = models.IntegerField(default=0, null=False, blank=True)
 
-    conditional_approval = models.NullBooleanField(default=None)
+    #conditional_approval = models.IntegerField(choices=CONDITIONAL_CHOICES, null=False, default=NO_CONDITION)
 
     @property
     def meeting_date(self):
@@ -414,6 +427,7 @@ class MeetingLink(models.Model):
                 else:
                     prop.applicant = u'{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
                 prop.save()
+
                 if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
                     # Final approval received
                     schedule_next_meeting = False
@@ -447,15 +461,23 @@ class MeetingLink(models.Model):
             if self.meeting.meeting_type == Meeting.PROCESSING:
                 schedule_next_meeting = False
 
-            if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS):
+            if self.meeting_outcome == self.BACKUP_APPROVED_STATUS:
+                schedule_next_meeting = True
+
+
+            if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS or self.meeting_outcome == self.BACKUP_APPROVED_STATUS):
                 notes = 'made by robot'
                 # Tabled status means it goes back on the agenda for the next occurance of the same meeting
                 if self.meeting_outcome == self.TABLED_STATUS:
                     meeting_type = self.meeting.meeting_type
                     notes = 'Tabled from {0}'.format(self.meeting.meeting_date,)
                 # Approved means it goes on the agenda of the next occurance of the next level meeting
-                if self.meeting_outcome == self.APPROVED_STATUS:
-                    notes = 'Promoted from {0}'.format(self.meeting.meeting_date,)
+                if self.meeting_outcome == self.APPROVED_STATUS or self.meeting_outcome == self.BACKUP_APPROVED_STATUS:
+                    if self.meeting_outcome == self.APPROVED_STATUS:
+                        notes = 'Promoted from {0}'.format(self.meeting.meeting_date,)
+                    if self.meeting_outcome == self.BACKUP_APPROVED_STATUS:
+                        notes = 'Backup - Promoted from {0}'.format(self.meeting.meeting_date,)
+
                     if self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE:
                         meeting_type = Meeting.BOARD_OF_DIRECTORS
                     if self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS:
@@ -478,7 +500,13 @@ class MeetingLink(models.Model):
                         meeting_date = rrule(MONTHLY, count=1, byweekday=WE(3), dtstart=self.meeting.meeting_date)[0].date()
                     next_meeting = Meeting(meeting_type=meeting_type, meeting_date=meeting_date)
                     next_meeting.save()
-                next_meeting_link = MeetingLink(application=self.application, meeting=next_meeting, notes=notes, schedule_weight=self.schedule_weight)
+                next_meeting_link = MeetingLink(
+                    application=self.application,
+                    meeting=next_meeting,
+                    notes=notes,
+                    schedule_weight=self.schedule_weight,
+                    conditional_approval=self.conditional_approval,
+                )
                 next_meeting_link.save()
         super(MeetingLink, self).save(*args, **kwargs)
 
