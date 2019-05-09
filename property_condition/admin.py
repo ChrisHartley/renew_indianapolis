@@ -52,7 +52,7 @@ class ConditionReportAdmin(admin.ModelAdmin):
         ('Property', {
             'fields':
                 (
-                    ('Property', 'get_condition_avg' ),
+                    ('Property', 'Property_ncst', 'get_condition_avg' ),
                     'general_property_notes',
                     ('picture','pic_download'),
                     ('upload_photo_page', 'timestamp'),
