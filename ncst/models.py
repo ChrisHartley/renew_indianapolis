@@ -41,7 +41,6 @@ class Property(models.Model):
     STATUS_CHOICES = (
         (NEW_STATUS, 'NSI New'),
         (INSPECTING_STATUS,'NSI Inspecting'),
-        (INSPECTING_COMPLETE_STATUS,'NSI Inspecting - Completed'),
         (WAITING_OFFER_STATUS,'NSI Awaiting Offer'),
         (OFFER_STATUS,'NSI Offer'),
         (PENDING_OFFER_ACCEPT_STATUS,'NSI Pending Offer Accept'),
