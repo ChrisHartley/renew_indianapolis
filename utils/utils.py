@@ -99,8 +99,11 @@ def virus_scan(input_file):
 import requests
 import json
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
+import logging
 def pull_property_info_from_arcgis(parcel):
     city_arcgis_url = 'http://xmaps.indy.gov/arcgis/rest/services/MapIndy/MapIndyProperty/MapServer/10/query?where=PARCEL_C%3D%27{0}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson'.format(parcel,)
+
+    logger = logging.getLogger(__name__)
 
     r = requests.get(city_arcgis_url)
     try:
@@ -108,9 +111,11 @@ def pull_property_info_from_arcgis(parcel):
         response_json = r.json()
     except ValueError:
         print('ValueError, no valid json in response?')
+        logger.error('Error parsing response from ArcGIS server - ValueError')
         return False
     except HTTPError:
         print('Response error')
+        logger.error('Error parsing response from ArcGIS server - HTTPError')
         return False
 
     data = {}
@@ -128,6 +133,7 @@ def pull_property_info_from_arcgis(parcel):
 
     except IndexError as e:
         print('Data not found in response: {}'.format(e,))
+        logger.error('Error parsing response from ArcGIS server - IndexError')
 
     else:
         data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
