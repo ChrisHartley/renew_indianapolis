@@ -401,7 +401,7 @@ class MeetingLink(models.Model):
     notes = models.CharField(max_length=1024, blank=True, null=False)
     schedule_weight = models.IntegerField(default=0, null=False, blank=True)
 
-    #conditional_approval = models.IntegerField(choices=CONDITIONAL_CHOICES, null=False, default=NO_CONDITION)
+    conditional_approval = models.IntegerField(choices=CONDITIONAL_CHOICES, null=False, default=NO_CONDITION)
 
     @property
     def meeting_date(self):
