@@ -21,6 +21,11 @@ class Program(models.Model):
     def __str__(self):
         return self.name
 
+class Seller(models.Model):
+    name = models.CharField(max_length=254, blank=False)
+    def __str__(self):
+        return self.name
+
 
 @python_2_unicode_compatible
 class Property(models.Model):
@@ -61,6 +66,7 @@ class Property(models.Model):
     update_from_server = models.BooleanField(default=True, help_text="Attempt to update street address, etc from remote server on next save.")
 
     program = models.ForeignKey(Program, null=False)
+    seller = models.ForeignKey(Seller, null=False)
     contact = models.ForeignKey(Contact, null=False)
 
     created = models.DateTimeField(auto_now_add=True)

@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 from utils.admin import ExportCsvMixin
 
-from .models import Contact, Property, Program
+from .models import Contact, Property, Program, Seller
 from photos.models import photo
 from property_condition.models import ConditionReport
 
@@ -45,4 +45,5 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
 
 admin.site.register(Contact)
 admin.site.register(Program)
+admin.site.register(Seller)
 admin.site.register(Property, PropertyAdmin)
