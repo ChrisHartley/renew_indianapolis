@@ -14,16 +14,10 @@ from property_condition.models import ConditionReport
 
 class photoInlineAdmin(regular_admin.TabularInline):
     model = photo
-    fields = ('prop_ncst', 'image', 'file_download', 'image_tag')
+    fields = ('prop_ncst', 'image', 'image_tag')
     extra = 0
-    readonly_fields = ('file_download', 'image_tag')
-    def file_download(self, obj):
-        if obj.id is None:
-            return '-'
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'photos', 'class_name': 'photo', 'pk':obj.id, 'field_name':'image'}),
-                "Download"
-            ))
+    readonly_fields = ('image_tag',)
+
 
 class propertyConditionReportInlineAdmin(regular_admin.TabularInline):
     model = ConditionReport

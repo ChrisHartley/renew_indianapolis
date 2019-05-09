@@ -4,14 +4,13 @@ from django.db import models
 from django.utils.text import slugify
 from os.path import basename
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 from PIL import Image, ExifTags
 from django.conf import settings
 
 def save_location(instance, filename):
-    if instance.prop is not None:
-        return 'property_photos/{0}/{1}'.format(instance.prop, filename)
-    if instance.prop_ncst is not None:
-        return 'property_photos/{0}/{1}'.format(instance.prop, filename)
+    return 'property_photos/{0}/{1}'.format(instance.prop or instance.prop_ncst or 'no_property', filename)
+
 
 class photo(models.Model):
     prop = models.ForeignKey('property_inventory.Property', null=True, blank=True)
@@ -21,7 +20,13 @@ class photo(models.Model):
     image = models.ImageField(upload_to=save_location, max_length=512, blank=False, null=False)
 
     def image_tag(self, width=150, height=150):
-        return mark_safe('<img src="/media/{0}" width="{1}" height="{2}" />'.format(self.image, width, height))
+        if self.id is not None:
+            return mark_safe('<a href="{0}"><img src="/media/{1}" width="{2}" height="{3}" /></a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'photos', 'class_name': 'photo', 'pk':self.id, 'field_name':'image'}),
+                self.image,
+                width,
+                height)
+            )
 
     image_tag.short_description = 'Image'
 

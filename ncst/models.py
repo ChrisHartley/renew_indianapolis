@@ -87,7 +87,7 @@ class Property(models.Model):
         verbose_name_plural = "Properties"
 
     def __str__(self):
-        return '{} - {} - {}'.format(self.street_address, self.parcel, self.get_status_display())
+        return '{} - {}'.format(self.street_address, self.parcel)
 
 
     def save(self, *args, **kwargs):
