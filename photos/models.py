@@ -8,8 +8,10 @@ from PIL import Image, ExifTags
 from django.conf import settings
 
 def save_location(instance, filename):
-    return 'property_photos/{0}/{1}'.format(instance.prop, filename)
-
+    if instance.prop is not None:
+        return 'property_photos/{0}/{1}'.format(instance.prop, filename)
+    if instance.prop_ncst is not None:
+        return 'property_photos/{0}/{1}'.format(instance.prop, filename)
 
 class photo(models.Model):
     prop = models.ForeignKey('property_inventory.Property', null=True, blank=True)

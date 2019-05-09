@@ -14,9 +14,9 @@ from property_condition.models import ConditionReport
 
 class photoInlineAdmin(regular_admin.TabularInline):
     model = photo
-    fields = ('prop_ncst', 'image', 'file_download')
+    fields = ('prop_ncst', 'image', 'file_download', 'image_tag')
     extra = 0
-    readonly_fields = ('file_download',)
+    readonly_fields = ('file_download', 'image_tag')
     def file_download(self, obj):
         if obj.id is None:
             return '-'
