@@ -94,3 +94,48 @@ def virus_scan(input_file):
             'Virus scanner returned %(value)s',
             params={'value': scan_results},
         )
+
+
+import requests
+import json
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
+def pull_property_info_from_arcgis(parcel):
+    city_arcgis_url = 'http://xmaps.indy.gov/arcgis/rest/services/MapIndy/MapIndyProperty/MapServer/10/query?where=PARCEL_C%3D%27{0}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson'.format(parcel,)
+
+    r = requests.get(city_arcgis_url)
+    try:
+        r.raise_for_status()
+        response_json = r.json()
+    except ValueError:
+        print('ValueError, no valid json in response?')
+        return False
+    except HTTPError:
+        print('Response error')
+        return False
+
+    data = {}
+    stname, stnumber, pre_dir, zipcode, geometry = '', '', '', '', ''
+
+    try:
+        stname = response_json['features'][0]['properties']['FULL_STNAME'] or ''
+        stnumber = response_json['features'][0]['properties']['STNUMBER'] or ''
+        pre_dir = response_json['features'][0]['properties']['PRE_DIR'] or ''
+        zipcode = response_json['features'][0]['properties']['ZIPCODE'] or ''
+        geometry = MultiPolygon(GEOSGeometry(json.dumps(response_json['features'][0]['geometry'])))
+        state_parcel = response_json['features'][0]['properties']['STATEPARCELNUMBER'] or ''
+        assessed_land_value = response_json['features'][0]['properties']['ASSESSORYEAR_LANDTOTAL'] or ''
+        assessed_improvement_value = response_json['features'][0]['properties']['ASSESSORYEAR_IMPTOTAL'] or ''
+
+    except IndexError as e:
+        print('Data not found in response: {}'.format(e,))
+
+    else:
+        data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
+        data['zipcode'] = zipcode
+        data['geometry'] = geometry
+        data['state_parcel'] = state_parcel
+        data['assessed_land_value'] = assessed_land_value
+        data['assessed_improvement_value'] = assessed_improvement_value
+
+
+    return data

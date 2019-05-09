@@ -56,7 +56,6 @@ INSTALLED_APPS = (
     'epp_connector',
     'neighborhood_notifications',
     #'post_sale',#
-    #'import_export',
     #'accella_records',
     'utils',
     #'debug_toolbar',#
@@ -64,6 +63,7 @@ INSTALLED_APPS = (
     #'work_orders',#
     'market_activity',
     'commind',
+    'ncst',
 )
 
 MIDDLEWARE_CLASSES = (
