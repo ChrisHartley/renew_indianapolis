@@ -291,6 +291,7 @@ class ClosingAdmin(admin.ModelAdmin):
                 ('application', 'prop'),
                 ('title_company', 'title_company_freeform'),
                 ('date_time', 'location', 'assigned_city_staff'),
+                ('processing_fee_paid', 'processing_fee_url'),
             )
             }
         ),

@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 from localflavor.us.models import PhoneNumberField, USStateField, USZipCodeField
-from applications.models import Application
+from applications.models import Application, MeetingLink, Meeting
 from property_inventory.models import Property
 from django.contrib.auth.models import User
 from django.utils.text import slugify
@@ -211,6 +212,30 @@ class closing(models.Model):
                 app.status = Application.WITHDRAWN_STATUS
                 app.staff_notes = 'Application marked as withdrawn when closing archived - {0}\n{1}'.format(timezone.now(),app.staff_notes)
                 app.save()
+                # This is where we would look for a backup application and create a new closing, processing fee, etc.
+
+                backup_app_ml = MeetingLink.objects.filter(application__Property__exact=self.application.Property).filter(meeting_outcome__exact=MeetingLink.BACKUP_APPROVED_STATUS).filter(
+                        Q(
+                            Q(
+                                Q(application__Property__renew_owned__exact=True),
+                                Q(meeting__meeting_type__exact=Meeting.BOARD_OF_DIRECTORS)
+                            )
+                            |
+                            Q(
+                                Q(application__Property__renew_owned__exact=False),
+                                Q(meeting__meeting_type__exact=Meeting.MDC)
+                            )
+                        )
+                ).order_by('application__submitted_timestamp').first()
+
+                backup_app_ml.meeting_outcome = MeetingLink.APPROVED_STATUS
+                backup_app_ml.save()
+                subject = 'Backup application promoted - {0}'.format(backup_app_ml.application,)
+                message = 'This is a courtesy notification that the backup application {} was promoted and a closing created.'.format(backup_app_ml.application,)
+                recipient = [settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL'],]
+                from_email = 'info@renewindianapolis.org'
+                send_mail(subject, message, from_email, recipient,)
+
                 if self.application.Property.blc_listing.count() > 0 and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
                     subject = 'BLC listed property closing cancelled - {0}'.format(self.application.Property,)
                     message = 'This is a courtesy notification that the closing on BLC property at {0} was cancelled. Please update your files as necessary.'.format(self.application.Property,)

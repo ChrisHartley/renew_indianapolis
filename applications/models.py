@@ -414,6 +414,26 @@ class MeetingLink(models.Model):
         if self.application.status != Application.WITHDRAWN_STATUS: # If an application is withdrawn then don't update meetings, etc even if it was approved.
 
             schedule_next_meeting = True # We want to put the app on the agenda of the next appropriate meeting unless it receives final approval.
+
+            if self.meeting_outcome == self.APPROVED_STATUS or self.meeting_outcome == self.BACKUP_APPROVED_STATUS:
+                if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
+                    # Final approval received
+                    schedule_next_meeting = False
+                    if self.meeting_outcome == self.APPROVED_STATUS:
+                        closing = apps.get_model('closings', 'closing')
+                        # No closing created yet
+                        if closing.objects.filter(application=self.application).count()==0:
+                            new_closing = closing(application=self.application)
+                            new_closing.save()
+                            # email applicant with congratulatory email and URL to pay processing fee
+                        else:
+                            old_closing = closing.objects.filter(application=self.application).ordery_by('datetime').first()
+                            pf = old_closing.processing_fee
+                            pf.due_date = now()+timedelta(days=9)
+                            pf.save()
+
+
+
             if self.meeting_outcome == self.APPROVED_STATUS:
                 prop = self.application.Property
                 body = self.meeting.get_meeting_type_display()
@@ -428,20 +448,7 @@ class MeetingLink(models.Model):
                     prop.applicant = u'{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
                 prop.save()
 
-                if (self.application.Property.renew_owned == False and self.meeting.meeting_type == Meeting.MDC) or (self.application.Property.renew_owned == True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS):
-                    # Final approval received
-                    schedule_next_meeting = False
-                    closing = apps.get_model('closings', 'closing')
-                    # No closing created yet
-                    if closing.objects.filter(application=self.application).count()==0:
-                        new_closing = closing(application=self.application)
-                        new_closing.save()
-                        # email applicant with congratulatory email and URL to pay processing fee
-                    else:
-                        old_closing = closing.objects.filter(application=self.application).ordery_by('datetime').first()
-                        pf = old_closing.processing_fee
-                        pf.due_date = now()+timedelta(days=9)
-                        pf.save()
+
 
 
                 # If a property is listed in BLC, notify BLC manager if necessary to mark sale pending.
@@ -460,9 +467,6 @@ class MeetingLink(models.Model):
 
             if self.meeting.meeting_type == Meeting.PROCESSING:
                 schedule_next_meeting = False
-
-            if self.meeting_outcome == self.BACKUP_APPROVED_STATUS:
-                schedule_next_meeting = True
 
 
             if schedule_next_meeting == True and (self.meeting_outcome == self.TABLED_STATUS or self.meeting_outcome == self.APPROVED_STATUS or self.meeting_outcome == self.BACKUP_APPROVED_STATUS):
