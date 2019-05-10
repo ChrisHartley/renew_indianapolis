@@ -728,7 +728,7 @@ CSS loading animation.
                 html = '<b><a target="_blank" href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+' ('+parcel.parcel+')</a></b><br/>'+
                   '<b>Price</b>: $'+new Intl.NumberFormat().format(parcel.price)+'<br/>'+
                   '<b>Lot Area</b>: '+new Intl.NumberFormat().format(parcel.area)+' square feet<br/><b>Parcel Type</b>: '+parcel.structureType+'<br/>'+
-                  '<b>Sidelot Program Eligible</b>: '+boolean_to_yesno(parcel.sidelot_eligible)+'<br/><b>Vacant Lot Program Eligible</b>: '+boolean_to_yesno(parcel.vacant_lot_eligible)+'<br/>'+
+                  '<b>Future Development Lot (FDL) Program Eligible</b>: '+boolean_to_yesno(parcel.future_development_program_eligible)+'<br/>'+
                   '<b>Status</b>: '+parcel.status+'<br/>'
                 if (parcel.status.indexOf('Available')){
                   html = html + '<b>Applicant</b>: '+parcel.applicant+'<br/>'
@@ -895,14 +895,8 @@ CSS loading animation.
                 },
                 { "title": 'Zoning',
                   "data": "properties.zone" },
-                { "title": 'Sidelot Program Eligible',
-                  "data": "properties.sidelot_eligible",
-                  "render": function ( data, type, row, meta ) {
-                        return data == true ? 'Yes' : 'No';
-                      },
-                },
-                { "title": 'Vacant Lot Program Eligible',
-                  "data": "properties.vacant_lot_eligible",
+                { "title": 'Future Development Lot (FDL) Program Eligible',
+                  "data": "properties.future_development_program_eligible",
                   "render": function ( data, type, row, meta ) {
                         return data == true ? 'Yes' : 'No';
                       },
