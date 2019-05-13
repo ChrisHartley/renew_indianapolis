@@ -319,7 +319,7 @@ class MDCCSVResponseMixin(object):
             response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'MDC-for-resolution.csv')
             writer = csv.writer(response)
 
-            header = ['Parcel','Street Address','Application Type','Structure Type','City\'s Sale Price','Renew\'s Sale Price','Total','Buyer Name']
+            header = ['Parcel','Street Address','Zipcode','Application Type','Structure Type','City\'s Sale Price','Renew\'s Sale Price','Total','Buyer Name']
             writer.writerow(header)
             # Write the data from the context somehow
             #from applications.models import MeetingLink.APPROVED_STATUS
@@ -354,7 +354,7 @@ class MDCCSVResponseMixin(object):
                     buyer = u'{0} {1}, {2}'.format(application.user.first_name, application.user.last_name, application.organization.name)
                 else:
                     buyer = u'{0} {1}'.format(application.user.first_name, application.user.last_name)
-                row = [application.Property.parcel, application.Property.streetAddress, application.get_application_type_display(), application.Property.structureType, city_split, renew_split, total, buyer]
+                row = [application.Property.parcel, application.Property.streetAddress, application.Property.zipcode, application.get_application_type_display(), application.Property.structureType, city_split, renew_split, total, buyer]
                 writer.writerow(row)
             return response
         # Business as usual otherwise
