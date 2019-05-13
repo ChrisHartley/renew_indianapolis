@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 import datetime # used for price_change summary view
 from django.apps import apps
 from django.utils.text import slugify
+from utils.utils import pull_property_info_from_arcgis
 
 ### This is the parent model inherited by various overlay models, collections of geometries
 ### such as zip codes, census tracts, CDC focus areas, etc that a Property (below) could fall within.
@@ -63,9 +64,9 @@ class Property(models.Model):
 
     PROPERTY_TYPES = (('lb', 'Landbank'), ('sp', 'County Owned Surplus'))
 
-    geometry = models.MultiPolygonField(srid=4326)
+    geometry = models.MultiPolygonField(srid=4326, blank=True)
 
-    centroid_geometry = models.PointField(srid=4326, default='POINT(39.7684 86.1581)')
+    centroid_geometry = models.PointField(srid=4326, default='POINT(39.7684 86.1581)', blank=True)
 
     objects = models.GeoManager()
     propertyType = models.CharField(
@@ -74,7 +75,11 @@ class Property(models.Model):
     parcel = models.CharField(
         max_length=7, unique=True, help_text="The 7 digit local parcel number for a property, ex 1052714", verbose_name='parcel number')
     streetAddress = models.CharField(
-        max_length=255, help_text="Supports partial matching, so you can enter either the full street address (eg 1425 E 11TH ST) to find one property or just the street name (eg 11th st) to find all the properties on that street.", verbose_name='Street Address')
+        max_length=255,
+        help_text="Supports partial matching, so you can enter either the full street address (eg 1425 E 11TH ST) to find one property or just the street name (eg 11th st) to find all the properties on that street.",
+        verbose_name='Street Address',
+        blank=True,
+        )
     nsp = models.BooleanField(
         default=False, help_text="If a property comes with requirements related to the Neighborhood Stabilization Program.", verbose_name='NSP')
     quiet_title_complete = models.BooleanField(
@@ -100,8 +105,8 @@ class Property(models.Model):
     sidelot_eligible = models.BooleanField(
         default=False, help_text="If the property is currently elgibile for the side-lot program")
     price = models.DecimalField(
-        max_digits=8, decimal_places=2, help_text="The price of the property", null=True)
-    area = models.FloatField(help_text="The parcel area in square feet")
+        max_digits=8, decimal_places=2, help_text="The price of the property", null=True, blank=True)
+    area = models.FloatField(help_text="The parcel area in square feet", null=True, blank=True)
     # change to foreign key when ready
     applicant = models.CharField(
         max_length=255, blank=True, null=True, help_text="Name of current applicant for status page")
@@ -130,10 +135,12 @@ class Property(models.Model):
     buyer_application = models.ForeignKey('applications.Application', null=True, blank=True, help_text='The final buyer application.')
 
     property_inspection_group = models.CharField(blank=True, max_length=10)
+    update_from_server = models.BooleanField(default=True, help_text="Attempt to update street address, etc from remote server on next save.")
 
     class Meta:
         verbose_name_plural = "properties"
         ordering = ['streetAddress', 'parcel']
+
     def natural_key(self):
         return u'%s - %s' % (self.streetAddress, self.parcel)
 
@@ -142,7 +149,24 @@ class Property(models.Model):
 
     ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
     def save(self, *args, **kwargs):
-        self.centroid_geometry = self.geometry.centroid
+        if self.parcel is not None and self.parcel != '' and self.update_from_server == True:
+            results = pull_property_info_from_arcgis(self.parcel)
+            if results:
+                self.streetAddress = results['street_address']
+                self.geometry = results['geometry']
+                self.centroid_geometry = self.geometry.centroid
+                self.area = float(results['estsqft'])
+                if float(results['assessed_improvement_value']) > 0:
+                    self.structureType = 'Residential Dwelling'
+                else:
+                    self.structureType = 'Vacant Lot'
+                self.zipcode = Zipcode.objects.filter(geometry__contains=self.centroid_geometry).first()
+                self.zone = Zoning.objects.filter(geometry__contains=self.centroid_geometry).first()
+                self.cdc = CDC.objects.filter(geometry__contains=self.centroid_geometry).first()
+                self.neighborhood = Neighborhood.objects.filter(geometry__contains=self.centroid_geometry).first()
+                self.census_tract = census_tract.objects.filter(geometry__contains=self.centroid_geometry).first()
+                self.is_active = False
+                self.update_from_server = False
         super(Property, self).save(*args, **kwargs)
 """
 Add notes to properties, for staff use.

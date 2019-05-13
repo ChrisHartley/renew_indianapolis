@@ -130,6 +130,7 @@ def pull_property_info_from_arcgis(parcel):
         state_parcel = response_json['features'][0]['properties']['STATEPARCELNUMBER'] or ''
         assessed_land_value = response_json['features'][0]['properties']['ASSESSORYEAR_LANDTOTAL'] or ''
         assessed_improvement_value = response_json['features'][0]['properties']['ASSESSORYEAR_IMPTOTAL'] or ''
+        estsqft = response_json['features'][0]['properties']['ESTSQFT'] or ''
 
     except IndexError as e:
         print('Data not found in response: {}'.format(e,))
@@ -142,6 +143,7 @@ def pull_property_info_from_arcgis(parcel):
         data['state_parcel'] = state_parcel
         data['assessed_land_value'] = assessed_land_value
         data['assessed_improvement_value'] = assessed_improvement_value
+        data['estsqft'] = estsqft
 
 
     return data
