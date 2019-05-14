@@ -166,6 +166,7 @@ class Property(models.Model):
                 self.neighborhood = Neighborhood.objects.filter(geometry__contains=self.centroid_geometry).first()
                 self.census_tract = census_tract.objects.filter(geometry__contains=self.centroid_geometry).first()
                 self.is_active = False
+                self.propertyType = 'lb'
                 self.update_from_server = False
         super(Property, self).save(*args, **kwargs)
 """
