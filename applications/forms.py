@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 
 class ScheduleInlineForm(forms.Form):
-    meeting = forms.ModelChoiceField(Meeting.objects.all())
+    meeting = forms.ModelChoiceField(Meeting.objects.all().order_by('-meeting_date') )
     meeting_outcome = forms.ChoiceField(choices=MeetingLink.STATUS_CHOICES, initial=MeetingLink.SCHEDULED_STATUS)
 
 class ApplicationForm(forms.ModelForm):
