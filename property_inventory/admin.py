@@ -134,7 +134,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
         return inquiries
 
     def view_photos(self, obj):
-        if self.id:
+        if obj.id:
             photo_page_link = '<a href="{}">{}</a>'.format(
                         reverse("property_photos", kwargs={'parcel': obj.parcel}), "View Photos")
         else:
