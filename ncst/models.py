@@ -5,6 +5,10 @@ from django.contrib.gis.db import models
 from localflavor.us.models import PhoneNumberField
 from django.utils.encoding import python_2_unicode_compatible
 from utils.utils import pull_property_info_from_arcgis
+from photos.models import photo
+from property_condition.models import ConditionReport
+from django.apps import apps
+
 
 @python_2_unicode_compatible
 class Contact(models.Model):
@@ -78,6 +82,20 @@ class Property(models.Model):
 
     notes = models.CharField(blank=True, max_length=1024)
 
+    closing_date = models.DateTimeField(blank=True, null=True)
+    title_company = models.ForeignKey('closings.title_company', blank=True, null=True)
+    closed = models.BooleanField(
+        default=False,
+        blank=False,
+    )
+
+    convert_to_landbank_inventory_on_save = models.BooleanField(
+        default=False,
+        blank=False,
+        verbose_name='Add property to landbank inventory and transfer photos and condition report'
+    )
+
+
     price_efmv = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     price_adjustment = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     price_offer = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
@@ -104,4 +122,28 @@ class Property(models.Model):
                 self.zipcode = results['zipcode']
                 self.geometry = results['geometry']
                 self.update_from_server = False
+        if self.convert_to_landbank_inventory_on_save:
+            inventory_property_model = apps.get_model('property_inventory', 'Property')
+
+            p, created = inventory_property_model.objects.get_or_create(
+                parcel=self.parcel,
+                defaults={
+                    'update_from_server': True,
+                    'status': 'New NCST acquisition',
+                    'renew_acquisition_date': self.closing_date,
+                },
+            )
+            p.save()
+            phs = photo.objects.filter(prop_ncst=self)
+            for ph in phs:
+                ph.prop = p
+                ph.prop_ncst = None
+                ph.save()
+            condition_reports = ConditionReport.objects.filter(Property_ncst=self)
+            for condition_report in condition_reports:
+                condition_report.Property = p
+                condition_report.Property_ncst = None
+                condition_report.save()
+            self.convert_to_landbank_inventory_on_save = False
+
         super(Property, self).save(*args, **kwargs)
