@@ -1,0 +1,42 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{% block center%}
+
+<table id="table" class="table-striped">
+    <thead>
+    <tr>
+        <th data-field="key" class="key">Question</th>
+        <th data-field="value">Response</th>
+    </tr>
+    </thead>
+<tbody>
+<tr><td>Applicant</td><td>{{application.user.first_name}} {{application.user.last_name}}</td></tr>
+<tr><td>Entity</td><td>{{application.entity}}</td></tr>
+<tr><td>Property</td><td>{{application.Properties.all.first}}</td></tr>
+<tr><td>
+Do you, any family members or partner/member of your entity, or any of your entity's board members or employees work for Renew Indianapolis or serve on the Renew Indianapolis Board of Directors or Committees and thus pose a potential conflict of interest?</td><td>{{application.conflict_board_rc}}</td></tr>
+<tr><td>If yes, what is their name?</td><td>{{application.conflict_board_rc_name}}</td></tr>
+<tr><td>Do you, any family members or partner/member of your entity, or any of your entity's board members or employees serve on the Metropolitan Development Commission or are employed by the City of Indianapolis Department of Metropolitan Development and thus pose a potential conflict of interest?</td><td>{{application.conflict_city}}</td></tr>
+<tr><td>If yes, what is their name?</td><td>{{application.conflict_city_name}}</td></tr>
+<tr><td>Does the applicant own any property that is subject to any un-remediated citation of violation of the state and local codes and ordinances?</td><td>{{application.active_citations}}</td></tr>
+<tr><td> Were the applicants the prior owner of any property in Marion County that was transferred to the Treasurer or to a local government as a result of tax foreclosure proceedings?</td><td>{{application.prior_tax_foreclosure}}</td></tr>
+<tr><td>Tax status of property currently owned in Marion County</td><td>{{application.get_tax_status_of_properties_owned_display}}</td></tr>
+<tr><td>Applicant work character</td><td>{{application.applicant_work_character}}</td></tr>
+<tr><td>Applicant experience</td><td>{{application.applicant_experience}}</td></tr>
+<tr><td>Applicant brownfield experience</td><td>{{application.applicant_brownfield_experience}}</td></tr>
+<tr><td>Applicant joint venture</td><td>{{application.applicant_joint_venture}}</td></tr>
+<tr><td>Applicant partnerships</td><td>{{application.applicant_partnerships}}</td></tr>
+<tr><td>Applicant offer price:</td><td>${{application.applicant_offer_price|intcomma}}</td></tr>
+<tr><td>Proposed end use:</td><td>{{application.proposed_end_use}}</td></tr>
+<tr><td>Submitted</td><td>{{application.submitted_timestamp}}</td></tr>
+
+{%comment%}
+{% for key, value in application%}
+<tr><td>{{key}}</td><td>{{value}}</td></tr>
+{%endfor%}
+{%endcomment%}
+
+</tbody>
+</table>
+
+{% endblock center %}

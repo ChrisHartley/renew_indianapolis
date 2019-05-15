@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
@@ -41,7 +42,7 @@ class CommIndApplicationFormView(FormView):
     def get_initial(self):
         initial = super(CommIndApplicationFormView, self).get_initial()
         if self.kwargs.get('parcel') is not None:
-            initial['Properties'] = Property.objects.filter(parcel__contains=self.kwargs['parcel'])
+            initial['Properties'] = Property.objects.filter(parcel__contains=self.kwargs['parcel']).first()
         return initial
 
     # def get_context_data(self, **kwargs):
@@ -63,9 +64,7 @@ class CommIndApplicationFormView(FormView):
         #context = self.get_context_data()
         #entitymembers = context['entity_member_form']
     #
-        #print(self)
         if form.validate_for_submission():
-            print "Form is valid"
             with transaction.atomic():
                 entity = Entity(
                     user=self.request.user,
@@ -144,6 +143,15 @@ class CommIndApplicationFormView(FormView):
 
 class CommIndApplicationSuccessView(TemplateView):
      template_name = "commind_application_sucess.html"
+
+class CommIndApplicationDetailView(DetailView):
+    model = Application
+    context_object_name = 'application'
+    template_name = "commind_application_summary.html"
+    def get_context_data(self, **kwargs):
+        context = super(CommIndApplicationDetailView, self).get_context_data(**kwargs)
+        return context
+
 
 class PropertyListView(ListView):
     model = Property

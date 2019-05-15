@@ -22,7 +22,7 @@ from epp_connector.views import fetch_epp_inventory
 from neighborhood_notifications.views import update_registered_organizations, RelevantOrganizationsView
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
 from utils.views import DonateView, send_class_file
-from commind.views import view_document, CommIndApplicationFormView, PropertyListView, CommIndApplicationSuccessView
+from commind.views import view_document, CommIndApplicationFormView, PropertyListView, CommIndApplicationSuccessView, CommIndApplicationDetailView
 
 admin.site.site_header = 'Blight Fight administration'
 from django.conf.urls import include, url  # For django versions before 2.0
@@ -243,6 +243,7 @@ urlpatterns = [
         # commind - Commercial Industrial URLS
         url(r'^media/documents/(?P<filename>.*)', view_document, name='view_commind_document'),
         url(r'^commercial_industrial/application/$', CommIndApplicationFormView.as_view(), name='commind_application'),
+        url(r'^commercial_industrial/app/detail/(?P<pk>[0-9]+)/', staff_member_required(CommIndApplicationDetailView.as_view()), name='commind_application_detail'),
         url(r'^commercial_industrial/application/(?P<parcel>[0-9]+)/', CommIndApplicationFormView.as_view(), name='commind_application_parcel'),
         url(r'^commercial_industrial/success/$', CommIndApplicationSuccessView.as_view(), name='commind_application_success'),
         url(r'^commercial_industrial/list/$', PropertyListView.as_view())
