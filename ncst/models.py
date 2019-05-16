@@ -71,7 +71,7 @@ class Property(models.Model):
 
     program = models.ForeignKey(Program, null=False)
     seller = models.ForeignKey(Seller, null=False)
-    contact = models.ForeignKey(Contact, null=True)
+    contact = models.ForeignKey(Contact, null=True, blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
