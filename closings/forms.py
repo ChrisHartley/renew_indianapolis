@@ -3,7 +3,7 @@ from .models import closing, processing_fee, title_company
 
 class TitleCompanyChooser(Form):
     title_company = ModelChoiceField(queryset=title_company.objects.filter(offer_to_users__exact=True).order_by('?'), help_text='This is a list of title companies we have worked with successfully in the past, in no particular order.')
-    manual_title_company_choice = CharField(max_length=50, required=False, label='Other choice', help_text='You are free to pick whichever title company you wish. If your preferred title company is not shown in the dropdown list above, please enter it here.')
+    #manual_title_company_choice = CharField(max_length=50, required=False, label='Other choice', help_text='You are free to pick whichever title company you wish. If your preferred title company is not shown in the dropdown list above, please email Nicholas Hunot at nhunot@renewindianapolis.org')
 
 class ClosingAdminForm(ModelForm):
     def clean(self):
