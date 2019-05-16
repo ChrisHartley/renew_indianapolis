@@ -71,7 +71,7 @@ class Property(models.Model):
 
     program = models.ForeignKey(Program, null=False)
     seller = models.ForeignKey(Seller, null=False)
-    contact = models.ForeignKey(Contact, null=False)
+    contact = models.ForeignKey(Contact, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -131,6 +131,7 @@ class Property(models.Model):
                     'update_from_server': True,
                     'status': 'New NCST acquisition',
                     'renew_acquisition_date': self.closing_date,
+                    'renew_owned': True,
                 },
             )
             p.save()
