@@ -133,7 +133,7 @@ class ProcessingFeePaidPage(View):
         obj.paid = True
         obj.user = request.user
         closing = obj.closing
-        if request.POST.get('manual_title_company_choice') != '':
+        if request.POST.get('manual_title_company_choice', '')  != '':
             closing.title_company_freeform = request.POST.get('manual_title_company_choice')
         else:
             if request.POST.get('title_company') != '':
