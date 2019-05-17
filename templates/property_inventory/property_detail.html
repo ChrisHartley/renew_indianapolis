@@ -99,8 +99,7 @@
     <tr><td>Community Development Corporation Area</td><td>{{property.cdc|title}}</td></tr>
     <tr><td>Quiet Title Completed</td><td>{{property.quiet_title_complete|yesno|capfirst}}</td></tr>
     <tr><td>Licensed Urban Garden in Place</td><td>{{property.urban_garden|yesno|capfirst}}</td></tr>
-    <tr><td>Eligible for Sidelot Program</td><td>{{property.sidelot_eligible|yesno|capfirst}}</td></tr>
-    <tr><td>Eligible for Vacant Lot Program</td><td>{{property.vacant_lot_eligible|yesno|capfirst}}</td></tr>
+    <tr><td>Eligible for Future Development Lot (FDL) Program</td><td>{{property.future_development_program_eligible|yesno|capfirst}}</td></tr>
     <tr><td>Reserved for owner occupants</td><td>{{property.homestead_only|yesno|capfirst}}</td></tr>
     <tr><td>Owned by Renew Indianapolis directly</td><td>{{property.renew_owned|yesno|capfirst}}</td></tr>
     <tr><td>Property Demolished through Hardest Hit Fund/Blight Elimination Program</td><td>{{property.hhf_demolition|yesno|capfirst}}</td></tr>
@@ -114,12 +113,12 @@
             <a href="https://build.renewindianapolis.org/media/{{ photo.image }}"><img src="https://build.renewindianapolis.org/media/{{ photo.image }}"/ class="img-responsive"></a>
           <div class="caption"><p>{{photo.created}}</p></div>
           </li>
-        {% empty %}
+          {% endfor %}
+
         <li>
           <img src="https://maps.googleapis.com/maps/api/streetview?size=300x300&key=AIzaSyDA2qmHbfbl1-I1BEshcKQxCgH7beKJDW0&location={{property.streetAddress}}, Indianapolis, IN {{property.zipcode}}" width=300 height=300/>
           <div class="caption"><p>Google StreetView images may not be accurate.</p></div>
         </li>
-        {% endfor %}
     </ul>
 
   </div>
@@ -168,8 +167,9 @@
   $(document).ready(function() {
     $("#lightSlider").lightSlider({
       item:1,
-      auto:true,
+      auto:false,
       pauseOnHover:true,
+      pause: 5000,
       loop:true,
       keyPress:true,
     });
