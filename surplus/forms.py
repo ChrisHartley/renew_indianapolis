@@ -21,14 +21,14 @@ class SurplusSearchForm(forms.ModelForm):
     #        'township',
             'notes',
             'interesting',
-            'classification',
+    #        'classification',
         #    'demolition_order_count',
         #    'repair_order_count',
         #    'vbo_count',
         #    'requested_from_commissioners',
         #    'previously_held_gateway_area',
             'vetted',
-            'vetting_notes'
+        #    'vetting_notes'
             ]
 
     def __init__(self, *args, **kwargs):

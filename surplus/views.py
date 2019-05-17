@@ -96,7 +96,10 @@ class ParcelDetailView(JSONResponseMixin, DetailView):
                               fields = ('parcel_number','street_address', 'zipcode', 'zoning',
                                   'township', 'has_building', 'land_value', 'improved_value',
                                   'area', 'assessor_classification', 'classification',
-                                  'demolition_order', 'repair_order', 'vbo_count', 'repair_order_count', 'demolition_order_count', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', 'intended_end_use'),
+                                  'demolition_order', 'repair_order', 'vbo_count',
+                                  'repair_order_count', 'demolition_order_count', 'interesting',
+                                  'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes',
+                                  'intended_end_use', 'condition_report_exists'),
                               use_natural_foreign_keys=True,
                               )
         return HttpResponse(s, content_type='application/json')
@@ -140,7 +143,9 @@ def searchSurplusProperties(request):
         fields = ('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
             'area', 'assessor_classification', 'classification',
-            'demolition_order_count', 'repair_order_count', 'vbo_count', 'interesting', 'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes', geom)
+            'demolition_order_count', 'repair_order_count', 'vbo_count',
+            'interesting', 'notes', 'requested_from_commissioners',
+            'vetted', 'vetting_notes', geom)
 
     s = serializers.serialize('geojson',
         f.qs,
