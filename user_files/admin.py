@@ -8,7 +8,7 @@ class UploadedFileAdmin(admin.ModelAdmin):
     model = UploadedFile
     list_display = ('user','organization','application','supporting_document', 'send_with_neighborhood_notification')
     readonly_fields = ('file_download',)
-
+    search_fields = ['application__Property__streetAddress', 'user']
     def file_download(self, obj):
         if obj is None:
             return '-'
