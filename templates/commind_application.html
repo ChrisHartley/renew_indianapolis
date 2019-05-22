@@ -19,15 +19,12 @@
 	</div>
 	<div class='panel-body'>
 		It looks like your application has a few problems to fix before it can be submitted. Please check the sections highlighted below.
-		If you need help or have questions you can reach {{COMPANY_SETTINGS.APPLICATION_CONTACT_NAME}} via email at
-		<a href='mailto:{{COMPANY_SETTINGS.APPLICATION_CONTACT_EMAIL}}'>{{COMPANY_SETTINGS.APPLICATION_CONTACT_EMAIL}}</a> or phone at
-		{{COMPANY_SETTINGS.APPLICATION_CONTACT_PHONE}}.
+		If you need help or have questions you can reach {{COMPANY_SETTINGS.COMMERCIAL_CONTACT_NAME}} via email at
+		<a href='mailto:{{COMPANY_SETTINGS.COMMERCIAL_CONTACT_EMAIL}}'>{{COMPANY_SETTINGS.COMMERCIAL_CONTACT_EMAIL}}</a> or phone at
+		{{COMPANY_SETTINGS.COMMERCIAL_CONTACT_PHONE}}.
 	</div>
 </div>
 {% endif %}
-<!-- <p class="text-center">Our next deadline is {{next_deadline}} for the {{next_meeting}} Review Committee meeting.</p> -->
-
-
 {% crispy form %}
 
 </div>
@@ -46,11 +43,6 @@ function boolean_to_yesno(boolean){
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
-
-
-
-
 
 function get_property_attributions(){
 	var term = $("#id_Property option:selected").text().match(/[0-9]{7}$/),

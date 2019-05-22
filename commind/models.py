@@ -220,10 +220,19 @@ class Application(models.Model):
 
     YES_CHOICE = True
     NO_CHOICE = False
+    UNKNOWN_CHOICE = None
     YESNO_TYPES = (
         (YES_CHOICE, 'Yes'),
         (NO_CHOICE, 'No')
     )
+
+    YESNOUNKOWN_TYPES = (
+        (YES_CHOICE, 'Yes'),
+        (NO_CHOICE, 'No'),
+        (UNKNOWN_CHOICE, 'Unknown'),
+    )
+
+
 
     CURRENT_STATUS = 3
     DELINQUENT_STATUS = 2
@@ -234,6 +243,7 @@ class Application(models.Model):
         (DELINQUENT_STATUS, 'Delinquent'),
         (NA_STATUS, 'N/A - No property owned')
     )
+
 
 
     Properties = models.ManyToManyField(Property, blank=True)
@@ -272,6 +282,20 @@ class Application(models.Model):
         blank=True,
         max_length=255
     )
+
+
+    conflict_renew_city = models.NullBooleanField(
+        choices=YESNO_TYPES,
+        verbose_name="Do you, any family members or partner/member of your entity, or any of your entity's board members or employees work for Renew Indianapolis or serve on the Renew Indianapolis Board of Directors or Committees or serve on the Metropolitan Development Commission or are employed by the City of Indianapolis Department of Metropolitan Development and thus pose a potential conflict of interest?",
+        blank=True
+    )
+
+    conflict_renew_city_name = models.CharField(
+        verbose_name="If yes, what is their name?",
+        blank=True,
+        max_length=255
+    )
+
 
     active_citations = models.NullBooleanField(
         choices=YESNO_TYPES,
@@ -345,7 +369,7 @@ class Application(models.Model):
 
     proposed_end_use = models.CharField(
         max_length=512,
-        blank=False,
+        blank=True,
         help_text="What is the proposed end use of the property?",
     )
 
@@ -354,19 +378,19 @@ class Application(models.Model):
 
     applicant_work_character = models.CharField(
         max_length=512,
-        blank=False,
+        blank=True,
         help_text="Describe the general character of work usually performed by the applicant",
     )
 
     applicant_experience = models.CharField(
         max_length=512,
-        blank=False,
+        blank=True,
         help_text="Describe the experience of applicant in projects similar to the proposed project including experience in design and construction of facilities similar to the proposed project",
     )
 
     applicant_brownfield_experience= models.CharField(
         max_length=512,
-        blank=False,
+        blank=True,
         help_text="Does the applicant have experience with brownfield projects? If so, please give further details",
     )
 
@@ -378,13 +402,13 @@ class Application(models.Model):
 
     applicant_joint_venture = models.CharField(
         max_length=512,
-        blank=False,
+        blank=True,
         help_text="Does the applicant intend to joint venture and/or subcontract with other firms, and, if so, list the names and qualifications of such firms",
     )
 
     applicant_partnerships = models.CharField(
         max_length=512,
-        blank=False,
+        blank=True,
         help_text="List any current community, neighborhood and/or charitable partnerships in relation to this project",
     )
 
@@ -418,33 +442,35 @@ class Application(models.Model):
         verbose_name='Other',
         blank=True,
     )
-    applicant_skills_environmental_remediation_boolean = models.NullBooleanField(
-        default=None,
+    applicant_skills_environmental_remediation_boolean = models.BooleanField(
+        default=False,
         blank=False,
+    #    choices=YESNOUNKOWN_TYPES,
+
         verbose_name='Environmental remediation',
     )
-    applicant_skills_brownfields_boolean = models.NullBooleanField(
-        default=None,
+    applicant_skills_brownfields_boolean = models.BooleanField(
+        default=False,
         blank=False,
         verbose_name='Brownfields',
     )
-    applicant_skills_commercial_real_estate_development_boolean = models.NullBooleanField(
-        default=None,
+    applicant_skills_commercial_real_estate_development_boolean = models.BooleanField(
+        default=False,
         blank=False,
         verbose_name='Commercial real estate development',
     )
-    applicant_skills_entitlement_process_boolean = models.NullBooleanField(
-        default=None,
+    applicant_skills_entitlement_process_boolean = models.BooleanField(
+        default=False,
         blank=False,
         verbose_name='Entitlement process',
     )
-    applicant_skills_incentives_boolean = models.NullBooleanField(
-        default=None,
+    applicant_skills_incentives_boolean = models.BooleanField(
+        default=False,
         blank=False,
         verbose_name='Incentives',
     )
-    applicant_skills_other_boolean = models.NullBooleanField(
-        default=None,
+    applicant_skills_other_boolean = models.BooleanField(
+        default=False,
         blank=False,
         verbose_name='Other (fill in the blank)',
     )
@@ -491,7 +517,7 @@ class Application(models.Model):
         help_text="Please provide details",
     )
 
-    total_number_of_jobs = models.PositiveIntegerField(
+    total_number_of_jobs = models.FloatField(
         blank=True,
         null=True,
         verbose_name='The total number of jobs',
@@ -509,6 +535,7 @@ class Application(models.Model):
         verbose_name='What is the blended hourly wage rate (the blended rate of hourly and salaried employees) excluding benefits and overtime, for the jobs that will be created by this project?'
     )
 
+
     hired_participant = models.NullBooleanField(
         blank=True,
         null=True,
@@ -518,6 +545,7 @@ class Application(models.Model):
     low_mod_daycare = models.NullBooleanField(
         blank=True,
         null=True,
+        choices=YESNOUNKOWN_TYPES,
         verbose_name="Is there opportunity with this project to provide low to mod income employees with daycare support?",
     )
     low_mod_transportation_support = models.NullBooleanField(
@@ -641,7 +669,7 @@ class Application(models.Model):
         super(Application, self).save(*args, **kwargs)
 
     def __str__(self):
-        return '{} - {} {} - {} - {}'.format(self.Properties.first(), self.user.first_name, self.user.last_name, self.entity, self.get_status_display())
+        return '{} - {} {} - {} - {}'.format(self.Property, self.user.first_name, self.user.last_name, self.entity, self.get_status_display())
 
     def __iter__(self):
         for field in self._meta.fields:

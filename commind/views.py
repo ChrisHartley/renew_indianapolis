@@ -42,18 +42,13 @@ class CommIndApplicationFormView(FormView):
     def get_initial(self):
         initial = super(CommIndApplicationFormView, self).get_initial()
         if self.kwargs.get('parcel') is not None:
-            initial['Properties'] = Property.objects.filter(parcel__contains=self.kwargs['parcel']).first()
+            initial['Property'] = Property.objects.filter(parcel__contains=self.kwargs['parcel']).first()
         return initial
 
-    # def get_context_data(self, **kwargs):
-    #     data = super(CommIndApplicationFormView, self).get_context_data(**kwargs)
-    #     if self.request.POST:
-    #         data['entity_form'] = EntityForm(self.request.POST)
-    #         data['entity_member_form'] = EntityMemberFormSet(self.request.POST)
-    #     else:
-    #         data['entity_form'] = EntityForm()
-    #         data['entity_member_form'] = EntityMemberFormSet()
-    #     return data
+    def get_context_data(self, **kwargs):
+        data = super(CommIndApplicationFormView, self).get_context_data(**kwargs)
+        data['COMPANY_SETTINGS'] = settings.COMPANY_SETTINGS
+        return data
 
 
     def form_invalid(self, form):
@@ -61,9 +56,7 @@ class CommIndApplicationFormView(FormView):
         return self.render_to_response(self.get_context_data(form=form))
 
     def form_valid(self, form):
-        #context = self.get_context_data()
-        #entitymembers = context['entity_member_form']
-    #
+
         if form.validate_for_submission():
             with transaction.atomic():
                 entity = Entity(
@@ -94,7 +87,7 @@ class CommIndApplicationFormView(FormView):
             self.object.Properties = form.cleaned_data['Properties']
             self.object.save()
             send_mail(
-                'Commercial Application received: {0}'.format(form.cleaned_data['Properties'][0],),
+                'Commercial Application received: {0}'.format(form.cleaned_data['Property'],),
                 "Application received in blight fight.",
                 'info@renewindianapolis.org',
                 [ settings.COMPANY_SETTINGS['COMMERCIAL_CONTACT_EMAIL'], ],
@@ -107,13 +100,6 @@ class CommIndApplicationFormView(FormView):
                 content_object = self.object,
             )
             budget_and_financing_file.save()
-            # balance_sheet_file = Document(
-            #     user = self.request.user,
-            #     file = form.cleaned_data['balance_sheet_file'],
-            #     file_purpose = 'Balance Sheet',
-            #     content_object = self.object,
-            # )
-            # balance_sheet_file.save()
             development_plan_file = Document(
                 user = self.request.user,
                 file = form.cleaned_data['development_plan_file'],

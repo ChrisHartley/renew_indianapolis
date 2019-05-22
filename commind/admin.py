@@ -50,12 +50,13 @@ class PropertyAdmin(admin.OSMGeoAdmin):
 class ApplicationAdmin(admin.OSMGeoAdmin):
     inlines = [DocumentInline, NotesInline, ]#EntityInline]
     readonly_fields = ('created', 'modified', 'submitted_timestamp')
+    list_filter = ('status',)
     fieldsets = (
         (None, {
             'fields': (
                         ('user',),
                         ('created', 'modified', 'submitted_timestamp'),
-                        ('Properties',),#  'property_type','property_status','property_vacant_lot','property_sidelot'),
+                        ('Properties','Property'),#  'property_type','property_status','property_vacant_lot','property_sidelot'),
                         'status',
                         )
         }),
@@ -114,6 +115,13 @@ class ApplicationAdmin(admin.OSMGeoAdmin):
         })
 
     )
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super(ApplicationAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        print db_field.__dict__
+        if db_field.name == 'notes':
+            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
+        return formfield
 
 admin.site.register(Property,PropertyAdmin)
 admin.site.register(Note)
