@@ -372,32 +372,32 @@ class CommIndApplicationForm(forms.ModelForm):
             Fieldset(
                 'Skills and experience of the applicant that are relevant to this project',
                 Div(
-                    'applicant_skills_environmental_remediation_boolean',#css_class='col-lg-3'),
+            #        'applicant_skills_environmental_remediation_boolean',#css_class='col-lg-3'),
                     'applicant_skills_environmental_remediation',# css_class='col-lg-9'),
                     class_class='row',
                 ),
                 Div(
-                    Field('applicant_skills_brownfields_boolean',css_class='col-lg-4'),
+            #        Field('applicant_skills_brownfields_boolean',css_class='col-lg-4'),
                     Field('applicant_skills_brownfields', css_class='col-lg-8'),
                     class_class='row',
                 ),
                 Div(
-                    Field('applicant_skills_commercial_real_estate_development_boolean',css_class='col-lg-4'),
+            #        Field('applicant_skills_commercial_real_estate_development_boolean',css_class='col-lg-4'),
                     Field('applicant_skills_commercial_real_estate_development', css_class='col-lg-8'),
                     class_class='row',
                 ),
                 Div(
-                    Field('applicant_skills_entitlement_process_boolean',css_class='col-lg-4'),
+            #        Field('applicant_skills_entitlement_process_boolean',css_class='col-lg-4'),
                     Field('applicant_skills_entitlement_process', css_class='col-lg-8'),
                     class_class='row',
                 ),
                 Div(
-                    Field('applicant_skills_incentives_boolean',css_class='col-lg-4'),
+            #        Field('applicant_skills_incentives_boolean',css_class='col-lg-4'),
                     Field('applicant_skills_incentives', css_class='col-lg-8'),
                     class_class='row',
                 ),
                 Div(
-                    Field('applicant_skills_other_boolean',css_class='col-lg-4'),
+            #        Field('applicant_skills_other_boolean',css_class='col-lg-4'),
                     Field('applicant_skills_other', css_class='col-lg-8'),
                     class_class='row',
                 ),
