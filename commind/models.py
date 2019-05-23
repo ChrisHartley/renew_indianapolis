@@ -520,13 +520,13 @@ class Application(models.Model):
     total_number_of_jobs = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='The total number of jobs',
+        verbose_name='The total number of jobs by this project.',
     )
 
     total_annual_new_salaries = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='The total dollar amount to be annually spent on new salaries',
+        verbose_name='The total dollar amount to be annually spent on new salaries by this project.',
     )
 
     blended_hourly_wage_rate = models.FloatField(
@@ -557,7 +557,7 @@ class Application(models.Model):
     youth_employment_opportunity = models.NullBooleanField(
         blank=True,
         null=True,
-        verbose_name="Is there opportunity with this project for youth employeement?",
+        verbose_name="Is there opportunity with this project for youth employement?",
     )
     neighborhood_hiring_opportunity = models.NullBooleanField(
         blank=True,
