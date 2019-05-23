@@ -45,7 +45,7 @@ class Property(models.Model):
     NSI_AWAITING_PA = 10
     NSI_CLOSING = 11
     NSI_CLOSED = 12
-
+    NST_TRIAGE_REVIEW = 13
 
     STATUS_CHOICES = (
         (NEW_STATUS, 'NSI New'),
@@ -53,6 +53,7 @@ class Property(models.Model):
         (WAITING_OFFER_STATUS,'NSI Awaiting Offer'),
         (OFFER_STATUS,'NSI Offer'),
         (PENDING_OFFER_ACCEPT_STATUS,'NSI Pending Offer Accept'),
+        (NST_TRIAGE_REVIEW,'NSI Triage Review'),
         (OFFER_ACCEPT_STATUS,'NSI Offer Accepted'),
         (SENT_TO_DOC_PREP,'Sent to Doc Prep'),
         (NSI_AWAITING_PA,'NSI Awaiting PA'),
