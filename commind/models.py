@@ -669,7 +669,7 @@ class Application(models.Model):
         super(Application, self).save(*args, **kwargs)
 
     def __str__(self):
-        return '{} - {} {} - {} - {}'.format(self.Property, self.user.first_name, self.user.last_name, self.entity, self.get_status_display())
+        return '{} - {} {} - {} - {} - {}'.format(self.Property, self.user.first_name, self.user.last_name, self.entity, self.get_status_display(), self.created.strftime('%Y-%m-%d %H:%M'))
 
     def __iter__(self):
         for field in self._meta.fields:
