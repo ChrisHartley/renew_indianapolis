@@ -109,13 +109,15 @@ def pull_property_info_from_arcgis(parcel):
     try:
         r.raise_for_status()
         response_json = r.json()
+       if response_json.get('error', None) != None:
+           raise requests.exceptions.HTTPError
     except ValueError:
-        print('ValueError, no valid json in response?')
+        #print('ValueError, no valid json in response?')
         logger.error('Error parsing response from ArcGIS server - ValueError')
         return False
-    except HTTPError:
-        print('Response error')
-        logger.error('Error parsing response from ArcGIS server - HTTPError')
+    except requests.exceptions.HTTPError as e:
+        #print('Response error')
+        logger.error('Error getting response from ArcGIS server or server returned error - HTTPError, {}'.format(e,))
         return False
 
     data = {}
@@ -133,8 +135,13 @@ def pull_property_info_from_arcgis(parcel):
         estsqft = response_json['features'][0]['properties']['ESTSQFT'] or ''
 
     except IndexError as e:
-        print('Data not found in response: {}'.format(e,))
+        #print('Data not found in response: {}'.format(e,))
         logger.error('Error parsing response from ArcGIS server - IndexError')
+    except KeyError as e:
+        #print('Data not found in response: {}'.format(e,))
+        #print(response_json)
+        logger.error('Error parsing response from ArcGIS server - KeyError: {}'.format(e,))
+
 
     else:
         data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
