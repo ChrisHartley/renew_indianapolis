@@ -109,8 +109,8 @@ def pull_property_info_from_arcgis(parcel):
     try:
         r.raise_for_status()
         response_json = r.json()
-       if response_json.get('error', None) != None:
-           raise requests.exceptions.HTTPError
+        if response_json.get('error', None) != None:
+            raise requests.exceptions.HTTPError
     except ValueError:
         #print('ValueError, no valid json in response?')
         logger.error('Error parsing response from ArcGIS server - ValueError')
