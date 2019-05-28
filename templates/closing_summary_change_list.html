@@ -63,6 +63,8 @@
           {% elif row.application__application_type == 2 %} Standard
           {% elif row.application__application_type == 1 %} Homestead
           {% elif row.application__application_type == 4 %} Vacant Lot
+          {% elif row.application__application_type == 5 %} Future Development Lot
+
           {% endif %}
         </td>
         <td>{{ row.total | intcomma }}</td>
