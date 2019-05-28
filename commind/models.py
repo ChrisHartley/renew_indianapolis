@@ -172,7 +172,7 @@ class Property(models.Model):
         verbose_name='parcel number')
     published = models.BooleanField(default=True)
     price = models.DecimalField(
-        max_digits=10,
+        max_digits=18,
         decimal_places=2,
         help_text="The price of the property",
         null=True,
@@ -352,7 +352,7 @@ class Application(models.Model):
     )
 
     applicant_offer_price = models.DecimalField(
-        max_digits=8,
+        max_digits=18,
         decimal_places=2,
         help_text="The price of the property offered by the applicant",
         null=False,
@@ -360,7 +360,7 @@ class Application(models.Model):
     )
 
     total_costs = models.DecimalField(
-        max_digits=8,
+        max_digits=18,
         decimal_places=2,
         help_text="Total estimated construction and/or rehabilitation costs",
         null=True,
@@ -625,7 +625,7 @@ class Application(models.Model):
     )
 
     staff_sow_total = models.DecimalField(
-        max_digits=10,
+        max_digits=18,
         decimal_places=2,
         help_text="Total scope of work, as verified by staff.",
         verbose_name='Staff determined scope of work total',
@@ -633,7 +633,7 @@ class Application(models.Model):
         blank=True
     )
 
-    staff_pof_total = models.DecimalField(max_digits=10, decimal_places=2,
+    staff_pof_total = models.DecimalField(max_digits=18, decimal_places=2,
         help_text="Total funds demonstrated",
         verbose_name='Staff determined PoF',
         null=True,
