@@ -497,7 +497,7 @@ class MeetingLink(models.Model):
                 next_meeting = Meeting.objects.filter(meeting_type__exact=meeting_type).filter(meeting_date__gt=self.meeting.meeting_date).order_by('meeting_date').first()
                 if next_meeting is None:
                     if meeting_type == Meeting.REVIEW_COMMITTEE:
-                        meeting_date = rrule(MONTHLY, count=1, byweekday=TH(4), dtstart=self.meeting.meeting_date)[0].date()
+                        meeting_date = rrule(MONTHLY, count=1, byweekday=TH(4), dtstart=self.meeting.meeting_date+timedelta(days=1))[0].date()
                     if meeting_type == Meeting.BOARD_OF_DIRECTORS:
                         meeting_date = rrule(MONTHLY, count=1, byweekday=TH(1), dtstart=self.meeting.meeting_date)[0].date()
                     if meeting_type == Meeting.MDC:
