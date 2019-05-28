@@ -227,14 +227,14 @@ class closing(models.Model):
                             )
                         )
                 ).order_by('application__submitted_timestamp').first()
-
-                backup_app_ml.meeting_outcome = MeetingLink.APPROVED_STATUS
-                backup_app_ml.save()
-                subject = 'Backup application promoted - {0}'.format(backup_app_ml.application,)
-                message = 'This is a courtesy notification that the backup application {} was promoted and a closing created.'.format(backup_app_ml.application,)
-                recipient = [settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL'],]
-                from_email = 'info@renewindianapolis.org'
-                send_mail(subject, message, from_email, recipient,)
+                if backup_app_ml is not None:
+                    backup_app_ml.meeting_outcome = MeetingLink.APPROVED_STATUS
+                    backup_app_ml.save()
+                    subject = 'Backup application promoted - {0}'.format(backup_app_ml.application,)
+                    message = 'This is a courtesy notification that the backup application {} was promoted and a closing created.'.format(backup_app_ml.application,)
+                    recipient = [settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL'],]
+                    from_email = 'info@renewindianapolis.org'
+                    send_mail(subject, message, from_email, recipient,)
 
                 if self.application.Property.blc_listing.count() > 0 and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
                     subject = 'BLC listed property closing cancelled - {0}'.format(self.application.Property,)
