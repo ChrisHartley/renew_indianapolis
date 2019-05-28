@@ -98,59 +98,111 @@ def virus_scan(input_file):
 
 import requests
 import json
-from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, LinearRing, Polygon
 import logging
-def pull_property_info_from_arcgis(parcel):
-    city_arcgis_url = 'http://xmaps.indy.gov/arcgis/rest/services/MapIndy/MapIndyProperty/MapServer/10/query?where=PARCEL_C%3D%27{0}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson'.format(parcel,)
+def pull_property_info_from_arcgis(parcel, request_type='json'):
+    if request_type == 'geojson':
+        city_arcgis_url = 'http://xmaps.indy.gov/arcgis/rest/services/MapIndy/MapIndyProperty/MapServer/10/query?where=PARCEL_C%3D%27{0}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson'.format(parcel,)
 
-    logger = logging.getLogger(__name__)
+        logger = logging.getLogger(__name__)
 
-    r = requests.get(city_arcgis_url)
-    try:
-        r.raise_for_status()
-        response_json = r.json()
-        if response_json.get('error', None) != None:
-            raise requests.exceptions.HTTPError
-    except ValueError:
-        #print('ValueError, no valid json in response?')
-        logger.error('Error parsing response from ArcGIS server - ValueError')
-        return False
-    except requests.exceptions.HTTPError as e:
-        #print('Response error')
-        logger.error('Error getting response from ArcGIS server or server returned error - HTTPError, {}'.format(e,))
-        return False
+        r = requests.get(city_arcgis_url)
+        try:
+            r.raise_for_status()
+            response_json = r.json()
+            if response_json.get('error', None) != None:
+                raise requests.exceptions.HTTPError
+        except ValueError:
+            #print('ValueError, no valid json in response?')
+            logger.error('Error parsing response from ArcGIS server - ValueError')
+            return False
+        except requests.exceptions.HTTPError as e:
+            #print('Response error')
+            logger.error('Error getting response from ArcGIS server or server returned error - HTTPError, {}'.format(e,))
+            return False
 
-    data = {}
-    stname, stnumber, pre_dir, zipcode, geometry = '', '', '', '', ''
+        data = {}
+        stname, stnumber, pre_dir, zipcode, geometry = '', '', '', '', ''
 
-    try:
-        stname = response_json['features'][0]['properties']['FULL_STNAME'] or ''
-        stnumber = response_json['features'][0]['properties']['STNUMBER'] or ''
-        pre_dir = response_json['features'][0]['properties']['PRE_DIR'] or ''
-        zipcode = response_json['features'][0]['properties']['ZIPCODE'] or ''
-        geometry = MultiPolygon(GEOSGeometry(json.dumps(response_json['features'][0]['geometry'])))
-        state_parcel = response_json['features'][0]['properties']['STATEPARCELNUMBER'] or ''
-        assessed_land_value = response_json['features'][0]['properties']['ASSESSORYEAR_LANDTOTAL'] or ''
-        assessed_improvement_value = response_json['features'][0]['properties']['ASSESSORYEAR_IMPTOTAL'] or ''
-        estsqft = response_json['features'][0]['properties']['ESTSQFT'] or ''
+        try:
+            stname = response_json['features'][0]['properties']['FULL_STNAME'] or ''
+            stnumber = response_json['features'][0]['properties']['STNUMBER'] or ''
+            pre_dir = response_json['features'][0]['properties']['PRE_DIR'] or ''
+            zipcode = response_json['features'][0]['properties']['ZIPCODE'] or ''
+            geometry = MultiPolygon(GEOSGeometry(json.dumps(response_json['features'][0]['geometry'])))
+            state_parcel = response_json['features'][0]['properties']['STATEPARCELNUMBER'] or ''
+            assessed_land_value = response_json['features'][0]['properties']['ASSESSORYEAR_LANDTOTAL'] or ''
+            assessed_improvement_value = response_json['features'][0]['properties']['ASSESSORYEAR_IMPTOTAL'] or ''
+            estsqft = response_json['features'][0]['properties']['ESTSQFT'] or ''
 
-    except IndexError as e:
-        #print('Data not found in response: {}'.format(e,))
-        logger.error('Error parsing response from ArcGIS server - IndexError')
-    except KeyError as e:
-        #print('Data not found in response: {}'.format(e,))
-        #print(response_json)
-        logger.error('Error parsing response from ArcGIS server - KeyError: {}'.format(e,))
-
-
-    else:
-        data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
-        data['zipcode'] = zipcode
-        data['geometry'] = geometry
-        data['state_parcel'] = state_parcel
-        data['assessed_land_value'] = assessed_land_value
-        data['assessed_improvement_value'] = assessed_improvement_value
-        data['estsqft'] = estsqft
+        except IndexError as e:
+            #print('Data not found in response: {}'.format(e,))
+            logger.error('Error parsing response from ArcGIS server - IndexError')
+        except KeyError as e:
+            #print('Data not found in response: {}'.format(e,))
+            #print(response_json)
+            logger.error('Error parsing response from ArcGIS server - KeyError: {}'.format(e,))
 
 
-    return data
+        else:
+            data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
+            data['zipcode'] = zipcode
+            data['geometry'] = geometry
+            data['state_parcel'] = state_parcel
+            data['assessed_land_value'] = assessed_land_value
+            data['assessed_improvement_value'] = assessed_improvement_value
+            data['estsqft'] = estsqft
+
+        return data
+
+    if request_type == 'json':
+        city_arcgis_url = 'http://xmaps.indy.gov/arcgis/rest/services/MapIndy/MapIndyProperty/MapServer/10/query?where=PARCEL_C%3D%27{0}%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=json'.format(parcel,)
+
+        logger = logging.getLogger(__name__)
+
+        r = requests.get(city_arcgis_url)
+        try:
+            r.raise_for_status()
+            response_json = r.json()
+            if response_json.get('error', None) != None:
+                raise requests.exceptions.HTTPError
+        except ValueError:
+            #print('ValueError, no valid json in response?')
+            logger.error('Error parsing response from ArcGIS server - ValueError')
+            return False
+        except requests.exceptions.HTTPError as e:
+            #print('Response error')
+            logger.error('Error getting response from ArcGIS server or server returned error - HTTPError, {}'.format(e,))
+            return False
+
+        data = {}
+        stname, stnumber, pre_dir, zipcode, geometry = '', '', '', '', ''
+
+        try:
+            stname = response_json['features'][0]['attributes']['FULL_STNAME'] or ''
+            stnumber = response_json['features'][0]['attributes']['STNUMBER'] or ''
+            pre_dir = response_json['features'][0]['attributes']['PRE_DIR'] or ''
+            zipcode = response_json['features'][0]['attributes']['ZIPCODE'] or ''
+            geometry = MultiPolygon(Polygon(LinearRing(response_json['features'][0]['geometry']['rings'][0], srid=2965), srid=2965), srid=2965)
+            state_parcel = response_json['features'][0]['attributes']['STATEPARCELNUMBER'] or ''
+            assessed_land_value = response_json['features'][0]['attributes']['ASSESSORYEAR_LANDTOTAL'] or ''
+            assessed_improvement_value = response_json['features'][0]['attributes']['ASSESSORYEAR_IMPTOTAL'] or ''
+            estsqft = response_json['features'][0]['attributes']['ESTSQFT'] or ''
+
+        except IndexError as e:
+            logger.error('Error parsing response from ArcGIS server - IndexError')
+        except KeyError as e:
+
+            logger.error('Error parsing response from ArcGIS server - KeyError: {}'.format(e,))
+
+
+        else:
+            data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
+            data['zipcode'] = zipcode
+            data['geometry'] = geometry
+            data['state_parcel'] = state_parcel
+            data['assessed_land_value'] = assessed_land_value
+            data['assessed_improvement_value'] = assessed_improvement_value
+            data['estsqft'] = estsqft
+
+        return data

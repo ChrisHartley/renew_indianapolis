@@ -117,7 +117,7 @@ class Property(models.Model):
 
     def save(self, *args, **kwargs):
         if self.parcel is not None and self.parcel != '' and self.update_from_server == True:
-            results = pull_property_info_from_arcgis(self.parcel)
+            results = pull_property_info_from_arcgis(self.parcel, request_type='json')
             if results:
                 self.street_address = results['street_address']
                 self.zipcode = results['zipcode']
