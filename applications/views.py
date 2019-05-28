@@ -468,7 +468,7 @@ class ePPPropertyUpdate(DetailView):
             ## This changes the property status if approved to Sale Pending. This works at all stages b/c
         for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('-meeting_outcome').exclude(meeting_outcome=4), max_index+1):
             application = meeting_link.application
-            if meeting_link.meeting_outcome == MeetingLink.APPROVED_STATUS:
+            if meeting_link.meeting_outcome == MeetingLink.APPROVED_STATUS or meeting_link.meeting_outcome == MeetingLink.BACKUP_APPROVED_STATUS:
                 status = 'Sale Pending'
 
             # If this is the first stage of review then status should already be available but it doesn't hurt to re-set it
