@@ -19,7 +19,7 @@
         {% endfor %}
         {% if ml.application.staff_sidelot_waiver_required %} (sidelot policy waiver required) {% endif %}
         {% if ml.application.application_type == 5 and not ml.application.Property.future_development_program_eligible %} (FDL policy waiver required) {% endif %}
-        {% if ml.conditional_approval == 2 %} (Approved as a Backup) {% endif %}
+        {% if ml.conditional_approval == 2 %} (Approved with conditions) {% endif %}
       </dt>
       <dd>Discussion:&nbsp;</br>&nbsp;</br></dd>
     {% endfor %}
