@@ -24,6 +24,7 @@ class Entity(models.Model):
     date_of_creation = models.DateField(blank=True, null=True)
     location_of_creation = models.CharField(max_length=100, blank=True)
 
+
     class Meta:
         verbose_name_plural = 'Entities'
 
@@ -320,6 +321,27 @@ class Application(models.Model):
             of tax foreclosure proceedings?
         """,
         blank=True
+    )
+
+    existing_liens = models.CharField(
+        verbose_name="""
+            Please list any existing liens against the applicant and affiliates
+            of the applicant for federal, state, or local taxes, judgments,
+            mechanics liens etc.""",
+        max_length=1024,
+        blank=True,
+
+    )
+
+    entity_affiliates = models.CharField(
+        verbose_name="""
+            Please  list all affiliates of the applicant meaning any person or
+            entity who directly or indirectly (through one (1) or more
+            intermediaries) owns or controls, is owned or controlled by, or
+            is under common ownership or control with, another person or entity.
+        """,
+        max_length=1024,
+        blank=True,
     )
 
     frozen = models.BooleanField(

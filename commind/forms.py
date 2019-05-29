@@ -194,6 +194,8 @@ class CommIndApplicationForm(forms.ModelForm):
         self.fields['arts_consideration_explanation'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
         self.fields['allignment_with_current_plans_details'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
         self.fields['stakeholders_contacted_details'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
+        self.fields['existing_liens'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
+        self.fields['entity_affiliates'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
 
         # for field in self.fields:
         #     if field
@@ -239,6 +241,7 @@ class CommIndApplicationForm(forms.ModelForm):
                 'Applicant Disclosures',
                 Field('conflict_renew_city'),
                 Field('conflict_renew_city_name'),
+                Field('existing_liens'),
                 Field('active_citations'),
                 Field('tax_status_of_properties_owned'),
                 Field('prior_tax_foreclosure'),
@@ -255,6 +258,7 @@ class CommIndApplicationForm(forms.ModelForm):
 #                    HTML(emfs),
 #                ),
                 Field('entity_name'),
+                Field('entity_affiliates'),
                 Field('entity_formed'),
                 Field('entity_formed_date'),
                 Field('entity_formed_location'),
@@ -511,11 +515,11 @@ class CommIndApplicationForm(forms.ModelForm):
                 'This is a required question.'))
 
         stakeholders_contacted_details = cleaned_data.get('stakeholders_contacted_details', None)
-        if stakeholders_contacted_details is None:
+        if stakeholders_contacted_details is None or len(stakeholders_contacted_details) < 1:
             self.add_error("stakeholders_contacted_details", ValidationError(
-                'This is a required question.'))
+                'You anwsered Yes above, please provide a name.'))
 
-        applicant_skills_environmental_remediation = cleaned_data.get('stakeholders_contacted_details', None)
+        applicant_skills_environmental_remediation = cleaned_data.get('applicant_skills_environmental_remediation', None)
         if applicant_skills_environmental_remediation is None:
             self.add_error("applicant_skills_environmental_remediation", ValidationError(
                 'This is a required question.'))
@@ -577,5 +581,18 @@ class CommIndApplicationForm(forms.ModelForm):
         if total_number_of_jobs is None:
             self.add_error('total_number_of_jobs', ValidationError(
                 "You must enter a number"))
+
+        arts_consideration = cleaned_data.get('arts_consideration', None)
+        arts_consideration_explanation = cleaned_data.get('arts_consideration_explanation', '')
+        if arts_consideration is True and len(arts_consideration_explanation) < 1:
+            self.add_error('arts_consideration_explanation', ValidationError(
+                "You anwsered Yes above, please elaborate."))
+
+        minority_owned_business_question = cleaned_data.get('minority_owned_business_question', None)
+        minority_owned_business_question_detail = cleaned_data.get('minority_owned_business_question_detail', '')
+        if minority_owned_business_question is True and len(minority_owned_business_question_detail) < 1:
+            self.add_error('minority_owned_business_question_detail', ValidationError(
+                "You anwsered Yes above, please elaborate."))
+
 
         return len(self.errors) == 0
