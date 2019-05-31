@@ -73,11 +73,11 @@ class ClosingAdmin(admin.ModelAdmin):
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__organization__name', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'application__Property__renew_owned', 'archived')
     readonly_fields = (
-        'purchase_agreement', 'nsp', 'processing_fee_url',
+        'recorded_ri_deed_download', 'purchase_agreement', 'nsp', 'processing_fee_url',
         'processing_fee_paid', 'print_deposit_slip','blc_listed',
         'blc_expiration', 'title_commitment_download', 'closing_statement_download',
     'deed_download', 'recorded_city_deed_download', 'ri_deed_download',
-    'recorded_ri_deed_download', 'nsp_convenants_download',
+    'nsp_convenants_download',
     'project_agreement_download', 'assignment_and_assumption_agreement_download',
      'signed_purchase_agreement_download',
      'renew_sales_disclosure_form_download',
@@ -310,18 +310,18 @@ class ClosingAdmin(admin.ModelAdmin):
         }),
         ('Documents', {
             'fields': (
-            ('title_commitment','title_commitment_download'),
-            ('closing_statement','closing_statement_download'),
-            ('deed', 'deed_download',),
             ('recorded_city_deed', 'recorded_city_deed_download','recorded_city_deed_instrument_number',),
-            ('ri_deed', 'ri_deed_download'),
-            ('recorded_ri_deed', 'recorded_ri_deed_instrument_number',),
-            ('nsp_convenants','nsp_convenants_download'),
-            ('project_agreement','project_agreement_download'),
-            ('assignment_and_assumption_agreement','assignment_and_assumption_agreement_download'),
-            ('signed_purchase_agreement','signed_purchase_agreement_download'),
-            ('renew_sales_disclosure_form','renew_sales_disclosure_form_download'),
-            ('city_sales_disclosure_form','city_sales_disclosure_form_download'),
+            ('recorded_ri_deed', 'recorded_ri_deed_download', 'recorded_ri_deed_instrument_number',),
+            # ('title_commitment','title_commitment_download'),
+            # ('closing_statement','closing_statement_download'),
+            # ('deed', 'deed_download',),
+            # ('ri_deed', 'ri_deed_download'),
+            # ('nsp_convenants','nsp_convenants_download'),
+            # ('project_agreement','project_agreement_download'),
+            # ('assignment_and_assumption_agreement','assignment_and_assumption_agreement_download'),
+            # ('signed_purchase_agreement','signed_purchase_agreement_download'),
+            # ('renew_sales_disclosure_form','renew_sales_disclosure_form_download'),
+            # ('city_sales_disclosure_form','city_sales_disclosure_form_download'),
             ),
         }),
     )
