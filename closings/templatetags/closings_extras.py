@@ -8,8 +8,10 @@ register = template.Library()
 @register.filter
 def num2words(value):
     """Returns a string/word representation of a number"""
-    return num2words_orig(value)
-
+    if type(value) in [long, int, float]:
+        return num2words_orig(value)
+    else:
+        return "ERROR - {}".format(value,)
 @register.filter
 def plus_30_days(value):
     """Returns now plus 30 days, an ugly hack"""
@@ -21,3 +23,12 @@ def plus_n_days(value, arg):
     if arg is None:
         return False
     return date.today() + timedelta(days=int(arg))
+
+@register.filter
+def multiply(value, arg):
+    try:
+        answer = float(value) * float(arg)
+    except:
+        answer = "Error"
+    finally:
+        return answer
