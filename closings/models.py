@@ -261,6 +261,7 @@ class closing_proxy2(closing):
     class Meta:
         proxy = True
         verbose_name = 'Closing Summary'
+        verbose_name_plural = 'Closing Summaries'
 
 
 #class project_agreement(models.Model):

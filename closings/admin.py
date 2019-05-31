@@ -453,8 +453,8 @@ class ClosingDistributionAdmin(admin.ModelAdmin):
         ).values('period').annotate(total=Sum(F('ri_proceeds') + F('city_proceeds') + F('city_loan_proceeds')), count=Count('id')).order_by('period')
 
         summary_range = summary_over_time.aggregate(
-            low=Min('total'),
-            high=Max('total'),
+            low=Min('count'),
+            high=Max('count'),
         )
         high = summary_range.get('high', 0)
         low = summary_range.get('low', 0)
@@ -463,9 +463,10 @@ class ClosingDistributionAdmin(admin.ModelAdmin):
             'period': x['period'],
             'total': x['total'] or 0,
             'count': x['count'],
+            'high': high,
+            'low': low,
             'pct': \
-               ((x['total'] or 0) - low) / (high - low) * 100
-               if high > low else 1,
+                float( float(x['count'] - low) / float(high-low) ) * 100 if x['count'] != low else 1,
         } for x in summary_over_time]
 
         return response
