@@ -11,6 +11,7 @@ from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
 
 class ProcessingFeeAdmin(admin.ModelAdmin):
+    list_display = ['__unicode__','due_date', 'date_paid', 'paid']
     search_fields = ['closing__application__Property__streetAddress', 'closing__application__Property__parcel', 'user__email','user__first_name', 'user__last_name']
 
 class PurchaseOptionInline(admin.TabularInline):
@@ -466,7 +467,7 @@ class ClosingDistributionAdmin(admin.ModelAdmin):
             'high': high,
             'low': low,
             'pct': \
-                float( float(x['count'] - low) / float(high-low) ) * 100 if x['count'] != low else 1,
+                float( float(x['count'] - 0) / float(high-0) ) * 100,# if x['count'] != low else 1,
         } for x in summary_over_time]
 
         return response
