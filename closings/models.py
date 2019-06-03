@@ -14,7 +14,6 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.utils import timezone # use this for timezone aware times
 
-
 class location(models.Model):
     name = models.CharField(max_length=254)
     def __unicode__(self):
@@ -92,7 +91,7 @@ class processing_fee(models.Model):
     class Meta:
         verbose_name = "processing fee"
         verbose_name_plural = "processing fees"
-
+        ordering = ['-timestamp']
 
 def today_plus_1_year():
     return date.today()+timedelta(days=365)
