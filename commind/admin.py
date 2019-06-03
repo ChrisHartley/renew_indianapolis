@@ -5,6 +5,9 @@ from django.contrib.gis import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from .models import Property, Note, Application, Document, Entity, Person, Photo
 from .forms import NoteInlineForm
+from django.forms.widgets import Textarea
+from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 class PersonInline(admin.TabularInline):
     model = Person
@@ -49,7 +52,7 @@ class PropertyAdmin(admin.OSMGeoAdmin):
 
 class ApplicationAdmin(admin.OSMGeoAdmin):
     inlines = [DocumentInline, NotesInline, ]#EntityInline]
-    readonly_fields = ('created', 'modified', 'submitted_timestamp')
+    readonly_fields = ('created', 'modified', 'submitted_timestamp', 'generate_application_summary')
     list_filter = ('status',)
     fieldsets = (
         (None, {
@@ -67,14 +70,19 @@ class ApplicationAdmin(admin.OSMGeoAdmin):
                     'conflict_board_rc_name',
                     'conflict_city',
                     'conflict_city_name',
+                    'conflict_renew_city',
+                    'conflict_renew_city_name',
                 ),
                 'active_citations',
                 'prior_tax_foreclosure',
-                'tax_status_of_properties_owned',)
+                'tax_status_of_properties_owned',
+                'existing_liens',
+                )
         }),
         ('Entity', {
             'fields': (
                 'entity',
+                'entity_affiliates',
             )
 
         }),
@@ -85,13 +93,42 @@ class ApplicationAdmin(admin.OSMGeoAdmin):
                 'applicant_brownfield_experience',
                 'applicant_joint_venture',
                 'applicant_partnerships',
+                'applicant_skills_environmental_remediation',
+                'applicant_skills_brownfields',
+                'applicant_skills_commercial_real_estate_development',
+                'applicant_skills_entitlement_process',
+                'applicant_skills_incentives',
+                'applicant_skills_other',
+                'applicant_skills_environmental_remediation_boolean',
+                'applicant_skills_brownfields_boolean',
+                'applicant_skills_commercial_real_estate_development_boolean',
+                'applicant_skills_entitlement_process_boolean',
+                'applicant_skills_incentives_boolean',
+                'applicant_skills_other_boolean',
             )
         }),
         ('Project Description', {
             'fields': (
                 'applicant_offer_price',
                 'proposed_end_use',
-
+                'project_type',
+                'allignment_with_current_plans',
+                'allignment_with_current_plans_details',
+                'stakeholders_contacted',
+                'stakeholders_contacted_details',
+                'total_number_of_jobs',
+                'total_annual_new_salaries',
+                'blended_hourly_wage_rate',
+                'hired_participant',
+                'low_mod_daycare',
+                'low_mod_transportation_support',
+                'youth_employment_opportunity',
+                'neighborhood_hiring_opportunity',
+                'subbaccalaureate_training_opportunity',
+                'arts_consideration',
+                'arts_consideration_explanation',
+                'minority_owned_business_question',
+                'minority_owned_business_question_detail',
             )
         }),
         ('Staff fields', {
@@ -109,6 +146,9 @@ class ApplicationAdmin(admin.OSMGeoAdmin):
                     'staff_recommendation_notes',
                     'staff_points_to_consider',
                     'frozen',
+                ),
+                (
+                    'generate_application_summary',
                 )
             )
 
@@ -116,11 +156,18 @@ class ApplicationAdmin(admin.OSMGeoAdmin):
 
     )
 
+    def generate_application_summary(self, obj):
+        if obj.id is None:
+            return '-'
+        return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
+            reverse("commind_application_detail", kwargs={'pk':obj.id,}),
+                "Summary"
+            ))
+
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(ApplicationAdmin, self).formfield_for_dbfield(db_field, **kwargs)
-        print db_field.__dict__
-        if db_field.name == 'notes':
-            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
+        if db_field.max_length > 255:
+            formfield.widget = Textarea(attrs=formfield.widget.attrs)
         return formfield
 
 admin.site.register(Property,PropertyAdmin)

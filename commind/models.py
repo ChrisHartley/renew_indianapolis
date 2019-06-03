@@ -435,32 +435,32 @@ class Application(models.Model):
     )
 
     applicant_skills_environmental_remediation = models.CharField(
-        max_length=254,
+        max_length=1024,
         verbose_name='Environmental remediation',
         blank=True,
     )
     applicant_skills_brownfields = models.CharField(
-        max_length=254,
+        max_length=1024,
         verbose_name='Brownfields',
         blank=True,
     )
     applicant_skills_commercial_real_estate_development = models.CharField(
-        max_length=254,
+        max_length=1024,
         verbose_name='Commercial real estate development',
         blank=True,
     )
     applicant_skills_entitlement_process = models.CharField(
-        max_length=254,
+        max_length=1024,
         verbose_name='Entitlement process',
         blank=True,
     )
     applicant_skills_incentives = models.CharField(
-        max_length=254,
+        max_length=1024,
         verbose_name='Incentives',
         blank=True,
     )
     applicant_skills_other = models.CharField(
-        max_length=254,
+        max_length=1024,
         verbose_name='Other',
         blank=True,
     )
