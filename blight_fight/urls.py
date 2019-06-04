@@ -6,7 +6,7 @@ from django.views.static import serve
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 
-from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MDCSpreadsheet, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2
+from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2, MDCResolution
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
 from property_inventory.views import PropertyInventoryList
@@ -18,7 +18,7 @@ from user_files.views import delete_uploaded_file, import_uploader
 from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, ClosingDepositSlipDetailView
 from property_condition.views import submitConditionReport, view_or_create_condition_report
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
-from epp_connector.views import fetch_epp_inventory
+from epp_connector.views import fetch_epp_inventory, propertyImportCreator
 from neighborhood_notifications.views import update_registered_organizations, RelevantOrganizationsView
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
 from utils.views import DonateView, send_class_file
@@ -85,6 +85,8 @@ urlpatterns = [
             PropertyPhotosView.as_view(), name='property_photos'),
         url(r'property/(?P<parcel>[0-9]{7})/json$',
             PropertyDetailJSONView.as_view(), name='property_detail_json'),
+        url(r'property/(?P<parcel>[0-9]{7})/epp.xlsx$',
+                staff_member_required(propertyImportCreator.as_view()), name='property_export_epp'),    
 
         url(r'overlay_area/context_areas/$', ContextAreaListJSONView.as_view(), name='overlay_area'),
 
@@ -144,6 +146,9 @@ urlpatterns = [
         url(r'meeting/view_agenda/(?P<pk>[0-9]+)/$',
              staff_member_required(ReviewCommitteeAgenda.as_view()),
              name='rc_agenda'),
+        url(r'meeting/view_mdc_resolution/(?P<pk>[0-9]+)/$',
+             staff_member_required(MDCResolution.as_view()),
+             name='mdc_resolution'),
         url(r'meeting/view_packet/(?P<pk>[0-9]+)/$',
             staff_member_required(ReviewCommitteeStaffSummary.as_view()),
             name='staff_packet'),
@@ -154,10 +159,6 @@ urlpatterns = [
         url(r'meeting/view_packet_attachement/(?P<pk>[0-9]+)/$',
              staff_member_required(CreateMeetingSupportArchive.as_view()),
              name='staff_packet_attachements'),
-
-        url(r'meeting/mdc_spreadsheet/(?P<pk>[0-9]+)/$',
-             staff_member_required(MDCSpreadsheet.as_view()),
-             name='mdc_spreadsheet'),
 
         url(r'meeting/epp_update_spreadsheet/(?P<pk>[0-9]+)/$',
              staff_member_required(ePPPropertyUpdate.as_view()),

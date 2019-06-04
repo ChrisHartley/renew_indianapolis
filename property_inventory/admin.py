@@ -92,7 +92,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary', 'condition_report_link')
+    readonly_fields = ('generate_epp_export','applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary', 'condition_report_link')
     actions = ["export_as_csv"]
 
     def main_photo(self, obj):
@@ -108,6 +108,14 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     def applications_search(self, obj):
         summary_link = '<a href="{}">{}</a>'.format(
             reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.parcel,), "View Applications")
+        return mark_safe(summary_link)
+
+    def generate_epp_export(self, obj):
+        if obj.id:
+            summary_link = '<a href="{}">{}</a>'.format(
+                reverse("property_export_epp", kwargs={'parcel': obj.parcel}), "Generate XLSX")
+        else:
+            summary_link = '-'
         return mark_safe(summary_link)
 
     def application_summary(self, obj):
