@@ -228,6 +228,7 @@ class closing(models.Model):
                 ).order_by('application__submitted_timestamp').first()
                 if backup_app_ml is not None:
                     backup_app_ml.meeting_outcome = MeetingLink.APPROVED_STATUS
+                    backup_app_ml.notes = 'Automatically promoted to approved after primary application closing archived - {} - {}'.format(timezone.now(), backup_app_ml.notes,)
                     backup_app_ml.save()
                     subject = 'Backup application promoted - {0}'.format(backup_app_ml.application,)
                     message = 'This is a courtesy notification that the backup application {} was promoted and a closing created.'.format(backup_app_ml.application,)
