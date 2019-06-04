@@ -131,9 +131,30 @@ class Application(models.Model):
         blank=True
     )
 
+    SELF_PERFORMED = 'Self'
+    FRIENDS_FAMILY_PERFORMED = 'Friends and family'
+    CONTRACTOR_PERFORMED = 'Contractor'
+    OTHER_PERFORMED = 'Other'
+
+
+    WORK_PERFORMER_CHOICES = (
+        (SELF_PERFORMED,SELF_PERFORMED),
+        (FRIENDS_FAMILY_PERFORMED,FRIENDS_FAMILY_PERFORMED),
+        (CONTRACTOR_PERFORMED,CONTRACTOR_PERFORMED),
+        (OTHER_PERFORMED,OTHER_PERFORMED),
+    )
+
+    who_will_perform_work = models.CharField(
+        max_length=254,
+        help_text="Who will perform most of the work?",
+        blank=True,
+        choices=WORK_PERFORMER_CHOICES,
+        default='',
+    )
+
     long_term_ownership = models.CharField(
         max_length=255,
-        help_text="Who will own the property long-term?",
+        help_text="Who will own the property long-term? (e.g. self, LLC, end-buyer, etc.)",
         blank=True
     )
 
@@ -284,9 +305,26 @@ class Application(models.Model):
     finished_square_footage = models.CharField(
         max_length=1024,
         verbose_name='Finished or conditioned square footage',
-        help_text='What is the final finished square footage of the structure(s)',
+        help_text='What is the final finished square footage of the structure(s) (for new construction and rehabs involving add-ons)',
         blank=True,
     )
+
+
+
+    SINGLE_MULTI_CHOICES = (
+        ('Single family', 'Single Family'),
+        ('Multi-family', 'Multi-family (duplex, etc)'),
+
+    )
+
+    single_or_multi_family = models.CharField(
+        max_length=254,
+        verbose_name='Single or multi-family?',
+        help_text='Will this home, when completed, be a single or multi-family (duplex, etc) home?',
+        blank=True,
+        choices=SINGLE_MULTI_CHOICES,
+    )
+
 
     nsp_income_qualifier = models.CharField(
         max_length=255,
@@ -361,7 +399,7 @@ class Meeting(models.Model):
 
     meeting_date = models.DateField()
     meeting_type = models.IntegerField(choices=MEETING_TYPE_CHOICES)
-
+    resolution_number = models.CharField(max_length=254, blank=True)
     def __unicode__(self):
         return u'%s - %s' % (self.get_meeting_type_display(), self.meeting_date)
 
@@ -427,8 +465,8 @@ class MeetingLink(models.Model):
                             new_closing.save()
                             # email applicant with congratulatory email and URL to pay processing fee
                         else:
-                            old_closing = closing.objects.filter(application=self.application).ordery_by('datetime').first()
-                            pf = old_closing.processing_fee
+                            old_closing = closing.objects.filter(application=self.application).order_by('date_time').first()
+                            pf = old_closing.processing_fee.first()
                             pf.due_date = now()+timedelta(days=9)
                             pf.save()
 

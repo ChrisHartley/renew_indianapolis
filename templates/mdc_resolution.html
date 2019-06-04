@@ -1,0 +1,165 @@
+{% extends 'base-simple.html' %}
+{% load humanize %}
+{% load closings_extras %}
+
+{% block center %}
+{% regroup meeting.meeting_link.all|dictsort:"application.application_type" by application.get_application_type_display as meeting_links  %}
+
+<span class="text-right">
+<h3>Community Economic Development<br/>Indy Land Bank/Renew Indianapolis<br/>Real Estate Conveyance</br><small>{{meeting.meeting_date}}</small></h3>
+</span>
+<p>
+<h1 class="text-center">METROPOLITAN DEVELOPMENT COMMISSION OF MARION COUNTY, INDIANA<br/><small>Resolution No. {{meeting.resolution_number}}</h1>
+</p>
+{%if meeting.meeting_type != 3%}<script>alert('This does not appear to be an MDC meeting');</script>{%endif%}
+<p>
+	WHEREAS, The City of Indianapolis, Department of Metropolitan Development
+  ("DMD"), is engaging in disposition and redevelopment activities within the
+  Marion County Redevelopment District in Marion County, Indiana
+  ("Redevelopment District"); and
+</p>
+
+<p>
+  WHEREAS, pursuant to I.C. 36‑7‑15.1‑6, the Metropolitan Development Commission
+  ("Commission") is charged with the responsibility of promoting the use of
+  land in the manner that best serves the interest of the City of Indianapolis
+  ("City") and its inhabitants, both from the standpoint of human needs and
+  economic values; and
+</p>
+
+<p>
+	WHEREAS, the Commission has acquired real property listed on the attached
+  Exhibit A of this Resolution, all generally located in the Redevelopment
+  District (collectively, the "Property"); and
+</p>
+
+<p>
+	WHEREAS, in accordance with IC 36-7-15.1-15.1, the Commission may sell or
+  grant at no cost title to real property to a Qualifying Corporation for the
+  purpose of providing development that will benefit or serve low or moderate
+  income families if such a corporation agrees to the requirements of IC
+  36-7-15.1-15.1(b), which includes requiring that the development that will
+  serve or benefit low or moderate income families on the Property be completed
+  within a specified period and meets certain additional criteria set forth
+  therein (a "Qualifying Corporation"); and
+</p>
+
+<p>
+  	WHEREAS, Renew Indianapolis Inc. is a Qualifying Corporation
+    (hereinafter the "Qualifying Corporation") as defined in
+    IC 36-7-15.1-15.1; and
+</p>
+
+<p>
+   WHEREAS, DMD desires to convey title or an option to purchase title of the
+   {{meeting.meeting_link.all.count|num2words|title}} ({{meeting.meeting_link.all.count}}) Properties to
+   the designated Qualifying Corporation as
+   described and for the respective sales and option/maintenance prices
+   listed on Exhibit A of this Resolution in consideration of certain
+   commitments to be made by the Qualifying Corporation for the purpose of
+   providing development that will benefit or serve low or moderate-income
+   families;
+</p>
+
+<p>
+  <strong>NOW, THEREFORE, BE IT RESOLVED THAT</strong>:
+  <ol>
+    <li>The Metropolitan Development Commission does hereby authorize the DMD to
+      convey title of the {{meeting.meeting_link.all.count|num2words|title}} ({{meeting.meeting_link.all.count}}) Properties to the designated
+      Qualifying Corporation as described and for the sales and
+      option/maintenance prices listed on Exhibit A in consideration of certain
+      commitments to be made by the Qualifying Corporation for the purpose of
+      providing development that will benefit or serve low or moderate-income
+      families.</li>
+      <li>The DMD  Director is hereby authorized to execute the necessary
+        documents, with such terms and provisions as may be deemed necessary or
+        appropriate, including without limitation, commitments to be made by
+        Renew Indianapolis Inc., consistent with Indiana Code 36-7-15.1-15.1,
+        to best accomplish the objectives set forth herein and all actions
+        heretofore taken by any such official toward the completion thereof are
+        hereby ratified, confirmed and approved, for the conveyance of said
+        Property in accordance with this Resolution.</li>
+      </ol>
+</p>
+<pre>
+Approved as to Adequacy & Legal Form		        Metropolitan Development Commission
+
+________________________________			__________________________________
+Sheila Kinney, Asst. Corp Counsel			John J. Dillon III, President
+
+Date: ___________________________			Date: _____________________________
+</pre>
+<div class="page-break"></div>
+<h1 class="text-center">Exhibit A <br/><small>Property Information</small></h1>
+<table class='table table-bordered table-striped'>
+	<thead>
+		<tr>
+			<td>Parcel</td>
+			<td>Street Address</td>
+			<td>Zip Code</td>
+			<td>Application Type</td>
+			<td>Property Type</td>
+			<td>City's Sale Price</td>
+			<td>Renew's Sale Price</td>
+			<td>Total</td>
+			<td>Buyer Name</td>
+		</tr>
+	</thead>
+	<tbody>
+
+		{% for meeting_link in meeting_links %}
+		    {% for ml in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"schedule_weight" %}
+					<tr>
+						<td>
+							{% if ml.meeting_outcome == 1%} {% endif %}
+							{{ml.application.Property.parcel}}
+						</td>
+						<td>
+							{{ml.application.Property.streetAddress}}
+						</td>
+						<td>
+							{{ml.application.Property.zipcode}}
+						</td>
+						<td>
+							{%if ml.application.application_type == 1 %}Homestead
+							{%elif ml.application.application_type == 2 %}Standard
+							{%elif ml.application.application_type == 3 %}Sidelot
+							{%elif ml.application.application_type == 4 %}Vacant Lot
+							{%elif ml.application.application_type == 5 %}Future Development Lot
+							{%else%}Other
+							{%endif%}
+						</td>
+						<td>
+							{{ml.application.Property.structureType}}
+						</td>
+						<td>
+							${% if ml.application.price_at_time_of_submission == 750%}250.00
+							{% else %}{{ml.application.price_at_time_of_submission|multiply:".55"|floatformat:2|intcomma}}
+							{% endif %}
+						</td>
+						<td>
+							${% if ml.application.price_at_time_of_submission == 750%}500.00
+							{% else %}{{ml.application.price_at_time_of_submission|multiply:".45"|floatformat:2|intcomma}}
+							{% endif %}
+						</td>
+						<td>
+							${{ml.application.price_at_time_of_submission|intcomma}}
+						</td>
+						<td>
+							{{ml.application.user.first_name}} {{ml.application.user.last_name}}{% if ml.application.organization %}, {{ ml.application.organization }}{% endif %}
+						</td>
+					</tr>
+		    {% endfor %}
+		{% endfor %}
+	</tbody>
+</table>
+<p class='text-center'>
+<strong>NOTE:</strong>
+<dl class="dl-horizontal">
+<dt>Homestead</dt><dd>Applicants will use this property as their primary residence.</dd>
+<dt>Standard</dt><dd>Applicants intend to rent or sell the property after completing the proposed project.</dd>
+<dt>Future Development Lot</dt><dd>Vacant Properties in city inventory; no requirement to build.</dd>
+</dl>
+*-This is a back-up offer, should the primary applicant fail to close
+</p>
+{% endblock center %}

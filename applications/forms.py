@@ -53,7 +53,8 @@ class ApplicationForm(forms.ModelForm):
             if app_type in Application.ACTIVE_APPLICATION_TYPES:
                 valid_application_types = valid_application_types + ((app_type,description),)
         self.fields['application_type'].choices = valid_application_types
-
+        self.fields['vacant_lot_end_use'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
+        self.fields['timeline'].widget = forms.TextInput()
         self.helper = FormHelper()
         self.helper.form_id = 'ApplicationForm'
         self.helper.form_class = 'form-horizontal'
@@ -112,7 +113,9 @@ class ApplicationForm(forms.ModelForm):
             Fieldset(
                 'Planned Improvements',
                 Field('planned_improvements'),
+                Field('who_will_perform_work'),
                 Field('finished_square_footage'),
+                Field('single_or_multi_family'),
                 Field('timeline'),
                 css_class='standard-app homestead-app well'
             ),
@@ -209,6 +212,7 @@ class ApplicationForm(forms.ModelForm):
         landlord_registry = cleaned_data.get('landlord_registry', None)
 
         planned_improvements = cleaned_data.get('planned_improvements')
+        who_will_perform_work = cleaned_data.get('who_will_perform_work')
         timeline = cleaned_data.get('timeline')
         estimated_cost = cleaned_data.get('estimated_cost')
         source_of_financing = cleaned_data.get('source_of_financing')
@@ -220,7 +224,7 @@ class ApplicationForm(forms.ModelForm):
         sidelot_eligible = cleaned_data.get('sidelot_eligible', None)
         square_footage = cleaned_data.get('finished_square_footage')
         vacant_lot_end_use = cleaned_data.get('vacant_lot_end_use', None)
-
+        single_or_multi_family = cleaned_data.get('single_or_multi_family', None)
 
         if conflict_board_rc is None:
             self.add_error("conflict_board_rc", ValidationError(
@@ -332,7 +336,10 @@ class ApplicationForm(forms.ModelForm):
                         standard or homestead programs."""
                         ))
                 else:
-                    pass
+                    if vacant_lot_end_use == '':
+                        self.add_error('vacant_lot_end_use', ValidationError(
+                        'Please answer this question.'
+                        ))
 
         if Application.HOMESTEAD == application_type or Application.STANDARD == application_type:
             msg = "This is a required field."
@@ -340,6 +347,8 @@ class ApplicationForm(forms.ModelForm):
                 self.add_error('planned_improvements', ValidationError(msg))
             if not timeline or timeline == "":
                 self.add_error('timeline', ValidationError(msg))
+            if not who_will_perform_work:
+                self.add_error('who_will_perform_work', ValidationError(msg))
             if property_selected is not None and property_selected.structureType == "Vacant Lot" and (not square_footage or square_footage == ""):
                 self.add_error('finished_square_footage', ValidationError(msg))
             if not estimated_cost or estimated_cost == 0:
@@ -361,7 +370,8 @@ class ApplicationForm(forms.ModelForm):
             if UploadedFile.objects.filter(file_purpose__exact=UploadedFile.PURPOSE_ELEVATION_VIEW).filter(application__exact=app_id).count() == 0 and property_selected is not None and property_selected.structureType == "Vacant Lot":
                 self.add_error(None, ValidationError(
                     'You must upload a separate elevation view with your application since the selected property is a vacant lot.'))
-
+            if not single_or_multi_family or single_or_multi_family == '':
+                self.add_error('single_or_multi_family', ValidationError(msg))
 
 
             if Application.STANDARD == application_type:

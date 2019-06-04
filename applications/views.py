@@ -25,7 +25,6 @@ from closings.models import processing_fee
 
 from django.contrib.auth.models import User
 
-
 # used to send confirmation email
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -40,6 +39,9 @@ from django.views.generic import DetailView, View, UpdateView
 import datetime
 from dateutil.rrule import *
 from dateutil.relativedelta import *
+import csv
+
+
 
 def determine_next_deadline_date():
     next_deadline = datetime.date(2017, 1, 1)
@@ -214,6 +216,11 @@ class ReviewCommitteeApplications(DetailView):
     context_object_name = 'meeting'
     template_name = 'application_detail_all.html'
 
+class MDCResolution(DetailView):
+    model = Meeting
+    context_object_name = 'meeting'
+    template_name = 'mdc_resolution.html'
+
 
 class CreateMeetingSupportArchive(View):
     def get(self, request, *args, **kwargs):
@@ -236,7 +243,6 @@ class CreateMeetingSupportArchive(View):
             return response
 
 
-import csv
 class PriceChangeCSVResponseMixin(object):
     """
     A mixin that constructs a CSV response from the context data if
@@ -298,74 +304,6 @@ class CreateMeetingPriceChangeCMAArchive(View):
             response = HttpResponse(tmp.read(), content_type='application/x-zip-compressed')
             response['Content-Disposition'] = 'attachment; filename="{0}-CMAs.zip"'.format(meeting,)
             return response
-
-
-import csv
-from decimal import *
-class MDCCSVResponseMixin(object):
-    """
-    A mixin that constructs a CSV response from the context data if
-    the CSV export option was provided in the request. In this case to create the
-    MDC spreadsheet.
-    """
-    def render_to_response(self, context, **response_kwargs):
-        """
-        Creates a CSV response if requested, otherwise returns the default
-        template response.
-        """
-        # Sniff if we need to return a CSV export
-        if 'csv' in self.request.GET.get('export', ''):
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'MDC-for-resolution.csv')
-            writer = csv.writer(response)
-
-            header = ['Parcel','Street Address','Zipcode','Application Type','Structure Type','City\'s Sale Price','Renew\'s Sale Price','Total','Buyer Name']
-            writer.writerow(header)
-            # Write the data from the context somehow
-            #from applications.models import MeetingLink.APPROVED_STATUS
-
-            for meeting_link in context['meeting'].meeting_link.all().order_by('application__application_type', 'application__Property__streetAddress', 'application__staff_sidelot_waiver_required').filter(application__Property__renew_owned__exact=False).filter(meeting_outcome=MeetingLink.SCHEDULED_STATUS):
-                application = meeting_link.application
-
-                # Price is locked at time of submission, but older apps might
-                # not have a price, so use the property price then.
-                if application.price_at_time_of_submission is None:
-                    property_price = application.Property.price
-                else:
-                    property_price = application.price_at_time_of_submission
-
-                if property_price >= 3500:
-                    price = property_price
-                    city_split = round(price*Decimal('.55'))
-                    renew_split = Decimal(price)-Decimal(city_split)
-                # elif property_price == 3500.0:
-                #     price = property_price
-                #     city_split = 1000.00
-                #     renew_split = 2500.00
-                elif property_price == 750.0:
-                    price = property_price
-                    city_split = 250.00
-                    renew_split = 500.00
-                else: # Error case, should catch people's attention to fix manually
-                    city_split = 0
-                    renew_split = 0
-                total = Decimal(city_split)+Decimal(renew_split)
-                if application.organization:
-                    buyer = u'{0} {1}, {2}'.format(application.user.first_name, application.user.last_name, application.organization.name)
-                else:
-                    buyer = u'{0} {1}'.format(application.user.first_name, application.user.last_name)
-                row = [application.Property.parcel, application.Property.streetAddress, application.Property.zipcode, application.get_application_type_display(), application.Property.structureType, city_split, renew_split, total, buyer]
-                writer.writerow(row)
-            return response
-        # Business as usual otherwise
-        else:
-            return super(MDCCSVResponseMixin, self).render_to_response(context, **response_kwargs)
-
-
-class MDCSpreadsheet(MDCCSVResponseMixin, DetailView):
-    model = Meeting
-    context_object_name = 'meeting'
-    template_name = 'price_change_summary_view_all.html'
 
 # Meeting Outcome Notification CSV Response Mixin
 class MONCSVResponseMixin(object):

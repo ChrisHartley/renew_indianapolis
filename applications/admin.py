@@ -119,7 +119,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
             'fields': ( ('conflict_board_rc', 'conflict_board_rc_name', 'conflict_city', 'conflict_city_name'), 'active_citations', 'prior_tax_foreclosure', 'tax_status_of_properties_owned', 'other_properties_names_owned', 'landlord_in_marion_county', 'landlord_registry')
         }),
         ('Application Details', {
-            'fields': ('application_type','planned_improvements','finished_square_footage', 'estimated_cost','source_of_financing','is_rental','nsp_income_qualifier','long_term_ownership','timeline','sidelot_eligible', 'vacant_lot_end_use')
+            'fields': ('application_type','planned_improvements','who_will_perform_work','finished_square_footage', 'estimated_cost','source_of_financing','is_rental','nsp_income_qualifier','long_term_ownership','timeline','sidelot_eligible', 'vacant_lot_end_use')
 
         }),
         ('Staff fields', {
@@ -257,10 +257,10 @@ class MeetingAdmin(admin.ModelAdmin):
     def create_mdc_spreadsheet(self, obj):
         if obj.id is None:
             return mark_safe('<a href="">(none)</a>')
-        summary_link = '<a target="_blank" href="{}?export=csv">{}</a>'.format(
-            reverse("mdc_spreadsheet", args=(obj.id,)), "View CSV Spreadsheet for MDC Resolution")
+        summary_link = '<a target="_blank" href="{}">{}</a>'.format(
+            reverse("mdc_resolution", args=(obj.id,)), "View MDC Resolution")
         return mark_safe(summary_link)
-    create_mdc_spreadsheet.short_description = 'MDC Resolution CSV spreadsheet'
+    create_mdc_spreadsheet.short_description = 'MDC Resolution'
 
     def create_meeting_outcome_notification_spreadsheet(self, obj):
         if obj.id is None:
@@ -401,19 +401,22 @@ class ApplicationMeetingSummaryAdmin(admin.ModelAdmin):
         ).values('period').annotate(total=Sum('application__Property__price'), count=Count('application')).order_by('period')
 
         summary_range = summary_over_time.aggregate(
-            low=Min('total'),
-            high=Max('total'),
+            low=Min('count'),
+            high=Max('count'),
         )
         high = summary_range.get('high', 0)
         low = summary_range.get('low', 0)
 
         response.context_data['summary_over_time'] = [{
             'period': x['period'],
+            'high': high,
+            'low': low,
             'total': x['total'] or 0,
-            'count': x['count'],
-            'pct': \
-               ((x['total'] or 0) - low) / (high - low) * 100
-               if high > low else 0,
+            'count': x['count'] or 0,
+            #            'pct': float( float(x['count'] - low) / float(high-low) ) * 100 if x['count'] != low else 1,
+            'pct': float( float(x['count'] - 0) / float(high-0) ) * 100,# if x['count'] != low else 1,
+            #'pct': (x['count'] - low) / (high-low) * 100,
+               #if high > low else 0,
         } for x in summary_over_time]
 
         return response
