@@ -6,6 +6,7 @@ from crispy_forms.layout import Submit
 
 from property_inquiry.models import propertyInquiry, propertyShowing
 from property_inventory.models import Property
+from django.forms.widgets import CheckboxSelectMultiple
 
 
 class PropertyInquiryForm(ModelForm):
@@ -35,9 +36,30 @@ class PropertyInquiryForm(ModelForm):
         fields = ['Property',]
 
 class propertyShowingAdminForm(ModelForm):
+    inquiries_to_complete = ModelChoiceField(
+        queryset=propertyInquiry.objects.none(),
+        widget=CheckboxSelectMultiple,
+        help_text="Select inquries to mark complete",
+        empty_label=None,
+        required=False,
+        label='Inquiries to mark completed',
+        )
+
     class Meta:
         model = propertyShowing
         exclude = []
+
+    def clean(self):
+        self.cleaned_data['inquiries_to_complete'] = self.clean_inquiries_to_complete()
+        return self.cleaned_data
+
+    def clean_inquiries_to_complete(self): # Remove all errors on this since queryset is None
+        try:
+            del self._errors['inquiries_to_complete']
+        except KeyError:
+            pass
+        return self['inquiries_to_complete'].value()
+
 
     def __init__(self, *args, **kwargs):
         super(propertyShowingAdminForm, self).__init__(*args, **kwargs)
@@ -45,3 +67,5 @@ class propertyShowingAdminForm(ModelForm):
             self.fields['inquiries'].queryset = propertyInquiry.objects.filter(Property=self.instance.Property).order_by('-timestamp')
         elif self.initial:
             self.fields['inquiries'].queryset = propertyInquiry.objects.filter(Property__pk=self.get_initial_for_field(self, 'Property')).order_by('-timestamp')
+        if self.instance.pk is not None:
+            self.fields['inquiries_to_complete'].queryset = propertyInquiry.objects.filter(Property=self.instance.Property).exclude(status=propertyInquiry.COMPLETED_STATUS).order_by('-timestamp')

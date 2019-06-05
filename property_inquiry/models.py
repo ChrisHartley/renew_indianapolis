@@ -35,7 +35,7 @@ class propertyInquiry(models.Model):
     COMPLETED_STATUS = 6
     DUPLICATE_REQUEST_STATUS = 7
     USER_DID_NOT_SHOW = 8
-    REQUESTED_ANOTHER_INVITATION = 9 
+    REQUESTED_ANOTHER_INVITATION = 9
 
     STATUS_CHOICES = (
         (NULL_STATUS, 'Initial status'),
@@ -57,7 +57,7 @@ class propertyInquiry(models.Model):
         verbose_name_plural = "property inquiries"
 
     def __unicode__(self):
-        return u'{0} - {1} - {2} - {3}'.format(self.Property, self.user.email, self.timestamp.strftime('%x'), self.get_status_display())
+        return u'{0} - {1} {2} ({3}) - {4}'.format(self.Property, self.user.first_name, self.user.last_name, self.user.email, self.timestamp.strftime('%x'), self.get_status_display())
 
 def save_location(instance, filename):
     return "property_showing/{0}/{1}/{2}".format(instance.Property, instance.datetime.strftime('%Y-%m-%d'), filename)

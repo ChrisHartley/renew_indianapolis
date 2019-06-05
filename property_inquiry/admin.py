@@ -287,6 +287,17 @@ class propertyShowingAdmin(admin.ModelAdmin):
         return mark_safe(link)
     get_inquiry_rsvp_id.short_description = 'URL for inquiry with auto RSVP'
 
+    def save_model(self, request, obj, form, change):
+        if change:
+            inqs = form.cleaned_data.get('inquiries_to_complete', None)
+            if inqs is not None:
+                for inq in inqs:
+                    pi = propertyInquiry.objects.get(id=inq)
+                    pi.status = propertyInquiry.COMPLETED_STATUS
+                    pi.save()
+        super(propertyShowingAdmin, self).save_model(request, obj, form, change)
+
+
 from django.db.models import Count, Sum, Min, Max
 from django.db.models.functions import Trunc
 from django.db.models import DateTimeField
