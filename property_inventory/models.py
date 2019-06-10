@@ -156,7 +156,11 @@ class Property(models.Model):
                 self.geometry = results['geometry']
                 self.centroid_geometry = self.geometry.centroid
                 self.area = float(results['estsqft'])
-                if float(results['assessed_improvement_value']) > 0:
+                try:
+                    aiv = float(results['assessed_improvement_value'])
+                except ValueError:
+                    aiv = 0
+                if aiv > 0:
                     self.structureType = 'Residential Dwelling'
                 else:
                     self.structureType = 'Vacant Lot'
