@@ -146,7 +146,7 @@ class ApplicationForm(forms.ModelForm):
                 HTML('<p>Before your application can be submitted for review you must attach both a scope of work and proof of funds, as referenced earlier. You can upload those files here.</p>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Scope of Work</div><div id="sow-file-uploader" class="form-control-static col-lg-6">Drop your scope of work file here to upload</div>'),
-                HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://build.renewindianapolis.org/static/Scope-of-Work-Template.xls" target="_blank">spreadsheet</a> or <a href="https://build.renewindianapolis.org/static/Scope-of-Work-Template.pdf" target="_blank">printable template</a> as a starting point.</div></div>'),
+                HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://build.renewindianapolis.org/static/Scope-of-Work-Template-(2019).xls" target="_blank">spreadsheet</a> or <a href="https://build.renewindianapolis.org/static/Scope-of-Work-Template-(Single-Unit)-2019.pdf" target="_blank">single family</a> or <a href="https://build.renewindianapolis.org/static/Scope-of-Work-Template-(Multi-Unit)-2019.pdf" target="_blank">multi-unit</a> printable template as a starting point.</div></div>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Elevation View</div><div id="elevation-file-uploader" class="form-control-static col-lg-6">Drop your elevation view file here to upload</div></div>'),
 
