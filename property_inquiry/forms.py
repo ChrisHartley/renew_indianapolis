@@ -58,8 +58,10 @@ class propertyShowingAdminForm(ModelForm):
             del self._errors['inquiries_to_complete']
         except KeyError:
             pass
-        return self['inquiries_to_complete'].value()
-
+        try:
+            return self['inquiries_to_complete'].value()
+        except KeyError:
+            return None
 
     def __init__(self, *args, **kwargs):
         super(propertyShowingAdminForm, self).__init__(*args, **kwargs)
