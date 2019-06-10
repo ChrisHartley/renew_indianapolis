@@ -224,7 +224,9 @@ class propertyImportCreator(View):
 
         header_text_fields = [u'Parcel Number']
         header_date_fields = [u'Custom.Mow List Change Date', u'Sold Date', u'Acquisition Date']
-        workbook = xlsxwriter.Workbook('property-import-{0}.xlsx'.format(prop.parcel,))
+        FILENAME = '/tmp/property-import-{0}.xlsx'.format(prop.parcel,)
+
+        workbook = xlsxwriter.Workbook(FILENAME)
         workbook.remove_timezone = True
         worksheet = workbook.add_worksheet('PropertyDescription')
         text_format = workbook.add_format({'num_format': '@'})
@@ -247,7 +249,6 @@ class propertyImportCreator(View):
 
 
         workbook.close()
-        FILENAME = 'property-import-{0}.xlsx'.format(prop.parcel,)
         wrapper = FileWrapper(open(FILENAME,'rb'))
         content_type = mimetypes.MimeTypes().guess_type(FILENAME)[0]
         response = HttpResponse(wrapper, content_type=content_type)
