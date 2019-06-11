@@ -12,7 +12,7 @@ from property_inventory.models import Property, blc_listing
 
 class ProcessingFeeAdmin(admin.ModelAdmin):
     list_display = ['__unicode__','due_date', 'date_paid', 'paid']
-    search_fields = ['closing__application__Property__streetAddress', 'closing__application__Property__parcel', 'user__email','user__first_name', 'user__last_name']
+    search_fields = ['closing__application__Property__streetAddress', 'closing__application__Property__parcel', 'closing__application__user__email','closing__application__user__first_name', 'closing__application__user__last_name']
 
 class PurchaseOptionInline(admin.TabularInline):
     model = purchase_option
