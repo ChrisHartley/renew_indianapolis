@@ -8,9 +8,14 @@ register = template.Library()
 @register.filter
 def num2words(value):
     """Returns a string/word representation of a number"""
-    if type(value) in [long, int, float]:
+    try:
+        val = float(value)
         return num2words_orig(value)
-    else:
+    except ValueError:
+
+#    if type(value) in [long, int, float]:
+#        return num2words_orig(value)
+#    else:
         return "ERROR - {}".format(value,)
 @register.filter
 def plus_30_days(value):
