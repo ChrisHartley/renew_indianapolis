@@ -220,7 +220,17 @@ class MDCResolution(DetailView):
     model = Meeting
     context_object_name = 'meeting'
     template_name = 'mdc_resolution.html'
-
+    def get_context_data(self, **kwargs):
+        context = super(MDCResolution, self).get_context_data(**kwargs)
+        pk = self.kwargs.get('pk', None)
+        obj = Meeting.objects.get(id=pk)
+        props = []
+        for ml in obj.meeting_link.all():
+            if ml.application.Property not in props:
+                props.append(ml.application.Property)
+        context['property_count'] = len(props)
+        context['title'] = 'MDC Resolution {}'.format(obj.resolution_number,)
+        return context
 
 class CreateMeetingSupportArchive(View):
     def get(self, request, *args, **kwargs):
