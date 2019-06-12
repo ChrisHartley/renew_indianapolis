@@ -13,42 +13,42 @@ class AnnualReportAdmin(admin.ModelAdmin):
             if obj.id is None:
                 return '-'
             return mark_safe('<a href="{}">{}</a>'.format(
-                reverse("send_class_file", kwargs={'app_name': 'user_files', 'class_name': 'UploadedFile', 'pk':obj.id, 'field_name':'lot_picture'}),
+                reverse("send_class_file", kwargs={'app_name': 'annual_report_form', 'class_name': 'annual_report', 'pk':obj.id, 'field_name':'lot_picture'}),
                     "Download"
                 ))
         def front_exterior_picture_download(self, obj):
             if obj.id is None:
                 return '-'
             return mark_safe('<a href="{}">{}</a>'.format(
-                reverse("send_class_file", kwargs={'app_name': 'user_files', 'class_name': 'UploadedFile', 'pk':obj.id, 'field_name':'front_exterior_picture'}),
+                reverse("send_class_file", kwargs={'app_name': 'annual_report_form', 'class_name': 'annual_report', 'pk':obj.id, 'field_name':'front_exterior_picture'}),
                     "Download"
                 ))
         def back_exterior_picture_download(self, obj):
             if obj.id is None:
                 return '-'
             return mark_safe('<a href="{}">{}</a>'.format(
-                reverse("send_class_file", kwargs={'app_name': 'user_files', 'class_name': 'UploadedFile', 'pk':obj.id, 'field_name':'back_exterior_picture'}),
+                reverse("send_class_file", kwargs={'app_name': 'annual_report_form', 'class_name': 'annual_report', 'pk':obj.id, 'field_name':'back_exterior_picture'}),
                     "Download"
                 ))
         def kitchen_picture_download(self, obj):
             if obj.id is None:
                 return '-'
             return mark_safe('<a href="{}">{}</a>'.format(
-                reverse("send_class_file", kwargs={'app_name': 'user_files', 'class_name': 'UploadedFile', 'pk':obj.id, 'field_name':'kitchen_picture'}),
+                reverse("send_class_file", kwargs={'app_name': 'annual_report_form', 'class_name': 'annual_report', 'pk':obj.id, 'field_name':'kitchen_picture'}),
                     "Download"
                 ))
         def bathroom_picture_download(self, obj):
             if obj.id is None:
                 return '-'
             return mark_safe('<a href="{}">{}</a>'.format(
-                reverse("send_class_file", kwargs={'app_name': 'user_files', 'class_name': 'UploadedFile', 'pk':obj.id, 'field_name':'bathroom_picture'}),
+                reverse("send_class_file", kwargs={'app_name': 'annual_report_form', 'class_name': 'annual_report', 'pk':obj.id, 'field_name':'bathroom_picture'}),
                     "Download"
                 ))
         def other_picture_download(self, obj):
             if obj.id is None:
                 return '-'
             return mark_safe('<a href="{}">{}</a>'.format(
-                reverse("send_class_file", kwargs={'app_name': 'user_files', 'class_name': 'UploadedFile', 'pk':obj.id, 'field_name':'other_picture'}),
+                reverse("send_class_file", kwargs={'app_name': 'annual_report_form', 'class_name': 'annual_report', 'pk':obj.id, 'field_name':'other_picture'}),
                     "Download"
                 ))
 
