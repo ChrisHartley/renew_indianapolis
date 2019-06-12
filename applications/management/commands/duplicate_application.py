@@ -43,4 +43,4 @@ class Command(BaseCommand):
                 )
                 fname = f.supporting_document.name.split('/')[-1]
                 f2.supporting_document.save(fname, ContentFile(f.supporting_document), save=True)
-                self.stdout.write('File {}'.format(fname,))
+                self.stdout.write('{} - {}'.format(fname,f2.get_file_purpose_display()))
