@@ -12,11 +12,8 @@ def num2words(value):
         val = float(value)
         return num2words_orig(value)
     except ValueError:
-
-#    if type(value) in [long, int, float]:
-#        return num2words_orig(value)
-#    else:
         return "ERROR - {}".format(value,)
+        
 @register.filter
 def plus_30_days(value):
     """Returns now plus 30 days, an ugly hack"""
