@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.apps import apps
 from property_inventory.models import Property
 from applicants.models import Organization
-from neighborhood_associations.models import Neighborhood_Association
 from django.utils.deconstruct import deconstructible
 from django.conf import settings
 
@@ -371,16 +370,6 @@ class Application(models.Model):
 
 class TransferApplication(Application):
     pass
-
-class NeighborhoodNotification(models.Model):
-    application = models.ForeignKey(Application, related_name="notification")
-    neighborhood = models.ForeignKey(Neighborhood_Association, null=False)
-    feedback = models.CharField(blank=True, max_length=1024)
-    def __unicode__(self):
-        if self.feedback is not '':
-            return u'%s - feedback received' % (self.neighborhood,)
-        else:
-            return u'%s - no feedback received' % (self.neighborhood,)
 
 class Meeting(models.Model):
     REVIEW_COMMITTEE = 1

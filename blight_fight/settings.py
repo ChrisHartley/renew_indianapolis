@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'property_inventory',
     'annual_report_form',
     'property_inquiry',
-    'neighborhood_associations',
+    #'neighborhood_associations',
     'property_condition',
     'applications',
     'applicants',
@@ -266,7 +266,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True,
+            'include_html': False,
         },
          'console': {
             'class': 'logging.StreamHandler',
@@ -275,10 +275,14 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['console','mail_admins'],
+            'handlers': ['console',],#'mail_admins'],
             'level': 'WARNING',
             'propagate': True,
         },
+        # 'django': {
+        #     'handlers': ['console'],
+        #     'propagate': True,
+        # },
     },
 }
 

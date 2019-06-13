@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Application, Meeting, MeetingLink, NeighborhoodNotification, PriceChangeMeetingLink, ApplicationMeetingSummary
-from neighborhood_associations.models import Neighborhood_Association
+from .models import Application, Meeting, MeetingLink, PriceChangeMeetingLink, ApplicationMeetingSummary
 from user_files.models import UploadedFile
 from property_inquiry.models import propertyInquiry
 from .forms import ScheduleInlineForm
@@ -52,28 +51,6 @@ class PriceChangeMeetingLinkInline(admin.TabularInline):
             ))
     price_change_link.short_description = 'price change'
 
-
-
-class NeighborhoodNotificationAdmin(admin.TabularInline):
-    model = NeighborhoodNotification
-    extra = 1
-    fields = ('neighborhood','neighborhood_contact','feedback')
-    readonly_fields = ('neighborhood_contact',)
-
-    def neighborhood_contact(self, obj):
-        return obj.neighborhood.contact_email_address
-    # I am very proud of this. Source: http://stackoverflow.com/questions/14950193/how-to-get-the-current-model-instance-from-inlineadmin-in-django
-    # This limits the neighborhood associations shown in the dropdown to only the ones that contain the property.
-    def get_formset(self, request, obj=None, **kwargs):
-        kwargs['formfield_callback'] = partial(self.formfield_for_dbfield, request=request, obj=obj)
-        return super(NeighborhoodNotificationAdmin, self).get_formset(request, obj, **kwargs)
-
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        app = kwargs.pop('obj', None)
-        formfield = super(NeighborhoodNotificationAdmin, self).formfield_for_dbfield(db_field, **kwargs)
-        if db_field.name == "neighborhood" and app is not None and app.Property:
-            formfield.queryset = Neighborhood_Association.objects.filter(receive_notifications__exact=True).filter(geometry__contains=app.Property.geometry)
-        return formfield
 
 class MeetingScheduledFilter(admin.SimpleListFilter):
     title = 'scheduled for a meeting'
