@@ -31,7 +31,7 @@ def update_registered_organizations(request):
             geometry = GEOSGeometry(str(record['geometry']))
             if not geometry.valid:
                 geometry = geometry.buffer(0)
-        except GDALException, ValueError:
+        except (GDALException, ValueError):
             number_errors = number_errors + 1
             #print "Error on", record['properties']['ORG_NAME']
         try:
