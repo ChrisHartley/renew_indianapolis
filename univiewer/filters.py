@@ -1,4 +1,5 @@
 import django_filters
+from django.apps import apps
 from django.contrib.gis.db import models
 from django.db.models import Q
 
@@ -23,7 +24,7 @@ class UniSearchFilter(django_filters.FilterSet):
 
     bid_group_filter = django_filters.MultipleChoiceFilter(choices=BID_GROUP_CHOICES, method="bid_group_choice_filter", label='Bid Group')
 
-    MVA_VALUES = parcel.objects.order_by('mva_category').distinct(
+    MVA_VALUES = apps.get_model(app_lable='univiewer', model_name='parcel').objects.order_by('mva_category').distinct(
         'mva_category').values_list('mva_category', flat=True)
     MVA_CHOICES = zip(MVA_VALUES, MVA_VALUES)
 

@@ -2,6 +2,7 @@ import django_filters
 #from django_filters import MethodFilter
 from django.db.models import Count, Q
 from django import forms
+from django.apps import apps
 from django.contrib.gis.db import models
 
 
@@ -44,7 +45,7 @@ class ApplicationStatusFilters(django_filters.FilterSet):
 
 class PropertySearchSlimFilter(django_filters.FilterSet):
     parcel_or_street_address = django_filters.CharFilter(method='filter_parcel_or_street_address', label="Street address or parcel number")
-    st = Property.objects.order_by('structureType').distinct(
+    st = apps.get_model(app_label='property_inventory', model_name='Property').objects.order_by('structureType').distinct(
         'structureType').values_list('structureType', flat=True).order_by('structureType')
     structure_types = zip(st, st)
     structureType = django_filters.MultipleChoiceFilter(
@@ -165,7 +166,7 @@ class PropertySearchFilter(django_filters.FilterSet):
     parcel_or_street_address = django_filters.CharFilter(method='filter_parcel_or_street_address', label="Address or parcel number")
 
     # lord I don't remember how this works but it takes calculates all the structureTypes in the database and makes a list.
-    st = Property.objects.order_by('structureType').distinct(
+    st = apps.get_model(app_label='property_inventory', model_name='Property').objects.order_by('structureType').distinct(
         'structureType').values_list('structureType', flat=True).order_by('structureType')
     structure_types = zip(st, st)
     structureType = django_filters.MultipleChoiceFilter(
