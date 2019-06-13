@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models import Q, F
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django import forms
 from django.utils.text import slugify
 from datetime import date

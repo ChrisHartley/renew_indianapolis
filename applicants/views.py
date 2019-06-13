@@ -5,7 +5,7 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
 from django.utils.html import escape, escapejs
 from django.views.generic import View
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 from .forms import ApplicantProfileForm, OrganizationForm

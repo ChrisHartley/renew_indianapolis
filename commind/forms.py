@@ -4,7 +4,7 @@ from .models import Application, Property, Note, Entity, Document, Person
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, ButtonHolder, Div, Button, MultiField, Field, HTML, Div, LayoutObject, MultiField
 from crispy_forms.bootstrap import FormActions, InlineRadios, PrependedAppendedText, InlineField, AppendedText, InlineCheckboxes
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from applicants.widgets import AddAnotherWidgetWrapper
 from django.forms import inlineformset_factory
 from django.forms.models import formset_factory

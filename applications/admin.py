@@ -5,7 +5,7 @@ from property_inquiry.models import propertyInquiry
 from .forms import ScheduleInlineForm
 
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from functools import partial
 from django.shortcuts import render
 from django.http import HttpResponseRedirect

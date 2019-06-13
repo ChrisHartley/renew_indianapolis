@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.text import slugify
 from os.path import basename
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from PIL import Image, ExifTags
 from django.conf import settings
 

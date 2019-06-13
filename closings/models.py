@@ -11,7 +11,7 @@ from datetime import timedelta, date, datetime
 from django.utils.timezone import localtime, now
 from django.conf import settings
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import timezone # use this for timezone aware times
 
 class location(models.Model):

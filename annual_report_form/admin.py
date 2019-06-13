@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import annual_report
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 class AnnualReportAdmin(admin.ModelAdmin):
         list_display = ('created','Property', 'name', 'organization')

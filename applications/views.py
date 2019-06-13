@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotAllowed, JsonResponse
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core import serializers
 from django.core.serializers.json import Serializer
 #from django.core.serializers.json import DjangoJSONEncoder
@@ -507,7 +507,6 @@ from user_files.models import UploadedFile
 from django.db.models import Q
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.core.urlresolvers import reverse
 from django.contrib import messages
 class GenerateNeighborhoodNotifications(DetailView):
     model = Meeting

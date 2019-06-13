@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse
-from django.core.urlresolvers  import reverse_lazy
+from django.urls import reverse_lazy
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 # Create your views here.

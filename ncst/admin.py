@@ -4,7 +4,7 @@
 from django.contrib.gis import admin
 from django.contrib import admin as regular_admin
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from utils.admin import ExportCsvMixin
 

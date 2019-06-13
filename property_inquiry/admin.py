@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from .models import propertyInquiry, PropertyInquirySummary, propertyShowing, PropertyInquiryMapProxy
 from .forms import propertyShowingAdminForm
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.admin import SimpleListFilter
 
 from property_condition.models import ConditionReport

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import ConditionReport, Room, ConditionReportProxy
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django import forms
 

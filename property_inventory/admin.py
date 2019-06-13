@@ -2,7 +2,7 @@ from django.contrib.gis import admin
 from django.contrib import admin as regular_admin
 from django.contrib.admin import SimpleListFilter
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from django.db.models import Q

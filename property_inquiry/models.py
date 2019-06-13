@@ -16,7 +16,7 @@ import logging
 from operator import itemgetter, attrgetter
 from itertools import groupby
 from applicants.models import ApplicantProfile
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 class propertyInquiry(models.Model):
     user = models.ForeignKey(User)

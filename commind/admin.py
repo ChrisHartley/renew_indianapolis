@@ -7,7 +7,7 @@ from .models import Property, Note, Application, Document, Entity, Person, Photo
 from .forms import NoteInlineForm
 from django.forms.widgets import Textarea
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 class PersonInline(admin.TabularInline):
     model = Person
