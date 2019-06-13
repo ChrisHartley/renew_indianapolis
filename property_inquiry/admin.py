@@ -83,21 +83,14 @@ class statusFilter(SimpleListFilter):
 
 
     def queryset(self, request, queryset):
-        print len(queryset)
         if self.value() == None:
            return queryset
         if self.value() == '10':
-            print('value is 10')
-            for q in queryset.filter(status__isnull=True):
-                print q.status
-            print queryset.filter(status__isnull=True).count()
-            print queryset.query
             return queryset.filter(status__isnull=True)
         if self.value() == '0':
             return queryset
         else:
             qs = queryset.filter(status=int( self.value() ) )
-            print(qs.query)
             return qs
 
 from utils.utils import batch_update_view

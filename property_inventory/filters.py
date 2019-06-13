@@ -140,7 +140,6 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
 
 
     def filter_zoning(self, queryset, field, value):
-        print value
         if value == 'O':
             return queryset.exclude(zone__name__startswith='C').exclude(zone__name__startswith='I').exclude(zone__name__startswith='D')
         else:

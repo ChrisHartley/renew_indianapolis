@@ -31,10 +31,9 @@ def update_registered_organizations(request):
             geometry = GEOSGeometry(str(record['geometry']))
             if not geometry.valid:
                 geometry = geometry.buffer(0)
-                print "Geometry was invalid, repair was successfull:", geometry.valid
         except GDALException, ValueError:
             number_errors = number_errors + 1
-            print "Error on", record['properties']['ORG_NAME']
+            #print "Error on", record['properties']['ORG_NAME']
         try:
             x = registered_organization(
                 name=record['properties']['ORG_NAME'],
@@ -45,12 +44,13 @@ def update_registered_organizations(request):
                 )
             x.save()
             if registered_organization.objects.filter(geometry__isvalid=True).filter(id=x.id).count() == 0:
-                print "Error, invalid geometry", record['properties']['ORG_NAME']
+                #print "Error, invalid geometry", record['properties']['ORG_NAME']
+                pass
             else:
                 number_created = number_created + 1
         except IntegrityError:
             number_errors = number_errors + 1
-            print "IntegrityError on ", record['properties']['ORG_NAME']
+            #print "IntegrityError on ", record['properties']['ORG_NAME']
     return HttpResponse('<html><body><ul><li>Number deleted: {0}</li><li>Number created: {1}</li><li>Number errors: {2}</li></ul></body></html>'.format(number_deleted[0], number_created, number_errors))
 
 

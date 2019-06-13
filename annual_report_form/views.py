@@ -29,7 +29,7 @@ def showAnnualReportForm(request):
             form_saved.save()
             success = True
         else:
-            print form.errors
+            pass
     return render(request, 'annual_report_form.html', {
         'form': form,
         'success': success,

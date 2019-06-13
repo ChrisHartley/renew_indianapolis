@@ -74,7 +74,6 @@ def bepUpdateFieldsFromMap(request):
     prop = parcel.objects.get(parcel_number=request.GET.get('parcel_number', None))
     decision = request.GET.get('mortgage_decision', None)
     if decision != None:
-        print 'Got it', decision
         prop.mortgage_decision = decision
     try:
         prop.save()

@@ -181,7 +181,6 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     def batch_schedule_action(self, request, queryset):
         if 'schedule' in request.POST:
-            print request.POST
             form = ScheduleInlineForm(request.POST)
             if form.is_valid():
                 meeting = form.cleaned_data['meeting']

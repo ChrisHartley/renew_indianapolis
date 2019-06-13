@@ -110,7 +110,6 @@ class Document(models.Model):
 
         scan_results = cd.scan_file(self.file.path)
         if scan_results is not None:
-            print 'Virus found:', scan_results
             send_mail('Django Virus Found', 'Virus found in file uploaded', 'info@renewindianapolis.org',
         ['chris.hartley@renewindianapolis.org'], fail_silently=False)
             return True

@@ -154,7 +154,6 @@ def searchProperties(request):
             json_serializer = DisplayNameJsonSerializer()
             if 'centroids' in request.GET and request.GET['centroids']:
                 if request.GET['centroids'] == "true":
-                    print "using centroid_geometry"
                     geom = 'centroid_geometry'
                 else:
                     geom = 'geometry'

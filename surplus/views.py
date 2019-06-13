@@ -161,7 +161,6 @@ def searchSurplusProperties(request):
 def surplusUpdateFieldsFromMap(request):
     prop = Parcel.objects.get(parcel_number=request.POST.get('parcel_number', None))
     if request.POST.get('notes', None):
-        print request.POST.get('notes', None)
         prop.notes = request.POST.get('notes')
     if request.POST.get('interesting', None) == 'on':
         prop.interesting = True

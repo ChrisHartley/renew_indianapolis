@@ -36,7 +36,6 @@ class DumpPhotosForm(forms.Form):
 
     def save_photos(self):
         for image, number in ( (self.cleaned_data.get('image1'), 1), (self.cleaned_data.get('image2'), 2), (self.cleaned_data.get('image3'), 3), (self.cleaned_data.get('image4'), 4), (self.cleaned_data.get('image5'), 5), (self.cleaned_data.get('image6'), 6), (self.cleaned_data.get('image7'), 7), (self.cleaned_data.get('image8'), 8), (self.cleaned_data.get('image9'), 9), (self.cleaned_data.get('image10'), 10) ):
-            print image, number
             if number == int(self.cleaned_data.get('primary_image')):
                 prime = True
             else:

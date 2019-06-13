@@ -81,7 +81,6 @@ def showApplicantProfileForm(request):
 class edit_organization(View):
 
     def get(self, request, id=None):
-        print "id is: %s" % id
         if '_popup' in request.GET:
             template = 'create_organization_popup.html'
         else:
@@ -102,7 +101,6 @@ class edit_organization(View):
         return render(request, template, {'title': 'edit organization', 'form': form, 'files': uploaded_files})
 
     def post(self, request, id=None):
-        print "id is: %s" % id
         if '_popup' in request.GET:
             template = 'create_organization_popup.html'
         else:

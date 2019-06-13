@@ -599,7 +599,6 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
                 if registered_organization.objects.filter(geometry__contains=app.Property.geometry).filter(id=org.id):
                     apps_in_area.append(app)
             if len(apps_in_area) == 0:
-                print "No apps in", org.name
                 break
             orgs.append( (org, apps_in_area) )
             subject = 'Neighborhood Notifications - Renew Indianapolis'

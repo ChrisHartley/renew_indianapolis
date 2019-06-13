@@ -28,7 +28,6 @@ def virus_scan(input_file):
 
     scan_results = cd.scan_file(input_file)
     if scan_results is not None:
-        print 'Virus found:', scan_results[0]
         send_mail('Django Virus Found', 'Virus found in file uploaded', 'info@renewindianapolis.org',
     ['chris.hartley@renewindianapolis.org'], fail_silently=False)
         return True
@@ -92,7 +91,6 @@ class UploadedFile(models.Model):
 
         if virus_scan(backend.path):
             # should delete or otherwise quarantine uploaded file
-            print 'returning in virus_scan called from create_on_upload'
             return
 
         app = None
