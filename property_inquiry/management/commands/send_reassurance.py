@@ -20,5 +20,4 @@ class Command(BaseCommand):
             context['inquiry_list'] = propertyInquiry.objects.filter(user=u).filter(status__isnull=True).filter(timestamp__date__gt=date(2018,4,1))
             message_body = render_to_string('email/property_inquiry_reassurance.txt', context)
             message_subject = 'Property Inquiry Followup'
-            self.stdout.write(message_body)
             send_mail(message_subject, message_body, 'info@renewindianapolis.org', [u.email,], fail_silently=False)
