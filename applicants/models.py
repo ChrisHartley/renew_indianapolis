@@ -7,7 +7,7 @@ from localflavor.us.models import PhoneNumberField
 
 
 class ApplicantProfile(models.Model):
-    user = models.OneToOneField(User, related_name="profile")
+    user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
 
     phone_number = PhoneNumberField()
 
@@ -70,7 +70,7 @@ class Organization(models.Model):
          'Individual Investment Vehicle (eg Self Directed IRA)'),
     )
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     relationship_to_user = models.IntegerField(
         choices=RELATIONSHIP_TYPES, help_text='Your relationship to this person or organization', verbose_name='Relationship to you')
     entity_type = models.IntegerField(

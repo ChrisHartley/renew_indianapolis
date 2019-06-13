@@ -68,7 +68,7 @@ class Room(models.Model):
 
     flooring_type = models.CharField(choices=FLOORING_TYPE, blank=False, null=False, max_length=254)
     dimensions = models.CharField(max_length=50, blank=True, null=False)
-    conditionreport = models.ForeignKey('property_condition.ConditionReport')
+    conditionreport = models.ForeignKey('property_condition.ConditionReport', on_delete=models.CASCADE)
 
     def __unicode__(self):
         return '{0} - {1}'.format(self.conditionreport, self.get_room_type_display())
@@ -95,8 +95,8 @@ class ConditionReport(models.Model):
     def limit_property_choices():
         return Q( (Q(structureType__exact='Residential Dwelling') | Q(structureType__exact='Mixed Use Commercial')), ~Q(status__contains='Sold'))
 
-    Property = models.ForeignKey('property_inventory.Property', limit_choices_to=limit_property_choices(), null=True, blank=True)
-    Property_ncst = models.ForeignKey('ncst.Property', null=True, blank=True)
+    Property = models.ForeignKey('property_inventory.Property', limit_choices_to=limit_property_choices(), null=True, blank=True, on_delete=models.CASCADE)
+    Property_ncst = models.ForeignKey('ncst.Property', null=True, blank=True, on_delete=models.CASCADE)
 
     picture = models.ImageField(upload_to=content_file_name, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)

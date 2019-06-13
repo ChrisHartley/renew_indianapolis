@@ -27,9 +27,9 @@ class UploadToApplicationDir(object):
 
 class Application(models.Model):
 
-    user = models.ForeignKey(User)
-    Property = models.ForeignKey(Property, null=True, blank=True)
-    organization = models.ForeignKey(Organization, null=True, blank=True,
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    Property = models.ForeignKey(Property, null=True, blank=True, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, null=True, blank=True, on_delete=models.CASCADE,
                                      help_text="Other parties (eg organizations, spouses, siblings, etc). This, or the name on your account, are the only names that can be shown on the deed")
 
     created = models.DateTimeField(auto_now_add=True)
@@ -422,9 +422,9 @@ class MeetingLink(models.Model):
         (CONDITION_SATISFIED,'Condition Satisfied'),
     )
 
-    meeting = models.ForeignKey(Meeting, related_name='meeting_link')
+    meeting = models.ForeignKey(Meeting, related_name='meeting_link', on_delete=models.CASCADE)
     meeting_outcome = models.IntegerField(choices=STATUS_CHOICES, null=False, default=SCHEDULED_STATUS)
-    application = models.ForeignKey(Application, related_name='meeting')
+    application = models.ForeignKey(Application, related_name='meeting', on_delete=models.CASCADE)
     notes = models.CharField(max_length=1024, blank=True, null=False)
     schedule_weight = models.IntegerField(default=0, null=False, blank=True)
 
@@ -567,9 +567,9 @@ class PriceChangeMeetingLink(models.Model):
         (TABLED_STATUS, 'Tabled'),
         (SCHEDULED_STATUS, 'Scheduled'),
     )
-    meeting = models.ForeignKey(Meeting, related_name='price_change_meeting_link')
+    meeting = models.ForeignKey(Meeting, related_name='price_change_meeting_link', on_delete=models.CASCADE)
     meeting_outcome = models.IntegerField(choices=STATUS_CHOICES, null=False, default=SCHEDULED_STATUS)
-    price_change = models.ForeignKey('property_inventory.price_change', related_name='meeting')
+    price_change = models.ForeignKey('property_inventory.price_change', related_name='meeting', on_delete=models.CASCADE)
     notes = models.CharField(max_length=1024, blank=True, null=False)
 
     @property

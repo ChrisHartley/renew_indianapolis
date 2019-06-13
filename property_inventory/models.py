@@ -14,7 +14,7 @@ from utils.utils import pull_property_info_from_arcgis
 class Overlay(models.Model):
     name = models.CharField(max_length=255)
     geometry = models.MultiPolygonField(srid=4326)
-    objects = models.GeoManager()
+    #objects = models.GeoManager()
 
     @property
     def area(self):
@@ -68,7 +68,7 @@ class Property(models.Model):
 
     centroid_geometry = models.PointField(srid=4326, default='POINT(39.7684 86.1581)', blank=True)
 
-    objects = models.GeoManager()
+#    objects = models.GeoManager()
     propertyType = models.CharField(
         choices=PROPERTY_TYPES, max_length=2, verbose_name='property type')
 
@@ -89,15 +89,15 @@ class Property(models.Model):
                                      help_text="As classified by the Assessor", verbose_name='Structure Type')
 
     cdc = models.ForeignKey(CDC, blank=True, null=True,
-                            help_text="The Community Development Corporation boundries the property falls within.", verbose_name='CDC')
+                            help_text="The Community Development Corporation boundries the property falls within.", verbose_name='CDC', on_delete=models.CASCADE)
     zone = models.ForeignKey(
-        Zoning, blank=True, null=True, help_text="The zoning of the property")
+        Zoning, blank=True, null=True, help_text="The zoning of the property", on_delete=models.CASCADE)
     neighborhood = models.ForeignKey(
-        Neighborhood, blank=True, null=True, help_text="The neighborhood the property is in")
+        Neighborhood, blank=True, null=True, help_text="The neighborhood the property is in", on_delete=models.CASCADE)
     zipcode = models.ForeignKey(
-        Zipcode, blank=True, null=True, help_text="The zipcode of the property")
+        Zipcode, blank=True, null=True, help_text="The zipcode of the property", on_delete=models.CASCADE)
     census_tract = models.ForeignKey(
-        census_tract, blank=True, null=True, help_text="The Census Tract of the property")
+        census_tract, blank=True, null=True, help_text="The Census Tract of the property", on_delete=models.CASCADE)
     urban_garden = models.BooleanField(
         default=False, help_text="If the property is currently licensed as an urban garden through the Office of Sustainability")
     status = models.CharField(max_length=255, null=True, blank=True,
@@ -132,7 +132,7 @@ class Property(models.Model):
 
     acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired')
     renew_acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired by Renew')
-    buyer_application = models.ForeignKey('applications.Application', null=True, blank=True, help_text='The final buyer application.')
+    buyer_application = models.ForeignKey('applications.Application', null=True, blank=True, help_text='The final buyer application.', on_delete=models.CASCADE)
 
     property_inspection_group = models.CharField(blank=True, max_length=10)
     update_from_server = models.BooleanField(default=True, help_text="Attempt to update street address, etc from remote server on next save.")
@@ -178,7 +178,7 @@ Add notes to properties, for staff use.
 Added 20170630.
 """
 class note(models.Model):
-    Property = models.ForeignKey(Property)
+    Property = models.ForeignKey(Property, on_delete=models.CASCADE)
 #    user = models.ForeignKey(User)
     text = models.TextField(blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -193,7 +193,7 @@ def price_change_directory_path(instance, filename):
 
 
 class price_change(models.Model):
-    Property = models.ForeignKey(Property)
+    Property = models.ForeignKey(Property, on_delete=models.CASCADE)
     proposed_price = models.DecimalField(max_digits=8, decimal_places=2,
         help_text="The proposed new price for the property", null=False)
     notes = models.CharField(max_length=1024, blank=True)
@@ -239,7 +239,7 @@ class price_change(models.Model):
         verbose_name_plural = 'price changes'
 
 class featured_property(models.Model):
-    Property = models.ForeignKey(Property, related_name='featured_property')
+    Property = models.ForeignKey(Property, related_name='featured_property', on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     note = models.CharField(max_length=1024, blank=True)
@@ -252,7 +252,7 @@ class featured_property(models.Model):
         return '{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])
 
 class blc_listing(models.Model):
-    Property = models.ForeignKey(Property, related_name='blc_listing')
+    Property = models.ForeignKey(Property, related_name='blc_listing', on_delete=models.CASCADE)
     blc_id = models.CharField(max_length=50, blank=False)
     blc_url = models.URLField(max_length=255, blank=True)
     date_time = models.DateTimeField(auto_now_add=True)
@@ -268,7 +268,7 @@ class blc_listing(models.Model):
         return '{0} - {1} - {2}'.format(self.Property, self.blc_id, self.date_time)
 
 class yard_sign(models.Model):
-    Property = models.ForeignKey(Property, related_name='yard_sign')
+    Property = models.ForeignKey(Property, related_name='yard_sign', on_delete=models.CASCADE)
     date_time = models.DateTimeField(auto_now_add=True)
     note = models.CharField(max_length=1024, blank=True)
     removed_date_time = models.DateTimeField(blank=True, null=True)
@@ -281,7 +281,7 @@ class yard_sign(models.Model):
         return '{0} - {1} - {2}'.format(self.Property, self.date_time, self.note[:20])
 
 class lockbox(models.Model):
-    Property = models.ForeignKey(Property, related_name='lockbox')
+    Property = models.ForeignKey(Property, related_name='lockbox', on_delete=models.CASCADE)
     date_time = models.DateTimeField(auto_now_add=True)
     code = models.CharField(max_length=10, blank=True)
     note = models.CharField(max_length=1024, blank=True)
@@ -296,13 +296,13 @@ class lockbox(models.Model):
 
 
 class take_back(models.Model):
-    Property = models.ForeignKey(Property, related_name='take_back')
+    Property = models.ForeignKey(Property, related_name='take_back', on_delete=models.CASCADE)
     take_back_date = models.DateField(blank=False)
     original_sale_date = models.DateField(blank=False)
     original_sale_price = models.DecimalField(max_digits=8, decimal_places=2)
     note = models.TextField(max_length=1024, blank=True)
     owner = models.CharField(max_length=1024, blank=True)
-    application = models.ForeignKey('applications.Application', null=True, blank=True)
+    application = models.ForeignKey('applications.Application', null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'take backs'

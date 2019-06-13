@@ -13,8 +13,8 @@ def save_location(instance, filename):
 
 
 class photo(models.Model):
-    prop = models.ForeignKey('property_inventory.Property', null=True, blank=True)
-    prop_ncst = models.ForeignKey('ncst.Property', null=True, blank=True)
+    prop = models.ForeignKey('property_inventory.Property', null=True, blank=True, on_delete=models.CASCADE)
+    prop_ncst = models.ForeignKey('ncst.Property', null=True, blank=True, on_delete=models.CASCADE)
     main_photo = models.BooleanField(null=False, default=False)
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to=save_location, max_length=512, blank=False, null=False)

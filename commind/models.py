@@ -17,7 +17,7 @@ from django.utils import timezone
 class Entity(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(get_user_model())
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     name = models.CharField(max_length=100, blank=False)
     created_boolean = models.BooleanField(default=False)
@@ -33,7 +33,7 @@ class Entity(models.Model):
 
 @python_2_unicode_compatible
 class Person(models.Model):
-    entity = models.ForeignKey(Entity)
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     title = models.CharField(max_length=100, blank=True, help_text='Job Title')
     email = models.CharField(max_length=255, blank=True)
@@ -63,7 +63,7 @@ class Note(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(get_user_model())
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     public = models.BooleanField(help_text='Is this note public?')
 
     def __str__(self):
@@ -80,7 +80,7 @@ class Document(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
-    user = models.ForeignKey(get_user_model())
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     file = models.FileField(
         upload_to="documents/%Y/%m/%d", max_length=512)
@@ -247,9 +247,9 @@ class Application(models.Model):
 
 
     Properties = models.ManyToManyField(Property, blank=True)
-    Property = models.ForeignKey(Property, null=True, blank=True, related_name='application_tmp')
+    Property = models.ForeignKey(Property, null=True, blank=True, related_name='application_tmp', on_delete=models.CASCADE)
 
-    user = models.ForeignKey(get_user_model(), related_name='commind_app')
+    user = models.ForeignKey(get_user_model(), related_name='commind_app', on_delete=models.CASCADE)
 
     status = models.IntegerField(
         choices=STATUS_TYPES,
@@ -615,7 +615,7 @@ class Application(models.Model):
 
     documents = GenericRelation(Document, related_query_name='application')
     notes = GenericRelation(Note, related_query_name='application_notes')
-    entity = models.ForeignKey(Entity, null=True, blank=True)
+    entity = models.ForeignKey(Entity, null=True, blank=True, on_delete=models.CASCADE)
 
     created = models.DateTimeField(auto_now_add=True)
     submitted_timestamp = models.DateTimeField(null=True, blank=True)

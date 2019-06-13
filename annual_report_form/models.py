@@ -14,7 +14,7 @@ def content_file_name(instance, filename):
 class annual_report(models.Model):
 
     parcel = models.CharField(max_length=7, blank=True, null=True)
-    Property = models.ForeignKey(Property, blank=False, null=True)
+    Property = models.ForeignKey(Property, blank=False, null=True, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=254, blank=False, null=False)
     organization = models.CharField(max_length=254, blank=True, null=True)
