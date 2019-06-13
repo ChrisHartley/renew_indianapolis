@@ -45,11 +45,24 @@ class ApplicationStatusFilters(django_filters.FilterSet):
 
 class PropertySearchSlimFilter(django_filters.FilterSet):
     parcel_or_street_address = django_filters.CharFilter(method='filter_parcel_or_street_address', label="Street address or parcel number")
-    st = apps.get_model(app_label='property_inventory', model_name='Property').objects.order_by('structureType').distinct(
-        'structureType').values_list('structureType', flat=True).order_by('structureType')
-    structure_types = zip(st, st)
+    #st = apps.get_model(app_label='property_inventory', model_name='Property').objects.order_by('structureType').distinct(
+    #    'structureType').values_list('structureType', flat=True).order_by('structureType')
+    VACANT_LOT_TYPE = 'Vacant Lot'
+    RESIDENTIAL_DWELLING_TYPE = 'Residential Dwelling'
+    MIXED_USE_COMMERCIAL_TYPE = 'Mixed Use Commercial'
+    DETACHED_GARAGE_BOATHOUSE_TYPE = 'Detached Garage/Boat House'
+
+    STRUCTURE_TYPE_CHOICES = (
+        (VACANT_LOT_TYPE,VACANT_LOT_TYPE),
+        (RESIDENTIAL_DWELLING_TYPE,RESIDENTIAL_DWELLING_TYPE),
+        (MIXED_USE_COMMERCIAL_TYPE,MIXED_USE_COMMERCIAL_TYPE),
+        (DETACHED_GARAGE_BOATHOUSE_TYPE,DETACHED_GARAGE_BOATHOUSE_TYPE),
+
+    )
+
+    #structure_types = zip(st, st)
     structureType = django_filters.MultipleChoiceFilter(
-        choices=structure_types, name='structureType', label='Structure Type')
+        choices=STRUCTURE_TYPE_CHOICES, name='structureType', label='Structure Type')
     zipcode = django_filters.ModelChoiceFilter(
          label='Zipcode', name='zipcode__name', lookup_expr="icontains",
         queryset=Zipcode.objects.all()
@@ -166,11 +179,23 @@ class PropertySearchFilter(django_filters.FilterSet):
     parcel_or_street_address = django_filters.CharFilter(method='filter_parcel_or_street_address', label="Address or parcel number")
 
     # lord I don't remember how this works but it takes calculates all the structureTypes in the database and makes a list.
-    st = apps.get_model(app_label='property_inventory', model_name='Property').objects.order_by('structureType').distinct(
-        'structureType').values_list('structureType', flat=True).order_by('structureType')
-    structure_types = zip(st, st)
+    #st = apps.get_model(app_label='property_inventory', model_name='Property').objects.order_by('structureType').distinct(
+    #    'structureType').values_list('structureType', flat=True).order_by('structureType')
+    #structure_types = zip(st, st)
+    VACANT_LOT_TYPE = 'Vacant Lot'
+    RESIDENTIAL_DWELLING_TYPE = 'Residential Dwelling'
+    MIXED_USE_COMMERCIAL_TYPE = 'Mixed Use Commercial'
+    DETACHED_GARAGE_BOATHOUSE_TYPE = 'Detached Garage/Boat House'
+
+    STRUCTURE_TYPE_CHOICES = (
+        (VACANT_LOT_TYPE,VACANT_LOT_TYPE),
+        (RESIDENTIAL_DWELLING_TYPE,RESIDENTIAL_DWELLING_TYPE),
+        (MIXED_USE_COMMERCIAL_TYPE,MIXED_USE_COMMERCIAL_TYPE),
+        (DETACHED_GARAGE_BOATHOUSE_TYPE,DETACHED_GARAGE_BOATHOUSE_TYPE),
+
+    )
     structureType = django_filters.MultipleChoiceFilter(
-        choices=structure_types, name='structureType', label='Structure Type')
+        choices=STRUCTURE_TYPE_CHOICES, name='structureType', label='Structure Type')
 
     status_choices = [('available', 'Available'), ('review', 'Application under review'),
                       ('approved', 'Approved for Sale'), ('sold', 'Sold'), ('bep', 'BEP Demolition Slated')]

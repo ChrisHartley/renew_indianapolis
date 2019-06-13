@@ -24,11 +24,11 @@ class UniSearchFilter(django_filters.FilterSet):
 
     bid_group_filter = django_filters.MultipleChoiceFilter(choices=BID_GROUP_CHOICES, method="bid_group_choice_filter", label='Bid Group')
 
-    MVA_VALUES = apps.get_model(app_lable='univiewer', model_name='parcel').objects.order_by('mva_category').distinct(
-        'mva_category').values_list('mva_category', flat=True)
-    MVA_CHOICES = zip(MVA_VALUES, MVA_VALUES)
+    #MVA_VALUES = apps.get_model(app_label='univiewer', model_name='parcel').objects.order_by('mva_category').distinct(
+    #    'mva_category').values_list('mva_category', flat=True)
+    #MVA_CHOICES = zip(MVA_VALUES, MVA_VALUES)
 
-    mva_category_filter = django_filters.MultipleChoiceFilter(choices=MVA_CHOICES, method="mva_category_choice_filter", label='MVA Categories')
+    #mva_category_filter = django_filters.MultipleChoiceFilter(choices=MVA_CHOICES, method="mva_category_choice_filter", label='MVA Categories')
 
     adjacent_homesteads_non_surplus_filter = django_filters.RangeFilter(widget=django_filters.widgets.RangeWidget(), name='adjacent_homesteads_non_surplus', label='# adjacent homesteads')
     ilp_within_quarter_mile_filter = django_filters.RangeFilter(widget=django_filters.widgets.RangeWidget(), name='ilp_within_quarter_mile', label='# ILPs within a quarter mile')
