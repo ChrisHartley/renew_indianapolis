@@ -23,7 +23,6 @@ class Command(BaseCommand):
             for ph in phs:
                 #print ph.image
                 ph_names.append(ph.image.name.split('/')[-1])
-            print p, ph_names
             for row in props['rows']:
                 image_results = epp.get_image_list(row['id'])
                 #print image_results
@@ -31,7 +30,7 @@ class Command(BaseCommand):
                 #    print image
                     fname = get_valid_filename(image['filename'])
                     if fname not in ph_names:
-                        print "Need to fetch this image: {}".format(fname,)
+                        self.stdout.write("Need to fetch this image: {}".format(fname,))
                         with NamedTemporaryFile() as f:
                             f.write(epp.get_image(image['id']))
                             f.seek(0)
