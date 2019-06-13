@@ -21,7 +21,7 @@ class Overlay(models.Model):
         return GEOSGeometry(self.geometry).area
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return '%s' % (self.name)
 
     def natural_key(self):
         return self.name
@@ -142,10 +142,10 @@ class Property(models.Model):
         ordering = ['streetAddress', 'parcel']
 
     def natural_key(self):
-        return u'%s - %s' % (self.streetAddress, self.parcel)
+        return '%s - %s' % (self.streetAddress, self.parcel)
 
     def __unicode__(self):
-        return u'%s - %s' % (self.streetAddress, self.parcel)
+        return '%s - %s' % (self.streetAddress, self.parcel)
 
     ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
     def save(self, *args, **kwargs):
@@ -185,7 +185,7 @@ class note(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return u'{0}...'.format(self.text[0:12],)
+        return '{0}...'.format(self.text[0:12],)
 
 def price_change_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
@@ -249,7 +249,7 @@ class featured_property(models.Model):
         verbose_name_plural = 'featured properties'
 
     def __unicode__(self):
-        return u'{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])
+        return '{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])
 
 class blc_listing(models.Model):
     Property = models.ForeignKey(Property, related_name='blc_listing')
@@ -265,7 +265,7 @@ class blc_listing(models.Model):
         verbose_name_plural = 'blc listings'
 
     def __unicode__(self):
-        return u'{0} - {1} - {2}'.format(self.Property, self.blc_id, self.date_time)
+        return '{0} - {1} - {2}'.format(self.Property, self.blc_id, self.date_time)
 
 class yard_sign(models.Model):
     Property = models.ForeignKey(Property, related_name='yard_sign')
@@ -278,7 +278,7 @@ class yard_sign(models.Model):
         verbose_name_plural = 'yard signs'
 
     def __unicode__(self):
-        return u'{0} - {1} - {2}'.format(self.Property, self.date_time, self.note[:20])
+        return '{0} - {1} - {2}'.format(self.Property, self.date_time, self.note[:20])
 
 class lockbox(models.Model):
     Property = models.ForeignKey(Property, related_name='lockbox')
@@ -292,7 +292,7 @@ class lockbox(models.Model):
         verbose_name_plural = 'lockboxes'
 
     def __unicode__(self):
-        return u'{0} - {1} - {2}'.format(self.Property, self.code, self.note[:20])
+        return '{0} - {1} - {2}'.format(self.Property, self.code, self.note[:20])
 
 
 class take_back(models.Model):
@@ -309,7 +309,7 @@ class take_back(models.Model):
         verbose_name_plural = 'take back'
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.Property, self.owner)
+        return '{0} - {1}'.format(self.Property, self.owner)
 
     def save(self, *args, **kwargs):
         if self.application is not None and self.id is None:

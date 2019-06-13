@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.contrib.gis.db import models as gis_models
@@ -12,7 +12,7 @@ class registered_organization(gis_models.Model):
     geometry = gis_models.PolygonField(srid=4326)
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.name, self.email)
+        return '{0} - {1}'.format(self.name, self.email)
 
 
 class blacklisted_emails(models.Model):
@@ -21,4 +21,4 @@ class blacklisted_emails(models.Model):
     reason = models.TextField(blank=True)
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.email, self.reason[:15])
+        return '{0} - {1}'.format(self.email, self.reason[:15])

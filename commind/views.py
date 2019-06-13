@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView

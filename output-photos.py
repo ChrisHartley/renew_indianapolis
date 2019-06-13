@@ -33,7 +33,7 @@ for indx in props_paginator.page_range:
             #print p
             seq = 1
             for photo in p.photo_set.filter(created__gte=last_import).order_by('-main_photo'):
-                print indx, p, photo
+                print(indx, p, photo)
                 worksheet.write(i, 0, p.parcel)
                 worksheet.write(i, 1, seq)
                 worksheet.write(i, 2, photo.created.strftime('%Y-%m-%d %I:%M')) # Caption

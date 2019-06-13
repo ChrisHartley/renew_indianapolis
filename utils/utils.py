@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
@@ -21,7 +21,7 @@ def batch_update_view(model_admin, request, queryset, field_names=None, exclude_
     f = model_admin.get_form(request)
     # If no field names are given, do them all
     if field_names is None:
-        field_names = f.base_fields.keys()
+        field_names = list(f.base_fields.keys())
     if exclude_field_names is not None:
         # should do this with list comprehension
         temp_names = []
@@ -50,7 +50,7 @@ def batch_update_view(model_admin, request, queryset, field_names=None, exclude_
                                     user=request.user,
                                     content_type=ContentType.objects.get_for_model(model_admin.model, for_concrete_model=False),
                                     object_id=item.pk,
-                                    object_repr=unicode(item),
+                                    object_repr=str(item),
                                     action_flag=CHANGE,
                                     change_message = 'Changed {}'.format(', '.join(changed_list),),
                                     )

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.contrib.gis.db import models
 
@@ -64,4 +64,4 @@ class parcel(models.Model):
     geometry = models.MultiPolygonField(srid=2965)
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.street_address, self.parcel_number,)
+        return '{0} - {1}'.format(self.street_address, self.parcel_number,)

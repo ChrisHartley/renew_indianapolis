@@ -72,7 +72,7 @@ def getSidelotEligible(parcel, cursor, structureType):
 	if int(result[0]) > 1:
 		cursor.execute("select b.\"streetAddress\", b.parcel_c, b2.permit, permit_type, b2.status from parcels p2 left join (select p.\"streetAddress\", p.parcel_c, p.geom from parcels p where p.parcel_c in(select parcel from improvement_location_permits where permit_type = 'PRIMARY' and status = 'Issued' group by parcel) ) as b on st_dwithin(p2.geom, b.geom, 1320) left join improvement_location_permits b2 on b2.parcel=b.parcel_c where p2.parcel_c = '%s'", [parcel])
 		result = cursor.fetchall()
-		print "Conflicting ILP for sidelot eligiblity: {0}".format(result,)
+		print("Conflicting ILP for sidelot eligiblity: {0}".format(result,))
 		return False
 	if structureType != 'Vacant Lot': # Only vacant lots can be eligible.
 		return False
@@ -115,38 +115,38 @@ def getVacantLotEligible(parcel, cursor):
 	return result == 'Sidelot / Auction Area'
 
 
-parcel = input("Enter parcel number: ")
+parcel = eval(input("Enter parcel number: "))
 streetAddress = getStreetAddress(parcel, cursor_gis)
-streetAddressInput = raw_input("Street Address [%s]: " % streetAddress)
+streetAddressInput = input("Street Address [%s]: " % streetAddress)
 streetAddress = streetAddressInput or streetAddress
 
 structureType = getStructureType(parcel, cursor_gis)
-structureTypeInput = raw_input("Structure Type [%s]: " % structureType)
+structureTypeInput = input("Structure Type [%s]: " % structureType)
 structureType = structureTypeInput or structureType
 
-nspInput = raw_input("NSP (y/n): ")
+nspInput = input("NSP (y/n): ")
 nsp = (nspInput in ['y','Y'])
 
-quietTitleInput = raw_input("Quiet Title Complete (y/n): ")
+quietTitleInput = input("Quiet Title Complete (y/n): ")
 quiet_title_complete = (quietTitleInput in ['y','Y'])
 
-homesteadInput = raw_input("Homestead Only (y/N): ")
+homesteadInput = input("Homestead Only (y/N): ")
 homestead_only = False or (homesteadInput in ['y', 'Y'])
 
-price_oboInput = raw_input("Price OBO (y/N): ")
+price_oboInput = input("Price OBO (y/N): ")
 price_obo = False or (price_oboInput in ['y', 'Y'])
 
-renew_ownedInput = raw_input("Renew Owned (y/N): ")
+renew_ownedInput = input("Renew Owned (y/N): ")
 renew_owned = False or (renew_ownedInput in ['y', 'Y'])
 
-hhf_demolitionInput = raw_input("HHF Demolition (y/N): ")
+hhf_demolitionInput = input("HHF Demolition (y/N): ")
 hhf_demolition = False or (hhf_demolitionInput in ['y', 'Y'])
 
-is_activeInput = raw_input("Mark Active in inventory (Y/n): ")
+is_activeInput = input("Mark Active in inventory (Y/n): ")
 is_active = False or (is_activeInput in ['y', 'Y'])
 
 
-price_Input = raw_input("Price [$3,500]: ")
+price_Input = input("Price [$3,500]: ")
 try:
 	price = int(price_Input)
 except ValueError:

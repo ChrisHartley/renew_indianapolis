@@ -96,7 +96,7 @@ class UploadedFile(models.Model):
         app = None
         if 'application' in request.GET:
             app_id = request.GET['application']
-            if app_id is not u'':
+            if app_id is not '':
                 try:
                     app = Application.objects.get(id=app_id)
                 except Application.DoesNotExist:

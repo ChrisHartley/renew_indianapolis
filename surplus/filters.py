@@ -66,7 +66,7 @@ class SurplusParcelFilter(django_filters.FilterSet):
         )
 
     def big_ask_filter(self, queryset, name, value):
-        print('in big ask!', value)
+        print(('in big ask!', value))
         if value==True:
             q = queryset.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True))
             print(q)

@@ -126,17 +126,17 @@ class CreateIcsFromShowing(View):
             e.add('location', '{0}, Indianapolis, IN'.format(','.join(props_addresses),))
             people = []
             organizer = vCalAddress('MAILTO:{}'.format(request.user.email,))
-            organizer.params['cn'] = vText(u'{} {}'.format(request.user.first_name, request.user.last_name))
+            organizer.params['cn'] = vText('{} {}'.format(request.user.first_name, request.user.last_name))
             e.add('organizer', organizer, encode=0)
 
 
             for u in users:
                 try:
-                    people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
+                    people.append('{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
                 except ApplicantProfile.DoesNotExist:
-                    people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
+                    people.append('{} {} - {}'.format(u.first_name, u.last_name, u.email))
                 attendee = vCalAddress('MAILTO:{}'.format(u.email,))
-                attendee.params['cn'] = vText(u'{} {}'.format(u.first_name, u.last_name))
+                attendee.params['cn'] = vText('{} {}'.format(u.first_name, u.last_name))
         #        e.add('attendee', attendee, encode=0)
 
             for staff in settings.COMPANY_SETTINGS['city_staff']:
@@ -189,6 +189,6 @@ class propertyShowingReleaseView(ListView):
 
         for ps in self.get_queryset():
             for i in ps.inquiries.all():
-                requestors.append(u'{} {}'.format(i.user.first_name, i.user.last_name))
+                requestors.append('{} {}'.format(i.user.first_name, i.user.last_name))
         context['requestors'] = set(requestors)
         return context

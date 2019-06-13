@@ -39,7 +39,7 @@ class ApplicantProfile(models.Model):
         super(ApplicantProfile, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'{0}'.format(self.user.first_name)
+        return '{0}'.format(self.user.first_name)
 
 class Organization(models.Model):
 
@@ -112,7 +112,7 @@ class Organization(models.Model):
 
 
     def __unicode__(self):
-        return u'{0}'.format(self.name)
+        return '{0}'.format(self.name)
 
 
     class Meta:

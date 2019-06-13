@@ -32,8 +32,8 @@ class photo(models.Model):
 
     def __unicode__(self):
         if self.image:
-            return u'%s - %s' % (self.prop, basename(self.image.path))
-        return u'%s' % (self.prop, )
+            return '%s - %s' % (self.prop, basename(self.image.path))
+        return '%s' % (self.prop, )
 
     def save(self, *args, **kwargs):
         super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
@@ -41,12 +41,12 @@ class photo(models.Model):
         # image rotation code from http://stackoverflow.com/a/11543365/2731298
         e = None
         if hasattr(im, '_getexif'): # only present in JPEGs
-            for orientation in ExifTags.TAGS.keys():
+            for orientation in list(ExifTags.TAGS.keys()):
                 if ExifTags.TAGS[orientation]=='Orientation':
                     break
             e = im._getexif()       # returns None if no EXIF data
         if e is not None:
-            exif=dict(e.items())
+            exif=dict(list(e.items()))
             orientation = exif.get(orientation, None)
 
             if orientation == 3:   im = im.transpose(Image.ROTATE_180)

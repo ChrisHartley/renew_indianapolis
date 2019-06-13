@@ -30,7 +30,7 @@ try:
     # Activate your virtual env
     activate_env = os.path.expanduser(
         "/home/django/.virtualenvs/blight_fight/bin/activate_this.py")
-    execfile(activate_env, dict(__file__=activate_env))
+    exec(compile(open(activate_env).read(), activate_env, 'exec'), dict(__file__=activate_env))
 
 except ImportError:
     pass

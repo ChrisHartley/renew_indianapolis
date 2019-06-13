@@ -165,7 +165,7 @@ class Parcel(models.Model):
         super(Parcel, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.street_address, self.parcel_number)
+        return '{0} - {1}'.format(self.street_address, self.parcel_number)
 
     def natural_key(self):
-        return u'{0} - {1}'.format(self.street_address, self.parcel_number)
+        return '{0} - {1}'.format(self.street_address, self.parcel_number)

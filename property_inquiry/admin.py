@@ -124,7 +124,7 @@ class propertyInquiryAdmin(admin.ModelAdmin, ExportCsvMixin):
     def number_of_pictures(self, obj):
         url = reverse('property_photos', kwargs={'parcel':obj.Property.parcel,})
         count = obj.Property.photo_set.get_queryset().count()
-        link = u'<a href="{}">{}</a>'.format(url,count)
+        link = '<a href="{}">{}</a>'.format(url,count)
         return mark_safe(link)
     number_of_pictures.short_description = 'Number of photos of property in BlightFight'
 
@@ -132,10 +132,10 @@ class propertyInquiryAdmin(admin.ModelAdmin, ExportCsvMixin):
         cr = ConditionReport.objects.filter(Property__exact=obj.Property).order_by('timestamp').first()
         if cr is not None:
             url = reverse('admin:property_condition_conditionreport_change', args=(cr.id,))
-            name_link = u'<a href="{}">{}</a>'.format(url,cr.timestamp)
+            name_link = '<a href="{}">{}</a>'.format(url,cr.timestamp)
         else:
             url = reverse('admin:property_condition_conditionreport_add')
-            name_link = u'<a href="{}">{}</a>'.format(url,'Add')
+            name_link = '<a href="{}">{}</a>'.format(url,'Add')
         return mark_safe(name_link)
     condition_report_link.short_description = 'Condition Report'
 
@@ -143,8 +143,8 @@ class propertyInquiryAdmin(admin.ModelAdmin, ExportCsvMixin):
         return Application.objects.filter(Property=obj.Property).filter(status=Application.COMPLETE_STATUS).count()
 
     def user_name(self, obj):
-        email_link = u'<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
-        name_link = u'<a href="{}">{}</a>'.format(
+        email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
+        name_link = '<a href="{}">{}</a>'.format(
              reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
                  obj.user.first_name + ' ' + obj.user.last_name
              )
@@ -200,7 +200,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
         if obj.pk is None:
             return '-'
         return mark_safe(
-            u'<a target="_blank" href="{}">{}</a>'.format(
+            '<a target="_blank" href="{}">{}</a>'.format(
                 reverse('property_inquiry_create_showing_ics', kwargs={'pks': obj.pk}),
                 'Add to Calendar and Publish')
             )
@@ -208,7 +208,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
         if obj.pk is None:
             return '-'
         return mark_safe(
-            u'<a target="_blank" href="{}">{}</a>'.format(
+            '<a target="_blank" href="{}">{}</a>'.format(
                 reverse('property_inquiry_showing_emails', args={obj.pk}),
                 'Generate Showing Email Template')
             )
@@ -217,7 +217,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
         if obj.pk is None:
             return '-'
         return mark_safe(
-            u'<a target="_blank" href="{}">{}</a>'.format(
+            '<a target="_blank" href="{}">{}</a>'.format(
                 reverse('property_inquiry_showing_release', args={obj.pk}),
                 'Generate Sign-in Sheet and Release')
         )
@@ -226,7 +226,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
         if obj.pk is None:
             return '-'
         url = reverse("send_class_file", kwargs={'app_name': 'property_inquiry', 'class_name': 'propertyShowing', 'pk':obj.id, 'field_name':'signin_sheet'})
-        link = u'<a href="{}">Download</a>'.format(url,)
+        link = '<a href="{}">Download</a>'.format(url,)
         return mark_safe(link)
     download_signin_sheet.short_description = 'Download Signin Sheet'
 
@@ -276,7 +276,7 @@ class propertyShowingAdmin(admin.ModelAdmin):
            url = '{}?parcel={}&rsvpId={}'.format(reverse('submit_property_inquiry'), obj.Property.parcel, obj.id)
         else:
            return '-'
-        link = u'<a href="{}">Link</a>'.format(url,)
+        link = '<a href="{}">Link</a>'.format(url,)
         return mark_safe(link)
     get_inquiry_rsvp_id.short_description = 'URL for inquiry with auto RSVP'
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.shortcuts import render, get_object_or_404
 import mimetypes
@@ -10,7 +10,7 @@ from wsgiref.util import FileWrapper
 import xlsxwriter
 from os.path import getmtime
 import datetime
-from ePP_simple_api import ePPHelper
+from .ePP_simple_api import ePPHelper
 from property_inventory.models import Property, MVAClassifcation, blc_listing
 from django.views import View
 from django.utils import timezone
@@ -222,8 +222,8 @@ class propertyImportCreator(View):
         d['Custom.Mowing Type'] = 'Mow',
         d['Custom.Sales Program'] = sales_program,
 
-        header_text_fields = [u'Parcel Number']
-        header_date_fields = [u'Custom.Mow List Change Date', u'Sold Date', u'Acquisition Date']
+        header_text_fields = ['Parcel Number']
+        header_date_fields = ['Custom.Mow List Change Date', 'Sold Date', 'Acquisition Date']
         FILENAME = '/tmp/property-import-{0}.xlsx'.format(prop.parcel,)
 
         workbook = xlsxwriter.Workbook(FILENAME)
@@ -233,12 +233,12 @@ class propertyImportCreator(View):
         date_format = workbook.add_format({'num_format': 'MM/DD/YY'})
 
         idx = 0
-        for k, v in d.items():
+        for k, v in list(d.items()):
             worksheet.write(0, idx, k)
             idx += 1
 
         idx = 0
-        for k, v in d.items():
+        for k, v in list(d.items()):
             if k in header_text_fields:
                 worksheet.write(1, idx, v[0], text_format) # write parcel numbers as text
             elif k in header_date_fields:

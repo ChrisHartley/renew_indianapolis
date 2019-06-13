@@ -120,8 +120,8 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
         return mark_safe(summary_link)
 
     def user_readable(self, obj):
-        email_link = u'<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Application: '+str(obj.Property), 'Dear ' +obj.user.first_name+', I have received your application for '+str(obj.Property)+'', obj.user.email)
-        name_link = u'<a href="{}">{}</a>'.format(
+        email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Application: '+str(obj.Property), 'Dear ' +obj.user.first_name+', I have received your application for '+str(obj.Property)+'', obj.user.email)
+        name_link = '<a href="{}">{}</a>'.format(
              reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
                  obj.user.first_name + ' ' + obj.user.last_name
              )
@@ -153,14 +153,14 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
     property_inquiry_count.boolean = True
 
     def user_link(self, obj):
-       return mark_safe(u'<a href="{}">{}</a>'.format(
+       return mark_safe('<a href="{}">{}</a>'.format(
             reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
-                u'{0} {1} {2}'.format(obj.user.first_name, obj.user.last_name, obj.user.email).strip()
+                '{0} {1} {2}'.format(obj.user.first_name, obj.user.last_name, obj.user.email).strip()
             ))
     user_link.short_description = 'user'
 
     def n_notification(self, obj):
-        return mark_safe(u'<a target="_blank" href="{}">{}</a>'.format(
+        return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
             reverse("application_neighborhood_notification", kwargs={'pk':obj.id}),
                 "Neighborhood Notification"
             ))
@@ -171,7 +171,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
     def num_scheduled_apps(self, obj):
         count = Application.objects.filter(Property__exact=obj.Property).filter(status__exact=Application.COMPLETE_STATUS).filter(meeting__isnull=False).count()
         if obj.Property is not None:
-            summary_link = u'<a href="{}">{}</a>'.format(
+            summary_link = '<a href="{}">{}</a>'.format(
                 reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.Property.parcel,), count)
         else:
             summary_link = '-'

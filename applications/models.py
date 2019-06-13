@@ -22,7 +22,7 @@ class UploadToApplicationDir(object):
         self.sub_path = sub_path
 
     def __call__(self, instance, filename):
-        return u'applicants/{0}/{1}{2}'.format(instance.user.email, self.sub_path, filename)
+        return 'applicants/{0}/{1}{2}'.format(instance.user.email, self.sub_path, filename)
 
 
 class Application(models.Model):
@@ -364,8 +364,8 @@ class Application(models.Model):
 
     def __unicode__(self):
         if self.organization:
-            return u'%s - %s - %s' % (self.organization.name, self.user.email, self.Property)
-        return u'%s %s - %s - %s' % (self.user.first_name, self.user.last_name, self.user.email, self.Property)
+            return '%s - %s - %s' % (self.organization.name, self.user.email, self.Property)
+        return '%s %s - %s - %s' % (self.user.first_name, self.user.last_name, self.user.email, self.Property)
 
 
 class TransferApplication(Application):
@@ -390,7 +390,7 @@ class Meeting(models.Model):
     meeting_type = models.IntegerField(choices=MEETING_TYPE_CHOICES)
     resolution_number = models.CharField(max_length=254, blank=True)
     def __unicode__(self):
-        return u'%s - %s' % (self.get_meeting_type_display(), self.meeting_date)
+        return '%s - %s' % (self.get_meeting_type_display(), self.meeting_date)
 
     class Meta:
         ordering = ['meeting_date']
@@ -435,7 +435,7 @@ class MeetingLink(models.Model):
         return self.meeting.meeting_date
 
     def __unicode__(self):
-        return u'%s - %s' % (self.meeting, self.get_meeting_outcome_display())
+        return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     def save(self, *args, **kwargs):
         if self.application.status != Application.WITHDRAWN_STATUS: # If an application is withdrawn then don't update meetings, etc even if it was approved.
@@ -465,14 +465,14 @@ class MeetingLink(models.Model):
                 prop = self.application.Property
                 body = self.meeting.get_meeting_type_display()
                 if body == 'Metropolitan Development Commission':
-                    body = u'MDC'
+                    body = 'MDC'
                 date = self.meeting.meeting_date
-                prop.status = u'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
+                prop.status = 'Sale approved by {0} {1}'.format(body, date.strftime('%m/%d/%Y'))
                 prop.buyer_application = self.application
                 if self.application.organization:
-                    prop.applicant = u'{0} {1} - {2}'.format(self.application.user.first_name, self.application.user.last_name, self.application.organization)
+                    prop.applicant = '{0} {1} - {2}'.format(self.application.user.first_name, self.application.user.last_name, self.application.organization)
                 else:
-                    prop.applicant = u'{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
+                    prop.applicant = '{0} {1}'.format(self.application.user.first_name, self.application.user.last_name)
                 prop.save()
 
 
@@ -577,7 +577,7 @@ class PriceChangeMeetingLink(models.Model):
         return self.meeting.meeting_date
 
     def __unicode__(self):
-        return u'%s - %s' % (self.meeting, self.get_meeting_outcome_display())
+        return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     # When saving this intermediary linkage object we save it and update the price_change and property_object to reflect approval, if given.
     def save(self, *args, **kwargs):

@@ -71,7 +71,7 @@ class Room(models.Model):
     conditionreport = models.ForeignKey('property_condition.ConditionReport')
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.conditionreport, self.get_room_type_display())
+        return '{0} - {1}'.format(self.conditionreport, self.get_room_type_display())
 
 def content_file_name(instance, filename):
     path = '/'.join(['condition_report', instance.Property.streetAddress, filename])
@@ -247,7 +247,7 @@ class ConditionReport(models.Model):
             image.save(filename)
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.Property, self.timestamp)
+        return '{0} - {1}'.format(self.Property, self.timestamp)
 
 class ConditionReportProxy(ConditionReport):
     class Meta:

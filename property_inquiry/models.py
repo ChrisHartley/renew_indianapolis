@@ -57,7 +57,7 @@ class propertyInquiry(models.Model):
         verbose_name_plural = "property inquiries"
 
     def __unicode__(self):
-        return u'{0} - {1} {2} ({3}) - {4} - {5}'.format(self.Property, self.user.first_name, self.user.last_name, self.user.email, self.timestamp.strftime('%x'), self.get_status_display())
+        return '{0} - {1} {2} ({3}) - {4} - {5}'.format(self.Property, self.user.first_name, self.user.last_name, self.user.email, self.timestamp.strftime('%x'), self.get_status_display())
 
 def save_location(instance, filename):
     return "property_showing/{0}/{1}/{2}".format(instance.Property, instance.datetime.strftime('%Y-%m-%d'), filename)
@@ -87,9 +87,9 @@ def save_calendar_events(showing):
                 users.append(k)
             for u in users:
                 try:
-                    people.append(u'{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
+                    people.append('{} {} - {} {}'.format(u.first_name, u.last_name, u.email, u.profile.phone_number))
                 except ApplicantProfile.DoesNotExist:
-                    people.append(u'{} {} - {}'.format(u.first_name, u.last_name, u.email))
+                    people.append('{} {} - {}'.format(u.first_name, u.last_name, u.email))
             #for inq in self.inquiries.all():
 
             e['description'] = render_to_string('property_inquiry/property_showing_ics_description.txt', {'showing': showing, 'properties': Property.objects.filter(pk=showing.Property.pk), 'users': people})
@@ -205,7 +205,7 @@ class propertyShowing(models.Model):
 
 
     def __unicode__(self):
-        return u'{0} - {1}'.format(self.Property, datetime.strftime(localtime(self.datetime), '%x, %-I:%M%p') )
+        return '{0} - {1}'.format(self.Property, datetime.strftime(localtime(self.datetime), '%x, %-I:%M%p') )
 
 class PropertyInquirySummary(propertyInquiry):
     class Meta:
