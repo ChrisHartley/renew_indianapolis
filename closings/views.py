@@ -149,7 +149,6 @@ class ProcessingFeePaidPage(View):
             obj.save()
             closing.save()
         except Exception as e:
-            print "terrible error!!!"
             messages.add_message(request, messages.ERROR, 'There was a problem with our system, please contact support.')
             return HttpResponse("Error saving payment object: {0}".format(e))
         messages.add_message(request, messages.SUCCESS, 'Your card has been charged and our staff have been notified to proceed with your closing.')
