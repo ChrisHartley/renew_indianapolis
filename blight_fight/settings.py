@@ -66,17 +66,29 @@ INSTALLED_APPS = (
     'ncst',
 )
 
-MIDDLEWARE_CLASSES = (
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
+# MIDDLEWARE_CLASSES = (
+# #    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+#     'django_tables2_reports.middleware.TableReportMiddleware',
+# )
+
+MIDDLEWARE = [
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_tables2_reports.middleware.TableReportMiddleware',
-)
+]
 
 ROOT_URLCONF = 'blight_fight.urls'
 

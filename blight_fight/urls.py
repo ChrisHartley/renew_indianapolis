@@ -25,9 +25,9 @@ from utils.views import DonateView, send_class_file
 from commind.views import view_document, CommIndApplicationFormView, PropertyListView, CommIndApplicationSuccessView, CommIndApplicationDetailView
 
 admin.site.site_header = 'Blight Fight administration'
-from django.conf.urls import include, url  # For django versions before 2.0
+from django.conf.urls import url  # For django versions before 2.0
 urlpatterns = [
-        url(r'admin/', include(admin.site.urls)),
+        url(r'admin/', admin.site.urls),
         url(r'^favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico', permanent=True)),
         url(r'^$', profile_home,
            name='applicants_home'),
@@ -86,7 +86,7 @@ urlpatterns = [
         url(r'property/(?P<parcel>[0-9]{7})/json$',
             PropertyDetailJSONView.as_view(), name='property_detail_json'),
         url(r'property/(?P<parcel>[0-9]{7})/epp.xlsx$',
-                staff_member_required(propertyImportCreator.as_view()), name='property_export_epp'),    
+                staff_member_required(propertyImportCreator.as_view()), name='property_export_epp'),
 
         url(r'overlay_area/context_areas/$', ContextAreaListJSONView.as_view(), name='overlay_area'),
 
@@ -239,7 +239,6 @@ urlpatterns = [
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
         url(r'donate/$', DonateView.as_view(), name='donate'),
         url(r'file/(?P<app_name>.*)/(?P<class_name>.*)/(?P<pk>[0-9]+)/(?P<field_name>.*)/$', send_class_file, name='send_class_file'),
-#app_name, class_name, pk, field_name
 
         # commind - Commercial Industrial URLS
         url(r'^media/documents/(?P<filename>.*)', view_document, name='view_commind_document'),
