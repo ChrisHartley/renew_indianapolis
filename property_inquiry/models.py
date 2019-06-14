@@ -21,8 +21,8 @@ from django.utils.encoding import python_2_unicode_compatible
 
 @python_2_unicode_compatible
 class propertyInquiry(models.Model):
-    user = models.ForeignKey(User)
-    Property = models.ForeignKey(Property, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    Property = models.ForeignKey(Property, blank=True, null=True, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(
         auto_now_add=True, verbose_name="Time/Date")
     showing_scheduled = models.DateTimeField(blank=True, null=True)
@@ -135,7 +135,7 @@ def save_calendar_events(showing):
 
 @python_2_unicode_compatible
 class propertyShowing(models.Model):
-    Property = models.ForeignKey(Property, blank=False, null=False)
+    Property = models.ForeignKey(Property, blank=False, null=False, on_delete=models.CASCADE)
     datetime = models.DateTimeField(verbose_name="Time/Date")
     notes = models.CharField(blank=True, max_length=1024)
     inquiries = models.ManyToManyField(

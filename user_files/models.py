@@ -70,9 +70,9 @@ class UploadedFile(models.Model):
          (PURPOSE_FLOOR_PLAN, 'Floor plan'),
 
     )
-    user = models.ForeignKey(User)
-    organization = models.ForeignKey(Organization, null=True, blank=True, related_name="file")
-    application = models.ForeignKey(Application, null=True, blank=True, related_name="file")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, null=True, blank=True, related_name="file", on_delete=models.CASCADE)
+    application = models.ForeignKey(Application, null=True, blank=True, related_name="file", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     supporting_document = models.FileField(
         upload_to="attachments/%Y/%m/%d", max_length=512)

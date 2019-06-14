@@ -24,13 +24,13 @@ class location(models.Model):
 
 @python_2_unicode_compatible
 class company_contact(models.Model):
-    company = models.ForeignKey('title_company')
+    company = models.ForeignKey('title_company', on_delete=models.CASCADE)
     title = models.CharField(blank=True, max_length=255)
     first_name = models.CharField(blank=False, max_length=255)
     last_name = models.CharField(blank=False, max_length=255)
     phone_number = PhoneNumberField()
     email_address = models.CharField(max_length=254)
-    address = models.ForeignKey('mailing_address', blank=True, null=True)
+    address = models.ForeignKey('mailing_address', blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "company contacts"
@@ -58,8 +58,8 @@ class mailing_address(models.Model):
 @python_2_unicode_compatible
 class title_company(models.Model):
     name = models.CharField(max_length=254)
-    primary_contact = models.ForeignKey('company_contact', blank=True, null=True)
-    address = models.ForeignKey('mailing_address', blank=True, null=True)
+    primary_contact = models.ForeignKey('company_contact', blank=True, null=True, on_delete=models.CASCADE)
+    address = models.ForeignKey('mailing_address', blank=True, null=True, on_delete=models.CASCADE)
     offer_to_users = models.BooleanField(default=True)
 
     class Meta:
@@ -76,9 +76,9 @@ def save_location(instance, filename):
 
 @python_2_unicode_compatible
 class processing_fee(models.Model):
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    closing = models.ForeignKey('closing', blank=False, editable=False, related_name='processing_fee')
+    closing = models.ForeignKey('closing', blank=False, editable=False, related_name='processing_fee', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     stripe_token = models.CharField(max_length=30, blank=True, editable=False)
     paid = models.BooleanField(default=False)
@@ -106,7 +106,7 @@ def today_plus_1_year():
 
 @python_2_unicode_compatible
 class purchase_option(models.Model):
-    closing = models.ForeignKey('closing')
+    closing = models.ForeignKey('closing', on_delete=models.CASCADE)
     date_purchased = models.DateField(blank=False, null=False, default=date.today)
     date_expiring = models.DateField(blank=False, null=False, default=today_plus_1_year)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
@@ -127,11 +127,11 @@ class purchase_option(models.Model):
 
 @python_2_unicode_compatible
 class closing(models.Model):
-    application = models.ForeignKey(Application, help_text="Select the application if it is in the system", null=True, blank=True, related_name='closing_set')
-    prop = models.ForeignKey(Property, verbose_name="Property", help_text="Select the property only if this is a legacy application that is not listed under Application", null=True, blank=True)
+    application = models.ForeignKey(Application, help_text="Select the application if it is in the system", null=True, blank=True, related_name='closing_set', on_delete=models.CASCADE)
+    prop = models.ForeignKey(Property, verbose_name="Property", help_text="Select the property only if this is a legacy application that is not listed under Application", null=True, blank=True, on_delete=models.CASCADE)
     date_time = models.DateTimeField(blank=True, null=True)
-    location = models.ForeignKey('location', blank=True, null=True)
-    title_company = models.ForeignKey(title_company, blank=True, null=True)
+    location = models.ForeignKey('location', blank=True, null=True, on_delete=models.CASCADE)
+    title_company = models.ForeignKey(title_company, blank=True, null=True, on_delete=models.CASCADE)
     title_company_freeform = models.CharField(max_length=255, blank=True, null=True)
     title_commitment = models.FileField(upload_to=save_location, blank=True, null=True)
     closing_statement = models.FileField(upload_to=save_location, blank=True, null=True)
@@ -148,7 +148,7 @@ class closing(models.Model):
     signed_purchase_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     renew_sales_disclosure_form = models.FileField(upload_to=save_location, blank=True, null=True)
     city_sales_disclosure_form = models.FileField(upload_to=save_location, blank=True, null=True)
-    assigned_city_staff = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, limit_choices_to={'groups__name__in': ["City Staff",]})
+    assigned_city_staff = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, limit_choices_to={'groups__name__in': ["City Staff",]}, on_delete=models.CASCADE)
     closed = models.BooleanField(default=False, help_text="Has this transaction been completed?")
     notes = models.CharField(max_length=2048, blank=True, help_text="Internal notes")
     city_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for the City of Indianapolis", blank=False, default=0)

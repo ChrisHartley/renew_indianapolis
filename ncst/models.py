@@ -72,9 +72,9 @@ class Property(models.Model):
 
     update_from_server = models.BooleanField(default=True, help_text="Attempt to update street address, etc from remote server on next save.")
 
-    program = models.ForeignKey(Program, null=False)
-    seller = models.ForeignKey(Seller, null=False)
-    contact = models.ForeignKey(Contact, null=True, blank=True)
+    program = models.ForeignKey(Program, null=False, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Seller, null=False, on_delete=models.CASCADE)
+    contact = models.ForeignKey(Contact, null=True, blank=True, on_delete=models.CASCADE)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -86,7 +86,7 @@ class Property(models.Model):
     notes = models.CharField(blank=True, max_length=1024)
 
     closing_date = models.DateTimeField(blank=True, null=True)
-    title_company = models.ForeignKey('closings.title_company', blank=True, null=True)
+    title_company = models.ForeignKey('closings.title_company', blank=True, null=True, on_delete=models.CASCADE)
     closed = models.BooleanField(
         default=False,
         blank=False,
