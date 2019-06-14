@@ -10,6 +10,9 @@ class market_value_analysis(models.Model):
     geoid = models.CharField(max_length=50)
     geometry = models.MultiPolygonField(srid=2965)
 
+    def __str__(self):
+        return '{}'.format(self.classification,)
+
 @python_2_unicode_compatible
 class parcel(models.Model):
     parcel_number = models.CharField(max_length=7)

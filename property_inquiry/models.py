@@ -209,14 +209,12 @@ class propertyShowing(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.Property, datetime.strftime(localtime(self.datetime), '%x, %-I:%M%p') )
 
-@python_2_unicode_compatible
 class PropertyInquirySummary(propertyInquiry):
     class Meta:
         proxy = True
         verbose_name = 'Property Inquiry Summary'
         verbose_name_plural = 'Property Inquiry Summaries'
 
-@python_2_unicode_compatible
 class PropertyInquiryMapProxy(propertyInquiry):
    class Meta:
        proxy = True

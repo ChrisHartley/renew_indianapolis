@@ -259,13 +259,11 @@ class closing(models.Model):
             else:
                 return '{0} - {1}'.format(self.prop, "Legacy Application")
 
-@python_2_unicode_compatible
 class closing_proxy(closing):
     class Meta:
         proxy = True
         verbose_name = 'Closing Scheduling'
-        
-@python_2_unicode_compatible
+
 class closing_proxy2(closing):
     class Meta:
         proxy = True

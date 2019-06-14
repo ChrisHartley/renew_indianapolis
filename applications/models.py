@@ -368,7 +368,6 @@ class Application(models.Model):
             return '%s - %s - %s' % (self.organization.name, self.user.email, self.Property)
         return '%s %s - %s - %s' % (self.user.first_name, self.user.last_name, self.user.email, self.Property)
 
-@python_2_unicode_compatible
 class TransferApplication(Application):
     pass
 
@@ -547,7 +546,6 @@ class MeetingLink(models.Model):
     class Meta:
         get_latest_by = 'meeting_date'
 
-@python_2_unicode_compatible
 class ApplicationMeetingSummary(MeetingLink):
     class Meta:
         proxy = True

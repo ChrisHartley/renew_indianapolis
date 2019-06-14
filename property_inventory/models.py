@@ -33,31 +33,24 @@ class Overlay(models.Model):
         abstract = True
         ordering = ['name']
 
-@python_2_unicode_compatible
 class Zipcode(Overlay):
     pass
 
-@python_2_unicode_compatible
 class CDC(Overlay):
     CDCtype = models.CharField(max_length=50)
 
-@python_2_unicode_compatible
 class Zoning(Overlay):
     pass
 
-@python_2_unicode_compatible
 class Neighborhood(Overlay):
     pass
 
-@python_2_unicode_compatible
 class ContextArea(Overlay):
     disposition_strategy = models.CharField(max_length=50)
 
-@python_2_unicode_compatible
 class MVAClassifcation(Overlay):
     mva_cat = models.CharField(max_length=10)
 
-@python_2_unicode_compatible
 class census_tract(Overlay):
     opportunity_zone = models.BooleanField(default=False, help_text="Federally designated opportunity zone.")
 
