@@ -2,6 +2,8 @@ from django.contrib.gis.db import models
 from property_inventory.models import Property
 from property_condition.models import ConditionReport
 from photos.models import photo
+from django.utils.encoding import python_2_unicode_compatible
+
 
 """
 ## The absurd query to populate this model from existing data:
@@ -39,7 +41,7 @@ when p.township = 'WARREN' then 8 when p.township = 'FRANKLIN' then 9
  st_within(st_centroid(p.geom), st_setsrid(z.geom, 2965)) where p.parcel_c in()
 
 """
-
+@python_2_unicode_compatible
 class Parcel(models.Model):
     #parcel_number = models.CharField(max_length=7, primary_key=True)
     parcel_number = models.CharField(max_length=7)
@@ -164,7 +166,7 @@ class Parcel(models.Model):
         self.area = self.geometry.area
         super(Parcel, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1}'.format(self.street_address, self.parcel_number)
 
     def natural_key(self):

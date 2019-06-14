@@ -7,6 +7,8 @@ from django.dispatch import receiver
 import os
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils.encoding import python_2_unicode_compatible
+
 
 from django.contrib.auth.models import User
 
@@ -34,6 +36,7 @@ def virus_scan(input_file):
     else:
         return False
 
+@python_2_unicode_compatible
 class UploadedFile(models.Model):
     PURPOSE_SOW = 1
     PURPOSE_POF = 2
@@ -81,7 +84,7 @@ class UploadedFile(models.Model):
     )
     send_with_neighborhood_notification = models.BooleanField(default=False, verbose_name='Include this file in the neighborhodo notification email?')
 
-    def __unicode__(self):
+    def __str__(self):
         return os.path.basename(self.supporting_document.name)
 
     @receiver(file_uploaded, sender=AjaxFileUploader)

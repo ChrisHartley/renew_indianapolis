@@ -12,6 +12,7 @@ from django.utils import timezone # use this for timezone aware times
 from django.core.mail import send_mail
 #from datetime import timedelta, date, datetime
 from django.utils.timezone import now
+from django.utils.encoding import python_2_unicode_compatible
 
 
 @deconstructible
@@ -24,7 +25,7 @@ class UploadToApplicationDir(object):
     def __call__(self, instance, filename):
         return 'applicants/{0}/{1}{2}'.format(instance.user.email, self.sub_path, filename)
 
-
+@python_2_unicode_compatible
 class Application(models.Model):
 
     user = models.ForeignKey(User)
@@ -362,15 +363,16 @@ class Application(models.Model):
             self.submitted_timestamp = timezone.now()
         super(Application, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.organization:
             return '%s - %s - %s' % (self.organization.name, self.user.email, self.Property)
         return '%s %s - %s - %s' % (self.user.first_name, self.user.last_name, self.user.email, self.Property)
 
-
+@python_2_unicode_compatible
 class TransferApplication(Application):
     pass
 
+@python_2_unicode_compatible
 class Meeting(models.Model):
     REVIEW_COMMITTEE = 1
     BOARD_OF_DIRECTORS = 2
@@ -389,13 +391,14 @@ class Meeting(models.Model):
     meeting_date = models.DateField()
     meeting_type = models.IntegerField(choices=MEETING_TYPE_CHOICES)
     resolution_number = models.CharField(max_length=254, blank=True)
-    def __unicode__(self):
+
+    def __str__(self):
         return '%s - %s' % (self.get_meeting_type_display(), self.meeting_date)
 
     class Meta:
         ordering = ['meeting_date']
 
-
+@python_2_unicode_compatible
 class MeetingLink(models.Model):
 
     APPROVED_STATUS = 1
@@ -434,7 +437,7 @@ class MeetingLink(models.Model):
     def meeting_date(self):
         return self.meeting.meeting_date
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     def save(self, *args, **kwargs):
@@ -544,7 +547,7 @@ class MeetingLink(models.Model):
     class Meta:
         get_latest_by = 'meeting_date'
 
-
+@python_2_unicode_compatible
 class ApplicationMeetingSummary(MeetingLink):
     class Meta:
         proxy = True
@@ -555,6 +558,7 @@ class ApplicationMeetingSummary(MeetingLink):
 """
 Sure would be nice to just inherient from MeetingLink and override application but not allowed except on abstract models so we have a lot of code duplication.
 """
+@python_2_unicode_compatible
 class PriceChangeMeetingLink(models.Model):
     APPROVED_STATUS = 1
     NOT_APPROVED_STATUS = 2
@@ -576,7 +580,7 @@ class PriceChangeMeetingLink(models.Model):
     def meeting_date(self):
         return self.meeting.meeting_date
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s - %s' % (self.meeting, self.get_meeting_outcome_display())
 
     # When saving this intermediary linkage object we save it and update the price_change and property_object to reflect approval, if given.

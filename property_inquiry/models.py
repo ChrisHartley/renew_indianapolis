@@ -17,7 +17,9 @@ from operator import itemgetter, attrgetter
 from itertools import groupby
 from applicants.models import ApplicantProfile
 from django.urls import reverse
+from django.utils.encoding import python_2_unicode_compatible
 
+@python_2_unicode_compatible
 class propertyInquiry(models.Model):
     user = models.ForeignKey(User)
     Property = models.ForeignKey(Property, blank=True, null=True)
@@ -56,7 +58,7 @@ class propertyInquiry(models.Model):
     class Meta:
         verbose_name_plural = "property inquiries"
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1} {2} ({3}) - {4} - {5}'.format(self.Property, self.user.first_name, self.user.last_name, self.user.email, self.timestamp.strftime('%x'), self.get_status_display())
 
 def save_location(instance, filename):
@@ -131,6 +133,7 @@ def save_calendar_events(showing):
                 break
     showing.save()
 
+@python_2_unicode_compatible
 class propertyShowing(models.Model):
     Property = models.ForeignKey(Property, blank=False, null=False)
     datetime = models.DateTimeField(verbose_name="Time/Date")
@@ -203,16 +206,17 @@ class propertyShowing(models.Model):
                         break
         super(propertyShowing, self).delete()
 
-
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1}'.format(self.Property, datetime.strftime(localtime(self.datetime), '%x, %-I:%M%p') )
 
+@python_2_unicode_compatible
 class PropertyInquirySummary(propertyInquiry):
     class Meta:
         proxy = True
         verbose_name = 'Property Inquiry Summary'
         verbose_name_plural = 'Property Inquiry Summaries'
 
+@python_2_unicode_compatible
 class PropertyInquiryMapProxy(propertyInquiry):
    class Meta:
        proxy = True

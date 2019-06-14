@@ -11,7 +11,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
 # used for geojson display of search results
-from vectorformats.Formats import Django, GeoJSON
+#from vectorformats.Formats import Django, GeoJSON
 from django.core.serializers import serialize  # new in 1.8 supports geojson
 from django.http import JsonResponse
 from django.core.serializers.json import Serializer
@@ -20,7 +20,7 @@ from django.utils.encoding import is_protected_type
 
 # these used for search() function, can be removed when that is removed
 # used for geojson display of search results
-from vectorformats.Formats import Django, GeoJSON
+#from vectorformats.Formats import Django, GeoJSON
 import csv  # used for csv return of search results
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q

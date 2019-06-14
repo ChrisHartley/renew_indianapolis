@@ -13,12 +13,16 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils import timezone # use this for timezone aware times
+from django.utils.encoding import python_2_unicode_compatible
 
+@python_2_unicode_compatible
 class location(models.Model):
     name = models.CharField(max_length=254)
-    def __unicode__(self):
+
+    def __str__(self):
         return self.name
 
+@python_2_unicode_compatible
 class company_contact(models.Model):
     company = models.ForeignKey('title_company')
     title = models.CharField(blank=True, max_length=255)
@@ -32,10 +36,10 @@ class company_contact(models.Model):
         verbose_name = "company contacts"
         verbose_name_plural = "company contacts"
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} {1} ({2})'.format(self.last_name, self.first_name, self.company)
 
-
+@python_2_unicode_compatible
 class mailing_address(models.Model):
     mailing_address_line1 = models.CharField(max_length=254)
     mailing_address_line2 = models.CharField(max_length=254, blank=True)
@@ -48,9 +52,10 @@ class mailing_address(models.Model):
         verbose_name = "mailing address"
         verbose_name_plural = "mailing addresses"
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} {1} {2} {3} {4} {5}'.format(self.mailing_address_line1, self.mailing_address_line2, self.mailing_address_line3, self.mailing_address_city, self.mailing_address_state, self.mailing_address_zip)
 
+@python_2_unicode_compatible
 class title_company(models.Model):
     name = models.CharField(max_length=254)
     primary_contact = models.ForeignKey('company_contact', blank=True, null=True)
@@ -60,7 +65,8 @@ class title_company(models.Model):
     class Meta:
         verbose_name = "title company"
         verbose_name_plural = "title companies"
-    def __unicode__(self):
+
+    def __str__(self):
         return '{0}'.format(self.name,)
 
 def save_location(instance, filename):
@@ -68,6 +74,7 @@ def save_location(instance, filename):
         return 'closings/{0}/{1}'.format(instance.application.Property, filename)
     return 'closings/{0}/{1}'.format(instance.prop, filename)
 
+@python_2_unicode_compatible
 class processing_fee(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -85,7 +92,7 @@ class processing_fee(models.Model):
     stripeTokenType = models.CharField(max_length=1024, blank=True, editable=False)
     stripeEmail = models.CharField(max_length=1024, blank=True, editable=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Processing Fee - {0}'.format(self.closing,)
 
     class Meta:
@@ -97,13 +104,14 @@ def today_plus_1_year():
     return date.today()+timedelta(days=365)
 
 
+@python_2_unicode_compatible
 class purchase_option(models.Model):
     closing = models.ForeignKey('closing')
     date_purchased = models.DateField(blank=False, null=False, default=date.today)
     date_expiring = models.DateField(blank=False, null=False, default=today_plus_1_year)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Purchase Option - {0} - exp {1}'.format(self.closing, self.date_expiring)
 
     def save(self, *args, **kwargs):
@@ -117,7 +125,7 @@ class purchase_option(models.Model):
         verbose_name = "purchase option"
         verbose_name_plural = "purchase options"
 
-
+@python_2_unicode_compatible
 class closing(models.Model):
     application = models.ForeignKey(Application, help_text="Select the application if it is in the system", null=True, blank=True, related_name='closing_set')
     prop = models.ForeignKey(Property, verbose_name="Property", help_text="Select the property only if this is a legacy application that is not listed under Application", null=True, blank=True)
@@ -243,8 +251,7 @@ class closing(models.Model):
                     from_email = 'info@renewindianapolis.org'
                     send_mail(subject, message, from_email, recipient,)
 
-
-    def __unicode__(self):
+    def __str__(self):
             if self.application:
                 if self.application.organization:
                         return '{0} - {1} {2} ({3})'.format(self.application.Property, self.application.user.first_name, self.application.user.last_name, self.application.organization)
@@ -252,11 +259,13 @@ class closing(models.Model):
             else:
                 return '{0} - {1}'.format(self.prop, "Legacy Application")
 
+@python_2_unicode_compatible
 class closing_proxy(closing):
     class Meta:
         proxy = True
         verbose_name = 'Closing Scheduling'
-
+        
+@python_2_unicode_compatible
 class closing_proxy2(closing):
     class Meta:
         proxy = True

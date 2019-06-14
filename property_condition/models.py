@@ -4,10 +4,11 @@ import numpy as np
 from django.conf import settings
 from django.db.models import Q
 #from property_inventory.models import Property
+from django.utils.encoding import python_2_unicode_compatible
 
 
 
-
+@python_2_unicode_compatible
 class Room(models.Model):
     ROOM_TYPE_CHOICES = (
         ('ATCFN','Attic, Finished'),
@@ -70,13 +71,14 @@ class Room(models.Model):
     dimensions = models.CharField(max_length=50, blank=True, null=False)
     conditionreport = models.ForeignKey('property_condition.ConditionReport')
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1}'.format(self.conditionreport, self.get_room_type_display())
 
 def content_file_name(instance, filename):
     path = '/'.join(['condition_report', instance.Property.streetAddress, filename])
     return path
 
+@python_2_unicode_compatible
 class ConditionReport(models.Model):
 
     GOOD_STATUS = 3
@@ -246,9 +248,10 @@ class ConditionReport(models.Model):
             image.thumbnail(size, Image.ANTIALIAS)
             image.save(filename)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1}'.format(self.Property, self.timestamp)
 
+@python_2_unicode_compatible
 class ConditionReportProxy(ConditionReport):
     class Meta:
         proxy = True

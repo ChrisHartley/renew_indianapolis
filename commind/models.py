@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 from django.contrib.gis.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation

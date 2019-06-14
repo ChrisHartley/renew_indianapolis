@@ -7,11 +7,12 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from PIL import Image, ExifTags
 from django.conf import settings
+from django.utils.encoding import python_2_unicode_compatible
 
 def save_location(instance, filename):
     return 'property_photos/{0}/{1}'.format(instance.prop or instance.prop_ncst or 'no_property', filename)
 
-
+@python_2_unicode_compatible
 class photo(models.Model):
     prop = models.ForeignKey('property_inventory.Property', null=True, blank=True)
     prop_ncst = models.ForeignKey('ncst.Property', null=True, blank=True)
@@ -30,7 +31,7 @@ class photo(models.Model):
 
     image_tag.short_description = 'Image'
 
-    def __unicode__(self):
+    def __str__(self):
         if self.image:
             return '%s - %s' % (self.prop, basename(self.image.path))
         return '%s' % (self.prop, )

@@ -1,5 +1,6 @@
 from django.db import models
 from property_inventory.models import Property
+from django.utils.encoding import python_2_unicode_compatible
 
 # put uploaded files in subdirectory based on address
 
@@ -10,7 +11,7 @@ def content_file_name(instance, filename):
     else:
         return '/'.join(['annual_reports', instance.Property.streetAddress, filename])
 
-
+@python_2_unicode_compatible
 class annual_report(models.Model):
 
     parcel = models.CharField(max_length=7, blank=True, null=True)
@@ -70,7 +71,7 @@ class annual_report(models.Model):
     other_picture = models.ImageField(
         upload_to=content_file_name, blank=True, help_text='Project photo of your choice (optional)')
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1} - {2}'.format(self.Property, self.created, self.certificate_of_completion_ready)
 
 

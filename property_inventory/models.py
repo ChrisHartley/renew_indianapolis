@@ -5,12 +5,15 @@ import datetime # used for price_change summary view
 from django.apps import apps
 from django.utils.text import slugify
 from utils.utils import pull_property_info_from_arcgis
+from django.utils.encoding import python_2_unicode_compatible
+
 
 ### This is the parent model inherited by various overlay models, collections of geometries
 ### such as zip codes, census tracts, CDC focus areas, etc that a Property (below) could fall within.
 ### These are calculated when the Property is first created. I believe I tried not having a ForeignKey in the
 ### Property definition but it was crazy slow to compute st_within for all the properties 3-4 times. It would be
 ### more elegant though.
+@python_2_unicode_compatible
 class Overlay(models.Model):
     name = models.CharField(max_length=255)
     geometry = models.MultiPolygonField(srid=4326)
@@ -20,7 +23,7 @@ class Overlay(models.Model):
     def area(self):
         return GEOSGeometry(self.geometry).area
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s' % (self.name)
 
     def natural_key(self):
@@ -30,27 +33,31 @@ class Overlay(models.Model):
         abstract = True
         ordering = ['name']
 
-
+@python_2_unicode_compatible
 class Zipcode(Overlay):
     pass
 
-
+@python_2_unicode_compatible
 class CDC(Overlay):
     CDCtype = models.CharField(max_length=50)
 
-
+@python_2_unicode_compatible
 class Zoning(Overlay):
     pass
 
+@python_2_unicode_compatible
 class Neighborhood(Overlay):
     pass
 
+@python_2_unicode_compatible
 class ContextArea(Overlay):
     disposition_strategy = models.CharField(max_length=50)
 
+@python_2_unicode_compatible
 class MVAClassifcation(Overlay):
     mva_cat = models.CharField(max_length=10)
 
+@python_2_unicode_compatible
 class census_tract(Overlay):
     opportunity_zone = models.BooleanField(default=False, help_text="Federally designated opportunity zone.")
 
@@ -60,6 +67,7 @@ class census_tract(Overlay):
 ### parcel number. It has various attributes, including geometry, and can fall within a Overlay geometry (above).
 ###
 ###
+@python_2_unicode_compatible
 class Property(models.Model):
 
     PROPERTY_TYPES = (('lb', 'Landbank'), ('sp', 'County Owned Surplus'))
@@ -144,7 +152,7 @@ class Property(models.Model):
     def natural_key(self):
         return '%s - %s' % (self.streetAddress, self.parcel)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s - %s' % (self.streetAddress, self.parcel)
 
     ## added this function to calculate centroid of the geometry on saving, as it not otherwise available.
@@ -177,6 +185,7 @@ class Property(models.Model):
 Add notes to properties, for staff use.
 Added 20170630.
 """
+@python_2_unicode_compatible
 class note(models.Model):
     Property = models.ForeignKey(Property)
 #    user = models.ForeignKey(User)
@@ -184,14 +193,14 @@ class note(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0}...'.format(self.text[0:12],)
 
 def price_change_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'price_change/{0}/{1}/{2}'.format(slugify(instance.Property), instance.datestamp, filename)
 
-
+@python_2_unicode_compatible
 class price_change(models.Model):
     Property = models.ForeignKey(Property)
     proposed_price = models.DecimalField(max_digits=8, decimal_places=2,
@@ -231,13 +240,14 @@ class price_change(models.Model):
         return apps.get_model('property_inquiry', 'propertyInquiry').objects.filter(Property=self.Property).filter(timestamp__range=(start_day, end_day)).count()
 
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1} - {2}'.format(self.Property, self.datestamp, self.proposed_price)
 
     class Meta:
         verbose_name = 'price change'
         verbose_name_plural = 'price changes'
 
+@python_2_unicode_compatible
 class featured_property(models.Model):
     Property = models.ForeignKey(Property, related_name='featured_property')
     start_date = models.DateField()
@@ -248,9 +258,10 @@ class featured_property(models.Model):
         verbose_name = 'featured property'
         verbose_name_plural = 'featured properties'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0}, {1} - {2} - {3}'.format(self.Property, self.start_date, self.end_date, self.note[:15])
 
+@python_2_unicode_compatible
 class blc_listing(models.Model):
     Property = models.ForeignKey(Property, related_name='blc_listing')
     blc_id = models.CharField(max_length=50, blank=False)
@@ -264,9 +275,10 @@ class blc_listing(models.Model):
         verbose_name = 'blc listing'
         verbose_name_plural = 'blc listings'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1} - {2}'.format(self.Property, self.blc_id, self.date_time)
 
+@python_2_unicode_compatible
 class yard_sign(models.Model):
     Property = models.ForeignKey(Property, related_name='yard_sign')
     date_time = models.DateTimeField(auto_now_add=True)
@@ -277,9 +289,10 @@ class yard_sign(models.Model):
         verbose_name = 'yard sign'
         verbose_name_plural = 'yard signs'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1} - {2}'.format(self.Property, self.date_time, self.note[:20])
 
+@python_2_unicode_compatible
 class lockbox(models.Model):
     Property = models.ForeignKey(Property, related_name='lockbox')
     date_time = models.DateTimeField(auto_now_add=True)
@@ -291,10 +304,10 @@ class lockbox(models.Model):
         verbose_name = 'lockbox'
         verbose_name_plural = 'lockboxes'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1} - {2}'.format(self.Property, self.code, self.note[:20])
 
-
+@python_2_unicode_compatible
 class take_back(models.Model):
     Property = models.ForeignKey(Property, related_name='take_back')
     take_back_date = models.DateField(blank=False)
@@ -308,7 +321,7 @@ class take_back(models.Model):
         verbose_name = 'take backs'
         verbose_name_plural = 'take back'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1}'.format(self.Property, self.owner)
 
     def save(self, *args, **kwargs):

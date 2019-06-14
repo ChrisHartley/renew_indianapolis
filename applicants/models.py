@@ -2,10 +2,11 @@ from django.db import models
 #from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import User
 from localflavor.us.models import PhoneNumberField
+from django.utils.encoding import python_2_unicode_compatible
 
 #from applications.models import UploadedFile
 
-
+@python_2_unicode_compatible
 class ApplicantProfile(models.Model):
     user = models.OneToOneField(User, related_name="profile")
 
@@ -38,9 +39,10 @@ class ApplicantProfile(models.Model):
             self.external_system_id = 'INDY-APPLICANT-{0}'.format(self.id,)
         super(ApplicantProfile, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0}'.format(self.user.first_name)
 
+@python_2_unicode_compatible
 class Organization(models.Model):
 
     FRIEND = 1
@@ -110,8 +112,7 @@ class Organization(models.Model):
             self.external_system_id = 'INDY-ORGANIZATION-{0}'.format(self.id,)
         super(Organization, self).save(*args, **kwargs)
 
-
-    def __unicode__(self):
+    def __str__(self):
         return '{0}'.format(self.name)
 
 

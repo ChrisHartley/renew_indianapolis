@@ -3,6 +3,8 @@
 
 from django.db import models
 from property_inventory.models import census_tract
+from django.utils.encoding import python_2_unicode_compatible
+
 
 # Model saves census tract level analysis of sales disclosures
 # for the past 12 months. Should be updated monthly.
@@ -54,6 +56,8 @@ and s.num_parcels = 1 -- exclude bulk sales
 group by ct.id
 )
 """
+
+@python_2_unicode_compatible
 class tract_sdf_summary(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     census_tract = models.ForeignKey(census_tract, related_name='sdf_summary')
@@ -89,5 +93,5 @@ class tract_sdf_summary(models.Model):
         verbose_name = 'Census Tract Sales Summary'
         verbose_name_plural = 'Census Tract Sales Summaries'
 
-    def __str__(self):              # __unicode__ on Python 2
+    def __str__(self):              # __str__ on Python 2
         return '{} - {} - {}'.format(self.census_tract, self.created, self.get_with_improvements_display())

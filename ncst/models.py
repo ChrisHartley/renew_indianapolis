@@ -20,11 +20,13 @@ class Contact(models.Model):
     def __str__(self):
         return self.name
 
+@python_2_unicode_compatible
 class Program(models.Model):
     name = models.CharField(max_length=254, blank=False)
     def __str__(self):
         return self.name
 
+@python_2_unicode_compatible
 class Seller(models.Model):
     name = models.CharField(max_length=254, blank=False)
     def __str__(self):

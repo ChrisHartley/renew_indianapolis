@@ -11,7 +11,7 @@ from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
 
 class ProcessingFeeAdmin(admin.ModelAdmin):
-    list_display = ['__unicode__','due_date', 'date_paid', 'paid']
+    list_display = ['__str__','due_date', 'date_paid', 'paid']
     search_fields = ['closing__application__Property__streetAddress', 'closing__application__Property__parcel', 'closing__application__user__email','closing__application__user__first_name', 'closing__application__user__last_name']
 
 class PurchaseOptionInline(admin.TabularInline):
@@ -70,7 +70,7 @@ custom_batch_editing__admin_action.short_description = "Batch Update"
 class ClosingAdmin(admin.ModelAdmin):
 
     form = ClosingAdminForm
-    list_display = ['__unicode__','title_company','renew_owned', 'date_time', 'processing_fee_paid', 'assigned_city_staff']
+    list_display = ['__str__','title_company','renew_owned', 'date_time', 'processing_fee_paid', 'assigned_city_staff']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__organization__name', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'application__Property__renew_owned', 'archived')
     readonly_fields = (

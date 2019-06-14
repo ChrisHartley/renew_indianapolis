@@ -2,13 +2,15 @@
 
 
 from django.contrib.gis.db import models
+from django.utils.encoding import python_2_unicode_compatible
 
+@python_2_unicode_compatible
 class market_value_analysis(models.Model):
     classification = models.CharField(max_length=25)
     geoid = models.CharField(max_length=50)
     geometry = models.MultiPolygonField(srid=2965)
 
-
+@python_2_unicode_compatible
 class parcel(models.Model):
     parcel_number = models.CharField(max_length=7)
     street_address = models.CharField(max_length=255)
@@ -63,5 +65,5 @@ class parcel(models.Model):
 
     geometry = models.MultiPolygonField(srid=2965)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} - {1}'.format(self.street_address, self.parcel_number,)
