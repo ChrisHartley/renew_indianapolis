@@ -98,30 +98,49 @@ def showApplications(request):
         reviewPendingProperties = Property.objects.none().order_by('zipcode__name', 'streetAddress')
 
 
-    soldFilter = ApplicationStatusFilters(
-        request.GET, queryset=soldProperties, prefix="sold-")
-    approvedFilter = ApplicationStatusFilters(
-        request.GET, queryset=approvedProperties, prefix="approved-")
-    reviewPendingFilter = ApplicationStatusFilters(
-        request.GET, queryset=reviewPendingProperties, prefix="review_pending-")
-
-    soldTable = PropertyStatusTable(soldFilter.qs, prefix="sold-")
-    approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
-    reviewPendingTable = reviewPendingStatusTable(reviewPendingFilter.qs, prefix="review_pending-")
+#     soldFilter = ApplicationStatusFilters(
+#         request.GET, queryset=soldProperties, prefix="sold-")
+#     approvedFilter = ApplicationStatusFilters(
+#         request.GET, queryset=approvedProperties, prefix="approved-")
+#     reviewPendingFilter = ApplicationStatusFilters(
+#         request.GET, queryset=reviewPendingProperties, prefix="review_pending-")
+#
+# #    soldTable = PropertyStatusTable(soldFilter.qs, prefix="sold-")
+#    approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
+#    reviewPendingTable = reviewPendingStatusTable(reviewPendingFilter.qs, prefix="review_pending-")
 
     config.configure(reviewPendingTable)
     config.configure(soldTable)
     config.configure(approvedTable)
     return render(request, 'app_status_template.html', {
         'meeting': meeting_date,
-        'reviewPendingTable': reviewPendingTable,
-        'soldTable': soldTable,
-        'approvedTable': approvedTable,
+        # 'reviewPendingTable': reviewPendingTable,
+        # 'soldTable': soldTable,
+        # 'approvedTable': approvedTable,
         'title': 'applications & sale activity',
-        'soldFilter': soldFilter,
-        'approvedFilter': approvedFilter,
-        'reviewPendingFilter': reviewPendingFilter,
+        # 'soldFilter': soldFilter,
+        # 'approvedFilter': approvedFilter,
+        # 'reviewPendingFilter': reviewPendingFilter,
         })
+
+from django_tables2 import MultiTableMixin
+from django.views.generic.base import TemplateView
+class SoldPendingTable(tables.Table):
+    class Meta:
+        model = Property
+        template_name = 'django_tables2/bootstrap-responsive.html'
+
+
+class ApplicationSaleStatusView(MultiTableMixin, TemplateView):
+    #def get():
+#        pass
+    template_name = 'app_status_template.html'
+    table_pagination = {
+        'per_page': 30,
+    }
+    tables = [
+        SoldPendingTable(Property.objects.filter(status__startswith='Sold'))
+    ]
 
 
 class DisplayNameJsonSerializer(GeoJSONSerializer):
