@@ -92,7 +92,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('generate_epp_export','applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary', 'condition_report_link')
+    readonly_fields = ('blc_id', 'generate_epp_export','applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary', 'condition_report_link')
     actions = ["export_as_csv"]
 
     def main_photo(self, obj):
@@ -104,6 +104,16 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
 
     def context_area_name(self, obj):
         return ContextArea.objects.filter(geometry__contains=obj.geometry).first()
+
+    def blc_id(self, obj):
+        try:
+            blc = blc_listing.objects.get(Property=obj)
+        except blc_listing.DoesNotExist:
+            return '-'
+        return mark_safe("<a href='{}'>{}</a>".format(
+            reverse('admin:property_inventory_blc_listing_change', args=(blc.pk,)),
+            blc_listing.objects.filter(Property=obj).first().blc_id
+            ))
 
     def applications_search(self, obj):
         summary_link = '<a href="{}">{}</a>'.format(
