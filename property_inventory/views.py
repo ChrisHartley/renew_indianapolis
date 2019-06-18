@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 import json  # not used anymore, right?
 from django.core import serializers
-from django_tables2_reports.config import RequestConfigReport as RequestConfig
+from django_tables2.config import RequestConfig
 from django.views.generic import View  # for class based views
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -83,47 +83,47 @@ def getAddressFromParcel(request):
 def showApplications(request):
     config = RequestConfig(request)
 
-#     soldProperties = Property.objects.all().filter(
-#         status__istartswith='Sold').order_by('status', 'applicant')
-#     approvedProperties = Property.objects.all().filter(
-#         status__istartswith='Sale').order_by('status', 'applicant')
-#         #status__istartswith='Sale').order_by('-buyer_application__meeting__meeting__meeting_date')
-#
-#     next_rc_meeting = Meeting.objects.filter(Q(meeting_type=Meeting.REVIEW_COMMITTEE)&Q(meeting_date__gte=datetime.date.today())).order_by('meeting_date').first()
-#     if next_rc_meeting is not None:
-#         meeting_date = next_rc_meeting.meeting_date
-#         reviewPendingProperties = Property.objects.filter(application__meeting__meeting=next_rc_meeting).distinct().order_by('zipcode__name', 'streetAddress')
-#     else:
-#         meeting_date = 'future'
-#         reviewPendingProperties = Property.objects.none().order_by('zipcode__name', 'streetAddress')
-#
-#
-# #     soldFilter = ApplicationStatusFilters(
-# #         request.GET, queryset=soldProperties, prefix="sold-")
-# #     approvedFilter = ApplicationStatusFilters(
-# #         request.GET, queryset=approvedProperties, prefix="approved-")
-# #     reviewPendingFilter = ApplicationStatusFilters(
-# #         request.GET, queryset=reviewPendingProperties, prefix="review_pending-")
-# #
-# # #    soldTable = PropertyStatusTable(soldFilter.qs, prefix="sold-")
-# #    approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
-# #    reviewPendingTable = reviewPendingStatusTable(reviewPendingFilter.qs, prefix="review_pending-")
-#
-#     config.configure(reviewPendingTable)
-#     config.configure(soldTable)
-#     config.configure(approvedTable)
+    soldProperties = Property.objects.all().filter(
+        status__istartswith='Sold').order_by('status', 'applicant')
+    approvedProperties = Property.objects.all().filter(
+        status__istartswith='Sale').order_by('status', 'applicant')
+        #status__istartswith='Sale').order_by('-buyer_application__meeting__meeting__meeting_date')
+
+    next_rc_meeting = Meeting.objects.filter(Q(meeting_type=Meeting.REVIEW_COMMITTEE)&Q(meeting_date__gte=datetime.date.today())).order_by('meeting_date').first()
+    if next_rc_meeting is not None:
+        meeting_date = next_rc_meeting.meeting_date
+        reviewPendingProperties = Property.objects.filter(application__meeting__meeting=next_rc_meeting).distinct().order_by('zipcode__name', 'streetAddress')
+    else:
+        meeting_date = 'future'
+        reviewPendingProperties = Property.objects.none().order_by('zipcode__name', 'streetAddress')
+
+
+    soldFilter = ApplicationStatusFilters(
+        request.GET, queryset=soldProperties, prefix="sold-")
+    approvedFilter = ApplicationStatusFilters(
+        request.GET, queryset=approvedProperties, prefix="approved-")
+    reviewPendingFilter = ApplicationStatusFilters(
+        request.GET, queryset=reviewPendingProperties, prefix="review_pending-")
+
+    soldTable = PropertyStatusTable(soldFilter.qs, prefix="sold-")
+    approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
+    reviewPendingTable = reviewPendingStatusTable(reviewPendingFilter.qs, prefix="review_pending-")
+
+    config.configure(reviewPendingTable)
+    config.configure(soldTable)
+    config.configure(approvedTable)
     return render(request, 'app_status_template.html', {
         'meeting': meeting_date,
-        # 'reviewPendingTable': reviewPendingTable,
-        # 'soldTable': soldTable,
-        # 'approvedTable': approvedTable,
+        'reviewPendingTable': reviewPendingTable,
+        'soldTable': soldTable,
+        'approvedTable': approvedTable,
         'title': 'applications & sale activity',
-        # 'soldFilter': soldFilter,
-        # 'approvedFilter': approvedFilter,
-        # 'reviewPendingFilter': reviewPendingFilter,
+        'soldFilter': soldFilter,
+        'approvedFilter': approvedFilter,
+        'reviewPendingFilter': reviewPendingFilter,
         })
 
-# from django_tables2 import MultiTableMixin
+# from django_tables2 import MultiTableMixin, tables
 # from django.views.generic.base import TemplateView
 # class SoldPendingTable(tables.Table):
 #     class Meta:

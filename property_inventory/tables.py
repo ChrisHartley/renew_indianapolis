@@ -1,9 +1,8 @@
-from django_tables2_reports.tables import TableReport
-
+import django_tables2 as tables
 from property_inventory.models import Property
 
 
-class PropertyStatusTable(TableReport):
+class PropertyStatusTable(tables.Table):
 
     class Meta:
         model = Property
@@ -11,7 +10,7 @@ class PropertyStatusTable(TableReport):
         fields = ("parcel", "streetAddress", "zipcode",
                   "structureType", "price", "applicant", "status", )
 
-class reviewPendingStatusTable(TableReport):
+class reviewPendingStatusTable(tables.Table):
 
     class Meta:
         model = Property
@@ -19,7 +18,7 @@ class reviewPendingStatusTable(TableReport):
         fields = ("parcel", "streetAddress", "zipcode",
                   "structureType",)
 
-class PropertySearchTable(TableReport):
+class PropertySearchTable(tables.Table):
 
     class Meta:
         model = Property

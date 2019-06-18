@@ -49,9 +49,9 @@ urlpatterns = [
 
         url(r'search-neighborhood-association/(?P<parcel>[0-9]{7})/$',
            RelevantOrganizationsView.as_view()),
-        # 
-        # url(r'application_status/$',
-        #    showApplications),
+
+        url(r'application_status/$',
+           showApplications),
         url(r'show/search/$', get_inventory_csv, name='inventory_download'),
         #url(r'show/mdc_download/$', 'property_inventory.views.get_mdc_csv', name='mdc_download'),
         url(r'show/search/featured/$', get_featured_properties_csv, name='featured_inventory_download' ),
