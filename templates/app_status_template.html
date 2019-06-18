@@ -10,14 +10,14 @@
 {% load crispy_forms_tags %}
 <p>
 <h3>The following applications will be reviewed at the {{meeting}} meeting of the Review Committee:</h3>
-{% render_table reviewPendingTable %}
+{%comment%}{% render_table reviewPendingTable %}{%endcomment%} (temporarily disabled, fix in progress)
 </p>
 <p>
 <h3>The following properties are sale pending:</h3>
-{% render_table approvedTable %}
+{%comment%}{% render_table approvedTable %}{%endcomment%} (temporarily disabled, fix in progress)
 </p>
 <p>
 <h3>The following sales have been completed:</h3>
-{% render_table soldTable %}
+{%comment%}{% render_table soldTable %}{%endcomment%} (temporarily disabled, fix in progress)
 </p>
 {% endblock content %}
