@@ -10,14 +10,11 @@ from wsgiref.util import FileWrapper
 import mimetypes
 from django.http import HttpResponse, HttpResponseNotFound
 
-from django_tables2_reports.config import RequestConfigReport as RequestConfig
-
 from property_inquiry.models import propertyInquiry
 from property_inventory.models import Property
 from property_condition.models import ConditionReport, ConditionReportProxy
 from property_condition.forms import ConditionReportForm
 from property_condition.filters import ConditionReportFilters
-from property_condition.tables import ConditionReportTable
 
 
 
@@ -40,21 +37,6 @@ def submitConditionReport(request):
         'success': success
     })
 
-# Displays submitted property condition reports
-#@user_passes_test(lambda u: u.groups.filter(name='City Staff').exists() or u.is_staff)
-
-
-def condition_report_list(request):
-    config = RequestConfig(request)
-    f = ConditionReportFilters(
-        request.GET, queryset=ConditionReport.objects.all().order_by('-timestamp'))
-    table = ConditionReportTable(f)
-    config.configure(table)
-    return render(request, 'admin-with-filter-table.html', {
-        'filter': f,
-        'title': 'Condition Reports Admin',
-        'table': table
-    })
 
 def view_or_create_condition_report(request, parcel):
     if parcel and Property.objects.filter(parcel=parcel).exists():

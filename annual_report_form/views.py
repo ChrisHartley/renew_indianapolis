@@ -1,17 +1,6 @@
 from django.shortcuts import render
-from django.shortcuts import render_to_response
-from django.shortcuts import get_object_or_404
-from django.template import RequestContext
-from django_tables2_reports.config import RequestConfigReport as RequestConfig
-from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
 
-
-from annual_report_form.models import annual_report
 from annual_report_form.forms import annualReportForm
-from annual_report_form.filters import AnnualReportFilters
-from annual_report_form.tables import AnnualReportTable
-from property_inventory.models import Property
 
 # Displays form template for annual reports from property owners, and
 # saves those submissions
@@ -34,44 +23,4 @@ def showAnnualReportForm(request):
         'form': form,
         'success': success,
         'title': "annual report"
-    })
-
-
-@staff_member_required
-def showAnnualReportData(request, id):
-    selected_report = get_object_or_404(annual_report, id=id)
-    title = selected_report.Property.streetAddress + " - annual report"
-
-    try:
-        next = annual_report.objects.filter(
-            pk__gt=selected_report.pk).order_by('id').first()
-    except annual_report.DoesNotExist:
-        next = None
-    try:
-        pre = annual_report.objects.filter(
-            pk__lt=selected_report.pk).order_by('id').last()
-    except annual_report.DoesNotExist:
-        pre = None
-
-    title = selected_report.Property.streetAddress + " - annual report"
-
-    return render(request, 'annual_report_viewer.html', {
-        'record': selected_report,
-        'title': title,
-        'next': next,
-        'pre': pre,
-    })
-
-
-@staff_member_required
-def showAnnualReportIndex(request):
-    config = RequestConfig(request)
-    f = AnnualReportFilters(
-        request.GET, queryset=annual_report.objects.all().order_by('id'))
-    table = AnnualReportTable(f)
-    config.configure(table)
-    return render(request, 'admin-with-filter-table.html', {
-        'filter': f,
-        'title': 'Annual Report Admin',
-        'table': table
     })
