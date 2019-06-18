@@ -4,8 +4,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 
-from django_tables2_reports.config import RequestConfigReport as RequestConfig
-
 from django.urls import reverse
 
 from django.core.mail import send_mail
@@ -15,7 +13,6 @@ from ipware import get_client_ip
 from property_inquiry.models import propertyInquiry, propertyShowing
 from property_inventory.models import Property
 from property_inquiry.filters import PropertyInquiryFilters
-from property_inquiry.tables import PropertyInquiryTable
 from property_inquiry.forms import PropertyInquiryForm
 from applicants.models import ApplicantProfile
 

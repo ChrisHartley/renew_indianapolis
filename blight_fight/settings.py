@@ -33,7 +33,7 @@ INSTALLED_APPS = (
     'django.contrib.gis',  # added 20150225
     'crispy_forms',  # added 20150225
     'django_tables2',  # added 20150225
-    'django_tables2_reports',  # added 20150225
+    #'django_tables2_reports',  # added 20150225
     'django_filters',  # added 20150225
     'allauth',  # added 20150526
     'allauth.account',  # added 20150526
@@ -87,7 +87,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_tables2_reports.middleware.TableReportMiddleware',
+    #'django_tables2_reports.middleware.TableReportMiddleware',
 ]
 
 ROOT_URLCONF = 'blight_fight.urls'
