@@ -1,5 +1,4 @@
 import django_tables2 as tables2
-from django_tables2_reports.tables import TableReport
 from django_tables2.utils import A
 
 from .models import Organization
@@ -44,7 +43,7 @@ class ApplicationTable(tables2.Table):
         fields = ("Property", "structure_type", "status", "edit_app",)
 
 
-class PropertyInquiryTable(TableReport):
+class PropertyInquiryTable(tables2.Table):
     requested_timestamp = tables2.Column(
         accessor='timestamp', verbose_name="Submitted")
 
