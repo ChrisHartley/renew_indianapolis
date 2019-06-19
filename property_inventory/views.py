@@ -80,6 +80,9 @@ def getAddressFromParcel(request):
 
 # Show a table with property statuses broken down by sold, sale-approved and in-progress.
 
+from django_tables2.export.export import TableExport
+from django.urls import reverse
+
 def showApplications(request):
     config = RequestConfig(request)
 
@@ -112,11 +115,26 @@ def showApplications(request):
     config.configure(reviewPendingTable)
     config.configure(soldTable)
     config.configure(approvedTable)
+
+    export_format = request.GET.get('_export_format', None)
+    if export_format is not None:
+        if request.GET.get('sold_export', None):
+            exporter = TableExport(export_format, soldTable)
+        if request.GET.get('approved_export', None):
+            exporter = TableExport(export_format, approvedTable)
+        if request.GET.get('pending_export', None):
+            exporter = TableExport(export_format, reviewPendingTable)
+        if exporter is not None:
+            return exporter.response('table.{}'.format(export_format,))
+
     return render(request, 'app_status_template.html', {
         'meeting': meeting_date,
         'reviewPendingTable': reviewPendingTable,
+        'reviewPendingExport': '{}?{}'.format(reverse("application_status"), 'pending_export=True&_export_format=csv'),
         'soldTable': soldTable,
+        'soldExport': '{}?{}'.format(reverse("application_status"), 'sold_export=True&_export_format=csv'),
         'approvedTable': approvedTable,
+        'approvedExport': '{}?{}'.format(reverse("application_status"), 'approved_export=True&_export_format=csv'),
         'title': 'applications & sale activity',
         'soldFilter': soldFilter,
         'approvedFilter': approvedFilter,
