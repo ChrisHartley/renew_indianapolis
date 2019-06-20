@@ -158,7 +158,7 @@ class Property(models.Model):
 
     geometry = models.MultiPolygonField(srid=4326, blank=True, null=True)
     street_address = models.CharField(max_length=512, blank=True, null=False)
-    property_name = models.CharField(max_length=512, blank=False, null=False)
+    property_name = models.CharField(max_length=512, blank=True, null=False)
     status = models.CharField(choices=STATUS_CHOICES, blank=True, max_length=100)
     status_date = models.DateField(blank=True, null=True)
     parcel = models.CharField(
