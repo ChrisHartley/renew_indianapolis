@@ -67,7 +67,7 @@ class Property(models.Model):
 
     geometry = models.MultiPolygonField(srid=4326, blank=True)
 
-    centroid_geometry = models.PointField(srid=4326, default='POINT(39.7684 86.1581)', blank=True)
+    centroid_geometry = models.PointField(srid=4326, default='SRID=4326;POINT(39.7684 86.1581)', blank=True)
 
 #    objects = models.GeoManager()
     propertyType = models.CharField(
