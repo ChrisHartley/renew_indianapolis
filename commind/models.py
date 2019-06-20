@@ -157,7 +157,7 @@ class Property(models.Model):
 
 
     geometry = models.MultiPolygonField(srid=4326)
-    street_address = models.CharField(max_length=512, blank=False, null=False)
+    street_address = models.CharField(max_length=512, blank=True, null=False)
     property_name = models.CharField(max_length=512, blank=False, null=False)
     status = models.CharField(choices=STATUS_CHOICES, blank=True, max_length=100)
     status_date = models.DateField(blank=True)
@@ -177,20 +177,29 @@ class Property(models.Model):
         blank=True,
     )
 
-    parcel_size = models.IntegerField(null=True)
+    parcel_size = models.IntegerField(null=True, blank=True)
     zoning = models.CharField(blank=True, max_length=12)
     environmental_information = models.CharField(max_length=10240, blank=True)
     has_improvement = models.NullBooleanField()
     building_size = models.IntegerField(null=True, blank=True)
     location_notes = models.CharField(max_length=5120, blank=True)
     property_notes = models.CharField(max_length=5120, blank=True)
+    update_from_server = models.BooleanField(default=True, help_text="Attempt to update street address, etc from remote server on next save.")
+
 
     documents = GenericRelation(Document, related_query_name='prop')
     photos = GenericRelation(Photo)
 
 
-    #def save(self):
-
+    def save(self, *args, **kwargs):
+        if self.parcel is not None and self.parcel != '' and self.update_from_server == True:
+            results = pull_property_info_from_arcgis(self.parcel)
+            if results:
+                self.street_address = results['street_address']
+                self.geometry = results['geometry']
+                self.area = float(results['estsqft'])
+                self.update_from_server = False
+        super(Property, self).save(*args, **kwargs)
 
     def __str__(self):
         return '{} - {}'.format(self.street_address, self.parcel)
