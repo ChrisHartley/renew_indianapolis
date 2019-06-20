@@ -9,7 +9,7 @@ import pyclamd
 from django.core.mail import send_mail
 from PIL import Image, ExifTags
 from django.utils import timezone
-
+from utils.utils import pull_property_info_from_arcgis
 
 @python_2_unicode_compatible
 class Entity(models.Model):
@@ -156,7 +156,7 @@ class Property(models.Model):
     )
 
 
-    geometry = models.MultiPolygonField(srid=4326)
+    geometry = models.MultiPolygonField(srid=4326, blank=True, null=True)
     street_address = models.CharField(max_length=512, blank=True, null=False)
     property_name = models.CharField(max_length=512, blank=False, null=False)
     status = models.CharField(choices=STATUS_CHOICES, blank=True, max_length=100)
