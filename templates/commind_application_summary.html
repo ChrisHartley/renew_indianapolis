@@ -10,6 +10,7 @@
     </tr>
     </thead>
 <tbody>
+  {% comment %}
 <tr><td>Applicant</td><td>{{application.user.first_name}} {{application.user.last_name}}</td></tr>
 <tr><td>Entity</td><td>{{application.entity}}</td></tr>
 <tr><td>Property</td><td>{{application.Properties.all.first}}</td></tr>
@@ -30,13 +31,70 @@ Do you, any family members or partner/member of your entity, or any of your enti
 <tr><td>Proposed end use:</td><td>{{application.proposed_end_use}}</td></tr>
 <tr><td>Submitted</td><td>{{application.submitted_timestamp}}</td></tr>
 
-{%comment%}
+
 {% for key, value in application%}
 <tr><td>{{key}}</td><td>{{value}}</td></tr>
 {%endfor%}
-{%endcomment%}
+{% endcomment %}
+<tr><td>Property</td><td>{{application.Property}}</td></tr>
+<tr><td>Do you, any family members or partner/member of your entity, or any of your entity's board members or employees work for Renew Indianapolis or serve on the Renew Indianapolis Board of Directors or Committees or serve on the Metropolitan Development Commission or are employed by the City of Indianapolis Department of Metropolitan Development and thus pose a potential conflict of interest?"</td><td>{{application.conflict_renew_city}}</td></tr>
+<tr><td>If yes, what is their name?</td><td>{{application.conflict_renew_city_name}}</td></tr>
+<tr><td>Please list any existing liens against the applicant and affiliates
+            of the applicant for federal, state, or local taxes, judgments,
+            mechanics liens etc.</td><td>{{application.existing_liens}}</td></tr>
+<tr><td>Does the applicant own any property that is subject to any un-remediated citation of violation of the state and local codes and ordinances?"</td><td>{{application.active_citations}}</td></tr>
+<tr><td>Tax status of property currently owned in Marion County</td><td>{{application.get_tax_status_of_properties_owned_display}}</td></tr>
+<tr><td>Were the applicants the prior owner of any property in Marion County that was
+            transferred to the Treasurer or to a local government as a result
+            of tax foreclosure proceedings?</td><td>{{application.prior_tax_foreclosure}}</td></tr>
+<tr><td>Entity to take title</td><td>{{application.entity_name}}</td></tr>
+<tr><td>Please  list all affiliates of the applicant meaning any person or
+            entity who directly or indirectly (through one (1) or more
+            intermediaries) owns or controls, is owned or controlled by, or
+            is under common ownership or control with, another person or entity.</td><td>{{application.entity_affiliates}}</td></tr>
+<tr><td>Entity created already?</td><td>{{application.entity.created_boolean}}</td></tr>
+<tr><td>Date entity created</td><td>{{application.entity.date_of_creation}}</td></tr>
+<tr><td>Location entity created</td><td>{{application.entity.location_of_creation}}</td></tr>
+{% for person in application.entity.person_set.all%}
+<tr><td>Principle #{{forloop.counter}} Name</td><td>{{person.name}}</td></tr>
+<tr><td>Principle #{{forloop.counter}} Title</td><td>{{person.title}}</td></tr>
+<tr><td>Principle #{{forloop.counter}} Email</td><td>{{person.email}}</td></tr>
+<tr><td>Principle #{{forloop.counter}} Phone</td><td>{{person.phone}}</td></tr>
+<tr><td>Principle #{{forloop.counter}} Address</td><td>{{person.address}}</td></tr>
+{% endfor %}
+<tr><td></td><td>{{application.principal_1_name}}</td></tr>
+<tr><td></td><td>{{application.principal_1_title}}</td></tr>
+<tr><td></td><td>{{application.principal_1_email}}</td></tr>
+<tr><td></td><td>{{application.principal_1_phone}}</td></tr>
+<tr><td></td><td>{{application.principal_1_address}}</td></tr>
+<tr><td>Will your project involve:</td><td>{{application.get_project_type_display}}</td></tr>
+<tr><td>Is your project/development in alignment with current plans (i.e. neighborhood plans, long term plans, city plans for land use, etc.)?</td><td>{{application.allignment_with_current_plans}}</td></tr>
+<tr><td>Please provide details</td><td>{{application.allignment_with_current_plans_details}}</td></tr>
+<tr><td>Have you contacted any community and/or neighborhood stakeholders in regard to your project?</td><td>{{application.stakeholders_contacted}}</td></tr>
+<tr><td>Please provide details</td><td>{{application.stakeholders_contacted_details}}</td></tr>
+<tr><td>The price of the property offered by the applicant</td><td>${{application.applicant_offer_price|intcomma}}</td></tr>
+<tr><td>Total estimated construction and/or rehabilitation costs</td><td>${{application.total_costs|intcomma}}</td></tr>
+<tr><td>The total number of jobs by this project.</td><td>{{application.total_number_of_jobs}}</td></tr>
+<tr><td>The total dollar amount to be annually spent on new salaries by this project.</td><td>${{application.total_annual_new_salaries|intcomma}}</td></tr>
+<tr><td>What is the blended hourly wage rate (the blended rate of hourly and salaried employees) excluding benefits and overtime, for the jobs that will be created by this project?</td><td>${{application.blended_hourly_wage_rate|intcomma}}</td></tr>
+<tr><td>Does this project wish to participate in the City’s Hiring Incentive for Re-Entry Development (HIRED) Program?</td><td>{{application.hired_participant}}</td></tr>
+<tr><td>Is there opportunity with this project to provide low to mod income employees with daycare support?</td><td>{{application.low_mod_daycare}}</td></tr>
+<tr><td>Is there opportunity with this project to provide low to mod income employees with transportation support?</td><td>{{application.low_mod_transportation_support}}</td></tr>
+<tr><td>Is there opportunity with this project for youth employement?</td><td>{{application.youth_employment_opportunity}}</td></tr>
+<tr><td>Is there opportunity with this project for hiring employees within the neighborhood?</td><td>{{application.neighborhood_hiring_opportunity}}</td></tr>
+<tr><td>Is there opportunity with this project for training for sub-baccalaureate candidates?</td><td>{{application.subbaccalaureate_training_opportunity}}</td></tr>
+<tr><td>Is there an arts consideration with this project?</td><td>{{application.arts_consideration}}</td></tr>
+<tr><td>If yes, please explain further</td><td>{{application.arts_consideration_explanation}}</td></tr>
+<tr><td>Will this project be developed by, owned by or engage with any minority owned businesses and/or entities and/or an equal opportunity employer?",</td><td>{{application.minority_owned_business_question}}</td></tr>
+<tr><td>If yes, please explain further</td><td>{{application.minority_owned_business_question_detail}}</td></tr>
+<tr><td>Applicant skills with: Environmental remediation</td><td>{{application.applicant_skills_environmental_remediation}}</td></tr>
+<tr><td>Applicant skills with: Brownfields</td><td>{{application.applicant_skills_brownfields}}</td></tr>
+<tr><td>Applicant skills with: Commercial real estate development</td><td>{{application.applicant_skills_commercial_real_estate_development}}</td></tr>
+<tr><td>Applicant skills with: Entitlement process</td><td>{{application.applicant_skills_entitlement_process}}</td></tr>
+<tr><td>Applicant skills with: Incentives</td><td>{{application.applicant_skills_incentives}}</td></tr>
+<tr><td>Applicant skills with: Other (fill in the blank)</td><td>{{application.applicant_skills_other}}</td></tr>
 
 </tbody>
 </table>
-
+<p>&nbsp;</p>
 {% endblock center %}
