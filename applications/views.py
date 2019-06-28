@@ -332,7 +332,7 @@ class MONCSVResponseMixin(object):
             response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'notification-merge-template.csv')
             writer = csv.writer(response)
 
-            header = ['First Name', 'Email Address', 'Property', 'Renew Owned', 'Status', 'Reason', 'Sidelot', 'Link']
+            header = ['First Name', 'Email Address', 'Property', 'Status', 'Renew Owned', 'Contingent Approval', 'Reason', 'Sidelot', 'Link']
             #header = ['Parcel','Street Address','Application Type','Structure Type','City\'s Sale Price','Renew\'s Sale Price','Total','Buyer Name']
             writer.writerow(header)
             # Write the data from the context somehow
@@ -349,7 +349,7 @@ class MONCSVResponseMixin(object):
                         reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)),)
                 except processing_fee.DoesNotExist:
                     pf_link = ''
-                row = [user_name, application.user.email, application.Property, application.Property.renew_owned, meeting_link.get_meeting_outcome_display(), '', sidelot_text, pf_link]
+                row = [user_name, application.user.email, application.Property, meeting_link.get_meeting_outcome_display(), application.Property.renew_owned, meeting_link.get_conditional_approval_display(), '', sidelot_text, pf_link]
                 #row = [application.Property.parcel, application.Property.streetAddress, application.get_application_type_display(), application.Property.structureType, city_split, renew_split, total, buyer]
                 writer.writerow(row)
             return response
