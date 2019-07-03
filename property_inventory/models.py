@@ -131,6 +131,8 @@ class Property(models.Model):
     short_legal_description = models.CharField(max_length=2048, blank=True)
     #slug = AutoSlugField(always_update=True, unique=True, populate_from=lambda instance: instance.streetAddress + instance.parcel)
 
+    number_of_units = models.PositiveIntegerField(default=1, help_text="Number of units in the property, at time of sale")
+
     acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired')
     renew_acquisition_date =  models.DateField(null=True, blank=True, help_text='Date property was acquired by Renew')
     buyer_application = models.ForeignKey('applications.Application', null=True, blank=True, help_text='The final buyer application.', on_delete=models.CASCADE)
