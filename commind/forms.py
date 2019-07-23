@@ -157,7 +157,7 @@ class CommIndApplicationForm(forms.ModelForm):
     development_plan_file = forms.FileField(
         required=True,
         label='Development Plan',
-        help_text='Please review <a href="/static/Development-Plan-2019-02-18.pdf">our template</a> as a reference point for what must be included',
+        help_text='Please review <a href="/static/Development-Plan-2019-07-23.pdf">our template</a> as a reference point for what must be included',
     )
     # balance_sheet_file = forms.FileField(
     #     required=False,
