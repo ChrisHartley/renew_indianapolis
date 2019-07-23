@@ -599,10 +599,10 @@
 
 
       $(document).ready(function(){
-        $.get('/static/WMTSCapabilities2018.xml', function(text){
+        $.get('/static/WMTSCapabilities2019.xml', function(text){
           var result = parser.read(text);
           var options = ol.source.WMTS.optionsFromCapabilities(result, {
-            layer: 'Imagery_2018Photography_Labels', matrixSet: 'default028mm'
+            layer: 'Imagery_2019Photography_Labels', matrixSet: 'default028mm'
           });
 
           var view = new ol.View({
