@@ -351,7 +351,7 @@ class CommIndApplicationForm(forms.ModelForm):
             ),
             Fieldset(
                 'Economics, Scope of Project &amp; Capacity',
-                Field('applicant_offer_price'),
+            #    Field('applicant_offer_price'),
                 Field('total_costs'),
                 #Field('skills_and_expierence_applicant'),
                 css_class='well'
