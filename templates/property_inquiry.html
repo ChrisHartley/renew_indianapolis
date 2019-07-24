@@ -39,9 +39,7 @@
 	<p>
 	Check the calendar below to see if a showing is already scheduled. You are welcome to attend any of these showings, or submit the form below to request a showing on another property.
 	</p>
-	<p>
-<iframe src="https://calendar.google.com/calendar/b/2/embed?title=Property%20Showings&amp;showPrint=0&amp;showTz=0&amp;mode=AGENDA&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=renewindianapolis.org_pmmt30l2g1lm606tl88gt6sc04%40group.calendar.google.com&amp;color=%238D6F47&amp;ctz=America%2FIndiana%2FIndianapolis" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-	</p>
+
 
 
 </div>
@@ -65,9 +63,13 @@
 {% endif %}
 {% else %}
 <p class="lead">
-Please <a href='{%url 'account_login'%}?next={%url 'submit_property_inquiry' %}'>log in or create an account</a> to submit a property inquiry.
+Please <a href='{%url 'account_login'%}?next={%url 'submit_property_inquiry' %}'>log in or create an account</a> to submit a property inquiry. You must be logged in to RSVP to a showing.
 </p>
 {% endif %}
+
+<p>
+<iframe src="https://calendar.google.com/calendar/b/2/embed?title=Property%20Showings&amp;showPrint=0&amp;showTz=0&amp;mode=AGENDA&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=renewindianapolis.org_pmmt30l2g1lm606tl88gt6sc04%40group.calendar.google.com&amp;color=%238D6F47&amp;ctz=America%2FIndiana%2FIndianapolis" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+</p>
 
 <script>
 
