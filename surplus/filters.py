@@ -78,7 +78,7 @@ class SurplusParcelFilter(django_filters.FilterSet):
         model = Parcel
         form = SurplusSearchForm
         exclude = ['centroid_geometry', 'geometry']
-
+        fields = '__all__'
         filter_overrides = {
             models.MultiPolygonField: {
                 'filter_class': django_filters.CharFilter,

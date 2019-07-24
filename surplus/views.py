@@ -136,9 +136,8 @@ def searchSurplusProperties(request):
 #        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).exclude(intended_end_use='BEP')
     qs = Parcel.objects.filter(classification=1)
     f = SurplusParcelFilter(request.GET, queryset=qs)
-    geom = 'geometry'
-    fields = ('parcel_number', 'has_building', geom)
-    if request.GET.get("geometry_type") == "centroid":
+
+    if request.GET.get("geometry_type", None) == "centroid":
         geom = 'centroid_geometry'
         fields = ('parcel_number','street_address', 'zipcode', 'zoning',
             'township', 'has_building', 'land_value', 'improved_value',
@@ -146,6 +145,9 @@ def searchSurplusProperties(request):
             'demolition_order_count', 'repair_order_count', 'vbo_count',
             'interesting', 'notes', 'requested_from_commissioners',
             'vetted', 'vetting_notes', geom)
+    else:
+        geom = 'geometry'
+        fields = ('parcel_number', 'has_building', geom)
 
     s = serializers.serialize('geojson',
         f.qs,
@@ -154,7 +156,6 @@ def searchSurplusProperties(request):
         fields=fields,
         use_natural_foreign_keys=True
     )
-
     return HttpResponse(s, content_type='application/json')
 
 @csrf_exempt

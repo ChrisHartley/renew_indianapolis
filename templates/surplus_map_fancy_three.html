@@ -886,7 +886,7 @@
       console.log($('#SurplusSearchForm').serialize());
       console.log($('#id_demolition_order_count'));
       $.ajax({
-        url: '{% url "surplus_search" %}',
+        url: '{% url "surplus_search" %}?geometry_type=centroid',
         type: "GET",
         data: $('#SurplusSearchForm').serialize(),
         success: function(json){
