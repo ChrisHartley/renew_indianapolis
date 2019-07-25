@@ -8,15 +8,15 @@ from .models import Parcel
 
 class SurplusSearchForm(forms.ModelForm):
 
-    general_search = forms.CharField(max_length=30, label='Address, zipcode, parcel number')
-    geometry_type = forms.CharField()
+    general_search = forms.CharField(widget=HiddenInput())
+    geometry_type = forms.CharField(widget=HiddenInput())
 
     class Meta:
         model = Parcel
         exclude = []
         fields = [
-            'geometry_type',
-            'general_search',
+    #        'geometry_type',
+    #        'general_search',
             'has_building',
     #        'township',
             'notes',
@@ -33,8 +33,8 @@ class SurplusSearchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
-        self.fields['general_search'].widget = HiddenInput() # because we want the search box up top, so we copy the value from that box to this hidden one prior to submission
-        self.fields['geometry_type'].widget = HiddenInput() # because we need to indicate we are looking for centroid points
+    #    self.fields['general_search'].widget = HiddenInput() # because we want the search box up top, so we copy the value from that box to this hidden one prior to submission
+    #    self.fields['geometry_type'].widget = HiddenInput() # because we need to indicate we are looking for centroid points
 
         self.helper = FormHelper()
         self.helper.form_id = 'SurplusSearchForm'
@@ -62,7 +62,8 @@ class SurplusSearchForm(forms.ModelForm):
             Field('demolition_order_count', css_class='input-sm'),
             Field('vbo_count', css_class='input-sm'),
             Field('vetted', css_class='input-sm'),
-
+            Field('general_search'),
+            Field('geometry_type'),
 
         #    Field('requested_from_commissioners', css_class='input-sm'),
         #    Field('previously_held_gateway_area', css_class='input-sm'),
