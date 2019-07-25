@@ -33,7 +33,7 @@ class SurplusSearchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SurplusSearchForm, self).__init__(*args, **kwargs)
-    #    self.fields['general_search'].widget = HiddenInput() # because we want the search box up top, so we copy the value from that box to this hidden one prior to submission
+        self.fields['general_search'].widget = HiddenInput() # because we want the search box up top, so we copy the value from that box to this hidden one prior to submission
     #    self.fields['geometry_type'].widget = HiddenInput() # because we need to indicate we are looking for centroid points
 
         self.helper = FormHelper()
