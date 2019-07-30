@@ -751,7 +751,9 @@
                 filter = 'Interesting? <input type="checkbox" name="interesting" '+interesting_checked+'/>'+
                   ' Vetted? <input type="checkbox" name="vetted" '+vetted_checked+'/><br/>'+
                   'Notes: <input type="text" name="notes" value="'+parcel.notes+'"/></br>'+
-                  '<input type="hidden" name="parcel_number" value="'+parcel.parcel_number+'"/>'+
+                  'Request Tranche: <input type="number" name="request_tranche" value="'+parcel.request_tranche+'"/></br>'+
+                  '<small>1: House not in very poor condition, 2: Vacant lot for new construction, 3: House in very poor condition, 4: Vacant lot not for new construction, 5: Sliver or other valueless property</small></br>'+
+                  '<input type="hidden" name="parcel_number" value="'+parcel.parcel_number+'"/></br>'+
                   '<input type="submit" id="submit" value="Save"/>';
                 html = '<ul class="list-unstyled">'+
                   '<li>Area: '+parcel.area+' Township: '+parcel.township+'</li>'+
@@ -836,6 +838,9 @@
                   "data": "properties.notes" },
                 { "title": 'Vetting Notes',
                   "data": "properties.vetting_notes" },
+                { "title": 'Request Tranche',
+                  "data": "properties.request_tranche" },
+
             ],
 /*            columnDefs: [ {
               targets: 6,

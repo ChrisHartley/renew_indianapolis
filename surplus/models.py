@@ -143,6 +143,8 @@ class Parcel(models.Model):
 
     previously_held_gateway_area = models.BooleanField(default=False)
 
+    request_tranche = models.IntegerField(blank=True, null=True, help_text='1: House not in very poor condition, 2: Vacant lot for new construction, 3: House in very poor condition, 4: Vacant lot not for new construction, 5: Sliver or other valueless property')
+
     geometry = models.MultiPolygonField(srid=2965)
     centroid_geometry = models.PointField(srid=2965) # compuated from geometry on save
 

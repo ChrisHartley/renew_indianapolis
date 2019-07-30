@@ -10,7 +10,7 @@ class SurplusSearchForm(forms.ModelForm):
 
     general_search = forms.CharField(widget=HiddenInput())
     geometry_type = forms.CharField(widget=HiddenInput())
-
+    #request_tranche_range = forms.IntegerField()
     class Meta:
         model = Parcel
         exclude = []
@@ -62,6 +62,7 @@ class SurplusSearchForm(forms.ModelForm):
             Field('demolition_order_count', css_class='input-sm'),
             Field('vbo_count', css_class='input-sm'),
             Field('vetted', css_class='input-sm'),
+            Field('request_tranche', css_class='input-sm'),
             Field('general_search'),
             Field('geometry_type'),
 

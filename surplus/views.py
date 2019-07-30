@@ -99,7 +99,7 @@ class ParcelDetailView(JSONResponseMixin, DetailView):
                                   'demolition_order', 'repair_order', 'vbo_count',
                                   'repair_order_count', 'demolition_order_count', 'interesting',
                                   'notes', 'requested_from_commissioners', 'vetted', 'vetting_notes',
-                                  'intended_end_use', 'condition_report_exists'),
+                                  'intended_end_use', 'condition_report_exists', 'request_tranche'),
                               use_natural_foreign_keys=True,
                               )
         return HttpResponse(s, content_type='application/json')
@@ -144,7 +144,7 @@ def searchSurplusProperties(request):
             'area', 'assessor_classification', 'classification',
             'demolition_order_count', 'repair_order_count', 'vbo_count',
             'interesting', 'notes', 'requested_from_commissioners',
-            'vetted', 'vetting_notes', geom)
+            'vetted', 'vetting_notes', 'request_tranche', geom)
     else:
         geom = 'geometry'
         fields = ('parcel_number', 'has_building', geom)
@@ -171,6 +171,7 @@ def surplusUpdateFieldsFromMap(request):
         prop.vetted = True
     else:
         prop.vetted = False
+    prop.request_tranche = request.POST.get('request_tranche', None)
     try:
         prop.save()
         return JsonResponse({'status': 'OK'})
@@ -179,6 +180,6 @@ def surplusUpdateFieldsFromMap(request):
 
 
 def get_surplus_inventory_csv(request):
-    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes', 'vetted', 'vetting_notes') #.values('parcel', 'street_address')
+    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes', 'vetted', 'vetting_notes', 'request_tranche') #.values('parcel', 'street_address')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
