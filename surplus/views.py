@@ -121,6 +121,7 @@ class SurplusMapTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(SurplusMapTemplateView, self).get_context_data(**kwargs)
         context['filter'] = SurplusParcelFilter
+        context['classification'] = self.request.GET.get('classification', 1)
         return context
 
 from django.db import connection
@@ -134,7 +135,8 @@ def searchSurplusProperties(request):
 #        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).filter(parcel_number__in=properties_with_reports).exclude(intended_end_use='BEP')
 #    else:
 #        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).exclude(intended_end_use='BEP')
-    qs = Parcel.objects.filter(classification=1)
+    classification_requested = request.GET.get('classification', 1)
+    qs = Parcel.objects.filter(classification=classification_requested)
     f = SurplusParcelFilter(request.GET, queryset=qs)
 
     if request.GET.get("geometry_type", None) == "centroid":
@@ -180,6 +182,6 @@ def surplusUpdateFieldsFromMap(request):
 
 
 def get_surplus_inventory_csv(request):
-    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes', 'vetted', 'vetting_notes', 'request_tranche') #.values('parcel', 'street_address')
+    qs = Parcel.objects.filter(classification=1).values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes', 'vetted', 'vetting_notes', 'request_tranche') #.values('parcel', 'street_address')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)

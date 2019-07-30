@@ -42,11 +42,11 @@ def view_or_create_condition_report(request, parcel):
     if parcel and Property.objects.filter(parcel=parcel).exists():
         if ConditionReport.objects.filter(Property__parcel=parcel).exists():
             return redirect('{0}?_popup=1'.format(
-                reverse('admin:property_condition_conditionreportproxy_change', args=[ConditionReportProxy.objects.filter(Property__parcel=parcel).order_by('timestamp').first().pk])
+                reverse('admin:property_condition_conditionreport_change', args=[ConditionReport.objects.filter(Property__parcel=parcel).order_by('timestamp').first().pk])
                 ),
             )
         else:
             cr = ConditionReport(Property=Property.objects.get(parcel=parcel))
             cr.save()
-            return redirect('{0}?_popup=1'.format(reverse('admin:property_condition_conditionreportproxy_change', args=[cr.pk])),)
+            return redirect('{0}?_popup=1'.format(reverse('admin:property_condition_conditionreport_change', args=[cr.pk])),)
     return HttpResponseNotFound('<h1>Parcel not found. BEP Property?</h1>')

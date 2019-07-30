@@ -559,7 +559,7 @@
           //minResolution: '.25',
           style: styles['polygon'],
           source: new ol.source.Vector({
-            url: '/surplus/search/?geometry_type=polgyon',
+            url: '/surplus/search/?geometry_type=polgyon&classification={{classification}}',
             format: new ol.format.GeoJSON()
           }),
         });
@@ -579,7 +579,7 @@
           projection: 'EPSG:2965',
           minResolution: '3',
           source: new ol.source.Vector({
-            url: '/surplus/search/?geometry_type=centroid&report=true',
+            url: '/surplus/search/?geometry_type=centroid&report=true&classification={{classification}}',
             format: new ol.format.GeoJSON()
           }),
           style: styleFunction,
@@ -590,7 +590,7 @@
             projection: 'EPSG:2965',
             minResolution: '3',
             source: new ol.source.Vector({
-              url: '/surplus/search/?geometry_type=centroid&report=false',
+              url: '/surplus/search/?geometry_type=centroid&report=false&classification={{classification}}',
               format: new ol.format.GeoJSON()
             }),
             style: styleFunction,
