@@ -342,7 +342,7 @@ class MONCSVResponseMixin(object):
                 application = meeting_link.application
                 user_name = '{0} {1}'.format(application.user.first_name, application.user.last_name)
                 sidelot_text = ''
-                if application.application_type in(Application.SIDELOT, Application.VACANT_LOT):
+                if application.application_type in(Application.SIDELOT, Application.VACANT_LOT, Application.FDL):
                     sidelot_text = 'Since this is a sidelot or vacant lot program application you have the option of closing directly with Renew Indianapolis, rather than with a title company.'
                 try:
                     pf = processing_fee.objects.get(closing__application__exact=application)
@@ -350,8 +350,12 @@ class MONCSVResponseMixin(object):
                         reverse("application_pay_processing_fee", args=(slugify(pf.slug), pf.id,)),)
                 except processing_fee.DoesNotExist:
                     pf_link = ''
-                city_split = 500 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.45))
-                renew_split = 250 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.55))
+                if application.Property.renew_owned == False:
+                    city_split = 500 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.45))
+                    renew_split = 250 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.55))
+                else:
+                    city_split = 0
+                    renew_split = application.price_at_time_of_submission
                 row = [user_name, application.user.email, application.Property, meeting_link.get_meeting_outcome_display(), application.Property.renew_owned, meeting_link.get_conditional_approval_display(), '', sidelot_text, pf_link, city_split, renew_split, application.price_at_time_of_submission]
                 #row = [application.Property.parcel, application.Property.streetAddress, application.get_application_type_display(), application.Property.structureType, city_split, renew_split, total, buyer]
                 writer.writerow(row)
