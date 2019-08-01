@@ -311,6 +311,8 @@ class take_back(models.Model):
     note = models.TextField(max_length=1024, blank=True)
     owner = models.CharField(max_length=1024, blank=True)
     application = models.ForeignKey('applications.Application', null=True, blank=True, on_delete=models.CASCADE)
+    dmd_to_renew_conversion = models.BooleanField(default=False, help_text="This was originally sold as DMD owned but taken back to Renew")
+
 
     class Meta:
         verbose_name = 'take backs'
