@@ -15,6 +15,7 @@ class UploadedFileInline(admin.TabularInline):
     model = UploadedFile
     fields = ('file_purpose', 'file_purpose_other_explanation', 'supporting_document', 'file_download', 'send_with_neighborhood_notification', 'user','application')
     readonly_fields = ('file_download',)
+    raw_id_fields = ('user',)
     extra = 1
 
     def file_download(self, obj):
@@ -81,6 +82,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
         'scheduled_meeting','application_summary_page','application_detail_page',
         'n_notification', 'submitted_timestamp', 'price_at_time_of_submission',
         'property_inquiry_count')
+    raw_id_fields = ('user','Property',)
     fieldsets = (
         (None, {
             'fields': (
