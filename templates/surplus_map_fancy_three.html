@@ -454,6 +454,10 @@
 
       // Get value of paper
       var classification = params.get("classification");
+      if(classification == null){
+        window.location.replace("?classification=1");
+
+      }
 
       // Set it as the dropdown value
       $("#classification_select").val(classification);
