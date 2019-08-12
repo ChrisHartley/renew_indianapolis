@@ -210,11 +210,12 @@ class closing(models.Model):
                 prop.save()
 
             if self.archived == True and orig_closing.archived != True:
-                prop = self.application.Property
-                prop.status = 'Available'
-                prop.applicant = ''
-                prop.buyer_application = None
-                prop.save()
+                if self.application.Property.buyer_application_id == self.application.id:
+                    prop = self.application.Property
+                    prop.status = 'Available'
+                    prop.applicant = ''
+                    prop.buyer_application = None
+                    prop.save()
                 app = self.application
                 app.status = Application.WITHDRAWN_STATUS
                 app.staff_notes = 'Application marked as withdrawn when closing archived - {0}\n{1}'.format(timezone.now(),app.staff_notes)
