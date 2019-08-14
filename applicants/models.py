@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from localflavor.us.models import PhoneNumberField
 from django.utils.encoding import python_2_unicode_compatible
-
+from django.core.exceptions import ValidationError
 #from applications.models import UploadedFile
 
 @python_2_unicode_compatible
@@ -105,6 +105,10 @@ class Organization(models.Model):
     #     verbose_name='Most Recent Financial Statement', help_text='If available', blank=True, null=True)
 
     external_system_id = models.CharField(max_length=100, blank=True)
+
+    def clean(self):
+        if self.phone_number == '' and self.email == '':
+            raise ValidationError('Either a phone number or email address is required.')
 
     def save(self, *args, **kwargs):
         super(Organization, self).save(*args, **kwargs)
