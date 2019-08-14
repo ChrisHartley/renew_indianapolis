@@ -13,7 +13,7 @@
 {% for app in applications%}
 {{app}}</br>
 <pre>
-{% include 'email/neighborhood_notification_email.txt' with application=app %}
+{% include message_template  with application=app %}
 {% for file in app.file.all %}{% if file.send_with_neighborhood_notification %}. {{file}}
 {% endif %}{% endfor %}
 </pre>

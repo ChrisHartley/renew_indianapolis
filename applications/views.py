@@ -532,7 +532,7 @@ class GenerateNeighborhoodNotifications(DetailView):
         applications = []
         for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
             application = meeting_link.application
-            if application.neighborhood_notification_details != '':
+            if '{0} - {1}:'.format(context['meeting'].get_meeting_type_display(), context['meeting'].meeting_date) in application.neighborhood_notification_details:
                 continue
             applications.append(application)
             orgs = registered_organization.objects.filter(geometry__contains=application.Property.geometry).exclude(email='n/a').order_by('-geometry')
@@ -548,7 +548,16 @@ class GenerateNeighborhoodNotifications(DetailView):
 
             subject = 'Neighborhood Notification - {0}'.format(application.Property,)
             from_email = 'info@renewindianapolis.org'
-            message = render_to_string('email/neighborhood_notification_email.txt', {'application': application})
+            meeting_type = context['meeting'].meeting_type
+
+            if meeting_type == Meeting.REVIEW_COMMITTEE:
+                message_template = 'email/neighborhood_notification_email.txt'
+            elif meeting_type == Meeting.MDC:
+                message_template = 'email/neighborhood_notification_email_mdc.txt'
+            else:
+                message_template = 'email/neighborhood_notification_email.txt'
+            context['message_template'] = message_template
+            message = render_to_string(message_template, {'application': application})
 
             email = EmailMessage(
                 subject,
@@ -564,11 +573,10 @@ class GenerateNeighborhoodNotifications(DetailView):
                     email.attach_file('/tmp/blank.txt')
                 else:
                     email.attach_file(f.supporting_document.path)
-            #print "Send?", self.request.GET.get('send')
             if self.request.GET.get('send') == 'True':
                 email.send()
-            #    print 'Sent email'
                 new_notifications = ', '.join(org_names)
+                new_notifications = '{0} - {1}: {2}. '.format(context['meeting'].get_meeting_type_display(), context['meeting'].meeting_date, new_notifications)
                 application.neighborhood_notification_details = application.neighborhood_notification_details + new_notifications
                 application.save()
 
