@@ -48,6 +48,8 @@ class Property(models.Model):
     NSI_CLOSING = 11
     NSI_CLOSED = 12
     NST_TRIAGE_REVIEW = 13
+    NSI_BUYER_EXECUTED_PA = 14
+
 
     STATUS_CHOICES = (
         (NEW_STATUS, 'NSI New'),
@@ -59,6 +61,7 @@ class Property(models.Model):
         (OFFER_ACCEPT_STATUS,'NSI Offer Accepted'),
         (SENT_TO_DOC_PREP,'Sent to Doc Prep'),
         (NSI_AWAITING_PA,'NSI Awaiting PA'),
+        (NSI_BUYER_EXECUTED_PA,'NSI Buyer Executed PA'),
         (NSI_CLOSING,'NSI Closing'),
         (NSI_CLOSED,'NSI Closed'),
         (DECLINED_STATUS,'NSI Declined by Buyer'),
