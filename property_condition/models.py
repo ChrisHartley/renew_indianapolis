@@ -249,7 +249,13 @@ class ConditionReport(models.Model):
             image.save(filename)
 
     def __str__(self):
-        return '{0} - {1}'.format(self.Property, self.timestamp)
+        prop = None
+        if self.Property is not None:
+            prop = self.Property
+        elif self.Property_ncst is not None:
+            prop = self.Property_ncst
+        return '{0} - {1}'.format(prop, self.timestamp)
+
 
 class ConditionReportProxy(ConditionReport):
     class Meta:
