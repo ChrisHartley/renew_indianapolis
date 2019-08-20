@@ -18,7 +18,7 @@ class SurplusParcelFilter(django_filters.FilterSet):
     has_building = django_filters.BooleanFilter(label='Has a structure')
     township = django_filters.MultipleChoiceFilter(choices=Parcel.TOWNSHIP_CHOICES)
     land_value = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder': '$'}))
-    request_tranche = django_filters.RangeFilter(widget=RangeWidget())
+    request_tranche = django_filters.MultipleChoiceFilter(choices=Parcel.REQUEST_TRANCHE_CHOICES) #RangeFilter(widget=RangeWidget())
     improved_value = django_filters.RangeFilter(widget=RangeWidget(attrs={'placeholder': '$'}))
     interesting = django_filters.BooleanFilter()
     classification = django_filters.ChoiceFilter(choices=Parcel.CLASSIFICATION_CHOICES)

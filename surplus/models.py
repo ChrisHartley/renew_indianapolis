@@ -67,6 +67,29 @@ class Parcel(models.Model):
         (WARREN_TOWNSHIP, 'Warren Township'),
         (FRANKLIN_TOWNSHIP, 'Franklin Township'),
     )
+
+    #1: House not in very poor condition, 2: Vacant lot for new construction, 3: House in very poor condition, 4: Vacant lot not for new construction, 5: Sliver or other valueless property')
+
+    NONE = 0
+    HOUSE_OK = 1
+    LOT_STANDARD = 2
+    HOUSE_BAD = 3
+    LOT_FDL = 4
+    SLIVER = 5
+    OTHER = 6
+
+    REQUEST_TRANCHE_CHOICES = (
+            (HOUSE_OK, 'House not in immediate need of demolition'),
+            (LOT_STANDARD, 'Vacant lot for new construction'),
+            (HOUSE_BAD,'House in need of demolition'),
+            (LOT_FDL,'Vacant lot for sale as FDL'),
+            (SLIVER,'Sliver or other vacant lot without value'),
+            (OTHER,'Other, brownfield, commercial, etc'),
+            (NONE, 'None')
+
+    )
+
+
     township = models.IntegerField(choices=TOWNSHIP_CHOICES, null=True)
     zipcode = models.CharField(max_length=5, null=True)
     zoning = models.CharField(max_length=5, null=True)
@@ -92,7 +115,12 @@ class Parcel(models.Model):
     SURPLUS = 2
     FORMER_SURPLUS = 3
     DMD_HOLD = 4
-    CLASSIFICATION_CHOICES = ( (TAX_SALE_UNSOLD,'Tax Sale Unsold'),(SURPLUS, 'County Surplus'), (FORMER_SURPLUS, 'Former Surplus'), (DMD_HOLD, 'DMD Hold'),)
+    CLASSIFICATION_CHOICES = (
+        (TAX_SALE_UNSOLD,'Tax Sale Unsold'),
+        (SURPLUS, 'County Surplus'),
+        (FORMER_SURPLUS, 'Former Surplus'),
+        (DMD_HOLD, 'DMD Hold'),
+    )
     classification = models.IntegerField(choices=CLASSIFICATION_CHOICES, default=SURPLUS)
 
     demolition_order = models.BooleanField(default=False)
@@ -144,8 +172,11 @@ class Parcel(models.Model):
 
     previously_held_gateway_area = models.BooleanField(default=False)
 
-    request_tranche = models.IntegerField(blank=True, null=True, help_text='1: House not in very poor condition, 2: Vacant lot for new construction, 3: House in very poor condition, 4: Vacant lot not for new construction, 5: Sliver or other valueless property')
-
+    request_tranche = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=REQUEST_TRANCHE_CHOICES
+    )
     geometry = models.MultiPolygonField(srid=2965)
     centroid_geometry = models.PointField(srid=2965) # compuated from geometry on save
 
