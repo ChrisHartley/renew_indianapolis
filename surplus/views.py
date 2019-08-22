@@ -182,6 +182,7 @@ def surplusUpdateFieldsFromMap(request):
 
 
 def get_surplus_inventory_csv(request):
-    qs = Parcel.objects.filter(classification=1).values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes', 'vetted', 'vetting_notes', 'request_tranche') #.values('parcel', 'street_address')
+#    classification_requested = request.GET.get('classification', 1)
+    qs = Parcel.objects.all().values('parcel_number','street_address','township','zipcode','zoning','has_building','improved_value','land_value','area','assessor_classification','classification','demolition_order','repair_order','interesting','requested_from_commissioners','notes', 'vetted', 'vetting_notes', 'request_tranche') #.values('parcel', 'street_address')
     #qs = Property.objects.all().prefetch_related('cdc', 'zone', 'zipcode')
     return render_to_csv_response(qs)
