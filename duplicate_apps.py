@@ -9,9 +9,10 @@ from property_inventory.models import Property
 from user_files.models import UploadedFile
 from django.core.files.base import ContentFile
 #parcels = ['1014357','1045714','1053819','1053818','1077379','1007209','1058628','1059843','1025250','1033374','1046931','1076327','1071972','1003893','1072980','1023819','1048095','1035011']
-parcels = ['1032075','1050963','1033774','1073948']
-template_app = Application.objects.get(id=7787)
-org_app =  Application.objects.get(id=7787)
+#parcels = ['1032075','1050963','1033774','1073948']
+parcels = ['8046303',]
+template_app = Application.objects.get(id=8236)
+org_app =  Application.objects.get(id=8236)
 print(template_app)
 for parcel in parcels:
     app = org_app
