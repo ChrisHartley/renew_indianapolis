@@ -515,9 +515,9 @@ class CommIndApplicationForm(forms.ModelForm):
                 'This is a required question.'))
 
         stakeholders_contacted_details = cleaned_data.get('stakeholders_contacted_details', None)
-        if stakeholders_contacted_details is None or len(stakeholders_contacted_details) < 1:
+        if stakeholders_contacted is True and len(stakeholders_contacted_details) < 1:
             self.add_error("stakeholders_contacted_details", ValidationError(
-                'You anwsered Yes above, please provide a name.'))
+                'You answered Yes above, please provide a name.'))
 
         applicant_skills_environmental_remediation = cleaned_data.get('applicant_skills_environmental_remediation', None)
         if applicant_skills_environmental_remediation is None:

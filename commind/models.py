@@ -383,8 +383,8 @@ class Application(models.Model):
         max_digits=18,
         decimal_places=2,
         help_text="The price of the property offered by the applicant",
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
     )
 
     total_costs = models.DecimalField(
