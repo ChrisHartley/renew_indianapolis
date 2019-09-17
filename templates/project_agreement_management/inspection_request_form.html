@@ -1,0 +1,48 @@
+{% extends 'allauth-base.html' %}
+
+{% block extra_head %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+{% endblock extra_head %}
+
+{% block content %}
+<div class="row">&nbsp;</div>
+<div class="row">
+  <p>
+<strong>Congratulations</strong> on completing your project purchased through Renew Indianapolis.
+We are proud and grateful for the work our buyers do to strengthen neighborhoods
+around Indianapolis.
+</p>
+<p>
+When you are ready to schedule an appontment for the final inspection to release
+the project agreement recorded on your deed, complete and submit the following form.
+</p>
+<p>
+Someone from Renew or the City will contact you in 2-3 business days to schedule
+the on-site inspection. We recommend the owner be present during the inspection
+but if the property is on a lock-box and you would like one of our inspectors
+to complete the inspection without you than please note that in the comment box.
+</p>
+</div>
+{% if user.is_authenticated %}
+	<div class="row">
+		<div class="col-md-7">
+			{% load crispy_forms_tags %}
+		 	{% crispy form %}
+
+		</div>
+	</div>
+{% else %}
+<p class="lead">
+Please <a href='{%url 'account_login'%}?next={%url 'submit_property_inquiry' %}'>log in or create an account</a>
+to submit a project agreement release inspection request.
+</p>
+{% endif %}
+</div>
+<script>
+$('#id_Property').select2({
+  placeholder: "Enter address, street name, parcel number or select from dropdown"
+});
+</script>
+{% endblock content %}
