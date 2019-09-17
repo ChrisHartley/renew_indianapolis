@@ -23,6 +23,8 @@ from neighborhood_notifications.views import update_registered_organizations, Re
 #from post_sale.views import ApplicationModifyProjectAggreementCreate, ApplicationModifyProjectAggreementUpdate
 from utils.views import DonateView, send_class_file
 from commind.views import view_document, CommIndApplicationFormView, PropertyListView, CommIndApplicationSuccessView, CommIndApplicationDetailView
+from project_agreement_management.views import InspectionRequestFormView
+
 
 admin.site.site_header = 'Blight Fight administration'
 from django.conf.urls import url  # For django versions before 2.0
@@ -246,8 +248,10 @@ urlpatterns = [
         url(r'^commercial_industrial/app/detail/(?P<pk>[0-9]+)/', staff_member_required(CommIndApplicationDetailView.as_view()), name='commind_application_detail'),
         url(r'^commercial_industrial/application/(?P<parcel>[0-9]+)/', CommIndApplicationFormView.as_view(), name='commind_application_parcel'),
         url(r'^commercial_industrial/success/$', CommIndApplicationSuccessView.as_view(), name='commind_application_success'),
-        url(r'^commercial_industrial/list/$', PropertyListView.as_view())
+        url(r'^commercial_industrial/list/$', PropertyListView.as_view()),
 
+        url(r'^inspection_request/$', InspectionRequestFormView.as_view(), name='pa_release_inspection_request'),
+        url(r'^inspection_request/(?P<parcel>[0-9]+)/', InspectionRequestFormView.as_view(), name='pa_release_inspection_request_parcel'),
 
     ]
 
