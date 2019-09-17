@@ -51,3 +51,18 @@ class PropertyInquiryTable(tables2.Table):
         model = propertyInquiry
         attrs = {"class": "table table-bordered"}
         fields = ("Property", "requested_timestamp",)
+
+
+class PropertiesUnderPATable(tables2.Table):
+    request_release = tables2.LinkColumn(
+        'pa_release_inspection_request_parcel',
+        kwargs={
+            'parcel': A('parcel'),
+        },
+        text='Request Release Inspection',
+        empty_values=(),
+    )
+    class Meta:
+        model = Property
+        attrs = {"class": "table table-bordered"}
+        fields = ("streetAddress", "parcel", "structureType", "status", "project_agreement_released", "request_release",)

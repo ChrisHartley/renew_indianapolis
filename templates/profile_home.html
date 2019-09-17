@@ -55,6 +55,13 @@
 <a href="{% url 'process_application' 'new' %}" class="btn btn-primary" role="button">Start a New Application</a>
 </p>
 </p>
+<p class="">
+<h3>Purchased Properties</h3>
+{% render_table properties_under_pa %}
+<p>
+If you need to request a release inspection on a property not shown here, <a href="{% url 'pa_release_inspection_request' %}">use this form.</a>
+</p>
+</p>
 <!--
 <span class="">
 <h3>Organizations</h3>

@@ -55,7 +55,7 @@ INSTALLED_APPS = (
     'univiewer',
     'epp_connector',
     'neighborhood_notifications',
-    #'post_sale',#
+     #'post_sale',#
     #'accella_records',
     'utils',
     #'debug_toolbar',#
@@ -64,6 +64,7 @@ INSTALLED_APPS = (
     'market_activity',
     'commind',
     'ncst',
+    'project_agreement_management',
 )
 
 # MIDDLEWARE_CLASSES = (
@@ -88,6 +89,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #'django_tables2_reports.middleware.TableReportMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'blight_fight.urls'

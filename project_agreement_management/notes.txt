@@ -1,0 +1,30 @@
+Project Agreement Management
+project_agreement_management
+Releases
+- Recorded number
+- Date
+- Scanned copy
+
+Inspection requests
+- Linked to a Property/Application combination
+- Photos
+- Date/time submitted
+- Contact info for inspection
+- Staff field - Inspection scheduled - datetime
+- Staff field - notes
+
+Enforcement Object
+- Property/Application combination
+- Notes attach to it
+-- Note
+--- Datetime
+--- User
+--- File attachment
+--- Text 
+
+Workout meeting - agenda items
+
+Notes
+
+
+Project Agreements pertain to a particular property/applicant combination

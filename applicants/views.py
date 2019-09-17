@@ -11,10 +11,10 @@ from django.urls import reverse
 from .forms import ApplicantProfileForm, OrganizationForm
 from .models import ApplicantProfile, Organization
 from user_files.models import UploadedFile
-from .tables import PropertyInquiryTable, ApplicationTable, OrganizationTable
+from .tables import PropertyInquiryTable, ApplicationTable, OrganizationTable, PropertiesUnderPATable
 from applications.models import Application
 from property_inquiry.models import propertyInquiry
-
+from property_inventory.models import Property
 #class CustomFormSignupView(allauth.account.views.SignupView):
 #    form_class = CustomSignupForm
 
@@ -45,11 +45,19 @@ def profile_home(request):
     except Organization.DoesNotExist:
         organizations_table = None
 
+    try:
+        properties_under_pa = Property.objects.filter(buyer_application__user=request.user)
+        properties_under_pa_table = PropertiesUnderPATable(properties_under_pa)
+    except Property.DoesNotExist:
+        properties_under_pa_table = None
+
+
     return render(request, 'profile_home.html', {
         'property_inquiries': property_inquiries_table,
         'applications': applications_table,
         'organizations': organizations_table,
         'profile': profile,
+        'properties_under_pa': properties_under_pa_table,
         'title': "my account"
     })
 
