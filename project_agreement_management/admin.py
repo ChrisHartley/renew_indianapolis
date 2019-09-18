@@ -93,10 +93,10 @@ class BreechStatusAdmin(admin.ModelAdmin):
 
 class EnforcementAdmin(admin.ModelAdmin):
     inlines = [NoteInline,BreechTypesInlineAdmin]
-    readonly_fields=('user','current_property_status', 'closing_info', 'find_takeback', 'open_breech_count')
+    readonly_fields=('user','current_property_status', 'closing_info', 'find_takeback', 'open_breech_count', 'person', 'contact_info', 'last_sale_date')
     #fields = ('breech_types',)
-    list_filter = ('level_of_concern',)
-    list_display = ('Property', 'Application','created', 'modified', 'level_of_concern', 'open_breech_count')
+    list_filter = ('level_of_concern','open_breech_count')
+    list_display = ('Property', 'person', 'last_sale_date', 'created', 'modified', 'level_of_concern', 'open_breech_count')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__user__first_name','Application__user__last_name', 'Application__organization__name')
 
     def formfield_for_dbfield(self, db_field, **kwargs):
@@ -117,6 +117,29 @@ class EnforcementAdmin(admin.ModelAdmin):
                 if obj.Property is not None: # and obj.Application is None:
                     formfield.queryset = Application.objects.filter(Property__exact=obj.Property)
         return formfield
+
+
+    def person(self, obj):
+        if obj.Application is not None:
+            name = '{} {}'.format(obj.Application.user.first_name, obj.Application.user.last_name)
+            if obj.Application.organization is not None:
+                name = '{} ({})'.format(name, obj.Application.organization)
+        else:
+            name = obj.owner
+        return name
+
+    def contact_info(self, obj):
+        if obj.Application is not None:
+            email = obj.Application.user.email
+            phone = obj.Application.user.profile.phone_number
+            return '{} {}'.format(email, phone)
+        return ''
+
+
+    def last_sale_date(self, obj):
+        if 'Sold' in obj.Property.status:
+            return obj.Property.status[5:]
+        return '-'
 
 
     def save_model(self, request, obj, form, change):
