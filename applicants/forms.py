@@ -86,7 +86,7 @@ class SignupForm(forms.Form):
     last_name = forms.CharField(max_length=30, label='Last name')
     phone_number = USPhoneNumberField()
     mailing_address_line1 = forms.CharField(
-        max_length='100', required=True, label='Mailing Address Line 1')
+        max_length='100', required=True, label='Mailing Address Line 1', help_text='Pursuant to IC Code 32-21-2-3 we are no longer allowed to use a PO Box for tax mailing address purposes.')
     mailing_address_line2 = forms.CharField(
         max_length='100', required=False, label='Mailing Address Line 2')
     mailing_address_line3 = forms.CharField(
