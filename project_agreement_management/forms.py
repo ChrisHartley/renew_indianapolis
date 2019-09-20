@@ -3,6 +3,10 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from .models import InspectionRequest
 from property_inventory.models import Property
+from django.conf import settings
+from django.urls import reverse
+from django.core.mail import send_mail
+
 
 class InspectionRequestForm(forms.ModelForm):
     note = forms.CharField(
@@ -11,7 +15,16 @@ class InspectionRequestForm(forms.ModelForm):
         widget=forms.Textarea
     )
 
-    
+    def send_email(self, prop):
+        subject = 'New inspection request - {0}'.format(prop,)
+        message = 'Hello, an inspection for {0} has been submitted. View here: https://build.renewindianapolis.org{1}'.format(prop, reverse('admin:project_agreement_management_inspectionrequest_changelist'))#, args=(self.pk,)))
+        from_email = 'info@renewindianapolis.org'
+        if prop.renew_owned == True:
+            to_email = settings.COMPANY_SETTINGS['RENEW_PA_RELEASE']
+        else:
+            to_email = settings.COMPANY_SETTINGS['CITY_PA_RELEASE']
+        send_mail(subject, message, from_email, [to_email,])
+
 
     def __init__(self, *args, **kwargs):
         super(InspectionRequestForm, self).__init__(*args, **kwargs)
