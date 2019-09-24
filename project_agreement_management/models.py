@@ -129,7 +129,7 @@ class InspectionRequest(models.Model):
 
     email = models.CharField(max_length=254, blank=True, help_text='Enter your email address if the one tied to your account is not accurate')
     phone_number = models.CharField(max_length=15, blank=True, help_text='Enter your phone number if the one tied to your account is not accurate')
-
+    request_notes = models.CharField(max_length=254, blank=True, help_text="Any notes for the inspector before they contact you?")
     def __str__(self):
         if self.pk is not None:
             if self.Property is not None:
@@ -167,11 +167,7 @@ class Inspection(models.Model):
     documents = GenericRelation(Document)
     request = models.ForeignKey(InspectionRequest, blank=False, null=False)
     pass_outcome = models.NullBooleanField(blank=True, null=True)
-    #- Linked from InspectionRequest
-    #- Datetime of inspection
-    #- Created datetime
-    #- pull deed, insturment number from closing. Mail merge system to create bulk release?
-    #- linked to a release
+
     def __str__(self):
         return '{} - {} - {}'.format(self.request, self.datetime, self.pass_outcome)
 
@@ -236,11 +232,6 @@ class Enforcement(models.Model):
     meeting = models.ManyToManyField('WorkoutMeeting', blank=True)
 
     open_breech_count = models.PositiveIntegerField(blank=True, null=False, default=0)
-
-
-
-# Need some way to close out an enforcement. Most sensible way would be to look at the status of breeches, but that will be
-# expensive. Instead have a boolean field on the enforcement that gets inspected/changed every time a breech is modified?
 
     def save(self, *args, **kwargs):
         super(Enforcement, self).save(*args, **kwargs)

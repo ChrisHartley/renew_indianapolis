@@ -9,11 +9,6 @@ from django.core.mail import send_mail
 
 
 class InspectionRequestForm(forms.ModelForm):
-    note = forms.CharField(
-        max_length=1024,
-        required=False,
-        widget=forms.Textarea
-    )
 
     def send_email(self, prop):
         subject = 'New inspection request - {0}'.format(prop,)
@@ -30,6 +25,7 @@ class InspectionRequestForm(forms.ModelForm):
         super(InspectionRequestForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.render_unmentioned_fields = True
+        self.fields['request_notes'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
         #self.helper.form_id = 'propertyInquiryForm'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-3'
@@ -41,4 +37,4 @@ class InspectionRequestForm(forms.ModelForm):
 
     class Meta:
         model = InspectionRequest
-        fields = ['Property', 'note']
+        fields = ['Property', 'email', 'phone_number', 'request_notes']
