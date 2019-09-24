@@ -35,7 +35,7 @@ class Command(BaseCommand):
                             if b == overdue_breech:
                                 has_overdue = True
                 if has_overdue == False:
-                    print('No overdue found, creating')
+                    print('Overdue breech created for {}'.format(p,))
                     enf = enforcements.last()
                     if enf is None:
                         if app is not None:
@@ -45,4 +45,3 @@ class Command(BaseCommand):
                         enf.save()
                     bs = BreechStatus(breech=overdue_breech, enforcement=enf, date_created=date.today())
                     bs.save()
-                    print(enf)
