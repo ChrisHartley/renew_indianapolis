@@ -28,7 +28,6 @@ class Command(BaseCommand):
                     enforcements = Enforcement.objects.filter(Property=p).filter(Application=app).order_by('created')
                 else:
                     enforcements = Enforcement.objects.filter(Q(Application__isnull=True) & Q(owner__exact=p.applicant))
-                print(p, app, enforcements)
                 has_overdue = False
                 for e in enforcements:
                         for b in e.breech_types.all():
