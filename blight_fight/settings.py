@@ -55,7 +55,7 @@ INSTALLED_APPS = (
     'univiewer',
     'epp_connector',
     'neighborhood_notifications',
-     #'post_sale',#
+    #'post_sale',#
     #'accella_records',
     'utils',
     #'debug_toolbar',#
@@ -254,6 +254,8 @@ COMPANY_SETTINGS = {
     'STANDARD_PROCESSING_FEE': 200,
     'STANDARD_PROCESSING_STRIPE_FEE': 481, # new based on non-profit 2.2% + $0.30 rate
     'SIDELOT_PRICE': 750.00, # Regular sidelot price
+    'RENEW_PA_RELEASE': 'nhunot@renewindianapolis.org',
+    'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
     'city_staff': (
         {'name': 'Mickey Rogers', 'email': 'Michael.Rogers2@indy.gov'},
         {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
