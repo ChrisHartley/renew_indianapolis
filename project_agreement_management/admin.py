@@ -37,16 +37,18 @@ class InspectionAdmin(admin.ModelAdmin):
 
 
     def closing_link(self, obj):
-        try:
-            url = reverse("admin:closings_closing_change", args=(closing.objects.get(application=obj.request.Application).id,) )
-        except NoReverseMatch:
-            print('exceiption')
-        else:
-            tb_link = '<a target="_blank" href="{}">{}</a>'.format(
-                url,
-                obj.Application.closing_set.first().date_time
-            )
-            return mark_safe(tb_link)
+        tb_link = 'None linked'
+        if obj.request.Application is not None:
+            try:
+                url = reverse("admin:closings_closing_change", args=(closing.objects.filter(application=obj.request.Application).first().id,) )
+            except NoReverseMatch:
+                pass
+            else:
+                tb_link = '<a target="_blank" href="{}">{}</a>'.format(
+                    url,
+                    obj.request.Application.closing_set.first().date_time.strftime('%m/%d/%Y')
+                )
+        return mark_safe(tb_link)
 
 class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]

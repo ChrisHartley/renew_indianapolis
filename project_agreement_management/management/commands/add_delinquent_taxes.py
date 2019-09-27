@@ -39,6 +39,7 @@ class Command(BaseCommand):
                     if b.breech == tax_delinquent and b.date_resolved is None:
                         print('{} - Breach is open, should be closed'.format(e,))
                         b.date_resolved = timezone.now()
+                        b.status = BreechStatus.CLOSED
                         b.save()
             return
 

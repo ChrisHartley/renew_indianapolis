@@ -26,7 +26,6 @@ class InspectionRequestForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.render_unmentioned_fields = True
         self.fields['request_notes'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
-        #self.helper.form_id = 'propertyInquiryForm'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-3'
         self.helper.field_class = 'col-lg-8'
