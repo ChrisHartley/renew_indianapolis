@@ -41,7 +41,6 @@ class Command(BaseCommand):
                         b.date_resolved = timezone.now()
                         b.status = BreechStatus.CLOSED
                         b.save()
-            return
 
         for p in props:
             app = p.buyer_application
