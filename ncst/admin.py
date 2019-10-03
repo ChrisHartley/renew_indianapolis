@@ -46,7 +46,8 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
         ct = census_tract.objects.filter(geometry__contains=obj.geometry.centroid).first()
         p = InventoryProperty.objects.filter(geometry__contained=ct.geometry).filter(status__startswith='Sold').count()
         return p
-   census_tract_landbank_sales_count.short_description = 'Sold landbank properties within census tract'
+
+   #census_tract_landbank_sales_count.short_description = 'Sold landbank properties within census tract'
 
     def condition_report_completed(self, obj):
         return ConditionReport.objects.filter(Property_ncst=obj).count()>0
