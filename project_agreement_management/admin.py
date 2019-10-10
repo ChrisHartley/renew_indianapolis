@@ -91,14 +91,24 @@ class BreechTypesInlineAdmin(admin.TabularInline):
 class BreechStatusAdmin(admin.ModelAdmin):
     raw_id_fields = ('enforcement',)
     inlines = [NoteInline,DocumentInline]
+    list_display = ('enforcement','breech', 'status')
+    list_filter = ('status', 'breech')
+    search_fields = (
+        'enforcement__Property__parcel',
+        'enforcement__Property__streetAddress',
+        'enforcement__Application__user__first_name',
+        'enforcement__Application__user__last_name',
+        'enforcement__Application__organization__name',
+        'enforcement__Application__user__email',
+        )
 
 
 class EnforcementAdmin(admin.ModelAdmin):
     inlines = [NoteInline,BreechTypesInlineAdmin]
-    readonly_fields=('user','current_property_status', 'closing_info', 'find_takeback', 'open_breech_count', 'person', 'contact_info', 'last_sale_date')
+    readonly_fields=('user','current_property_status', 'closing_info', 'find_takeback', 'open_breech_count', 'person', 'contact_info', 'last_sale_date', 'open_breech_types')
     #fields = ('breech_types',)
     list_filter = ('level_of_concern','open_breech_count')
-    list_display = ('Property', 'person', 'last_sale_date', 'created', 'modified', 'level_of_concern', 'open_breech_count')
+    list_display = ('Property', 'person', 'last_sale_date', 'created', 'modified', 'level_of_concern', 'open_breech_count', 'open_breech_types')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__user__first_name','Application__user__last_name', 'Application__organization__name')
 
     def formfield_for_dbfield(self, db_field, **kwargs):
@@ -183,6 +193,12 @@ class EnforcementAdmin(admin.ModelAdmin):
                 )
                 return mark_safe(tb_link)
         return 'No take back linked to application selected'
+
+    def open_breech_types(self, obj):
+        values = ''
+        for b in obj.breech_types.filter(breechstatus__status=BreechStatus.OPEN):
+            values = '{}{}/'.format(values, b)
+        return values
 
 class WorkoutMeetingAdmin(admin.ModelAdmin):
     inlines = [EnforcementInlineAdmin,]
