@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
 from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign, take_back, lockbox
+from closings.models import purchase_option
 from applications.models import Application
 from photos.models import photo
 from applications.admin import PriceChangeMeetingLinkInline
@@ -92,7 +93,11 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = False
-    readonly_fields = ('blc_id', 'generate_epp_export','applications_search','view_photos','context_area_strategy','context_area_name', 'number_of_inquiries', 'main_photo', 'application_summary', 'condition_report_link')
+    readonly_fields = ('purchase_option_in_place', 'blc_id', 'generate_epp_export',
+        'applications_search','view_photos','context_area_strategy',
+        'context_area_name', 'number_of_inquiries', 'main_photo',
+        'application_summary', 'condition_report_link'
+    )
     actions = ["export_as_csv"]
 
     def main_photo(self, obj):
@@ -165,6 +170,10 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
             reverse("admin:app_list", args=('property_condition',))+'conditionreport/?q={}'.format(obj.parcel,), count)
         return mark_safe(summary_link)
 
+    def purchase_option_in_place(self, obj):
+        po = purchase_option.objects.filter(closing__application=obj.buyer_application)
+        return po.count() > 0
+    purchase_option_in_place.boolean = True
 
 
 class ContextAreaAdmin(admin.OSMGeoAdmin):
