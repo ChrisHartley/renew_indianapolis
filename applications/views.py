@@ -557,7 +557,7 @@ class GenerateNeighborhoodNotifications(DetailView):
             else:
                 message_template = 'email/neighborhood_notification_email.txt'
             context['message_template'] = message_template
-            message = render_to_string(message_template, {'application': application})
+            message = render_to_string(message_template, {'application': application, 'meeting': context['meeting']})
 
             email = EmailMessage(
                 subject,

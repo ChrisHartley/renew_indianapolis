@@ -29,8 +29,8 @@ for our Review Committee or Board of Directors as they consider these
 applications please do let us know. Feedback from neighborhood groups
 is very important in the decision-making process.
 
-These applications will be considered at the Review Committee meeting
-on {% for meeting in application.meeting.all %}{% if forloop.first %}{{meeting.meeting_date}}{% endif %}{% endfor %}.
+These applications will be considered at the {{meeting.get_meeting_type_display}} meeting
+on {{meeting.meeting_date}}.
 If they recommend approval the applications will be considered at the
 next Board of Directors meeting{%if application.Property.renew_owned%} for final approval.{%else%} and then, if approved, at the
 following Metropolitan Development Commission meeting, where the final decision will be made.{%endif%}
