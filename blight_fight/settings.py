@@ -246,9 +246,9 @@ COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
     'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindianapolis.org',
     'APPLICATION_CONTACT_PHONE': '317-454-8528',
-    'COMMERCIAL_CONTACT_NAME':'Lily Smith',
-    'COMMERCIAL_CONTACT_EMAIL': 'lsmith@assemblerealestate.com',
-    'COMMERCIAL_CONTACT_PHONE': '317-454-8529',
+    'COMMERCIAL_CONTACT_NAME':'Nicholas Hunot',
+    'COMMERCIAL_CONTACT_EMAIL': 'nhunot@renewindianapolis.org',
+    'COMMERCIAL_CONTACT_PHONE': '317-454-8528',
     'SIDELOT_PROCESSING_FEE': 100,
     'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 200,
