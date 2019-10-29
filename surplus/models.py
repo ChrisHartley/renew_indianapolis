@@ -3,7 +3,9 @@ from property_inventory.models import Property
 from property_condition.models import ConditionReport
 from photos.models import photo
 from django.utils.encoding import python_2_unicode_compatible
-
+from django.apps import apps
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 """
 ## The absurd query to populate this model from existing data:
@@ -180,6 +182,12 @@ class Parcel(models.Model):
     geometry = models.MultiPolygonField(srid=2965)
     centroid_geometry = models.PointField(srid=2965) # compuated from geometry on save
 
+    convert_to_landbank_inventory_on_save = models.BooleanField(
+        default=False,
+        blank=False,
+        verbose_name='Add property to landbank inventory and transfer photos and condition report'
+    )
+
     @property
     def parcel_in_inventory(self):
         return Property.objects.filter(parcel=self.parcel_number).exists()
@@ -198,6 +206,33 @@ class Parcel(models.Model):
     def save(self, *args, **kwargs):
         self.centroid_geometry = self.geometry.centroid
         self.area = self.geometry.area
+
+        if self.convert_to_landbank_inventory_on_save:
+            inventory_property_model = apps.get_model('property_inventory', 'Property')
+
+            p, created = inventory_property_model.objects.get_or_create(
+                parcel=self.parcel_number,
+                defaults={
+                    'update_from_server': True,
+                    'status': 'New Surplus acquisition',
+                    #'acquisition_date': self.city_deed_recorded or timezone.now(),
+                    'renew_owned': False,
+                    'price': 0,
+                },
+            )
+            p.save()
+            phs = photo.objects.filter(prop_surplus=self)
+            for ph in phs:
+                ph.prop = p
+                ph.prop_surplus = None
+                ph.save()
+            condition_reports = ConditionReport.objects.filter(Property_surplus=self)
+            for condition_report in condition_reports:
+                condition_report.Property = p
+                condition_report.Property_surplus = None
+                condition_report.save()
+            self.convert_to_landbank_inventory_on_save = False
+
         super(Parcel, self).save(*args, **kwargs)
 
     def __str__(self):
