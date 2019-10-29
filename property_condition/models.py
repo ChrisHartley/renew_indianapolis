@@ -258,7 +258,7 @@ class ConditionReport(models.Model):
                 image.save(filename)
 
     def __str__(self):
-        return '{} - {1}'.format(self.Property or self.Property_ncst or self.Property_surplus or 'no_property', self.timestamp)
+        return '{0} - {1}'.format(self.Property or self.Property_ncst or self.Property_surplus or 'no_property', self.timestamp)
 
 
 
