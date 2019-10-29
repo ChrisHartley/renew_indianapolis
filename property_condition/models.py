@@ -75,7 +75,15 @@ class Room(models.Model):
         return '{0} - {1}'.format(self.conditionreport, self.get_room_type_display())
 
 def content_file_name(instance, filename):
-    path = '/'.join(['condition_report', instance.Property.streetAddress, filename])
+    address = 'No Address'
+    if instance.Property is not None:
+        address = instance.Property.streetAddress
+    elif instance.Property_ncst is not None:
+        address = instance.Property_ncst.street_address
+    elif instance.Property_surplus is not None:
+        address = instance.Property_surplus.street_address
+
+    path = '/'.join(['condition_report', address, filename])
     return path
 
 @python_2_unicode_compatible
@@ -99,6 +107,7 @@ class ConditionReport(models.Model):
 
     Property = models.ForeignKey('property_inventory.Property', limit_choices_to=limit_property_choices(), null=True, blank=True, on_delete=models.CASCADE)
     Property_ncst = models.ForeignKey('ncst.Property', null=True, blank=True, on_delete=models.CASCADE)
+    Property_surplus = models.ForeignKey('surplus.parcel', null=True, blank=True, on_delete=models.CASCADE)
 
     picture = models.ImageField(upload_to=content_file_name, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -244,17 +253,13 @@ class ConditionReport(models.Model):
         if self.picture:
             filename = self.picture.path
             image = Image.open(filename)
-
-            image.thumbnail(size, Image.ANTIALIAS)
-            image.save(filename)
+            if image.size[0] > 500:
+                image.thumbnail(size, Image.ANTIALIAS)
+                image.save(filename)
 
     def __str__(self):
-        prop = None
-        if self.Property is not None:
-            prop = self.Property
-        elif self.Property_ncst is not None:
-            prop = self.Property_ncst
-        return '{0} - {1}'.format(prop, self.timestamp)
+        return '{} - {1}'.format(self.Property or self.Property_ncst or self.Property_surplus or 'no_property', self.timestamp)
+
 
 
 class ConditionReportProxy(ConditionReport):

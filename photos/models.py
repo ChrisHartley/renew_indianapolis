@@ -10,12 +10,13 @@ from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
 
 def save_location(instance, filename):
-    return 'property_photos/{0}/{1}'.format(instance.prop or instance.prop_ncst or 'no_property', filename)
+    return 'property_photos/{0}/{1}'.format(instance.prop or instance.prop_ncst or instance.prop_surplus or 'no_property', filename)
 
 @python_2_unicode_compatible
 class photo(models.Model):
     prop = models.ForeignKey('property_inventory.Property', null=True, blank=True, on_delete=models.CASCADE)
     prop_ncst = models.ForeignKey('ncst.Property', null=True, blank=True, on_delete=models.CASCADE)
+    prop_surplus = models.ForeignKey('surplus.parcel', null=True, blank=True, on_delete=models.CASCADE)
     main_photo = models.BooleanField(null=False, default=False)
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to=save_location, max_length=512, blank=False, null=False)
@@ -33,8 +34,9 @@ class photo(models.Model):
 
     def __str__(self):
         if self.image:
-            return '%s - %s' % (self.prop, basename(self.image.path))
-        return '%s' % (self.prop, )
+            return '{} - {}'.format(instance.prop or instance.prop_ncst or instance.prop_surplus or 'no_property', basename(self.image.path) )
+            #return '%s - %s' % (self.prop, basename(self.image.path))
+        return '{}'.format(instance.prop or instance.prop_ncst or instance.prop_surplus or 'no_property')
 
     def save(self, *args, **kwargs):
         super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
