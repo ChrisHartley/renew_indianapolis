@@ -32,9 +32,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 
-from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea, price_change
+from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea, price_change, take_back
 from property_inventory.filters import ApplicationStatusFilters
-from property_inventory.tables import PropertySearchTable, PropertyStatusTable, reviewPendingStatusTable
+from property_inventory.tables import PropertySearchTable, PropertyStatusTable, reviewPendingStatusTable, SoldPropertyStatusTable, SoldPropertyStatusTable2
 from property_inventory.forms import PropertySearchForm, PropertySearchSlimForm
 from property_inventory.filters import PropertySearchFilter, PropertySearchSlimFilter
 from property_inquiry.models import propertyInquiry
@@ -86,8 +86,45 @@ from django.urls import reverse
 def showApplications(request):
     config = RequestConfig(request)
 
-    soldProperties = Property.objects.all().filter(
-        status__istartswith='Sold').order_by('status', 'applicant')
+#    soldProperties = Property.objects.all().filter(
+#        status__istartswith='Sold').order_by('status', 'applicant')
+
+    soldProps = []
+    sp = Property.objects.filter(status__istartswith='Sold')
+    for s in sp:
+        soldProps.append(
+            {
+                'address': s.streetAddress,
+                'parcel': s.parcel,
+                'sale_date': datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date(),
+                'buyer': s.applicant,
+                'amount': s.price,
+            }
+        )
+
+    tb = take_back.objects.all()
+    for t in tb:
+        soldProps.append(
+            {
+                'address': t.Property.streetAddress,
+                'parcel': t.Property.parcel,
+                'sale_date': t.original_sale_date,
+                'buyer': t.owner,
+                'amount': t.original_sale_price,
+            }
+        )
+
+    def takeDate(elem):
+        return elem['sale_date']
+    soldProps.sort(key=takeDate)
+
+
+
+    # soldProperties = Property.objects.all().filter(
+    #     Q(status__istartswith='Sold')
+    #     |
+    #     Q(take_back__isnull=False)
+    #     ).order_by('status', 'applicant')
     approvedProperties = Property.objects.all().filter(
         status__istartswith='Sale').order_by('status', 'applicant')
         #status__istartswith='Sale').order_by('-buyer_application__meeting__meeting__meeting_date')
@@ -101,14 +138,15 @@ def showApplications(request):
         reviewPendingProperties = Property.objects.none().order_by('zipcode__name', 'streetAddress')
 
 
-    soldFilter = ApplicationStatusFilters(
-        request.GET, queryset=soldProperties, prefix="sold-")
+    #soldFilter = ApplicationStatusFilters(
+    #    request.GET, queryset=soldProperties, prefix="sold-")
     approvedFilter = ApplicationStatusFilters(
         request.GET, queryset=approvedProperties, prefix="approved-")
     reviewPendingFilter = ApplicationStatusFilters(
         request.GET, queryset=reviewPendingProperties, prefix="review_pending-")
 
-    soldTable = PropertyStatusTable(soldFilter.qs, prefix="sold-")
+    #soldTable = SoldPropertyStatusTable(soldFilter.qs, prefix="sold-")
+    soldTable = SoldPropertyStatusTable2(soldProps, prefix="sold-")
     approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
     reviewPendingTable = reviewPendingStatusTable(reviewPendingFilter.qs, prefix="review_pending-")
 
@@ -136,7 +174,7 @@ def showApplications(request):
         'approvedTable': approvedTable,
         'approvedExport': '{}?{}'.format(reverse("application_status"), 'approved_export=True&_export_format=csv'),
         'title': 'applications & sale activity',
-        'soldFilter': soldFilter,
+    #    'soldFilter': soldFilter,
         'approvedFilter': approvedFilter,
         'reviewPendingFilter': reviewPendingFilter,
         })
