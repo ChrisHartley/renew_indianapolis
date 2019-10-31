@@ -208,19 +208,21 @@ class Parcel(models.Model):
         self.area = self.geometry.area
 
         if self.convert_to_landbank_inventory_on_save:
+            print("Saving")
             inventory_property_model = apps.get_model('property_inventory', 'Property')
 
             p, created = inventory_property_model.objects.get_or_create(
                 parcel=self.parcel_number,
                 defaults={
                     'update_from_server': True,
-                    'status': 'New Surplus acquisition',
-                    #'acquisition_date': self.city_deed_recorded or timezone.now(),
+                    'status': 'New Inventory',
+                #    'acquisition_date': self.city_deed_recorded or timezone.now(),
                     'renew_owned': False,
                     'price': 0,
                 },
             )
             p.save()
+            print(p)
             phs = photo.objects.filter(prop_surplus=self)
             for ph in phs:
                 ph.prop = p
@@ -232,7 +234,7 @@ class Parcel(models.Model):
                 condition_report.Property_surplus = None
                 condition_report.save()
             self.convert_to_landbank_inventory_on_save = False
-
+            print('{} - {} - {}'.format(p, phs, condition_reports))
         super(Parcel, self).save(*args, **kwargs)
 
     def __str__(self):
