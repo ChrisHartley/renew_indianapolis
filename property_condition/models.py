@@ -1,6 +1,5 @@
 from django.db import models
 from PIL import Image
-import numpy as np
 from django.conf import settings
 from django.db.models import Q
 #from property_inventory.models import Property
@@ -236,12 +235,6 @@ class ConditionReport(models.Model):
 
     scope_of_work = models.FileField(blank=True)
 
-    # @property
-    # def condition_avg(self):
-    #     condition_array = [self.roof_shingles, self.roof_framing, self.roof_gutters, self.foundation_slab, self.foundation_crawl, self.exterior_siding_brick, self.exterior_siding_vinyl, self.exterior_siding_wood, self.exterior_siding_other, self.windows, self.garage, self.fencing, self.landscaping,
-    #                        self.doors, self.kitchen_cabinets, self.flooring_subflooring, self.electrical_knob_tube_cloth, self.electrical_standard, self.plumbing_metal, self.plumbing_plastic, self.walls_drywall, self.walls_lathe_plaster, self.hvac_furance, self.hvac_duct_work, self.hvac_air_conditioner]
-    #     clean = [x for x in condition_array if x is not None]
-    #     return np.round(np.mean(clean), 1)
 
     def save(self, size=(400, 300)):
         """
