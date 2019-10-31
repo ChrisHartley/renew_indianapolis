@@ -10,7 +10,7 @@ from property_inventory.models import Property
 from project_agreement_management.models import Enforcement, BreechType, BreechStatus
 
 class Command(BaseCommand):
-    help = 'Check for properties past the two year deadline and create enforcements and breeches'
+    help = 'Given a list of tax delinquent properties, create enforcements and breeches'
     deadline = timedelta(days=(2*365))
 
 
