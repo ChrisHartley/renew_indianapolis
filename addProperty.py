@@ -54,7 +54,7 @@ def getWithin(parcel, within, cursor_gis, cursor_geodjango):
 		return 'NULL'
 
 def getStructureType(parcel, cursor):
-	cursor.execute("SELECT improv_value FROM counter_book_2017 WHERE parcel_number = '"+str(parcel)+"'")
+	cursor.execute("SELECT \"Improv_Value\" FROM counter_book_2019_0814 WHERE \"Parcel_Number\" = '"+str(parcel)+"'")
 	try:
 		grossimprovedvalue = int(cursor.fetchone()[0])
 		if (grossimprovedvalue > 0):
@@ -83,11 +83,11 @@ def getParcelArea(parcel, cursor):
 	return cursor_gis.fetchone()[0]
 
 def getShortLegal(parcel, cursor):
-	cursor.execute('SELECT "Legal_Description" FROM counter_book_2017_updated WHERE "Parcel_Number" = \''+str(parcel)+"\'")
+	cursor.execute('SELECT "Legal_Description" FROM counter_book_2019_0814 WHERE "Parcel_Number" = \''+str(parcel)+"\'")
 	return cursor.fetchone()[0]
 
 def getDeedDate(parcel, cursor):
-	cursor.execute('SELECT "Deed_Date"::date FROM counter_book_2017_updated WHERE "Parcel_Number" = \''+str(parcel)+"\'")
+	cursor.execute('SELECT "Deed_Date"::date FROM counter_book_2019_0814 WHERE "Parcel_Number" = \''+str(parcel)+"\'")
 	return cursor.fetchone()[0]
 
 def getUrbanGardenStatus(parcel, cursor):
