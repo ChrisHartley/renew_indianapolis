@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.contrib import admin, messages
 from .models import propertyInquiry, PropertyInquirySummary, propertyShowing, PropertyInquiryMapProxy
 from .forms import propertyShowingAdminForm
@@ -144,11 +146,12 @@ class propertyInquiryAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     def user_name(self, obj):
         email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Property visit: '+str(obj.Property), 'Hi ' +obj.user.first_name+',', obj.user.email)
-        name_link = '<a href="{}">{}</a>'.format(
-             reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
-                 u' '.join((obj.user.first_name, obj.user.last_name)).encode('utf-8')
-             )
-        return mark_safe(name_link + ' - ' + email_link)
+        name_link = '<a href="{0}">{1} {2}</a>'.format(
+            reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
+            obj.user.first_name,
+            obj.user.last_name,
+        )
+        return mark_safe('{} - {}'.format(name_link,email_link))
     user_name.short_description = 'user'
 
     def user_phone(self, obj):
