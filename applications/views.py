@@ -91,7 +91,8 @@ def process_application(request, action, id=None):
                     is_active__exact=False).exclude(
                     status__contains='Sold').exclude(
                     status__contains='BEP').exclude(
-                    status__contains='Sale approved by Board of Directors', renew_owned=True).first()
+                    status__contains='Sale approved by Board of Directors', renew_owned=True).exclude(
+                    status__contains='Sale approved - purchase option').first()
             except Property.DoesNotExist:
                 raise Http404("Property does not exist or is not eligible for application")
             app = Application(user=request.user, status=Application.INITIAL_STATUS, Property=prop)

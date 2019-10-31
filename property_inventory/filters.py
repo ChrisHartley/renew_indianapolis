@@ -266,6 +266,7 @@ class PropertySearchFilter(django_filters.FilterSet):
                 (Q(renew_owned__exact=True) & Q(
                     status__icontains='Sale approved by Board of Directors'))
                 | Q(status__icontains='Sale approved by MDC')
+                | Q(status__icontains='Sale approved - purchase option')
             )
         if value == 'sold':
             return queryset.filter(status__contains='Sold')

@@ -115,11 +115,17 @@ class purchase_option(models.Model):
         return 'Purchase Option - {0} - exp {1}'.format(self.closing, self.date_expiring)
 
     def save(self, *args, **kwargs):
+
         super(purchase_option, self).save(*args, **kwargs)
-        #if self.date_expiring > date.today():
-        #    print self.closing.application.Property.status
-        #    self.closing.application.Property.status = 'this is fake!'
-        #    print self.closing.application.Property.status
+        cp = None
+        if self.closing.application is not None and self.closing.application.Property is not None:
+            cp = self.closing.application.Property
+        status_text = 'Sale approved - purchase option {}'.format(self.date_purchased.strftime('%m/%d/%Y'),)
+        if cp is not None and cp.status != status_text:
+            cp.status = status_text
+            cp.save()
+            print('Changing status to purchase option - {}'.format(self,))
+
 
     class Meta:
         verbose_name = "purchase option"

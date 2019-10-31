@@ -58,7 +58,7 @@ class PropertyStatusListFilter(SimpleListFilter):
         if self.value() == 'available':
             return queryset.filter(status__contains='Available')
         if self.value() == 'approved':
-            return queryset.filter( ( Q(status__contains='Sale approved by MDC') & Q(renew_owned__exact=False) ) | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=True)) )
+            return queryset.filter( Q(status__contains='Sale approved - purchase option') | ( Q(status__contains='Sale approved by MDC') & Q(renew_owned__exact=False) ) | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=True)) )
         if self.value() == 'consideration':
             return queryset.filter( Q(status__contains='Sale approved by Review Committee') | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=False)))
         if self.value() == 'bep':
