@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.db.models import Q
 from property_inventory.models import Property
+from applications.models import Application
 from project_agreement_management.models import Enforcement, BreechType, BreechStatus
 
 class Command(BaseCommand):
@@ -25,6 +26,9 @@ class Command(BaseCommand):
             if sold_date + self.deadline <= date.today():
                 app = p.buyer_application
                 if app is not None:
+                    if app.application_type not in[Application.HOMESTEAD, Application.STANDARD]:
+                        print('No timeline in PA. Property: {}, Application: {}, Application Type: {}'.format(p, app, app.application_type))
+                        continue
                     enforcements = Enforcement.objects.filter(Property=p).filter(Application=app).order_by('created')
                 else:
                     enforcements = Enforcement.objects.filter(Q(Application__isnull=True) & Q(owner__exact=p.applicant))
