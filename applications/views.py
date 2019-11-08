@@ -334,7 +334,7 @@ class MONCSVResponseMixin(object):
             response['Content-Disposition'] = 'attachment; filename="{0}-{1}"'.format(slugify(context['meeting']), 'notification-merge-template.csv')
             writer = csv.writer(response)
 
-            header = ['First Name', 'Email Address', 'Property', 'Status', 'Renew Owned', 'Contingent Approval', 'Reason', 'Sidelot', 'Link', 'City\'s Sale Price','Renew\'s Sale Price','Total']
+            header = ['First Name', 'Email Address', 'Property', 'Status', 'Renew Owned', 'Contingent Approval', 'Reason', 'Sidelot', 'Link',  'City\'s Sale Price', 'Renew\'s Sale Price','Total']
             #header = ['Parcel','Street Address','Application Type','Structure Type','City\'s Sale Price','Renew\'s Sale Price','Total','Buyer Name']
             writer.writerow(header)
             # Write the data from the context somehow
@@ -352,8 +352,8 @@ class MONCSVResponseMixin(object):
                 except processing_fee.DoesNotExist:
                     pf_link = ''
                 if application.Property.renew_owned == False:
-                    city_split = 500 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.45))
-                    renew_split = 250 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.55))
+                    city_split = 250 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.55))
+                    renew_split = 500 if application.price_at_time_of_submission == 750 else (application.price_at_time_of_submission * Decimal(.45))
                 else:
                     city_split = 0
                     renew_split = application.price_at_time_of_submission
