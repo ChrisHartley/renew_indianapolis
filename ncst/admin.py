@@ -38,8 +38,9 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'street_address', 'zipcode')
     list_display = ('parcel', 'street_address', 'status', 'lockbox', 'recommendation', 'price_offer', 'condition_report_completed')
     list_filter = ('status',)
-    readonly_fields = ('census_tract_landbank_sales_count', )
+    readonly_fields = ('census_tract_landbank_sales_count','get_market_assessment_spreadsheet' )
     inlines = [ photoInlineAdmin,propertyConditionReportInlineAdmin]
+#    change_list_template = 'admin/property_inquiry/change_list_map.html'
 
     def census_tract_landbank_sales_count(self, obj):
         # return count of inventory sales within this census tract
@@ -48,6 +49,15 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
         return p
 
    #census_tract_landbank_sales_count.short_description = 'Sold landbank properties within census tract'
+
+    def get_market_assessment_spreadsheet(self, obj):
+        if obj.id is None:
+           return '<none>'
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'ncst', 'class_name': 'Property', 'pk':obj.id, 'field_name':'market_assessment_spreadsheet'}),
+                "Download"
+            ))
+
 
     def condition_report_completed(self, obj):
         return ConditionReport.objects.filter(Property_ncst=obj).count()>0

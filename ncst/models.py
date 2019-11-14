@@ -8,7 +8,8 @@ from utils.utils import pull_property_info_from_arcgis
 from photos.models import photo
 from property_condition.models import ConditionReport
 from django.apps import apps
-
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 @python_2_unicode_compatible
 class Contact(models.Model):
@@ -32,6 +33,11 @@ class Seller(models.Model):
     def __str__(self):
         return self.name
 
+
+def save_location(instance, filename):
+    if instance.parcel:
+        return 'ncst/{0}/{1}'.format(instance.parcel, filename)
+    return 'ncst/{0}/{1}'.format('no_parcel', filename)
 
 @python_2_unicode_compatible
 class Property(models.Model):
@@ -112,6 +118,9 @@ class Property(models.Model):
 
     recommendation = models.NullBooleanField(blank=True, help_text="Recommened by staff for acquisition?")
 
+    market_assessment_spreadsheet = models.FileField(upload_to=save_location, blank=True, null=True)
+
+
     class Meta:
         verbose_name = "Property"
         verbose_name_plural = "Properties"
@@ -128,6 +137,16 @@ class Property(models.Model):
                 self.zipcode = results['zipcode']
                 self.geometry = results['geometry']
                 self.update_from_server = False
+                email = EmailMessage(
+                    'New NCST: {} - {}'.format(self.street_address, self.parcel),
+                    'A new NCST property at {} - parcel {} has been added to Blight Fight.'.format(self.street_address, self.parcel),
+                    'info@renewindianapolis.org',
+                    settings.COMPANY_SETTINGS['NCST_CONTACTS'],
+                    reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                )
+                email.send()
+
+
         if self.convert_to_landbank_inventory_on_save:
             inventory_property_model = apps.get_model('property_inventory', 'Property')
 

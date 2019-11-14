@@ -260,7 +260,8 @@ COMPANY_SETTINGS = {
         {'name': 'Mickey Rogers', 'email': 'Michael.Rogers2@indy.gov'},
         {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
         {'name': 'Gib Crabill', 'email': 'gib.crabill@indy.gov'},
-        )
+        ),
+    'NCST_CONTACTS': ['o.brownlee@renewindianapolis.org', 'squick@kingpark.org', 'aervin@kingpark.org',]
 }
 
 # This setting determins if property inquiries are allowed to be submitted
