@@ -190,12 +190,20 @@ class propertyShowingAdmin(admin.ModelAdmin):
         'google_public_calendar_event_id',
         'google_private_calendar_event_id',
         'download_signin_sheet',
-        'get_inquiry_rsvp_id'
+        'get_inquiry_rsvp_id',
+        'has_signin_sheet'
     )
     form = propertyShowingAdminForm
     actions = ['batch_calendar_and_email', 'showing_batch_update__admin_action']
+    list_display = ('Property', 'datetime', 'has_signin_sheet',)
+
 #    inlines = [propertyInquiryInlineAdmin,]
     #exclude = ('inquiries',)
+
+    def has_signin_sheet(self, obj):
+        return obj.signin_sheet != ''
+    has_signin_sheet.boolean = True
+
     def property_status(self, obj):
         return obj.Property.status
 
