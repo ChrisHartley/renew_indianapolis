@@ -34,9 +34,9 @@ class photo(models.Model):
 
     def __str__(self):
         if self.image:
-            return '{} - {}'.format(instance.prop or instance.prop_ncst or instance.prop_surplus or 'no_property', basename(self.image.path) )
+            return '{} - {}'.format(self.prop or self.prop_ncst or self.prop_surplus or 'no_property', basename(self.image.path) )
             #return '%s - %s' % (self.prop, basename(self.image.path))
-        return '{}'.format(instance.prop or instance.prop_ncst or instance.prop_surplus or 'no_property')
+        return '{}'.format(self.prop or self.prop_ncst or self.prop_surplus or 'no_property')
 
     def save(self, *args, **kwargs):
         super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
