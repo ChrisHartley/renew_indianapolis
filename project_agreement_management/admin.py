@@ -14,6 +14,9 @@ from applications.models import Application
 from property_inventory.models import take_back
 from closings.models import closing
 
+import csv
+from django.http import HttpResponse
+
 class NoteInline(GenericStackedInline):
     model = Note
     fields = ('text', 'created', 'modified', )
@@ -101,7 +104,81 @@ class BreechStatusAdmin(admin.ModelAdmin):
         'enforcement__Application__organization__name',
         'enforcement__Application__user__email',
         )
+    actions = ['export_as_csv_custom_action',]
 
+
+
+    def export_as_csv_custom_action(self, request, queryset):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format('Breech-enforcement')
+        writer = csv.writer(response)
+
+        field_names = [
+            'Street Address',
+            'Parcel',
+            'Structure Type',
+            'Application Type',
+            'Sale Date',
+            'Buyer Name',
+            'Organization Name',
+            'Buyer email',
+            'Buyer phone',
+            'Buyer mailing street address',
+            'Buyer mailing city',
+            'Buyer mailing state',
+            'Buyer mailing postal code',
+            'Breech Type',
+            'Breech opened date',
+            'Breech status',
+            'Breech closed date',
+            ]
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            if obj.enforcement.Application is not None:
+                data = [
+                    obj.enforcement.Property.streetAddress,
+                    obj.enforcement.Property.parcel,
+                    obj.enforcement.Property.structureType,
+                    obj.enforcement.Application.get_application_type_display(),
+                    obj.enforcement.Property.status[5:],
+                    '{} {}'.format(obj.enforcement.Application.user.first_name, obj.enforcement.Application.user.last_name),
+                    obj.enforcement.Application.organization,
+                    obj.enforcement.Application.user.email,
+                    obj.enforcement.Application.user.profile.phone_number,
+                    '{} {} {}'.format(obj.enforcement.Application.user.profile.mailing_address_line1, obj.enforcement.Application.user.profile.mailing_address_line2, obj.enforcement.Application.user.profile.mailing_address_line3),
+                    obj.enforcement.Application.user.profile.mailing_address_city,
+                    obj.enforcement.Application.user.profile.mailing_address_state,
+                    obj.enforcement.Application.user.profile.mailing_address_zip,
+                    obj.breech.name,
+                    obj.date_created,
+                    obj.status,
+                    obj.date_resolved,
+                ]
+            else:
+                data = [
+                    obj.enforcement.Property.streetAddress,
+                    obj.enforcement.Property.parcel,
+                    obj.enforcement.Property.structureType,
+                    'Legacy application not in system',
+                    obj.enforcement.Property.status[5:],
+                    obj.enforcement.Property.applicant,
+                    '', # org
+                    '', # email
+                    '', # phone
+                    '', # mailing address
+                    '', # mailing city
+                    '', # mailing state
+                    '', # mailing zip
+                    obj.breech.name,
+                    obj.date_created,
+                    obj.status,
+                    obj.date_resolved,
+                ]
+
+            row = writer.writerow(data)
+
+        return response
 
 class EnforcementAdmin(admin.ModelAdmin):
     inlines = [NoteInline,BreechTypesInlineAdmin]
