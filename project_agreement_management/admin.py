@@ -131,6 +131,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
             'Breech opened date',
             'Breech status',
             'Breech closed date',
+            'Notes',
             ]
 
         writer.writerow(field_names)
@@ -154,6 +155,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
                     obj.date_created,
                     obj.status,
                     obj.date_resolved,
+                    ' - '.join(['{} - {}.'.format(n.text, n.modified.strftime('%x')) for n in obj.notes.all()]),
                 ]
             else:
                 data = [
@@ -174,11 +176,13 @@ class BreechStatusAdmin(admin.ModelAdmin):
                     obj.date_created,
                     obj.status,
                     obj.date_resolved,
+                    ' - '.join(['{} - {}.'.format(n.text, n.modified.strftime('%x')) for n in obj.notes.all()]),
                 ]
 
             row = writer.writerow(data)
 
         return response
+    export_as_csv_custom_action.short_description = 'Export as CSV'
 
 class EnforcementAdmin(admin.ModelAdmin):
     inlines = [NoteInline,BreechTypesInlineAdmin]
