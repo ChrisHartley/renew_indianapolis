@@ -243,12 +243,12 @@ class ConditionReport(models.Model):
         #print "Does the object already exist?", self.id
         super(ConditionReport, self).save()
 
-        if self.picture:
-            filename = self.picture.path
-            image = Image.open(filename)
-            if image.size[0] > 500:
-                image.thumbnail(size, Image.ANTIALIAS)
-                image.save(filename)
+        # if self.picture:
+        #     filename = self.picture.path
+        #     image = Image.open(filename)
+        #     if image.size[0] > 1024:
+        #         image.thumbnail(size, Image.ANTIALIAS)
+        #         image.save(filename)
 
     def __str__(self):
         return '{0} - {1}'.format(self.Property or self.Property_ncst or self.Property_surplus or 'no_property', self.timestamp)
