@@ -21,8 +21,8 @@ class ConditionReportAdmin(admin.ModelAdmin):
 
 
     def upload_photo_page(self, obj):
-        upload_photo_page_link = '<a target="_blank" href="{}">{}</a>'.format(
-            reverse("admin_add_photos"), "Add photos page")
+        upload_photo_page_link = '<a target="_blank" href="{}?Property={}">{}</a>'.format(
+            reverse("admin_add_photos"), obj.Property.pk, "Add photos page")
         return mark_safe(upload_photo_page_link)
 
     def scope_download(self, obj):
