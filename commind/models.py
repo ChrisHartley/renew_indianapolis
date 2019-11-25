@@ -567,7 +567,7 @@ class Application(models.Model):
     hired_participant = models.NullBooleanField(
         blank=True,
         null=True,
-        verbose_name="Does this project wish to participate in the City’s Hiring Incentive for Re-Entry Development (HIRED) Program?",
+        verbose_name="Does this project wish to participate in the City's Hiring Incentive for Re-Entry Development (HIRED) Program?",
     )
 
     low_mod_daycare = models.NullBooleanField(
