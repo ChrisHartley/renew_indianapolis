@@ -10,12 +10,11 @@ class PropertySearchSlimForm(forms.ModelForm):
     parcel_or_street_address = forms.CharField(required=False)
     follow_me = forms.BooleanField(required=False, label='Show my location', widget=forms.CheckboxInput())
 
-    
 #    status = forms.BooleanField(required=False)
 
     class Meta:
         model = Property
-        fields = [ 'vacant_lot_eligible', 'searchArea', 'zipcode', 'neighborhood', 'status']
+        fields = [ 'vacant_lot_eligible', 'searchArea', 'zipcode', 'neighborhood', 'status', 'property_inspection_group',]
 
     def __init__(self, *args, **kwargs):
         super(PropertySearchSlimForm, self).__init__(*args, **kwargs)
@@ -28,7 +27,6 @@ class PropertySearchSlimForm(forms.ModelForm):
         #self.helper.label_class = 'col-lg-3'
         #self.helper.field_class = 'col-lg-8'
         self.helper.render_unmentioned_fields = False
-
         self.helper.form_method = 'get'
         self.helper.form_action = ''
         self.helper.layout = Layout(
@@ -38,6 +36,7 @@ class PropertySearchSlimForm(forms.ModelForm):
                     Submit('submit', 'Search', css_class='top-search-button'),
                     #HTML('<button id="modal_toggle" class="btn btn-info btn-modal" data-toggle="modal" data-target="#fsModal">Show Results Table</button>'),
                 ),
+                Field('inspection_group'),
                 Field('structureType'),
                 Field('zoning'),
                 Field('neighborhood'),

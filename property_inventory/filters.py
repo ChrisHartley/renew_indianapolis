@@ -76,6 +76,7 @@ class PropertySearchSlimFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(method='filter_status', label='Include sold or sale pending properties', choices=BOOL_CHOICES, empty_label=None)
 
 
+    inspection_group = AllValuesNoneFilter( name='property_inspection_group')
 
     ZONING_CHOICES = (
         ('D', 'Dwelling'),

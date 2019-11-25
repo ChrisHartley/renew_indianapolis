@@ -539,7 +539,20 @@ CSS loading animation.
             });
 
           }
+          if (status == 'New Inventory'){
+            //console.log(color);
+            fill_color = 'rgba(155, 89, 182,.4)' //clear
+            width = 3
+            fill = new ol.style.Fill({
+              color: fill_color //clear
+            });
+            stroke = new ol.style.Stroke({
+              //color: '#3399CC',
+              color: 'black',
+              width: 1.25
+            });
 
+          }
           // If we are zoomed out then just show circle markers
           if (resolution > 3){
             style = new ol.style.Style({
@@ -728,8 +741,11 @@ CSS loading animation.
                 html = '<b><a target="_blank" href="/map/property/'+parcel.parcel+','+slugify(parcel.streetAddress)+'/">'+parcel.streetAddress+' ('+parcel.parcel+')</a></b><br/>'+
                   '<b>Price</b>: $'+new Intl.NumberFormat().format(parcel.price)+'<br/>'+
                   '<b>Lot Area</b>: '+new Intl.NumberFormat().format(parcel.area)+' square feet<br/><b>Parcel Type</b>: '+parcel.structureType+'<br/>'+
-                  '<b>Future Development Lot (FDL) Program Eligible</b>: '+boolean_to_yesno(parcel.future_development_program_eligible)+'<br/>'+
-                  '<b>Status</b>: '+parcel.status+'<br/>'
+            '<b>Future Development Lot (FDL) Program Eligible</b>: '+boolean_to_yesno(parcel.future_development_program_eligible)+'<br/>'+
+
+                  '<b>Status</b>: '+parcel.status+'<br/>'+
+                  {% if request.user.is_active and request.user.is_staff %}  '<b>Condition Report</b>: <a href="{% if not debug %}https://build.renewindianapolis.org{%else%}http://localhost:8000{%endif%}/admin/condition_report_admin/'+parcel.parcel+'" target="_blank">View or create report</a></br>'
+                  {%else%}''{%endif%}
                 if (parcel.status.indexOf('Available')){
                   html = html + '<b>Applicant</b>: '+parcel.applicant+'<br/>'
                 }
@@ -953,7 +969,9 @@ CSS loading animation.
     });
 
 
-
+{% if not request.user.is_active and not request.user.is_staff %}
+$('#div_id_inspection_group').hide();
+{% endif %}
     </script>
 
   </body>

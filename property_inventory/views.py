@@ -86,9 +86,7 @@ from django.urls import reverse
 def showApplications(request):
     config = RequestConfig(request)
 
-#    soldProperties = Property.objects.all().filter(
-#        status__istartswith='Sold').order_by('status', 'applicant')
-
+    # This more involved process is necessary to properly disclose sales that resulted in take backs.
     soldProps = []
     sp = Property.objects.filter(status__istartswith='Sold')
     for s in sp:
@@ -119,15 +117,8 @@ def showApplications(request):
     soldProps.sort(key=takeDate)
 
 
-
-    # soldProperties = Property.objects.all().filter(
-    #     Q(status__istartswith='Sold')
-    #     |
-    #     Q(take_back__isnull=False)
-    #     ).order_by('status', 'applicant')
     approvedProperties = Property.objects.all().filter(
         status__istartswith='Sale').order_by('status', 'applicant')
-        #status__istartswith='Sale').order_by('-buyer_application__meeting__meeting__meeting_date')
 
     next_rc_meeting = Meeting.objects.filter(Q(meeting_type=Meeting.REVIEW_COMMITTEE)&Q(meeting_date__gte=datetime.date.today())).order_by('meeting_date').first()
     if next_rc_meeting is not None:
@@ -178,25 +169,6 @@ def showApplications(request):
         'approvedFilter': approvedFilter,
         'reviewPendingFilter': reviewPendingFilter,
         })
-
-# from django_tables2 import MultiTableMixin, tables
-# from django.views.generic.base import TemplateView
-# class SoldPendingTable(tables.Table):
-#     class Meta:
-#         model = Property
-#         template_name = 'django_tables2/bootstrap-responsive.html'
-#
-#
-# class ApplicationSaleStatusView(MultiTableMixin, TemplateView):
-#     #def get():
-# #        pass
-#     template_name = 'app_status_template.html'
-#     table_pagination = {
-#         'per_page': 30,
-#     }
-#     tables = [
-#         SoldPendingTable(Property.objects.filter(status__startswith='Sold'))
-#     ]
 
 
 class DisplayNameJsonSerializer(GeoJSONSerializer):
@@ -304,8 +276,12 @@ class SlimPropertySearchView(ListView):
     model = Property
     def get_context_data(self, **kwargs):
         context = super(SlimPropertySearchView, self).get_context_data(**kwargs)
-        context['filter'] = PropertySearchSlimFilter(self.request.GET, queryset=Property.objects.filter(
-            propertyType__exact='lb', is_active__exact=True).prefetch_related('cdc', 'zone', 'zipcode'))
+        if self.request.user.is_staff:
+            context['filter'] = PropertySearchSlimFilter(self.request.GET, queryset=Property.objects.filter(
+                propertyType__exact='lb').prefetch_related('cdc', 'zone', 'zipcode'))
+        else:
+            context['filter'] = PropertySearchSlimFilter(self.request.GET, queryset=Property.objects.filter(
+                propertyType__exact='lb', is_active=True).prefetch_related('cdc', 'zone', 'zipcode'))
         return context
 
     def render_to_response(self, context, **response_kwargs):
