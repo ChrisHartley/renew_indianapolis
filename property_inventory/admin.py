@@ -86,7 +86,7 @@ class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
 
 
 class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
-    search_fields = ('parcel', 'streetAddress', 'zipcode__name')
+    search_fields = ('parcel', 'streetAddress', 'zipcode__name', 'buyer_application__user__email', 'buyer_application__user__last_name', 'buyer_application__user__first_name', 'buyer_application__organization__name')
     list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status', 'future_development_program_eligible')
     list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition')
     inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin, lockboxInlineAdmin]
