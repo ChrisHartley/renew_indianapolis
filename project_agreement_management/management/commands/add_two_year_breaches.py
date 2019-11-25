@@ -15,8 +15,6 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        # need to fix this filter so it just pulls ones 4 days old
-    #    users = User.objects.filter(Q(propertyinquiry__status__isnull=True) & Q(propertyinquiry__timestamp__date__gt=date(2018,4,1)) & Q(propertyinquiry__timestamp__date=date.today() - self.stale_period)).distinct()
         props = Property.objects.filter(project_agreement_released=False).filter(status__startswith='Sold')
 
         overdue_breech = BreechType.objects.get(name='Past two year deadline')
