@@ -36,11 +36,19 @@ class propertyConditionReportInlineAdmin(regular_admin.TabularInline):
 
 class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'street_address', 'zipcode')
-    list_display = ('parcel', 'street_address', 'status', 'lockbox', 'recommendation', 'price_offer', 'condition_report_completed')
+    list_display = ('parcel', 'street_address', 'status', 'lockbox', 'recommendation', 'price_offer', 'condition_report_completed', 'get_short_notes')
     list_filter = ('status',)
     readonly_fields = ('census_tract_landbank_sales_count','get_market_assessment_spreadsheet' )
     inlines = [ photoInlineAdmin,propertyConditionReportInlineAdmin]
 #     change_list_template = 'admin/property_inquiry/change_list_map.html'
+
+    def get_short_notes(self,obj):
+        if len(obj.notes)>35:
+            return '{}...'.format(obj.notes[0:32],)
+        else:
+            return obj.notes
+
+    get_short_notes.short_description = 'Notes'
 
     def census_tract_landbank_sales_count(self, obj):
         # return count of inventory sales within this census tract
