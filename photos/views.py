@@ -24,8 +24,6 @@ class DumpPhotosView(SuccessMessageMixin, FormView):
         return initial_data
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
         form.save_photos()
         return super(DumpPhotosView, self).form_valid(form)
 
