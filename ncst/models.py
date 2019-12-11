@@ -176,26 +176,27 @@ class Property(models.Model):
                 condition_report.save()
             self.convert_to_landbank_inventory_on_save = False
 
-        if self.parcel is not None and self.parcel != '':
-            existing = Property.objects.get(parcel=self.parcel)
-            if existing.rehab_start_date is None and self.rehab_start_date is not None:
-                email = EmailMessage(
-                    'NCST rehab start: {} - {}'.format(self.street_address, self.parcel),
-                    'Rehab work has started at the NCST property at {} - parcel {}. Update insurance as necessary.'.format(self.street_address, self.parcel),
-                    'info@renewindianapolis.org',
-                    settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
-                    reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
-                )
-                email.send()
-            if existing.rehab_end_date is None and self.rehab_end_date is not None:
-                email = EmailMessage(
-                    'NCST rehab end: {} - {}'.format(self.street_address, self.parcel),
-                    'Rehab work has ended at the NCST property at {} - parcel {}. Update insurance as necessary.'.format(self.street_address, self.parcel),
-                    'info@renewindianapolis.org',
-                    settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
-                    reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
-                )
-                email.send()
+        if self.id is not None:
+            existing = Property.objects.filter(id=self.id).first()
+            if existing is not None:
+                if existing.rehab_start_date is None and self.rehab_start_date is not None:
+                    email = EmailMessage(
+                        'NCST rehab start: {} - {}'.format(self.street_address, self.parcel),
+                        'Rehab work has started at the NCST property at {} - parcel {}. Update insurance as necessary.'.format(self.street_address, self.parcel),
+                        'info@renewindianapolis.org',
+                        settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
+                        reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                    )
+                    email.send()
+                if existing.rehab_end_date is None and self.rehab_end_date is not None:
+                    email = EmailMessage(
+                        'NCST rehab end: {} - {}'.format(self.street_address, self.parcel),
+                        'Rehab work has ended at the NCST property at {} - parcel {}. Update insurance as necessary.'.format(self.street_address, self.parcel),
+                        'info@renewindianapolis.org',
+                        settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
+                        reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                    )
+                    email.send()
 
 
         super(Property, self).save(*args, **kwargs)

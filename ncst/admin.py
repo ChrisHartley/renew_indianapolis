@@ -38,7 +38,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'street_address', 'zipcode')
     list_display = ('parcel', 'street_address', 'status', 'lockbox', 'recommendation', 'price_offer', 'condition_report_completed', 'get_short_notes')
     list_filter = ('status',)
-    readonly_fields = ('census_tract_landbank_sales_count','get_market_assessment_spreadsheet' )
+    readonly_fields = ('census_tract_landbank_sales_count','get_market_assessment_spreadsheet', 'get_comparative_market_analysis',)
     inlines = [ photoInlineAdmin,propertyConditionReportInlineAdmin]
 #     change_list_template = 'admin/property_inquiry/change_list_map.html'
 
