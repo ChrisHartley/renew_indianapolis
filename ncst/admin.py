@@ -66,6 +66,14 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
                 "Download"
             ))
 
+    def get_comparative_market_analysis(self, obj):
+        if obj.id is None or obj.comparative_market_analysis == '':
+           return '<none>'
+        return mark_safe('<a href="{}">{}</a>'.format(
+            reverse("send_class_file", kwargs={'app_name': 'ncst', 'class_name': 'Property', 'pk':obj.id, 'field_name':'comparative_market_analysis'}),
+                "Download"
+            ))
+
 
     def condition_report_completed(self, obj):
         return ConditionReport.objects.filter(Property_ncst=obj).count()>0
