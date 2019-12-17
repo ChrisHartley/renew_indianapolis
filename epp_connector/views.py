@@ -255,3 +255,136 @@ class propertyImportCreator(View):
         response['Content-Length'] = os.path.getsize(FILENAME)
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(os.path.basename(FILENAME))
         return response
+
+
+# This is for interactive shell use, pass it a list of parcels and writes a bulk import xlsx.
+def write_xlsx(parcels):
+    header_text_fields = ['Parcel Number']
+    header_date_fields = ['Custom.Mow List Change Date', 'Sold Date', 'Acquisition Date']
+    FILENAME = '/tmp/property-import-bulk.xlsx'
+
+    workbook = xlsxwriter.Workbook(FILENAME)
+    workbook.remove_timezone = True
+    worksheet = workbook.add_worksheet('PropertyDescription')
+    text_format = workbook.add_format({'num_format': '@'})
+    date_format = workbook.add_format({'num_format': 'MM/DD/YY'})
+
+
+
+    props = Property.objects.filter(parcel__in=parcels) #get_object_or_404(Property, parcel=parcel)
+    line = 1
+    for prop in props:
+        sales_program = 'Homestead'
+        if not prop.homestead_only:
+            sales_program += '|Standard'
+        if prop.future_development_program_eligible:
+            sales_program += '|Future Development Lot'
+
+        property_class = 'Residential Vacant Lot'
+        if prop.structureType == 'Residential Dwelling':
+            property_class = 'Residential Building'
+        if prop.structureType == 'Mixed Use Commercial':
+            property_class = 'Commercial Building'
+
+        blc_id = ''
+        blc = blc_listing.objects.filter(Property=prop).first()
+        if blc:
+            blc_id = blc.blc_id
+
+        property_status = 'Available'
+        if 'Sold' in prop.status:
+            property_status = 'Sold'
+        if 'Sale' in prop.status:
+            property_status = 'Sale Pending'
+
+        d = collections.OrderedDict()
+        d['Parcel Number'] = prop.parcel,
+        d['Property Status'] = property_status,
+        d['Property Class'] = property_class,
+        d['Owner Party Number'] = '',
+        d['Owner Party External System Id'] = 'INDY1001' if prop.renew_owned else 'INDY1000',
+        d['Property Address.Address1'] = prop.streetAddress,
+        d['Property Address.Address2'] = '',
+        d['Property Address.City'] = 'INDIANAPOLIS',
+        d['Property Address.County'] = 'MARION',
+        d['Property Address.State'] = 'IN',
+        d['Property Address.Postal Code'] = prop.zipcode.name,
+        d['Status Date'] = '',
+        d['Property Manager Party Number'] = '',
+        d['Property Manager Party External System Id'] = 'INDY1005' if prop.renew_owned else 'INDY1003',
+        d['Update'] = '',
+        d['Available'] = 'Y' if prop.status == 'Available' else 'N',
+        d['Foreclosure Year'] = '',
+        d['Inventory Type'] = 'Land Bank', ###
+        d['Legal Description'] = prop.short_legal_description,
+        d['Listing Comments'] = '',
+        d['Maintenance Manager Party External System Id'] = 'INDY1008' if prop.renew_owned else 'INDY1007',
+        d['Maintenance Manager Party Number'] = '',
+        d['Parcel Square Footage'] = prop.area,
+        d['Parcel Length'] = prop.geometry[0].transform(2965, clone=True).extent[2] - prop.geometry[0].transform(2965, clone=True).extent[0],
+        d['Parcel Width'] = prop.geometry[0].transform(2965, clone=True).extent[3] - prop.geometry[0].transform(2965, clone=True).extent[1],
+        d['Published'] = 'Y' if prop.is_active and 'Available' in prop.status else 'N',
+        d['Tags'] = '',
+        d['Latitude'] = prop.centroid_geometry.y,
+        d['Longitude'] = prop.centroid_geometry.x,
+        d['Parcel Boundary'] = prop.geometry.wkt,
+        d['Census Tract'] = prop.census_tract.name,
+        d['Congressional District'] = '',
+        d['Legislative District'] = '',
+        d['Local District'] = '',
+        d['Neighborhood'] = prop.neighborhood.name,
+        d['School District'] = '',
+        d['Voting Precinct'] = '',
+        d['Zoned As'] = prop.zone.name,
+        d['Acquisition Amount'] = '',
+        d['Acquisition Date'] = prop.renew_acquisition_date if prop.renew_owned else prop.acquisition_date,
+        d['Acquisition Method'] = '',
+        d['Sold Amount'] = prop.price if 'Sold' in prop.status else '',
+        d['Sold Date'] = prop.status[-10] if 'Sold' in prop.status else '',
+        d['Actual Disposition'] = '',
+        d['Asking Price'] = prop.price,
+        d['Assessment Year'] = '',
+        d['Current Assessment'] = '',
+        d['Minimum Bid Amount'] = '',
+        d['Block Condition'] = '',
+        d['Brush Removal'] = '',
+        d['Cleanup Assessment'] = '',
+        d['Demolition Needed'] = '',
+        d['Environmental Cleanup Needed'] = '',
+        d['Market Condition'] = MVAClassifcation.objects.filter(geometry__contains=prop.centroid_geometry).first(),
+        d['Potential Use'] = '',
+        d['Property Condition'] = '',
+        d['Property of Interest'] = '',
+        d['Quiet Title'] = 'Y' if prop.quiet_title_complete else 'N',
+        d['Rehab Candidate'] = '',
+        d['Target Disposition'] = '',
+        d['Trash Removal '] = '',
+        d['Custom.BEP Mortgage Expiration Date'] = '',
+        d['Custom.BLC Number'] = blc_id,
+        d['Custom.CDC'] = '',
+        d['Custom.Grant Program'] = 'BEP' if prop.hhf_demolition else '',
+        d['Custom.Mow List'] = 'Y',
+        d['Custom.Mow List Change Date'] = timezone.now(),
+        d['Custom.Mowing List Notes'] = '',
+        d['Custom.Mowing Type'] = 'Mow',
+        d['Custom.Sales Program'] = sales_program,
+
+        if line == 1:
+            idx = 0
+            for k, v in list(d.items()):
+                worksheet.write(0, idx, k)
+                idx += 1
+
+        idx = 0
+        for k, v in list(d.items()):
+            if k in header_text_fields:
+                worksheet.write(line, idx, v[0], text_format) # write parcel numbers as text
+            elif k in header_date_fields:
+               worksheet.write(line, idx, v[0], date_format)
+            else:
+                worksheet.write(line, idx, v[0] )
+            idx += 1
+        line = line + 1
+
+
+    workbook.close()
