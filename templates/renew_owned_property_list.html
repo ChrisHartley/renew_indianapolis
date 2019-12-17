@@ -1,0 +1,107 @@
+{% extends 'commind_base.html' %}
+{% load humanize %}
+{% block head_title %}Featured Renew Owned Properties :: Renew Indianapolis{% endblock %}
+{% block header %}
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/css/lightslider.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.js"></script>
+{% endblock %}
+
+{% block content %}
+
+{% if published_property_count == 0 %}
+<div class="row">
+  <div class='col-md-5 col-md-offset-2'>
+    <div class="panel panel-info">
+      <div class="panel-heading">Coming Soon</div>
+
+      <div class="panel-body">Please check back for a complete list of available
+        featured properties owned by Renew Indianapolis.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endif %}
+
+{% for property in object_list %}
+<div class="row">
+
+{%if property.is_active%}
+  <div class='col-md-5 col-md-offset-2'>
+    <div class="panel panel-default">
+      <div class="panel-heading">{{property.streetAddress}}
+        <div class="pull-right">Parcel {{property.parcel}}</div>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-6">
+
+        <dl>
+          <dt>Address</dt>
+          <dd>{{property.streetAddress}}, Indianapolis, IN</dd>
+          <dt>Price</dt>
+          <dd>${{property.price|intcomma}}</dd>
+          <dt>Status</dt>
+          <dd>{{property.status}}</dd>
+          <dt>Current Zoning</dt>
+          <dd>{{property.zone}}</dd>
+          <dt>Lot Size</dt>
+          <dd>{{property.area|intcomma}} sq ft</dd>
+          <dt>BLC Number</dt>
+          <dd><a href="https://property.mibor.com/listing/details/{{property.blc_listing.all.first.blc_id}}">{{property.blc_listing.all.first.blc_id}}</a></dd>
+        </dl>
+      </div>
+      <div class="col-md-6">
+        <ul class="lightSlider">
+      {% for phot in property.photo_set.all|dictsort:"main_photo" %}
+        <li>{{phot.image_tag}}</li>
+      {%endfor %}
+
+
+      </ul>
+
+      {% if property.status == 'Available' %}
+      <p>&nbsp;</p><p><a class="btn btn-primary" href="{% url 'process_application' action='new'%}?parcel={{property.parcel}}" role="button">Start An Application</a>
+        {% if property.structureType == 'Residential Dwelling' %}
+      <a class="btn btn-info" href="{% url 'submit_property_inquiry' %}?parcel={{property.parcel}}" role="button">Request A Showing</a></p>
+        {% endif %}
+      {% else %}
+      <p>&nbsp;</p><p><button type="button" class="btn btn-default btn-md" disabled="disabled">{{property.status}}</button></p>
+      {% endif %}
+      </div>
+
+      </div>
+    </div>
+      <div class="panel-footer">Documents:
+        <ul>
+          {% for doc in property.documents.all %}
+          {% if doc.publish and not doc.is_photo%}
+          <li><a target="_blank" href="/media/{{doc.file}}">{%if doc.file_purpose == ''%}{{doc.file}}{%else%}{{doc.file_purpose}}{%endif%}</a></li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {%else%}
+  {%endif%}
+</div> <!-- end row !-->
+
+{% endfor %}
+<script type="text/javascript">
+  $(document).ready(function() {
+    $(".lightSlider").lightSlider({
+      item:1 ,
+      auto:true,
+      pauseOnHover:true,
+      pause: 5000,
+      loop:true,
+      keyPress:false,
+      thumbItem:10,
+
+    });
+
+  });
+</script>
+{% endblock content %}
