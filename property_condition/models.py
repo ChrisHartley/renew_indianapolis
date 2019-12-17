@@ -110,6 +110,8 @@ class ConditionReport(models.Model):
 
     picture = models.ImageField(upload_to=content_file_name, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
 
     general_property_notes = models.CharField(
         max_length=5000, blank=True, verbose_name='General Property Notes')
