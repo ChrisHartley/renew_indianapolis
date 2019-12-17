@@ -425,3 +425,15 @@ class PropertyInventoryList(ListView):
         response['Content-Length'] = getsize(FILENAME)
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(basename(FILENAME))
         return response
+
+class PropertyListView(ListView):
+    model = Property
+    template_name = 'renew_owned_property_list.html'
+
+    def get_queryset(self):
+        return Property.objects.filter(renew_owned=True).filter(blc_listing__isnull=False).filter(is_active=True).order_by('status', 'structureType', )
+
+    def get_context_data(self, **kwargs):
+        context = super(PropertyListView, self).get_context_data(**kwargs)
+        context['header_title'] = 'Featured Residential Land Bank Properties '
+        return context

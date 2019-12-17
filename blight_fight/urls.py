@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2, MDCResolution
 from photos.views import DumpPhotosView, PropertyPhotosView
 from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
-from property_inventory.views import PropertyInventoryList
+from property_inventory.views import PropertyInventoryList, PropertyListView as RenewPropertyListView
 from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingReleaseView, propertyShowingListEmailTemplateView
 from applicants.views import edit_organization, profile_home, showApplicantProfileForm, show_organizations
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
@@ -252,6 +252,7 @@ urlpatterns = [
 
         url(r'^inspection_request/$', InspectionRequestFormView.as_view(), name='pa_release_inspection_request'),
         url(r'^inspection_request/(?P<parcel>[0-9]+)/', InspectionRequestFormView.as_view(), name='pa_release_inspection_request_parcel'),
+        url(r'^renew_featured_list/$', RenewPropertyListView.as_view()),
 
     ]
 
