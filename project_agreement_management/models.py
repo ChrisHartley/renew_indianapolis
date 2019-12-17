@@ -155,6 +155,15 @@ class InspectionRequest(models.Model):
 
         return '{} - {} - {}'.format(prop, person, self.datetime)
 
+    def save(self):
+        if self.pk is None:
+            send_mail(
+                'Inspection Request Submitted - {}'.format(self.Property,),
+                'An inspection request has been submitted for the property at {}. Please take a look.'.format(self.Property,),
+                'info@renewindianapolis.org',
+                'matt.hostetler@indy.gov',
+                fail_silently=False
+            )
 
 
 class Inspection(models.Model):
