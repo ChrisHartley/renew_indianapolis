@@ -15,7 +15,8 @@ from property_inventory.models import Property
 from property_condition.models import ConditionReport, ConditionReportProxy
 from property_condition.forms import ConditionReportForm
 from property_condition.filters import ConditionReportFilters
-
+from datetime import timedelta
+from django.utils import timezone
 
 
 
@@ -40,7 +41,8 @@ def submitConditionReport(request):
 
 def view_or_create_condition_report(request, parcel):
     if parcel and Property.objects.filter(parcel=parcel).exists():
-        if ConditionReport.objects.filter(Property__parcel=parcel).exists():
+        threshold = timezone.now() - timedelta(days=180)
+        if ConditionReport.objects.filter(Property__parcel=parcel).exclude(timestamp__lte=threshold).exists():
             return redirect('{0}?_popup=1'.format(
                 reverse('admin:property_condition_conditionreport_change', args=[ConditionReport.objects.filter(Property__parcel=parcel).order_by('timestamp').first().pk])
                 ),
