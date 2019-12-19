@@ -5,7 +5,8 @@ from photos.models import photo
 from tempfile import NamedTemporaryFile
 from django.core.files import File
 from django.utils.text import get_valid_filename
-
+from os.path import splitext, basename
+import imghdr
 
 class Command(BaseCommand):
     help = 'Check ePropertyPlus for new property photos and add them to Blight Fight'
@@ -21,18 +22,18 @@ class Command(BaseCommand):
             phs = photo.objects.filter(prop=p)
             ph_names = []
             for ph in phs:
-                #print ph.image
-                ph_names.append(ph.image.name.split('/')[-1])
+                root, ext = splitext(basename(ph.image.name))
+                ph_names.append(root)
             for row in props['rows']:
                 image_results = epp.get_image_list(row['id'])
-                #print image_results
                 for image in image_results['rows']:
-                #    print image
                     fname = get_valid_filename(image['filename'])
-                    if fname not in ph_names:
+                    fname_root, fname_ext = splitext(fname)
+                    if fname_root not in ph_names:
                         self.stdout.write("Need to fetch this image: {}".format(fname,))
                         with NamedTemporaryFile() as f:
                             f.write(epp.get_image(image['id']))
                             f.seek(0)
+                            determined_ext = imghdr.what(f.name)
                             x = photo(prop=p, main_photo=False)
-                            x.image.save(fname, File(f) )
+                            x.image.save('{}.{}'.format(fname_root, determined_ext), File(f) )
