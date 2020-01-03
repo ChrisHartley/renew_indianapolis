@@ -59,7 +59,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
    #census_tract_landbank_sales_count.short_description = 'Sold landbank properties within census tract'
 
     def get_market_assessment_spreadsheet(self, obj):
-        if obj.id is None or obj.market_assessment_spreadsheet == '':
+        if obj.id is None or obj.market_assessment_spreadsheet is None or  obj.market_assessment_spreadsheet == '':
            return '<none>'
         return mark_safe('<a href="{}">{}</a>'.format(
             reverse("send_class_file", kwargs={'app_name': 'ncst', 'class_name': 'Property', 'pk':obj.id, 'field_name':'market_assessment_spreadsheet'}),
@@ -67,7 +67,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
             ))
 
     def get_comparative_market_analysis(self, obj):
-        if obj.id is None or obj.comparative_market_analysis == '':
+        if obj.id is None or obj.comparative_market_analysis is None or obj.comparative_market_analysis == '':
            return '<none>'
         return mark_safe('<a href="{}">{}</a>'.format(
             reverse("send_class_file", kwargs={'app_name': 'ncst', 'class_name': 'Property', 'pk':obj.id, 'field_name':'comparative_market_analysis'}),
