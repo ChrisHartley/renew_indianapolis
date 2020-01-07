@@ -27,6 +27,7 @@ class PropertyInquiryYearListFilter(SimpleListFilter):
             ('2017','2017'),
             ('2018','2018'),
             ('2019','2019'),
+            ('2020', '2020'),
 
         )
     def queryset(self, request, queryset):
