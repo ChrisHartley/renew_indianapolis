@@ -11,6 +11,8 @@ import pyclamd
 from django.core.mail import send_mail
 from PIL import Image, ExifTags
 from django.utils import timezone
+from django.conf import settings
+
 from property_inventory.models import Property
 from applications.models import Application
 
@@ -155,13 +157,25 @@ class InspectionRequest(models.Model):
 
         return '{} - {} - {}'.format(prop, person, self.datetime)
 
-    def save(self):
-        if self.pk is None:
+    def save(self, *args, **kwargs):
+        new = (self.id is None)
+        super(InspectionRequest, self).save(*args, **kwargs)
+        contact = None
+        prop = None
+        if self.Property is not None:
+            prop = self.Property
+        elif self.Application is not None and self.Application.Property is not None:
+            prop = self.Application.Property
+        if prop.renew_owned == True:
+            contact = settings.COMPANY_SETTINGS['RENEW_PA_RELEASE']
+        elif prop.renew_owned == False:
+            contact = settings.COMPANY_SETTINGS['CITY_PA_RELEASE']
+        if new == True and contact is not None and prop is not None:
             send_mail(
-                'Inspection Request Submitted - {}'.format(self.Property,),
-                'An inspection request has been submitted for the property at {}. Please take a look.'.format(self.Property,),
+                'Inspection Request Submitted - {}'.format(prop,),
+                'An inspection request has been submitted for the property at {}. Please take a look.'.format(prop,),
                 'info@renewindianapolis.org',
-                'matt.hostetler@indy.gov',
+                [contact,],
                 fail_silently=False
             )
 
