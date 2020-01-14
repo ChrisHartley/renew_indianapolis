@@ -28,6 +28,7 @@
     <dt>Property</dt><dd>{{application.application.Property.streetAddress}}</dd>
 
     <dt>Parcel</dt><dd>{{application.application.Property.parcel}}</dd>
+    <dt>Property Type</dt><dd>{{application.application.Property.structureType}}</dd>
     <dt>Price</dt><dd>${{application.application.price_at_time_of_submission|intcomma}}</dd>
     <dt>Application Type</dt><dd>{{application.application.get_application_type_display}}</dd>
     {% if application.application.application_type == 3 %}
