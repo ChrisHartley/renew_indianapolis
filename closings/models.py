@@ -161,6 +161,8 @@ class closing(models.Model):
     city_loan_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount due to the City of Indianapolis, but not paid at closing", blank=False, default=0)
     ri_proceeds = models.DecimalField(max_digits=10, decimal_places=2, help_text="Amount for Renew Indianapolis", blank=True, default=0)
     ri_closing_fee = models.DecimalField(max_digits=10, decimal_places=2, help_text="Renew Indianapolis Closing Fee", blank=True, default=0)
+    other_closing_amount = models.DecimalField(max_digits=10, decimal_places=2, help_text="Other Closing Fee", blank=True, default=0)
+    other_closing_amount_note = models.CharField(max_length=1048, blank=True, help_text="Description of other closing fee")
 
     #scanned_receipt = models.FileField(upload_to=save_location, blank=True, null=True)
 

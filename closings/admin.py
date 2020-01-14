@@ -307,6 +307,7 @@ class ClosingAdmin(admin.ModelAdmin):
                 ('print_deposit_slip', 'purchase_agreement'),
                 ('city_proceeds', 'city_loan_proceeds'),
                 ('ri_proceeds', 'ri_closing_fee'),
+                ('other_closing_amount', 'other_closing_amount_note'),
             )
         }),
         ('Documents', {
