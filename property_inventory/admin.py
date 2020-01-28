@@ -184,7 +184,7 @@ class ContextAreaAdmin(admin.OSMGeoAdmin):
 class price_changeAdmin(regular_admin.ModelAdmin):
     search_fields = ('Property__streetAddress','Property__parcel')
     list_display = ('datestamp','Property', 'get_current_price', 'proposed_price', 'get_latest_approval_status')
-    readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view', 'download_cma_file')
+    readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view', 'download_cma_file', 'view_photos')
     inlines = [ PriceChangeMeetingLinkInline ]
 
 
@@ -214,6 +214,13 @@ class price_changeAdmin(regular_admin.ModelAdmin):
         else:
             return '-'
 
+    def view_photos(self, obj):
+        if obj.id:
+            photo_page_link = '<a href="{}">{}</a>'.format(
+                        reverse("property_photos", kwargs={'parcel': obj.parcel}), "View Photos")
+        else:
+            photo_page_link = '-'
+        return mark_safe(photo_page_link)
 
     def download_cma_file(self, obj):
         if obj.cma is None or obj.cma == '':
