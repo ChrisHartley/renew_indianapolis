@@ -215,9 +215,9 @@ class price_changeAdmin(regular_admin.ModelAdmin):
             return '-'
 
     def view_photos(self, obj):
-        if obj.id:
+        if obj.Property:
             photo_page_link = '<a href="{}">{}</a>'.format(
-                        reverse("property_photos", kwargs={'parcel': obj.parcel}), "View Photos")
+                        reverse("property_photos", kwargs={'parcel': obj.Property.parcel}), "View Photos")
         else:
             photo_page_link = '-'
         return mark_safe(photo_page_link)
