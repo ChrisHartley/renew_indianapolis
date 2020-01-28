@@ -184,7 +184,7 @@ class ContextAreaAdmin(admin.OSMGeoAdmin):
 class price_changeAdmin(regular_admin.ModelAdmin):
     search_fields = ('Property__streetAddress','Property__parcel')
     list_display = ('datestamp','Property', 'get_current_price', 'proposed_price', 'get_latest_approval_status')
-    readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view')
+    readonly_fields = ('approved', 'get_current_price','applications_search', 'get_current_property_status', 'summary_view', 'download_cma_file')
     inlines = [ PriceChangeMeetingLinkInline ]
 
 
@@ -213,6 +213,15 @@ class price_changeAdmin(regular_admin.ModelAdmin):
             return "{0}".format(obj.meeting.first())
         else:
             return '-'
+
+
+    def download_cma_file(self, obj):
+        if obj.cma is None or obj.cma == '':
+            return '-'
+        url = reverse("send_class_file", kwargs={'app_name': 'property_inventory', 'class_name': 'price_change', 'pk':obj.id, 'field_name':'cma'})
+        link = '<a href="{}">Download</a>'.format(url,)
+        return mark_safe(link)
+    download_cma_file.short_description = 'Download CMA'
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(price_changeAdmin, self).formfield_for_dbfield(db_field, **kwargs)
