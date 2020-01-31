@@ -113,7 +113,15 @@ class Release(models.Model):
     instrument_number = models.CharField(max_length=254, blank=True)
     recorded_document = models.ForeignKey(Document, blank=True, null=True)
     date_recorded = models.DateField(null=True, blank=True)
-
+    def __str__(self):
+        prop = 'none'
+        if self.Property is not None:
+            prop = self.Property
+        elif self.Application is not None:
+            prop = self.Application.Property
+        elif self.Inspection is not None:
+            prop = self.Inspection
+        return '{}, Instrument Number: {}, Date: {}'.format(prop, self.instrument_number, self.date_recorded )
 
 
 class InspectionRequest(models.Model):
@@ -155,7 +163,7 @@ class InspectionRequest(models.Model):
             prop = None
             person = None
 
-        return '{} - {} - {}'.format(prop, person, self.datetime)
+        return '{} - {}'.format(prop, person)
 
     def save(self, *args, **kwargs):
         new = (self.id is None)
@@ -192,7 +200,7 @@ class Inspection(models.Model):
     pass_outcome = models.NullBooleanField(blank=True, null=True)
 
     def __str__(self):
-        return '{} - {} - {}'.format(self.request, self.datetime, self.pass_outcome)
+        return '{} - Pass: {}'.format(self.request, self.pass_outcome)
 
 
 class BreechType(models.Model):
