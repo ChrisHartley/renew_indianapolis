@@ -123,6 +123,21 @@ class Release(models.Model):
             prop = self.Inspection
         return '{}, Instrument Number: {}, Date: {}'.format(prop, self.instrument_number, self.date_recorded )
 
+    def save(self, *args, **kwargs):
+        super(Release, self).save(*args, **kwargs)
+        prop = None
+        if self.Property is not None:
+            prop = self.Property
+        elif self.Application is not None and self.Application.Property is not None:
+            prop = self.Application.Property
+        elif self.Inspection is not None and self.Inspection.request is not None and self.Inspection.request.Property:
+            prop = self.Inspection.request.Property
+        elif self.Inspection is not None and self.Inspection.request is not None and self.Inspection.request.Application is not None and self.Inspection.request.Application.Property is not None:
+            prop = self.Inspection.request.Application.Property
+        if prop is not None and prop.project_agreement_released == False and self.date_recorded is not None:
+            prop.project_agreement_released = True
+            prop.save()
+
 
 class InspectionRequest(models.Model):
 
