@@ -14,7 +14,16 @@
       <dt>Buyer(s)</dt><dd>{{closing.application.user.first_name}} {{closing.application.user.last_name}} / {{closing.application.organization}}</dd>
       <dt>Title co.</dt><dd>{{closing.title_company}}</dd>
       <dt>Date of closing</dt><dd>{{closing.date_time|date:"M d, Y"}}</dd>
-      <dt>Disbursements</dt><dd>Renew: ${{closing.ri_proceeds|default:0|intcomma}} Renew Closing Fee: ${{closing.ri_closing_fee|default:0|intcomma}} City POC: ${{closing.city_loan_proceeds|default:0|intcomma}} City: ${{closing.city_proceeds|default:0|intcomma}}</dd>
+      <dt>Disbursements</dt><dd>
+        <table class="table table-bordered table-condensed">
+          <tr><td>Renew</td><td>${{closing.ri_proceeds|default:0|intcomma}}</td></tr>
+          <tr><td>City POC</td><td>${{closing.city_loan_proceeds|default:0|intcomma}}</td></tr>
+          <tr><td>City</td><td>${{closing.city_proceeds|default:0|intcomma}}</td></tr>
+          <tr><td>Other</td><td>${{closing.other_closing_amount|default:0|intcomma}}</td></tr>
+          <tr><td>Total Sale Price</td><td>${{closing.application.Property.price|default:0|intcomma}}</td></tr>
+          <tr><td>Renew Closing Fee</td><td>${{closing.ri_closing_fee|default:0|intcomma}}</td></tr>
+        </table>
+      </dd>
     </dl>
   </div>
 
