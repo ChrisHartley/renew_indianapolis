@@ -224,7 +224,7 @@ class price_changeAdmin(regular_admin.ModelAdmin):
         return mark_safe(photo_page_link)
 
     def download_cma_file(self, obj):
-        if obj.cma is None or obj.cma == '':
+        if obj.id is None or obj.cma is None or obj.cma == '':
             return '-'
         url = reverse("send_class_file", kwargs={'app_name': 'property_inventory', 'class_name': 'price_change', 'pk':obj.id, 'field_name':'cma'})
         link = '<a href="{}">Download</a>'.format(url,)
