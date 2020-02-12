@@ -113,7 +113,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
 
     def blc_id(self, obj):
         try:
-            blc = blc_listing.objects.filter.(Property=obj).order_by('date_time').first()
+            blc = blc_listing.objects.filter(Property=obj).order_by('date_time').first()
         except blc_listing.DoesNotExist:
             return '-'
         return mark_safe("<a href='{}'>{}</a>".format(
