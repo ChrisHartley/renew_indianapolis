@@ -112,17 +112,24 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_select_related = True
     actions = ['batch_schedule_action','export_as_csv']
     def application_summary_page(self, obj):
-        summary_link = '<a target="_blank" href="{}">{}</a>'.format(
-            reverse("application_summary_page", args=(obj.id,)), "View Summary Page")
+        if obj.id is not None:
+            summary_link = '<a target="_blank" href="{}">{}</a>'.format(
+                reverse("application_summary_page", args=(obj.id,)), "View Summary Page")
+        else:
+            summary_link = '(none)'
         return mark_safe(summary_link)
 
     def application_detail_page(self, obj):
-        summary_link = '<a target="_blank" href="{}">{}</a>'.format(
-            reverse("application_detail_page", args=(obj.id,)), "View Detail Page")
+        if obj.id is not None:
+            summary_link = '<a target="_blank" href="{}">{}</a>'.format(
+                reverse("application_detail_page", args=(obj.id,)), "View Detail Page")
+        else:
+            summary_link = '(none)'
+
         return mark_safe(summary_link)
 
     def user_readable(self, obj):
-        email_link = '<a target="_blank" href="https://mail.google.com/a/landbankofindianapolis.org/mail/u/1/?view=cm&fs=1&to={0}&su={1}&body={2}&tf=1">{3}</a>'.format(obj.user.email, 'Application: '+str(obj.Property), 'Dear ' +obj.user.first_name+', I have received your application for '+str(obj.Property)+'', obj.user.email)
+        email_link = '<a target="_blank" href="https://outlook.office.com/mail/deeplink/compose?to={0}&subject={1}&body={2}">{3}</a>'.format(obj.user.email, 'Application: '+str(obj.Property), 'Dear ' +obj.user.first_name+', I have received your application for '+str(obj.Property)+'', obj.user.email)
         name_link = '<a href="{}">{}</a>'.format(
              reverse("admin:applicants_applicantprofile_change", args=(obj.user.profile.id,)),
                  obj.user.first_name + ' ' + obj.user.last_name
