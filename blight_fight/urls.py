@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 from applications.views import ApplicationDetail, ApplicationDisplay, ApplicationNeighborhoodNotification, ApplicationPurchaseAgreement, ReviewCommitteeAgenda, ReviewCommitteeStaffSummary, CreateMeetingSupportArchive, ReviewCommitteeApplications, application_confirmation, process_application, PriceChangeSummaryAll, CreateMeetingPriceChangeCMAArchive, MeetingOutcomeNotificationSpreadsheet, ePPPropertyUpdate, ePPPartyUpdate, GenerateNeighborhoodNotifications, GenerateNeighborhoodNotificationsVersion2, MDCResolution
 from photos.views import DumpPhotosView, PropertyPhotosView
-from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, get_inventory_csv, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, get_featured_properties_csv, SlimPropertySearchView
+from property_inventory.views import PropertyDetailView, getAddressFromParcel, showApplications, searchProperties, propertyPopup, PropertyDetailJSONView, InventoryMapTemplateView, ContextAreaListJSONView, PriceChangeSummaryView, SlimPropertySearchView
 from property_inventory.views import PropertyInventoryList, PropertyListView as RenewPropertyListView
 from property_inquiry.views import property_inquiry_confirmation, submitPropertyInquiry, CreateIcsFromShowing, propertyShowingReleaseView, propertyShowingListEmailTemplateView
 from applicants.views import edit_organization, profile_home, showApplicantProfileForm, show_organizations
@@ -54,10 +54,7 @@ urlpatterns = [
 
         url(r'application_status/$',
            showApplications, name="application_status"),
-        url(r'show/search/$', get_inventory_csv, name='inventory_download'),
         #url(r'show/mdc_download/$', 'property_inventory.views.get_mdc_csv', name='mdc_download'),
-        url(r'show/search/featured/$', get_featured_properties_csv, name='featured_inventory_download' ),
-
 
         url(r'search_property/$',
            searchProperties, name='search_property'),

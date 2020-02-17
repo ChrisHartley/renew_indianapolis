@@ -47,18 +47,6 @@ import datetime # used for price_change summary view, getting next RC meeting
 from decimal import * # used for price_change summary view
 from applications.models import Meeting
 
-
-def get_inventory_csv(request):
-    #qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','nsp','zone__name','cdc__name', 'neighborhood__name','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned')
-    qs = Property.objects.filter(is_active=True).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned').order_by('zipcode', 'status', 'streetAddress')
-    return render_to_csv_response(qs)
-
-def get_featured_properties_csv(request):
-    from datetime import date
-    today = date.today()
-    qs = Property.objects.filter(is_active=True).filter(featured_property__start_date__lte=today).filter(featured_property__end_date__gte=today).values('parcel', 'streetAddress', 'zipcode__name', 'structureType','quiet_title_complete','zone__name','cdc__name', 'neighborhood__name','sidelot_eligible','vacant_lot_eligible','urban_garden', 'bep_demolition','homestead_only','applicant', 'status','area', 'price', 'price_obo', 'renew_owned', 'featured_property__note')
-    return render_to_csv_response(qs)
-
 # given a parcel number return a json with a number of fields
 def getAddressFromParcel(request):
     if 'parcel' in request.GET and request.GET['parcel']:
