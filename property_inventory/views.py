@@ -34,7 +34,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from property_inventory.models import Property, Zipcode, CDC, Zoning, ContextArea, price_change, take_back
 from property_inventory.filters import ApplicationStatusFilters
-from property_inventory.tables import PropertySearchTable, PropertyStatusTable, reviewPendingStatusTable, SoldPropertyStatusTable, SoldPropertyStatusTable2
+from property_inventory.tables import PropertySearchTable, PropertyStatusTable, reviewPendingStatusTable, SoldPropertyStatusTable2
 from property_inventory.forms import PropertySearchForm, PropertySearchSlimForm
 from property_inventory.filters import PropertySearchFilter, PropertySearchSlimFilter
 from property_inquiry.models import propertyInquiry
@@ -88,7 +88,7 @@ def showApplications(request):
 
     # This more involved process is necessary to properly disclose sales that resulted in take backs.
     soldProps = []
-    sp = Property.objects.filter(status__istartswith='Sold')
+    sp = Property.objects.filter(status__istartswith='Sold').filter(propertyType='lb')
     for s in sp:
         soldProps.append(
             {
@@ -100,6 +100,18 @@ def showApplications(request):
             }
         )
 
+    soldInvestmentProps = []
+    sip = Property.objects.filter(status__istartswith='Sold').filter(propertyType='in')
+    for s in sip:
+        soldInvestmentProps.append(
+            {
+                'address': s.streetAddress,
+                'parcel': s.parcel,
+                'sale_date': datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date(),
+                'buyer': s.applicant,
+                'amount': s.price,
+            }
+        )
     tb = take_back.objects.all()
     for t in tb:
         soldProps.append(
@@ -136,19 +148,23 @@ def showApplications(request):
     reviewPendingFilter = ApplicationStatusFilters(
         request.GET, queryset=reviewPendingProperties, prefix="review_pending-")
 
-    #soldTable = SoldPropertyStatusTable(soldFilter.qs, prefix="sold-")
     soldTable = SoldPropertyStatusTable2(soldProps, prefix="sold-")
+    soldInvestmentTable = SoldPropertyStatusTable2(soldInvestmentProps, prefix="soldinvestment-")
     approvedTable = PropertyStatusTable(approvedFilter.qs, prefix="approved-")
     reviewPendingTable = reviewPendingStatusTable(reviewPendingFilter.qs, prefix="review_pending-")
 
     config.configure(reviewPendingTable)
     config.configure(soldTable)
+    config.configure(soldInvestmentTable)
+
     config.configure(approvedTable)
 
     export_format = request.GET.get('_export_format', None)
     if export_format is not None:
         if request.GET.get('sold_export', None):
             exporter = TableExport(export_format, soldTable)
+        if request.GET.get('sold_investment_export', None):
+            exporter = TableExport(export_format, soldInvestmentTable)
         if request.GET.get('approved_export', None):
             exporter = TableExport(export_format, approvedTable)
         if request.GET.get('pending_export', None):
@@ -162,6 +178,8 @@ def showApplications(request):
         'reviewPendingExport': '{}?{}'.format(reverse("application_status"), 'pending_export=True&_export_format=csv'),
         'soldTable': soldTable,
         'soldExport': '{}?{}'.format(reverse("application_status"), 'sold_export=True&_export_format=csv'),
+        'soldInvestmentTable': soldInvestmentTable,
+        'soldInvestmentExport': '{}?{}'.format(reverse("application_status"), 'sold_investment_export=True&_export_format=csv'),
         'approvedTable': approvedTable,
         'approvedExport': '{}?{}'.format(reverse("application_status"), 'approved_export=True&_export_format=csv'),
         'title': 'applications & sale activity',
@@ -431,7 +449,7 @@ class PropertyListView(ListView):
     template_name = 'renew_owned_property_list.html'
 
     def get_queryset(self):
-        return Property.objects.filter(renew_owned=True).filter(blc_listing__isnull=False).filter(is_active=True).order_by('status', 'structureType', )
+        return Property.objects.filter(propertyType__exact='in').order_by('status', 'structureType', )
 
     def get_context_data(self, **kwargs):
         context = super(PropertyListView, self).get_context_data(**kwargs)

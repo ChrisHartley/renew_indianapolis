@@ -63,7 +63,11 @@ class census_tract(Overlay):
 @python_2_unicode_compatible
 class Property(models.Model):
 
-    PROPERTY_TYPES = (('lb', 'Landbank'), ('sp', 'County Owned Surplus'))
+    PROPERTY_TYPES = (
+        ('lb', 'Landbank'),
+        ('sp', 'County Owned Surplus'),
+        ('in', 'Investment'),
+        )
 
     geometry = models.MultiPolygonField(srid=4326, blank=True)
 

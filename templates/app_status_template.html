@@ -17,7 +17,11 @@
 {% render_table approvedTable %} <a href='{{approvedExport}}'><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Export</a>
 </p>
 <p>
-<h3>The following sales have been completed:</h3>
+<h3>The following landbank sales have been completed:</h3>
 {% render_table soldTable %} <a href='{{soldExport}}'><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Export</a>
+</p>
+<p>
+<h3>The following sales of non-landbank properties have been completed:</h3>
+{% render_table soldInvestmentTable %} <a href='{{soldInvestmentExport}}'><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Export</a>
 </p>
 {% endblock content %}

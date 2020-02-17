@@ -11,7 +11,7 @@ from django.forms.widgets import CheckboxSelectMultiple
 
 class PropertyInquiryForm(ModelForm):
     Property = ModelChoiceField(
-        queryset=Property.objects.filter(status__contains='Available').exclude(
+        queryset=Property.objects.filter(status__contains='Available').filter(propertyType__exact='lb').exclude(
             structureType__contains='Vacant Lot').exclude(structureType__contains='Detached Garage/Boat House').exclude(is_active__exact=False).order_by('streetAddress'),
         help_text='Select the property you would like to visit. Your request saved and you will be contacted within 5 business days to schedule the visit. Only "Available" properties with a structure are listed here.',
         label='Property to visit',
