@@ -275,7 +275,7 @@ CITY_URBAN_GARDENING_MANAGER_EMAIL = 'matt.mosier@indy.gov' # notified in closin
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
 BLC_MANAGER_EMAIL = 'chris.hartley@renewindianapolis.org'
 SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL = True
-
+DEFAULT_FROM_EMAIL = 'info@renewindianapolis.org'
 SMTP_PROVIDER = 'mailgun' # or gmail
 
 
