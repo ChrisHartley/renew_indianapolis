@@ -98,7 +98,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
             'fields': ( ('conflict_board_rc', 'conflict_board_rc_name', 'conflict_city', 'conflict_city_name'), 'active_citations', 'prior_tax_foreclosure', 'tax_status_of_properties_owned', 'other_properties_names_owned', 'landlord_in_marion_county', 'landlord_registry')
         }),
         ('Application Details', {
-            'fields': ('application_type','planned_improvements','who_will_perform_work','finished_square_footage', 'estimated_cost','source_of_financing','is_rental','nsp_income_qualifier','long_term_ownership','timeline','sidelot_eligible', 'vacant_lot_end_use')
+            'fields': ('application_type','planned_improvements','who_will_perform_work','finished_square_footage', 'single_or_multi_family', 'estimated_cost','source_of_financing','is_rental','nsp_income_qualifier','long_term_ownership','timeline','sidelot_eligible', 'vacant_lot_end_use')
 
         }),
         ('Staff fields', {
@@ -169,11 +169,13 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
     user_link.short_description = 'user'
 
     def n_notification(self, obj):
-        return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
-            reverse("application_neighborhood_notification", kwargs={'pk':obj.id}),
-                "Neighborhood Notification"
-            ))
-        #pass
+        if obj.id is not None:
+            return mark_safe('<a target="_blank" href="{}">{}</a>'.format(
+                reverse("application_neighborhood_notification", kwargs={'pk':obj.id}),
+                    "Neighborhood Notification"
+                ))
+        else:
+            return '(none)'
     n_notification.short_description = 'Neighborhood Notification'
 
 
