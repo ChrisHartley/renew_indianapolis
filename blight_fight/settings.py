@@ -193,7 +193,7 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_FORM_CLASS = 'applicants.forms.SignupForm'
-ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Renew Indianapolis]'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Renew Indianapolis] '
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 #SOCIALACCOUNT_FORMS = {
 #    'signup': 'applicants.forms.CustomSignupForm'
@@ -262,8 +262,8 @@ COMPANY_SETTINGS = {
         {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
         {'name': 'Gib Crabill', 'email': 'gib.crabill@indy.gov'},
         ),
-    'NCST_CONTACTS': ['o.brownlee@renewindianapolis.org', 'squick@renewindy.org', 'aervin@renewindy.org', 'bharris@kingpark.org'],
-    'RENEW_REHAB_CONTACT': ['o.brownlee@renewindianapolis.org',],
+    'NCST_CONTACTS': ['squick@renewindy.org', 'aervin@renewindy.org', 'bharris@renewindy.org'],
+    'RENEW_REHAB_CONTACT': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org'],
 }
 
 # This setting determins if property inquiries are allowed to be submitted
@@ -273,9 +273,10 @@ SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
 CITY_URBAN_GARDENING_MANAGER_EMAIL = 'matt.mosier@indy.gov' # notified in closings app if city owned urban garden license property sells
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
-BLC_MANAGER_EMAIL = 'chris.hartley@renewindianapolis.org, o.brownlee@renewindianapolis.org'
+BLC_MANAGER_EMAIL = 'chris.hartley@renewindianapolis.org'
 SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL = True
 
+SMTP_PROVIDER = 'mailgun' # or gmail
 
 
 LOGGING = {
@@ -317,3 +318,8 @@ try:
     from settings_production import *
 except ImportError:
     pass
+
+if SMTP_PROVIDER == 'mailgun':
+    from settings_mailgun import *
+elif SMTP_PROVIDER == 'gmail':
+    from settings_gmail import *
