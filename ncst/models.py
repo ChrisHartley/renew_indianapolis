@@ -55,6 +55,8 @@ class Property(models.Model):
     NSI_CLOSED = 12
     NST_TRIAGE_REVIEW = 13
     NSI_BUYER_EXECUTED_PA = 14
+    CF_PROPERTY_LISTED = 15
+    CF_EXPRESSED_INTEREST = 16
 
 
     STATUS_CHOICES = (
@@ -72,10 +74,13 @@ class Property(models.Model):
         (NSI_CLOSED,'NSI Closed'),
         (DECLINED_STATUS,'NSI Declined by Buyer'),
         (REMOVED_STATUS,'NSI Removed by Seller'),
+        (CF_PROPERTY_LISTED, 'CF - Property Listed'),
+        (CF_EXPRESSED_INTEREST, 'CF - Expressed Interest'),
     )
 
     geometry = models.MultiPolygonField(srid=4326, blank=True, null=True)
     street_address = models.CharField(blank=True, max_length=254)
+    city = models.ChairField(blank=True, max_length='254', default='Indianapolis')
     zipcode = models.CharField(blank=True, max_length=5)
     parcel = models.CharField(blank=False, max_length=7)
 
@@ -115,6 +120,8 @@ class Property(models.Model):
     request_deadline = models.DateTimeField(blank=False)
     inspection_deadline = models.DateTimeField(blank=True, null=True)
     acquisition_deadline = models.DateTimeField(blank=True, null=True)
+
+    inspection_time = models.DateTimeField(blank=True, null=True, help_text='Start of window for inspection')
 
     recommendation = models.NullBooleanField(blank=True, help_text="Recommened by staff for acquisition?")
 
@@ -182,7 +189,7 @@ class Property(models.Model):
                 if existing.rehab_start_date is None and self.rehab_start_date is not None:
                     email = EmailMessage(
                         'NCST rehab start: {} - {}'.format(self.street_address, self.parcel),
-                        'Rehab work has started at the NCST property at {} - parcel {}. Update insurance as necessary.'.format(self.street_address, self.parcel),
+                        'Rehab work started on {0} for the NCST property at {1} - parcel {2}. Update insurance as necessary.'.format(self.rehab_start_date, self.street_address, self.parcel),
                         'info@renewindianapolis.org',
                         settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
                         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
@@ -191,12 +198,21 @@ class Property(models.Model):
                 if existing.rehab_end_date is None and self.rehab_end_date is not None:
                     email = EmailMessage(
                         'NCST rehab end: {} - {}'.format(self.street_address, self.parcel),
-                        'Rehab work has ended at the NCST property at {} - parcel {}. Update insurance as necessary.'.format(self.street_address, self.parcel),
+                        'Rehab work completed on {0} for the NCST property at {1} - parcel {2}. Update insurance as necessary.'.format(self.rehab_end_date, self.street_address, self.parcel),
                         'info@renewindianapolis.org',
                         settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
                         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
                     )
                     email.send()
 
+                if existing.closed == False and self.closed == True:
+                    email = EmailMessage(
+                        'NCST property purchased: {} - {}'.format(self.street_address, self.parcel),
+                        'The NCST property at {1} - parcel {2} was purchased.'.format(self.street_address, self.parcel),
+                        'info@renewindianapolis.org',
+                        ['chartley@renewindy.org',],
+                        reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                    )
+                    email.send()
 
         super(Property, self).save(*args, **kwargs)
