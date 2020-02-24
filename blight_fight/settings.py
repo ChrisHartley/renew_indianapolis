@@ -245,17 +245,17 @@ GOOGLE_API_TOKEN_LOCATION = ''
 #
 COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
-    'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindianapolis.org',
+    'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindy.org',
     'APPLICATION_CONTACT_PHONE': '317-454-8528',
     'COMMERCIAL_CONTACT_NAME':'Nicholas Hunot',
-    'COMMERCIAL_CONTACT_EMAIL': 'nhunot@renewindianapolis.org',
+    'COMMERCIAL_CONTACT_EMAIL': 'nhunot@renewindy.org',
     'COMMERCIAL_CONTACT_PHONE': '317-454-8528',
     'SIDELOT_PROCESSING_FEE': 100,
     'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 200,
     'STANDARD_PROCESSING_STRIPE_FEE': 481, # new based on non-profit 2.2% + $0.30 rate
     'SIDELOT_PRICE': 750.00, # Regular sidelot price
-    'RENEW_PA_RELEASE': 'nhunot@renewindianapolis.org',
+    'RENEW_PA_RELEASE': 'nhunot@renewindy.org',
     'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
     'city_staff': (
         {'name': 'Mickey Rogers', 'email': 'Michael.Rogers2@indy.gov'},
