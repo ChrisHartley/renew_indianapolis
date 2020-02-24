@@ -80,7 +80,7 @@ class Property(models.Model):
 
     geometry = models.MultiPolygonField(srid=4326, blank=True, null=True)
     street_address = models.CharField(blank=True, max_length=254)
-    city = models.CharField(blank=True, max_length='254', default='Indianapolis')
+    city = models.CharField(blank=True, max_length=254, default='Indianapolis')
     zipcode = models.CharField(blank=True, max_length=5)
     parcel = models.CharField(blank=False, max_length=7)
 
