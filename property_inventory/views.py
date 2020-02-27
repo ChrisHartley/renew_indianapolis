@@ -402,7 +402,7 @@ class PropertyInventoryList(ListView):
                 sheet[0].set_column(12,12,None,boolean_format) # Renew Owned boolean is 8th field, format as Y/N boolean
                 sheet[0].set_row(0, None, regular_format)
 
-                props = Property.objects.filter(status__istartswith=sheet[1]).filter(is_active=True).values_list(
+                props = Property.objects.filter(propertyType__exact='lb').filter(status__istartswith=sheet[1]).filter(is_active=True).values_list(
                     'parcel',
                     "streetAddress",
                     "zipcode__name",
