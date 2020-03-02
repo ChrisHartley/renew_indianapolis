@@ -333,6 +333,18 @@ class Application(models.Model):
         blank=True
     )
 
+    why_this_house = models.CharField(
+        max_length=5120,
+        help_text="""
+			Tell us why you want to buy this property in particular. What makes it desirable to you? What features do you especially like? 
+		""",
+        blank=True
+
+
+
+    )
+
+
     frozen = models.BooleanField(
         default=False,
         verbose_name='Freeze Application for Review',
