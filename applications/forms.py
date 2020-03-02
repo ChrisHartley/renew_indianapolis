@@ -117,6 +117,7 @@ class ApplicationForm(forms.ModelForm):
                 Field('finished_square_footage'),
                 Field('single_or_multi_family'),
                 Field('timeline'),
+                Field('why_this_house'),
                 css_class='standard-app homestead-app well'
             ),
             Fieldset(
@@ -166,7 +167,7 @@ class ApplicationForm(forms.ModelForm):
                                 materials on hand.  An <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
                                 project costs.</li>
                             <li>Homestead (owner occupied) rehabilitation projects may demonstrate 100% of funds through an
-                                <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF).</li>
+                                <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) for properties that cost less than $10,000.</li>
 
                             <li>All proposed new construction projects require proof of funds for 75% of the
                                 total project costs.  An <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
@@ -225,6 +226,8 @@ class ApplicationForm(forms.ModelForm):
         square_footage = cleaned_data.get('finished_square_footage')
         vacant_lot_end_use = cleaned_data.get('vacant_lot_end_use', None)
         single_or_multi_family = cleaned_data.get('single_or_multi_family', None)
+        why_this_house = cleaned_data.get('why_this_house', None)
+
 
         if conflict_board_rc is None:
             self.add_error("conflict_board_rc", ValidationError(
@@ -372,6 +375,8 @@ class ApplicationForm(forms.ModelForm):
                     'You must upload a separate elevation view with your application since the selected property is a vacant lot.'))
             if not single_or_multi_family or single_or_multi_family == '':
                 self.add_error('single_or_multi_family', ValidationError(msg))
+            if not why_this_house or why_this_house == '':
+                self.add_error('why_this_house', ValidationError(msg))
 
 
             if Application.STANDARD == application_type:
