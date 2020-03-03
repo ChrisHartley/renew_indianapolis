@@ -335,13 +335,11 @@ class Application(models.Model):
 
     why_this_house = models.CharField(
         max_length=5120,
+        verbose_name="Why are you interseted in this specific property?",
         help_text="""
-			Tell us why you want to buy this property in particular. What makes it desirable to you? What features do you especially like? 
+			Tell us why you want to buy this property in particular. What makes it desirable to you? What features do you especially like?
 		""",
         blank=True
-
-
-
     )
 
 
