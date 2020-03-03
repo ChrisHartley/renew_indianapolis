@@ -316,7 +316,8 @@ class take_back(models.Model):
     owner = models.CharField(max_length=1024, blank=True)
     application = models.ForeignKey('applications.Application', null=True, blank=True, on_delete=models.CASCADE)
     dmd_to_renew_conversion = models.BooleanField(default=False, help_text="This was originally sold as DMD owned but taken back to Renew")
-
+    kingpark_to_renew_conversion = models.BooleanField(default=False, help_text="This was originally sold to King Park but reintegrated into inventory after merger")
+    dmd_to_dmd_conversion = models.BooleanField(default=False, help_text="This was originally sold as DMD owned and was taken back to DMD owned")
 
     class Meta:
         verbose_name = 'take backs'
