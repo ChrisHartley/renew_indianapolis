@@ -217,4 +217,27 @@ class Property(models.Model):
                     )
                     email.send()
 
+                if existing.market_assessment_spreadsheet == '' and self.market_assessment_spreadsheet != '':
+                    email = EmailMessage(
+                        'NCST market assessment tool spreadsheet uploaded: {} - {}'.format(self.street_address, self.parcel),
+                        'The NCST property at {1} - parcel {2} had a market assessment tool spreadsheet uploaded.'.format(self.street_address, self.parcel),
+                        'info@renewindianapolis.org',
+                        ['realestateteam@renewindy.org ',], # need to notify everyone
+                        reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                    )
+                    email.send()
+
+                if existing.lockbox == '' and self.lockbox != '':
+                    email = EmailMessage(
+                        'NCST property lockbox info added: {} - {}'.format(self.street_address, self.parcel),
+                        'The NCST property at {1} - parcel {2} had a lockbox code of {} entered.'.format(self.street_address, self.parcel, self.lockbox),
+                        'info@renewindianapolis.org',
+                        ['realestateteam@renewindy.org ',], # need to notify everyone
+                        reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                    )
+                    email.send()
+
+
+
+
         super(Property, self).save(*args, **kwargs)
