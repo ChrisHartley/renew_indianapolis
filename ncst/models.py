@@ -57,6 +57,7 @@ class Property(models.Model):
     NSI_BUYER_EXECUTED_PA = 14
     CF_PROPERTY_LISTED = 15
     CF_EXPRESSED_INTEREST = 16
+    CF_REMOVED = 17
 
 
     STATUS_CHOICES = (
@@ -76,6 +77,7 @@ class Property(models.Model):
         (REMOVED_STATUS,'NSI Removed by Seller'),
         (CF_PROPERTY_LISTED, 'CF - Property Listed'),
         (CF_EXPRESSED_INTEREST, 'CF - Expressed Interest'),
+        (CF_REMOVED, 'CF - Removed by Seller or Expired'),
     )
 
     geometry = models.MultiPolygonField(srid=4326, blank=True, null=True)
