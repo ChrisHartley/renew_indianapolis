@@ -132,7 +132,8 @@ class Property(models.Model):
 
     rehab_start_date = models.DateField(blank=True, null=True)
     rehab_end_date = models.DateField(blank=True, null=True)
-
+    rehab_costs = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    holding_costs_at_sale = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
 
     class Meta:
         verbose_name = "Property"
