@@ -143,21 +143,24 @@ class Property(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.parcel is not None and self.parcel != '' and self.update_from_server == True:
+        if self.update_from_server == True:
             results = pull_property_info_from_arcgis(self.parcel, request_type='json')
             if results:
                 self.street_address = results['street_address']
                 self.zipcode = results['zipcode']
                 self.geometry = results['geometry']
                 self.update_from_server = False
-                email = EmailMessage(
-                    'New NCST: {} - {}'.format(self.street_address, self.parcel),
-                    'A new NCST property at {} - parcel {} has been added to Blight Fight.'.format(self.street_address, self.parcel),
-                    'info@renewindianapolis.org',
-                    settings.COMPANY_SETTINGS['NCST_CONTACTS'],
-                    reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
-                )
-                email.send()
+
+
+        if self.id is None:
+            email = EmailMessage(
+                'New NCST: {} - {}'.format(self.street_address, self.parcel),
+                'A new NCST property at {} - parcel {} has been added to Blight Fight.'.format(self.street_address, self.parcel),
+                'info@renewindianapolis.org',
+                settings.COMPANY_SETTINGS['NCST_CONTACTS'],
+                reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+            )
+            email.send()
 
 
         if self.convert_to_landbank_inventory_on_save:
@@ -230,7 +233,7 @@ class Property(models.Model):
                 if existing.lockbox == '' and self.lockbox != '':
                     email = EmailMessage(
                         'NCST property lockbox info added: {} - {}'.format(self.street_address, self.parcel),
-                        'The NCST property at {1} - parcel {2} had a lockbox code of {} entered.'.format(self.street_address, self.parcel, self.lockbox),
+                        'The NCST property at {} - parcel {} had a lockbox code of {} entered.'.format(self.street_address, self.parcel, self.lockbox),
                         'info@renewindianapolis.org',
                         ['realestateteam@renewindy.org ',], # need to notify everyone
                         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
