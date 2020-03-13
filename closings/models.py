@@ -280,18 +280,25 @@ class closing_proxy2(closing):
         verbose_name_plural = 'Closing Summaries'
 
 
-#class project_agreement(models.Model):
-#    prop = models.ForeignKey(Property)
-#    start_date = models.DateField(null=False, blank=False, help_text='When the Project Agreement begins, either at closing or upon assumption')
-#    expiration_date = models.DateField(null=False, blank=False)
-#    buyer_name = models.CharField(max_length=254)
-#    released = models.BooleanField(default=False)
+class buyer_demographic(models.Model):
+    AMERICAN_INDIAN = 'American Indian'
+    ALASKANATIVE = 'Alaska Native'
+    ASIAN = 'Asian'
+    BLACK_OR_AFRICAN_AMERICAN = 'Black or African American'
+    NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER = 'Native Hawaiian or Other Pacific Islander'
+    WHITE = 'White'
+    RACE_CHOICES = (
+        (AMERICAN_INDIAN, AMERICAN_INDIAN),
+        (ALASKANATIVE,ALASKANATIVE),
+        (ASIAN,ASIAN),
+        (BLACK_OR_AFRICAN_AMERICAN,BLACK_OR_AFRICAN_AMERICAN),
+        (NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER,NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER),
+        (WHITE, WHITE),
+    )
 
-# class release_inspection(models.Model):
-#     prop = models.ForeignKey
-#     user = models.ForeignKey(User)
-#     staff_user = models.ForeignKey(User, related_name='staff_user')
-#     created = models.DateTimeField(auto_now_add=True)
-#     modified = models.DateTimeField(auto_now=True)
-#     staff_notes = models.CharField(max_length=5000)
-#     user_notes = models.CharField(max_length=5000)
+    race = models.CharField(max_length=128, choices=RACE_CHOICES)
+    hispanic_or_latino = models.NullBooleanField()
+    closing = models.ForeignKey(closing, null=True, blank=True)
+    class Meta:
+        verbose_name = 'Buyer Demographic'
+        verbose_name_plural = 'Buyer Demographics'

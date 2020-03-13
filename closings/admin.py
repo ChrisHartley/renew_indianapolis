@@ -5,7 +5,7 @@ from django.urls import reverse
 from django import forms
 from django.utils.text import slugify
 from datetime import date
-from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy, closing_proxy2
+from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy, closing_proxy2, buyer_demographic
 from .forms import ClosingAdminForm, ClosingScheduleAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
@@ -19,6 +19,10 @@ class PurchaseOptionInline(admin.TabularInline):
     fields = ('date_purchased', 'date_expiring', 'amount_paid', )
     readonly_fields=('closing',)
     extra = 1
+
+class BuyerDemographicInline(admin.TabularInline):
+    model = buyer_demographic
+    extra = 0
 
 
 class PurchaseOptionFilter(admin.SimpleListFilter):
@@ -84,7 +88,7 @@ class ClosingAdmin(admin.ModelAdmin):
      'renew_sales_disclosure_form_download',
      'city_sales_disclosure_form_download',)
     actions = [custom_batch_editing__admin_action]
-    inlines = [PurchaseOptionInline,]
+    inlines = [PurchaseOptionInline,BuyerDemographicInline]
     raw_id_fields = ('application',)
 
     def get_formset(self, request, obj=None, **kwargs):
@@ -473,7 +477,8 @@ class ClosingDistributionAdmin(admin.ModelAdmin):
 
         return response
 
-
+class BuyerDemographicAdmin(admin.ModelAdmin):
+    raw_id_fields = ('closing',)
 
 admin.site.register(purchase_option)
 admin.site.register(location)
@@ -484,3 +489,4 @@ admin.site.register(closing, ClosingAdmin)
 admin.site.register(closing_proxy, ClosingScheduleViewAdmin)
 admin.site.register(closing_proxy2, ClosingDistributionAdmin)
 admin.site.register(processing_fee, ProcessingFeeAdmin)
+admin.site.register(buyer_demographic, BuyerDemographicAdmin)
