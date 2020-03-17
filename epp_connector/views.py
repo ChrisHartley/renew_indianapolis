@@ -171,7 +171,7 @@ class propertyImportCreator(View):
         d['Inventory Type'] = 'Land Bank', ###
         d['Legal Description'] = prop.short_legal_description,
         d['Listing Comments'] = '',
-        d['Maintenance Manager Party External System Id'] = 'INDY1008' if prop.renew_owned else 'INDY1007',
+        d['Maintenance Manager Party External System Id'] = 'INDY1010' if prop.renew_owned else 'INDY1007',
         d['Maintenance Manager Party Number'] = '',
         d['Parcel Square Footage'] = prop.area,
         d['Parcel Length'] = prop.geometry[0].transform(2965, clone=True).extent[2] - prop.geometry[0].transform(2965, clone=True).extent[0],
@@ -318,7 +318,7 @@ def write_xlsx(parcels):
         d['Inventory Type'] = 'Land Bank', ###
         d['Legal Description'] = prop.short_legal_description,
         d['Listing Comments'] = '',
-        d['Maintenance Manager Party External System Id'] = 'INDY1008' if prop.renew_owned else 'INDY1007',
+        d['Maintenance Manager Party External System Id'] = 'INDY1010' if prop.renew_owned else 'INDY1007',
         d['Maintenance Manager Party Number'] = '',
         d['Parcel Square Footage'] = prop.area,
         d['Parcel Length'] = prop.geometry[0].transform(2965, clone=True).extent[2] - prop.geometry[0].transform(2965, clone=True).extent[0],
