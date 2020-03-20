@@ -246,10 +246,10 @@ GOOGLE_API_TOKEN_LOCATION = ''
 COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
     'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindy.org',
-    'APPLICATION_CONTACT_PHONE': '317-454-8528',
+    'APPLICATION_CONTACT_PHONE': '317-932-3775',
     'COMMERCIAL_CONTACT_NAME':'Nicholas Hunot',
     'COMMERCIAL_CONTACT_EMAIL': 'nhunot@renewindy.org',
-    'COMMERCIAL_CONTACT_PHONE': '317-454-8528',
+    'COMMERCIAL_CONTACT_PHONE': '317-932-3775',
     'SIDELOT_PROCESSING_FEE': 100,
     'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 200,
@@ -262,12 +262,12 @@ COMPANY_SETTINGS = {
         {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
         {'name': 'Gib Crabill', 'email': 'gib.crabill@indy.gov'},
         ),
-    'NCST_CONTACTS': ['squick@renewindy.org', 'aervin@renewindy.org', 'bharris@renewindy.org'],
+    'NCST_CONTACTS': ['realestateteam@renewindy.org',],
     'RENEW_REHAB_CONTACT': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org'],
 }
 
 # This setting determins if property inquiries are allowed to be submitted
-PROPERTY_INQUIRIES_ENABLED = True
+PROPERTY_INQUIRIES_ENABLED = False
 # This setting sets if closing assignment notification emails are sent to city employees
 SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
