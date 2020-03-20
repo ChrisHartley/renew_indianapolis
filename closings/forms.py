@@ -14,6 +14,8 @@ class ClosingAdminForm(ModelForm):
             raise ValidationError("Can't have both a property and an application - please select one or another")
         if not self.instance and not prop and not application:
             raise ValidationError("Please select either an application or a property")
+        if cleaned_data.get("closed") == True and cleaned_data.get("date_time") is None:
+            raise ValidationError("Please enter a closing date")
         # Always return the full collection of cleaned data.
         return cleaned_data
 
