@@ -214,7 +214,7 @@ class Property(models.Model):
                 if existing.closed == False and self.closed == True:
                     email = EmailMessage(
                         'NCST property purchased: {} - {}'.format(self.street_address, self.parcel),
-                        'The NCST property at {1} - parcel {2} was purchased.'.format(self.street_address, self.parcel),
+                        'The NCST property at {} - parcel {} was purchased.'.format(self.street_address, self.parcel),
                         'info@renewindianapolis.org',
                         ['chartley@renewindy.org',],
                         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
@@ -224,7 +224,7 @@ class Property(models.Model):
                 if existing.market_assessment_spreadsheet == '' and self.market_assessment_spreadsheet != '':
                     email = EmailMessage(
                         'NCST market assessment tool spreadsheet uploaded: {} - {}'.format(self.street_address, self.parcel),
-                        'The NCST property at {1} - parcel {2} had a market assessment tool spreadsheet uploaded.'.format(self.street_address, self.parcel),
+                        'The NCST property at {} - parcel {} had a market assessment tool spreadsheet uploaded.'.format(self.street_address, self.parcel),
                         'info@renewindianapolis.org',
                         ['realestateteam@renewindy.org ',], # need to notify everyone
                         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
