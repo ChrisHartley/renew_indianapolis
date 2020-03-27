@@ -120,6 +120,7 @@ class ClosingAdmin(admin.ModelAdmin):
                 ).exclude(Property__status__icontains='Sold').filter(closing_set__isnull=True).filter(status=Application.COMPLETE_STATUS)
             if db_field.name == "prop":
                 formfield.queryset = Property.objects.filter(
+                    (Q(propertyType__exact='in') & Q(status__icontains='Available')) |
                     (Q(renew_owned__exact=True) & Q(
                         status__icontains='Sale approved by Board of Directors'))
                     | Q(status__icontains='Sale approved by MDC')
@@ -176,9 +177,10 @@ class ClosingAdmin(admin.ModelAdmin):
     city_documents_in_place.boolean = True
 
     def purchase_agreement(self, obj):
-        pa_link = '<a target="_blank" href="{}">{}</a>'.format(
-            reverse("application_purchase_agreement", args=(obj.application.id,)), "Purchase Agreement")
-        return mark_safe(pa_link)
+        if obj.id is not None:
+            pa_link = '<a target="_blank" href="{}">{}</a>'.format(
+                reverse("application_purchase_agreement", args=(obj.application.id,)), "Purchase Agreement")
+            return mark_safe(pa_link)
 
     purchase_agreement.short_description = 'Generate Purchase Agreement'
 
@@ -191,73 +193,85 @@ class ClosingAdmin(admin.ModelAdmin):
         return mark_safe(pf_link)
 
     def closing_statement_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'closing_statement'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'closing_statement'}),
+                    "Download"
+                ))
 
     def title_commitment_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'title_commitment'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'title_commitment'}),
+                    "Download"
+                ))
 
     def deed_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'deed'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'deed'}),
+                    "Download"
+                ))
 
     def recorded_city_deed_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'recorded_city_deed'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'recorded_city_deed'}),
+                    "Download"
+                ))
     def ri_deed_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'ri_deed'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'ri_deed'}),
+                    "Download"
+                ))
 
     def recorded_ri_deed_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'recorded_ri_deed'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'recorded_ri_deed'}),
+                    "Download"
+                    ))
     def nsp_convenants_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'nsp_convenants'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'nsp_convenants'}),
+                    "Download"
+                ))
 
     def project_agreement_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'project_agreement'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'project_agreement'}),
+                    "Download"
+                ))
     def assignment_and_assumption_agreement_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'assignment_and_assumption_agreement'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'assignment_and_assumption_agreement'}),
+                    "Download"
+                ))
 
     def signed_purchase_agreement_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'signed_purchase_agreement'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'signed_purchase_agreement'}),
+                    "Download"
+                ))
 
     def renew_sales_disclosure_form_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'renew_sales_disclosure_form'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'renew_sales_disclosure_form'}),
+                    "Download"
+                ))
 
     def city_sales_disclosure_form_download(self, obj):
-        return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'city_sales_disclosure_form'}),
-                "Download"
-            ))
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'city_sales_disclosure_form'}),
+                    "Download"
+                ))
 
     def print_deposit_slip(self, obj):
         if obj.id is None:
