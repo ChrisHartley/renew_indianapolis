@@ -201,15 +201,15 @@ class Property(models.Model):
                         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
                     )
                     email.send()
-                if existing.rehab_end_date is None and self.rehab_end_date is not None:
-                    email = EmailMessage(
-                        'NCST rehab end: {} - {}'.format(self.street_address, self.parcel),
-                        'Rehab work completed on {0} for the NCST property at {1} - parcel {2}. Update insurance as necessary.'.format(self.rehab_end_date, self.street_address, self.parcel),
-                        'info@renewindianapolis.org',
-                        settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
-                        reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
-                    )
-                    email.send()
+                # if existing.rehab_end_date is None and self.rehab_end_date is not None:
+                #     email = EmailMessage(
+                #         'NCST rehab end: {} - {}'.format(self.street_address, self.parcel),
+                #         'Rehab work completed on {0} for the NCST property at {1} - parcel {2}. Update insurance as necessary.'.format(self.rehab_end_date, self.street_address, self.parcel),
+                #         'info@renewindianapolis.org',
+                #         settings.COMPANY_SETTINGS['RENEW_REHAB_CONTACT'],
+                #         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                #     )
+                #     email.send()
 
                 if existing.closed == False and self.closed == True:
                     email = EmailMessage(
