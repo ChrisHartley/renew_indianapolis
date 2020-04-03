@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
-from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign, take_back, lockbox
+from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign, take_back, lockbox, flood_zone
 from closings.models import purchase_option
 from applications.models import Application
 from photos.models import photo
@@ -97,9 +97,16 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     readonly_fields = ('purchase_option_in_place', 'blc_id', 'generate_epp_export',
         'applications_search','view_photos','context_area_strategy',
         'context_area_name', 'number_of_inquiries', 'main_photo',
-        'application_summary', 'condition_report_link'
+        'application_summary', 'condition_report_link', 'flood_zone',
     )
     actions = ["export_as_csv"]
+
+    def flood_zone(self,obj):
+        if obj.geometry is not None:
+            fz = flood_zone.objects.filter(geometry__overlaps=obj.geometry).values_list('name', flat=True)
+            return ', '.join(fz)
+        else:
+            return '-'
 
     def main_photo(self, obj):
         ph = photo.objects.filter(prop=obj).filter(main_photo__exact=True).first()
@@ -271,6 +278,7 @@ admin.site.register(price_change, price_changeAdmin)
 #admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
+admin.site.register(flood_zone)
 admin.site.register(take_back, take_backAdmin)
 admin.site.register(ContextArea, ContextAreaAdmin)
 admin.site.register(featured_property)

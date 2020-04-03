@@ -11,7 +11,7 @@ from utils.admin import ExportCsvMixin
 from .models import Contact, Property, Program, Seller
 from photos.models import photo
 from property_condition.models import ConditionReport
-from property_inventory.models import census_tract, Property as InventoryProperty
+from property_inventory.models import census_tract, flood_zone, Property as InventoryProperty
 
 class photoInlineAdmin(regular_admin.TabularInline):
     model = photo
@@ -38,7 +38,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'street_address', 'zipcode')
     list_display = ('parcel', 'street_address', 'status', 'lockbox', 'recommendation', 'price_offer', 'condition_report_completed', 'get_short_notes')
     list_filter = ('status',)
-    readonly_fields = ('census_tract_landbank_sales_count','get_market_assessment_spreadsheet', 'get_comparative_market_analysis',)
+    readonly_fields = ('census_tract_landbank_sales_count','get_market_assessment_spreadsheet', 'get_comparative_market_analysis','get_flood_zone')
     inlines = [ photoInlineAdmin,propertyConditionReportInlineAdmin]
 #     change_list_template = 'admin/property_inquiry/change_list_map.html'
 
@@ -78,6 +78,13 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     def condition_report_completed(self, obj):
         return ConditionReport.objects.filter(Property_ncst=obj).count()>0
     condition_report_completed.boolean = True
+
+    def get_flood_zone(self,obj):
+        if obj.geometry is not None:
+            fz = flood_zone.objects.filter(geometry__overlaps=obj.geometry).values_list('name', flat=True)
+            return ', '.join(fz)
+        else:
+            return '-'
 
 admin.site.register(Contact)
 admin.site.register(Program)

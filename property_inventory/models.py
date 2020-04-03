@@ -54,6 +54,8 @@ class MVAClassifcation(Overlay):
 class census_tract(Overlay):
     opportunity_zone = models.BooleanField(default=False, help_text="Federally designated opportunity zone.")
 
+class flood_zone(Overlay):
+    flood_code = models.CharField(max_length=254)
 
 
 ### The Property model is the heart of blight_fight. A Property is a parcel of land with a unique identifier, the
@@ -318,6 +320,8 @@ class take_back(models.Model):
     dmd_to_renew_conversion = models.BooleanField(default=False, help_text="This was originally sold as DMD owned but taken back to Renew")
     kingpark_to_renew_conversion = models.BooleanField(default=False, help_text="This was originally sold to King Park but reintegrated into inventory after merger")
     dmd_to_dmd_conversion = models.BooleanField(default=False, help_text="This was originally sold as DMD owned and was taken back to DMD owned")
+    landbank_to_investment_conversion = models.BooleanField(default=False, help_text="This was originally a landbank property but was converted to investment after takeback")
+
 
     class Meta:
         verbose_name = 'take backs'
