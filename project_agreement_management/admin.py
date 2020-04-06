@@ -33,8 +33,16 @@ class DocumentInline(GenericTabularInline):
     fields = ('file', 'file_purpose',)
     extra = 0
 
+
+class ReleaseInlineAdmin(admin.TabularInline):
+    model = Release
+    extra = 0
+    fields = ('instrument_number', 'recorded_document','date_recorded',)
+    #can_delete = False
+    show_change_link = True
+
 class InspectionAdmin(admin.ModelAdmin):
-    inlines = [NoteInline, DocumentInline]
+    inlines = [NoteInline, DocumentInline, ReleaseInlineAdmin]
     raw_id_fields = ('user',)
     readonly_fields = ('closing_link',)
 
@@ -57,7 +65,7 @@ class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]
     raw_id_fields = ('user','Application')
     readonly_fields = ('inspection_link', 'inspection_exists')
-    list_display = ('Property', 'Application', 'inspection_exists')
+    list_display = ('Property', 'Application', 'created', 'inspection_exists')
 
     def inspection_exists(self, obj):
         return Inspection.objects.filter(request=obj).count() > 0
@@ -284,8 +292,13 @@ class EnforcementAdmin(admin.ModelAdmin):
 class WorkoutMeetingAdmin(admin.ModelAdmin):
     inlines = [EnforcementInlineAdmin,]
 
+
+
+
 class ReleaseAdmin(admin.ModelAdmin):
     inlines = [NoteInline,]
+    raw_id_fields = ('Property','Application')
+
 
 admin.site.register(Document)
 admin.site.register(Note)

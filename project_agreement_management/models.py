@@ -38,9 +38,9 @@ class Note(models.Model):
 
 @python_2_unicode_compatible
 class Document(models.Model):
-    content_type = models.ForeignKey(ContentType, related_name='pa_document_content_type', on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()#'content_type', 'object_id')
+    content_type = models.ForeignKey(ContentType, related_name='pa_document_content_type', on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = GenericForeignKey() #'content_type', 'object_id')
 #    user = models.ForeignKey(get_user_model(), related_name='pa_document_user', on_delete=models.CASCADE)
 
     file = models.FileField(
@@ -202,6 +202,39 @@ class InspectionRequest(models.Model):
                 fail_silently=False
             )
 
+
+# class InspectionRequestPhotoSet(models.Model):
+#     Exterior:
+#
+#     exterior_front
+#     exterior_rear
+#     exterior_side1
+#     exterior_side2
+#
+#     interior_entry
+#     interior_family_room
+#     interior_dining_room
+#     interior_kitchen
+#     interior_bathroom1
+#
+#
+# Interior:
+#
+#     Entry
+#     Family/Living room
+#     Dining room
+#     Kitchen
+#     Bathrooms
+#     Bedrooms
+#     Basement (if applicable)
+#
+#
+#
+# Other Items:
+#
+#     Electrical Panel
+#     Furnace
+#     Water Heater
 
 class Inspection(models.Model):
 
