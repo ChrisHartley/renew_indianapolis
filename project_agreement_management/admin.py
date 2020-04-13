@@ -33,6 +33,9 @@ class DocumentInline(GenericTabularInline):
     fields = ('file', 'file_purpose',)
     extra = 0
 
+class DocumentAdmin(admin.ModelAdmin):
+    search_fields = ('file_purpose',)
+
 
 class ReleaseInlineAdmin(admin.TabularInline):
     model = Release
@@ -45,6 +48,7 @@ class InspectionAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline, ReleaseInlineAdmin]
     raw_id_fields = ('user',)
     readonly_fields = ('closing_link',)
+    search_fields = ('request',)
 
 
     def closing_link(self, obj):
@@ -66,6 +70,7 @@ class InspectionRequestAdmin(admin.ModelAdmin):
     raw_id_fields = ('user','Application')
     readonly_fields = ('inspection_link', 'inspection_exists')
     list_display = ('Property', 'Application', 'created', 'inspection_exists')
+    search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__Property__parcel', 'Application__Property__streetAddress', 'Application__user__last_name', 'Application__user__first_name', 'Application__organization__name')
 
     def inspection_exists(self, obj):
         return Inspection.objects.filter(request=obj).count() > 0
@@ -300,7 +305,7 @@ class ReleaseAdmin(admin.ModelAdmin):
     raw_id_fields = ('Property','Application')
 
 
-admin.site.register(Document)
+admin.site.register(Document, DocumentAdmin)
 admin.site.register(Note)
 admin.site.register(Release, ReleaseAdmin)
 admin.site.register(InspectionRequest, InspectionRequestAdmin)
