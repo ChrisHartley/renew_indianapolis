@@ -419,10 +419,28 @@ def get_next_in_date_hierarchy(request, date_hierarchy):
 
     return 'month'
 
+
+class PropertyTypeFilter(admin.SimpleListFilter):
+    title = 'property type'
+    parameter_name = 'property_type'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('in', 'Investment'),
+            ('lb', 'Landbank'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'in':
+            return queryset.filter(Q(application__Property__propertyType__exact='in') | Q(prop__propertyType__exact='in') )
+        if self.value() == 'lb':
+            return queryset.filter(Q(application__Property__propertyType__exact='lb') | Q(prop__propertyType__exact='lb') )
+        return queryset
+
 class ClosingDistributionAdmin(admin.ModelAdmin):
     change_list_template = 'closing_summary_change_list.html'
     date_hierarchy = 'date_time'
-    list_filter = ('application__Property__renew_owned', 'title_company')
+    list_filter = ('application__Property__renew_owned', 'title_company', PropertyTypeFilter)
 
     def get_queryset(self, request):
         return super(ClosingDistributionAdmin, self).get_queryset(request).filter(closed=True)
