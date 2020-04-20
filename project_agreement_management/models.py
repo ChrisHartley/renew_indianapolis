@@ -108,10 +108,10 @@ class Release(models.Model):
     Application = models.ForeignKey(Application, null=True, blank=True, on_delete=models.CASCADE)
     owner = models.CharField(max_length=254, blank=True, help_text='Used only if property was sold with a legacy application not in the system')
 
-    Inspection = models.ForeignKey('Inspection', blank=False, null=False)
+    Inspection = models.ForeignKey('Inspection', blank=False, null=False, on_delete=models.CASCADE)
 
     instrument_number = models.CharField(max_length=254, blank=True)
-    recorded_document = models.ForeignKey(Document, blank=True, null=True)
+    recorded_document = models.ForeignKey(Document, blank=True, null=True, on_delete=models.CASCADE)
     date_recorded = models.DateField(null=True, blank=True)
     def __str__(self):
         prop = 'none'
