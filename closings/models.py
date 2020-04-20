@@ -298,7 +298,7 @@ class buyer_demographic(models.Model):
 
     race = models.CharField(max_length=128, choices=RACE_CHOICES)
     hispanic_or_latino = models.NullBooleanField()
-    closing = models.ForeignKey(closing, null=True, blank=True)
+    closing = models.ForeignKey(closing, null=True, blank=True, on_delete=models.CASCADE)
     class Meta:
         verbose_name = 'Buyer Demographic'
         verbose_name_plural = 'Buyer Demographics'
