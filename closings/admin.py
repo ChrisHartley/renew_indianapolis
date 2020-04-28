@@ -9,7 +9,23 @@ from .models import location, company_contact, mailing_address, title_company, c
 from .forms import ClosingAdminForm, ClosingScheduleAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
-from utils.admin import PropertyTypeFilter
+
+class PropertyTypeFilter(admin.SimpleListFilter):
+    title = 'property type'
+    parameter_name = 'property_type'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('in', 'Investment'),
+            ('lb', 'Landbank'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'in':
+            return queryset.filter(Q(application__Property__propertyType__exact='in') | Q(prop__propertyType__exact='in') )
+        if self.value() == 'lb':
+            return queryset.filter(Q(application__Property__propertyType__exact='lb') | Q(prop__propertyType__exact='lb') )
+        return queryset
 
 
 class ProcessingFeeAdmin(admin.ModelAdmin):

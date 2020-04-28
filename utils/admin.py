@@ -16,9 +16,9 @@ class PropertyTypeFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'in':
-            return queryset.filter(Q(application__Property__propertyType__exact='in') | Q(prop__propertyType__exact='in') )
+            return queryset.filter(propertyType__exact='in')
         if self.value() == 'lb':
-            return queryset.filter(Q(application__Property__propertyType__exact='lb') | Q(prop__propertyType__exact='lb') )
+            return queryset.filter(propertyType__exact='lb')
         return queryset
 
 class ExportCsvMixin:
