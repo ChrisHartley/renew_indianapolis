@@ -19,7 +19,7 @@ import datetime
 from django.utils.timezone import now
 #import pytz
 
-from utils.admin import ExportCsvMixin
+from utils.admin import ExportCsvMixin, PropertyTypeFilter
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'
@@ -89,7 +89,7 @@ class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
 class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name', 'buyer_application__user__email', 'buyer_application__user__last_name', 'buyer_application__user__first_name', 'buyer_application__organization__name')
     list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status', 'future_development_program_eligible')
-    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition')
+    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition', PropertyTypeFilter)
     inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin, lockboxInlineAdmin]
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'

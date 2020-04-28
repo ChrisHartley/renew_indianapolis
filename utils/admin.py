@@ -4,6 +4,23 @@ from django.http import HttpResponse
 import csv
 from django.contrib import admin
 
+class PropertyTypeFilter(admin.SimpleListFilter):
+    title = 'property type'
+    parameter_name = 'property_type'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('in', 'Investment'),
+            ('lb', 'Landbank'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'in':
+            return queryset.filter(Q(application__Property__propertyType__exact='in') | Q(prop__propertyType__exact='in') )
+        if self.value() == 'lb':
+            return queryset.filter(Q(application__Property__propertyType__exact='lb') | Q(prop__propertyType__exact='lb') )
+        return queryset
+
 class ExportCsvMixin:
     def export_as_csv(self, request, queryset):
 
@@ -14,13 +31,16 @@ class ExportCsvMixin:
             field_names.remove('centroid_geometry')
         except ValueError:
             pass
-            
+
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
         writer = csv.writer(response)
 
         writer.writerow(field_names)
         for obj in queryset:
+            print(obj)
+        #    for field in field_names:
+        #        print(getattr(obj, field))
             row = writer.writerow([getattr(obj, field) for field in field_names])
 
         return response

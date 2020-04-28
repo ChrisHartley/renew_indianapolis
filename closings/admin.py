@@ -9,6 +9,8 @@ from .models import location, company_contact, mailing_address, title_company, c
 from .forms import ClosingAdminForm, ClosingScheduleAdminForm
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
+from utils.admin import PropertyTypeFilter
+
 
 class ProcessingFeeAdmin(admin.ModelAdmin):
     list_display = ['__str__','due_date', 'date_paid', 'paid']
@@ -76,7 +78,7 @@ class ClosingAdmin(admin.ModelAdmin):
     form = ClosingAdminForm
     list_display = ['__str__','title_company','renew_owned', 'date_time', 'processing_fee_paid', 'assigned_city_staff']
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__organization__name', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
-    list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'application__Property__renew_owned', 'archived')
+    list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'application__Property__renew_owned', 'archived', PropertyTypeFilter)
     readonly_fields = (
         'recorded_ri_deed_download', 'purchase_agreement', 'nsp', 'processing_fee_url',
         'processing_fee_paid', 'print_deposit_slip','blc_listed',
@@ -419,23 +421,6 @@ def get_next_in_date_hierarchy(request, date_hierarchy):
 
     return 'month'
 
-
-class PropertyTypeFilter(admin.SimpleListFilter):
-    title = 'property type'
-    parameter_name = 'property_type'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('in', 'Investment'),
-            ('lb', 'Landbank'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'in':
-            return queryset.filter(Q(application__Property__propertyType__exact='in') | Q(prop__propertyType__exact='in') )
-        if self.value() == 'lb':
-            return queryset.filter(Q(application__Property__propertyType__exact='lb') | Q(prop__propertyType__exact='lb') )
-        return queryset
 
 class ClosingDistributionAdmin(admin.ModelAdmin):
     change_list_template = 'closing_summary_change_list.html'
