@@ -8,7 +8,9 @@ from django.utils.safestring import mark_safe
 from django.db.models import Q
 from django.forms import Textarea
 from django.urls import NoReverseMatch
-from .models import Property, CDC, Neighborhood, ContextArea, price_change, note, featured_property, blc_listing, yard_sign, take_back, lockbox, flood_zone
+from .models import Property, CDC, Neighborhood, ContextArea, price_change
+from .models import note, featured_property, blc_listing, yard_sign, take_back
+from .models import lockbox, flood_zone, opportunity_zone, census_block_group
 from closings.models import purchase_option
 from applications.models import Application
 from photos.models import photo
@@ -279,6 +281,8 @@ admin.site.register(price_change, price_changeAdmin)
 admin.site.register(CDC)
 admin.site.register(Neighborhood)
 admin.site.register(flood_zone)
+admin.site.register(opportunity_zone)
+admin.site.register(census_block_group)
 admin.site.register(take_back, take_backAdmin)
 admin.site.register(ContextArea, ContextAreaAdmin)
 admin.site.register(featured_property)

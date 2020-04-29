@@ -57,6 +57,13 @@ class census_tract(Overlay):
 class flood_zone(Overlay):
     flood_code = models.CharField(max_length=254)
 
+class opportunity_zone(Overlay):
+    ## Federally designated opportunity zone
+    pass
+
+class census_block_group(Overlay):
+    pass
+
 
 ### The Property model is the heart of blight_fight. A Property is a parcel of land with a unique identifier, the
 ### parcel number. It has various attributes, including geometry, and can fall within a Overlay geometry (above).
