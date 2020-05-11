@@ -48,7 +48,7 @@ class InspectionAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline, ReleaseInlineAdmin]
     raw_id_fields = ('user',)
     readonly_fields = ('closing_link',)
-    search_fields = ('request',)
+    search_fields = ('request__Property__streetAddress','request__Property__parcel')
 
 
     def closing_link(self, obj):
