@@ -236,7 +236,7 @@ urlpatterns = [
 
 
         url(r'nn/update/$', update_registered_organizations, name='update_registered_organizations'),
-        url(r'donate/$', DonateView.as_view(), name='donate'),
+    #    url(r'donate/$', DonateView.as_view(), name='donate'),
         url(r'file/(?P<app_name>.*)/(?P<class_name>.*)/(?P<pk>[0-9]+)/(?P<field_name>.*)/$', send_class_file, name='send_class_file'),
 
         # commind - Commercial Industrial URLS
