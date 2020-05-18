@@ -248,7 +248,7 @@ class Inspection(models.Model):
     pass_outcome = models.NullBooleanField(blank=True, null=True)
 
     def __str__(self):
-        return '{} - Pass: {}'.format(self.request, self.pass_outcome)
+        return '{} - Pass: {} - Release in place: {}'.format(self.request, self.pass_outcome, self.release_set.count()>0)
 
 
 class BreechType(models.Model):

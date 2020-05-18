@@ -47,7 +47,7 @@ class ReleaseInlineAdmin(admin.TabularInline):
 class InspectionAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline, ReleaseInlineAdmin]
     raw_id_fields = ('user',)
-    readonly_fields = ('closing_link',)
+    readonly_fields = ('closing_link','application_link')
     search_fields = ('request__Property__streetAddress','request__Property__parcel')
 
 
@@ -65,30 +65,53 @@ class InspectionAdmin(admin.ModelAdmin):
                 )
         return mark_safe(tb_link)
 
+    def application_link(self, obj):
+        tb_link = 'None linked'
+        if obj.request.Application is not None:
+            url = reverse("admin:applications_application_change", args=(obj.request.Application.id,) )
+            tb_link = '<a target="_blank" href="{}">{}</a>'.format(
+                url,
+                obj.request.Application
+            )
+        return mark_safe(tb_link)
+
+
+
 class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]
     raw_id_fields = ('user','Application')
-    readonly_fields = ('inspection_link', 'inspection_exists')
-    list_display = ('Property', 'Application', 'created', 'inspection_exists')
+    readonly_fields = ('inspection_status',)
+    list_display = ('Property', 'get_application_or_applicant', 'created', 'inspection_status',)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__Property__parcel', 'Application__Property__streetAddress', 'Application__user__last_name', 'Application__user__first_name', 'Application__organization__name')
 
-    def inspection_exists(self, obj):
-        return Inspection.objects.filter(request=obj).count() > 0
-    inspection_exists.boolean = True
-
-    def inspection_link(self, obj):
-        tb_link = ''
+    ## release exists field
+    def inspection_status(self, obj):
+        insp = Inspection.objects.filter(request=obj).first()
+        result = '-'
         url = ''
-        try:
-            url = reverse("admin:project_agreement_management_inspection_change", args=(Inspection.objects.get(request=obj).id,) )
-        except NoReverseMatch:
-            print('exceiption')
+        if insp is None:
+            result = 'add inspection'
+            url = '{}{}{}'.format(reverse("admin:project_agreement_management_inspection_add"), '?request=',obj.id)
         else:
-            tb_link = '<a target="_blank" href="{}">{}</a>'.format(
-                url,
-                'Inspection'
-            )
-        return mark_safe(tb_link)
+            result = 'add release'
+            url = '{}{}{}'.format(reverse("admin:project_agreement_management_release_add"),'?Inspection=',insp.id)
+            rel = Release.objects.filter(Inspection=insp).first()
+            if rel != None:
+#                return mark_safe('done')
+                result = 'done'
+                url = reverse("admin:project_agreement_management_release_change", args=(rel.id,) )
+        il = '<a target="_blank" href="{}">{}</a>'.format(
+            url,
+            result,
+        )
+        return mark_safe(il)
+
+    def get_application_or_applicant(self,obj):
+        if obj.Application is not None:
+            url = reverse("admin:applications_application_change", args=(obj.Application.id,) )
+            return mark_safe('<a target="_blank" href="{}">{}</a>'.format(url, obj.Application) )
+        else:
+            return obj.Property.applicant
 
 
 class EnforcementInlineAdmin(admin.TabularInline):
@@ -303,6 +326,18 @@ class WorkoutMeetingAdmin(admin.ModelAdmin):
 class ReleaseAdmin(admin.ModelAdmin):
     inlines = [NoteInline,]
     raw_id_fields = ('Property','Application')
+    search_fields = (
+        'Property__streetAddress',
+        'Property__parcel',
+        'Application__Property__streetAddress',
+        'Application__Property__parcel',
+        'Inspection__request__Property__streetAddress',
+        'Inspection__request__Property__parcel',
+        'Inspection__request__Application__Property__streetAddress',
+        'Inspection__request__Application__Property__parcel',
+
+    )
+    list_display = ('created', 'Inspection', 'Property', 'Application', 'owner', 'date_recorded')
 
 
 admin.site.register(Document, DocumentAdmin)
