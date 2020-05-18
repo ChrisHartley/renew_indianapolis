@@ -155,6 +155,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
             'Structure Type',
             'Application Type',
             'Sale Date',
+            'Last Annual Report Submitted',
             'Buyer Name',
             'Organization Name',
             'Buyer email',
@@ -173,12 +174,19 @@ class BreechStatusAdmin(admin.ModelAdmin):
         writer.writerow(field_names)
         for obj in queryset:
             if obj.enforcement.Application is not None:
+                from annual_report_form.models import annual_report
+                annual_report = annual_report.objects.filter(Property=obj.enforcement.Application.Property).last()
+                if annual_report is not None:
+                    annual_report_date = annual_report.created
+                else:
+                    annual_report_date = '-'
                 data = [
                     obj.enforcement.Property.streetAddress,
                     obj.enforcement.Property.parcel,
                     obj.enforcement.Property.structureType,
                     obj.enforcement.Application.get_application_type_display(),
-                    obj.enforcement.Property.status[5:],
+                    obj.enforcement.Property.status[5:], # sale date
+                    annual_report_date,
                     '{} {}'.format(obj.enforcement.Application.user.first_name, obj.enforcement.Application.user.last_name),
                     obj.enforcement.Application.organization,
                     obj.enforcement.Application.user.email,
@@ -194,12 +202,19 @@ class BreechStatusAdmin(admin.ModelAdmin):
                     ' - '.join(['{} - {}.'.format(n.text, n.modified.strftime('%x')) for n in obj.notes.all()]),
                 ]
             else:
+                from annual_report_form.models import annual_report
+                annual_report = annual_report.objects.filter(Property=obj.enforcement.Property).last()
+                if annual_report is not None:
+                    annual_report_date = annual_report.created
+                else:
+                    annual_report_date = '-'
                 data = [
                     obj.enforcement.Property.streetAddress,
                     obj.enforcement.Property.parcel,
                     obj.enforcement.Property.structureType,
                     'Legacy application not in system',
                     obj.enforcement.Property.status[5:],
+                    annual_report_date, # no annual report lookup
                     obj.enforcement.Property.applicant,
                     '', # org
                     '', # email
