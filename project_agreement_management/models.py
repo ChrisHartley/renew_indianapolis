@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from PIL import Image, ExifTags
 from django.utils import timezone
 from django.conf import settings
+from django.urls import reverse
 
 from property_inventory.models import Property
 from applications.models import Application
@@ -155,6 +156,7 @@ class InspectionRequest(models.Model):
     email = models.CharField(max_length=254, blank=True, help_text='Enter your email address if the one tied to your account is not accurate')
     phone_number = models.CharField(max_length=15, blank=True, help_text='Enter your phone number if the one tied to your account is not accurate')
     request_notes = models.CharField(max_length=254, blank=True, help_text="Any notes for the inspector before they contact you?")
+
     def __str__(self):
         if self.pk is not None:
             if self.Property is not None:
@@ -196,7 +198,7 @@ class InspectionRequest(models.Model):
         if new == True and contact is not None and prop is not None:
             send_mail(
                 'Inspection Request Submitted - {}'.format(prop,),
-                'An inspection request has been submitted for the property at {}. Please take a look.'.format(prop,),
+                'An inspection request has been submitted for the property at {}. Please take a look: https://build.renewindianapolis.org{}'.format(prop, reverse('admin:project_agreement_management_inspectionrequest_change', args=(self.id,) )),
                 'info@renewindianapolis.org',
                 [contact,],
                 fail_silently=False

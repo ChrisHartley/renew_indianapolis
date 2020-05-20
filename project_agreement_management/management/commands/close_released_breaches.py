@@ -1,9 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
-from datetime import timedelta, datetime, date
 from django.utils import timezone
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from property_inventory.models import Property
 from project_agreement_management.models import Enforcement, BreechType, BreechStatus
 
@@ -30,8 +27,6 @@ class Command(BaseCommand):
 
         all_enf = Enforcement.objects.filter(Property__in=props)
         for e in all_enf:
-        #    print(e.breech_types)
-        #    print(dir(e))
             for b in e.breechstatus_set.all():
                 if b.status == BreechStatus.OPEN:
                     print('{} - Breach is open property was released, should be closed'.format(e,))

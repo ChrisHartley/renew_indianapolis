@@ -76,13 +76,36 @@ class InspectionAdmin(admin.ModelAdmin):
         return mark_safe(tb_link)
 
 
+class InspectionRequestStageFilter(admin.SimpleListFilter):
+    title = 'request stage'
+    parameter_name = 'stage'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('new', 'No inspection'),
+            ('inspection_passed', 'Inspection passed, no release'),
+            ('released', 'Completed and released'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'new':
+            return queryset.filter(inspection__isnull=True)
+        if self.value() == 'inspection_passed':
+            return queryset.filter(inspection__pass_outcome__exact=True).filter(inspection__release__isnull=True)
+        if self.value() == 'released':
+            return queryset.filter(inspection__release__isnull=False)
+        return queryset
+
+
 
 class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]
     raw_id_fields = ('user','Application')
-    readonly_fields = ('inspection_status',)
+    readonly_fields = ('inspection_status','get_contact_info_on_file')
     list_display = ('Property', 'get_application_or_applicant', 'created', 'inspection_status',)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__Property__parcel', 'Application__Property__streetAddress', 'Application__user__last_name', 'Application__user__first_name', 'Application__organization__name')
+    list_filter = (InspectionRequestStageFilter,)
+
 
     ## release exists field
     def inspection_status(self, obj):
@@ -106,13 +129,21 @@ class InspectionRequestAdmin(admin.ModelAdmin):
         )
         return mark_safe(il)
 
-    def get_application_or_applicant(self,obj):
+    def get_application_or_applicant(self, obj):
         if obj.Application is not None:
             url = reverse("admin:applications_application_change", args=(obj.Application.id,) )
             return mark_safe('<a target="_blank" href="{}">{}</a>'.format(url, obj.Application) )
         else:
             return obj.Property.applicant
 
+
+    def get_contact_info_on_file(self, obj):
+        if obj.Application is not None:
+            name = '{} {}'.format(obj.Application.user.first_name, obj.Application.user.last_name)
+            email = obj.Application.user.email
+            phone = obj.Application.user.profile.phone_number
+            return '{} {} {}'.format(name, email, phone)
+        return 'nothing on file'
 
 class EnforcementInlineAdmin(admin.TabularInline):
     model = Enforcement.meeting.through
