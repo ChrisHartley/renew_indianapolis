@@ -39,7 +39,7 @@ class PropertyStatusYearListFilter(SimpleListFilter):
         )
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(status__contains=self.value())
+            return queryset.filter(status__contains=self.value()).distinct()
         return queryset
 
 class PropertyStatusListFilter(SimpleListFilter):
@@ -57,17 +57,17 @@ class PropertyStatusListFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'sold':
-            return queryset.filter(status__contains='Sold')
+            return queryset.filter(status__contains='Sold').distinct()
         if self.value() == 'available':
-            return queryset.filter(status__contains='Available')
+            return queryset.filter(status__contains='Available').distinct()
         if self.value() == 'approved':
-            return queryset.filter( Q(status__contains='Sale approved - purchase option') | ( Q(status__contains='Sale approved by MDC') & Q(renew_owned__exact=False) ) | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=True)) )
+            return queryset.filter( Q(status__contains='Sale approved - purchase option') | ( Q(status__contains='Sale approved by MDC') & Q(renew_owned__exact=False) ) | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=True)) ).distinct()
         if self.value() == 'consideration':
-            return queryset.filter( Q(status__contains='Sale approved by Review Committee') | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=False)))
+            return queryset.filter( Q(status__contains='Sale approved by Review Committee') | (Q(status__contains='Sale approved by Board of Directors') & Q(renew_owned__exact=False))).distinct()
         if self.value() == 'bep':
-            return queryset.filter(status__contains='BEP demolition slated')
+            return queryset.filter(status__contains='BEP demolition slated').distinct()
         if self.value() == 'newinventory':
-            return queryset.filter(status__contains='New Inventory')
+            return queryset.filter(status__contains='New Inventory').distinct()
         return queryset
 
 class NoteInlineAdmin(regular_admin.TabularInline):
