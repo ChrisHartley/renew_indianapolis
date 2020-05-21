@@ -89,11 +89,11 @@ class InspectionRequestStageFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'new':
-            return queryset.filter(inspection__isnull=True)
+            return queryset.filter(inspection__isnull=True).distinct()
         if self.value() == 'inspection_passed':
-            return queryset.filter(inspection__pass_outcome__exact=True).filter(inspection__release__isnull=True)
+            return queryset.filter(inspection__pass_outcome__exact=True).filter(inspection__release__isnull=True).distinct()
         if self.value() == 'released':
-            return queryset.filter(inspection__release__isnull=False)
+            return queryset.filter(inspection__release__isnull=False).distinct()
         return queryset
 
 
