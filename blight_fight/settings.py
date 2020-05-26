@@ -223,10 +223,6 @@ MEDIA_URL = '/media/'
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
-
-# for django-tables2-reports
-EXCEL_SUPPORT = 'xlwt'
-
 # stripe settings
 # These key values are really set in settings_testing.py or settings_production.py
 STRIPE_PUBLIC_API_KEY = ""
@@ -241,6 +237,10 @@ MAILCHIMP_NEWSLETTER_ID = ''
 # google api settings
 # These key values are really set in settings_testing.py or settings_production.py
 GOOGLE_API_TOKEN_LOCATION = ''
+GOOGLE_STREETVIEW_API_KEY = ''
+GOOGLE_STREETVIEW_API_KEY_SIGNING_SECRET = ''
+
+
 
 #
 COMPANY_SETTINGS = {
@@ -264,6 +264,18 @@ COMPANY_SETTINGS = {
         ),
     'NCST_CONTACTS': ['realestateteam@renewindy.org',],
     'RENEW_REHAB_CONTACT': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org'],
+    'RENEW_OPERATIONS_MANAGER': ['glewis@renewindy.org',],
+    'BLC_MANAGER': ['chartley@renewindy.org',],
+    'RENEW_ACCOUNTANT': ['sumnersl@comcast.net'],
+    'CONTACTS': (
+        {'role': 'RENEW_REHAB_CONTACT', 'email': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org']},
+        {'role': 'NCST_CONTACTS', 'email': ['realestateteam@renewindy.org',],},
+        {'role': 'RENEW_PA_RELEASE', 'email': ['nhunot@renewindy.org',],},
+        {'role': 'CITY_PA_RELEASE', 'email': ['Matthew.Hostetler@indy.gov',],},
+        {'role': 'RENEW_OPERATIONS_MANAGER', 'name': 'Ginai Lewis-Manning', 'email': ['glewis@renewindy.org',],},
+
+
+    ),
 }
 
 # This setting determins if property inquiries are allowed to be submitted
@@ -319,7 +331,10 @@ try:
 except ImportError:
     pass
 
-if SMTP_PROVIDER == 'mailgun':
-    from settings_mailgun import *
-elif SMTP_PROVIDER == 'gmail':
-    from settings_gmail import *
+if DEBUG == False:
+    if SMTP_PROVIDER == 'mailgun':
+        from .settings_mailgun import *
+    elif SMTP_PROVIDER == 'gmail':
+        from .settings_gmail import *
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

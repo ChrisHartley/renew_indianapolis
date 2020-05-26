@@ -3,7 +3,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-
+from django.conf import settings
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.fields.files import FileField
@@ -197,7 +197,10 @@ def pull_property_info_from_arcgis(parcel, request_type='json'):
 
 
         else:
-            data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
+            if pre_dir == '':
+                data['street_address'] = '{} {}'.format(stnumber, stname)
+            else:
+                data['street_address'] = '{} {} {}'.format(stnumber, pre_dir, stname)
             data['zipcode'] = zipcode
             data['geometry'] = geometry
             data['state_parcel'] = state_parcel
@@ -206,3 +209,62 @@ def pull_property_info_from_arcgis(parcel, request_type='json'):
             data['estsqft'] = estsqft
 
         return data
+
+# import hashlib
+# import hmac
+# import base64
+# import urlparse
+# def get_signed_streetview_url(street_address, height=300, width=300):
+#     # assemble URL
+#     key = settings.GOOGLE_STREETVIEW_API_KEY
+#     secret = settings.GOOGLE_STREETVIEW_API_KEY_SIGNING_SECRET
+#     input_url = "https://maps.googleapis.com/maps/api/streetview?size={height}x{width}&key={key}&location={street_address}".format(height=height, width=width, key=key, street_address=street_address)
+#
+#     url = urlparse.urlparse(input_url)
+#
+#     # We only need to sign the path+query part of the string
+#     url_to_sign = url.path + "?" + url.query
+#
+#     # Decode the private key into its binary format
+#     # We need to decode the URL-encoded private key
+#     decoded_key = base64.urlsafe_b64decode(secret)
+#
+#     # Create a signature using the private key and the URL-encoded
+#     # string using HMAC SHA1. This signature will be binary.
+#     signature = hmac.new(decoded_key, str.encode(url_to_sign), hashlib.sha1)
+#
+#     # Encode the binary signature into base64 for use within a URL
+#     encoded_signature = base64.urlsafe_b64encode(signature.digest())
+#
+#     original_url = url.scheme + "://" + url.netloc + url.path + "?" + url.query
+#
+#     # Return signed URL
+#     return original_url + "&signature=" + encoded_signature.decode()
+
+
+
+def notify_on_sale(prop):
+    #pass
+    #
+    operations_manager = settings.COMPANY_SETTINGS['RENEW_OPERATIONS_MANAGER']
+    blc_manager = settings.COMPANY_SETTINGS['BLC_MANAGER']
+    accountant = settings.COMPANY_SETTINGS['RENEW_ACCOUNTANT']
+    sale_date = prop.status[-10:]
+
+    # Operations Manager - renew
+    # - Maintenance
+    # - Utilities
+    # - Insurance
+
+    operations_manager_message = "The Renew owned property at {0} sold on {1} for ${2} The property is a {3} and was classified as {4}. You may need to discontinue utilities, insurance or other recurring services.".format(prop.streetAddress, sale_date, prop.price, prop.structureType, prop.get_propertyType_display())
+    blc_manager_message = "The BLC listed property at {0} sold on {1}. BLC details: {2}.".format(prop, sale_date, prop.blc_listing.first())
+    accountant_message = "The Renew owned property at {0} sold on {1} for ${2} The property is a {3} and was classified as {4}.".format(prop.streetAddress, sale_date, prop.price, prop.structureType, prop.get_propertyType_display())
+
+    if prop.renew_owned == True:
+        send_mail('Renew owned property sold: {}'.format(prop,), operations_manager_message, 'info@renewindianapolis.org',
+            operations_manager, fail_silently=False)
+        send_mail('Renew owned property sold: {}'.format(prop,), accountant_message, 'info@renewindianapolis.org',
+            accountant, fail_silently=False)
+    if prop.blc_listing.count()>0:
+        send_mail('BLC property sold: {}'.format(prop,), blc_manager_message, 'info@renewindianapolis.org',
+            blc_manager, fail_silently=False)

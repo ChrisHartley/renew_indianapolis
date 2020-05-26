@@ -14,6 +14,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils import timezone # use this for timezone aware times
 from django.utils.encoding import python_2_unicode_compatible
+from utils.utils import notify_on_sale
 
 @python_2_unicode_compatible
 class location(models.Model):
@@ -111,6 +112,16 @@ class purchase_option(models.Model):
     date_expiring = models.DateField(blank=False, null=False, default=today_plus_1_year)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
 
+    ## The idea is to add an online payment page so buyers can pay option fees via credit card.
+    # slug = models.SlugField(max_length=50, allow_unicode=False, blank=False, editable=False)
+    # stripeTokenType = models.CharField(max_length=1024, blank=True, editable=False)
+    # stripeEmail = models.CharField(max_length=1024, blank=True, editable=False)
+    # check_number = models.CharField(max_length=255, blank=True, help_text="If a buyer pays the option fee with a cashier's check then the check number is entered manually by staff")
+    # notes = models.CharField(max_length=2048, blank=True)
+    # paid = models.BooleanField(default=False)
+
+
+
     def __str__(self):
         return 'Purchase Option - {0} - exp {1}'.format(self.closing, self.date_expiring)
 
@@ -121,7 +132,7 @@ class purchase_option(models.Model):
         if self.closing.application is not None and self.closing.application.Property is not None:
             cp = self.closing.application.Property
         status_text = 'Sale approved - purchase option {}'.format(self.date_purchased.strftime('%m/%d/%Y'),)
-        if cp is not None and cp.status != status_text:
+        if self.paid is True and cp is not None and cp.status != status_text:
             cp.status = status_text
             cp.save()
             print('Changing status to purchase option - {}'.format(self,))
@@ -199,6 +210,18 @@ class closing(models.Model):
                 send_mail(subject, message, from_email, recipient,)
 
         super(closing, self).save(*args, **kwargs)
+        prop = None
+        if self.application is not None and self.application.Property is not None:
+            prop = self.application.Property
+        elif self.prop is not None:
+            prop = self.prop
+        if prop is not None and 'Sold' not in prop.status and self.closed == True and self.date_time is not None:
+            # Change the status of the property to 'Sold mm/dd/yyyy' based on the closing date, if it isn't already.
+            prop.status = 'Sold {0}'.format(self.date_time.strftime('%m/%d/%Y'))
+            prop.buyer_application = self.application
+            prop.save()
+            notify_on_sale(prop) # Send notification emails
+
         # we can only do fancy stuff if there is an application associated with the closing, which legacy closings don't have. so skip allt he fancy stuff in that case.
         if self.application:
             # create a new processing fee object with the correct price if necessary
@@ -210,12 +233,6 @@ class closing(models.Model):
                 fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property), due_date=now()+timedelta(days=9))
                 fee.save()
 
-            # Change the status of the property to 'Sold mm/dd/yyyy' based on the closing date, if it isn't already.
-            if 'Sold' not in self.application.Property.status and self.closed == True and self.date_time is not None:
-                prop = self.application.Property
-                prop.status = 'Sold {0}'.format(self.date_time.strftime('%m/%d/%Y'))
-                prop.buyer_application = self.application
-                prop.save()
 
             if self.archived == True and orig_closing.archived != True:
                 if self.application.Property.buyer_application_id == self.application.id:
