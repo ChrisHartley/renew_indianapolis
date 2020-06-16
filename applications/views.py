@@ -566,7 +566,7 @@ class GenerateNeighborhoodNotifications(DetailView):
                 from_email,
                 recipient,
                 reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']],
-                cc=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']],                ]
+            #    cc=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']],                ]
             )
 
             files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
