@@ -131,8 +131,10 @@ class purchase_option(models.Model):
         cp = None
         if self.closing.application is not None and self.closing.application.Property is not None:
             cp = self.closing.application.Property
+        elif self.closing.Property is not None:
+            cp = self.closing.Property
         status_text = 'Sale approved - purchase option {}'.format(self.date_purchased.strftime('%m/%d/%Y'),)
-        if self.paid is True and cp is not None and cp.status != status_text:
+        if self.date_purchased is not None and cp is not None and cp.status != status_text:
             cp.status = status_text
             cp.save()
             print('Changing status to purchase option - {}'.format(self,))
@@ -199,13 +201,6 @@ class closing(models.Model):
                 if self.application.Property.urban_garden == True:
                     message = message + ' Our records show there was an active urban garden license on this property.'
                     recipient.append(settings.CITY_URBAN_GARDENING_MANAGER_EMAIL)
-                from_email = 'info@renewindianapolis.org'
-                send_mail(subject, message, from_email, recipient,)
-
-            if self.closed == True and orig_closing.closed == False and self.application and self.application.Property.blc_listing.count() > 0 and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
-                subject = 'BLC listed property closed - {0}'.format(self.application.Property,)
-                message = 'This is a courtesy notification that the BLC property at {0} was sold, please update your files as necessary.'.format(self.application.Property,)
-                recipient = [settings.BLC_MANAGER_EMAIL,]
                 from_email = 'info@renewindianapolis.org'
                 send_mail(subject, message, from_email, recipient,)
 
