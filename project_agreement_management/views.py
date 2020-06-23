@@ -22,6 +22,6 @@ class InspectionRequestFormView(CreateView):
         return initial
 
     def form_valid(self, form):
-        form.send_email(form.instance.Property)
         messages.add_message(self.request, messages.INFO, "Inspection request submitted!")
+
         return super(InspectionRequestFormView, self).form_valid(form)
