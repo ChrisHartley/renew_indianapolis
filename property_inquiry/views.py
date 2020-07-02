@@ -41,15 +41,15 @@ def submitPropertyInquiry(request):
         form = PropertyInquiryForm()
 
     if request.method == 'POST' and request.user.is_authenticated:
-        previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=timezone.now()-datetime.timedelta(hours=48)).count()
+        previousPIcount = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=timezone.now()-datetime.timedelta(days=7)).count()
 
         #print "Previous PI count:", previousPIcount
         form = PropertyInquiryForm(request.POST)
         duplicate_pi = propertyInquiry.objects.filter(user=request.user).filter(timestamp__gt=timezone.now()-datetime.timedelta(hours=72)).filter(Property=request.POST['Property']).count()
         if duplicate_pi > 0:
             form.add_error(None, "You submitted a request for this property within the past 72 hours. Due to volume it may take 5+ business days to schedule your inquiry, there is no need to re-submit.")
-        if previousPIcount >= 3: # limit number of requests per time period
-            form.add_error(None, "You can not submit more than 3 property inquiries every 48 hours. Please try again later.")
+        if previousPIcount > 2: # limit number of requests per time period
+            form.add_error(None, "You can not submit more than 2 property inquiries every 7 days. Please try again later.")
         if form.is_valid():
             form_saved = form.save(commit=False)
             form_saved.applicant_ip_address = get_client_ip(request)[0]
