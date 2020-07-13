@@ -279,7 +279,7 @@ class PropertyMapAdmin(PropertyAdmin):
 admin.site.register(price_change, price_changeAdmin)
 #admin.site.register(Property, PropertyAdmin)
 admin.site.register(CDC)
-admin.site.register(Neighborhood)
+admin.site.register(Neighborhood, ContextAreaAdmin)
 admin.site.register(flood_zone)
 admin.site.register(opportunity_zone)
 admin.site.register(census_block_group)
