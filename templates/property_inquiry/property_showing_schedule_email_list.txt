@@ -14,6 +14,10 @@
 Greetings, thank you for your recent inquiry regarding
 {% if object_list.count > 1 %}one or more of the properties{%else%}this property{%endif%}
 at {% for object in object_list%}{{object.Property.streetAddress}}{% if not forloop.last%}, {%endif%}{%endfor%}.
+We look forward to offering these showings, but require that you read the attached COVID-19 Land Bank Showing Protocol.
+These requirements are for the protection of City/Renew Indy staff and the public. Anyone who disregards or disrespects
+these requirements will be asked to leave. If possible, please also sign and bring the attached waiver of liability
+to the showing.
 </p>
 <p>
 We are showing {% if object_list.count > 1 %}these properties{%else%}this property{%endif%}
