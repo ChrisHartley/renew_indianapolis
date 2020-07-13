@@ -188,7 +188,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
 
 class ContextAreaAdmin(admin.OSMGeoAdmin):
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
-    modifiable = False
+    modifiable = True
 
 
 class price_changeAdmin(regular_admin.ModelAdmin):
