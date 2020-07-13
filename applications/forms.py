@@ -163,14 +163,16 @@ class ApplicationForm(forms.ModelForm):
                             and notarized affidavit, pre-approval letter from a lender, etc
                             <ol>
                             <li>Rehabilitation projects, including homes for rental or for sale projects, must
-                                show acceptable proof of funds for 75-100% of the total project costs less any
-                                materials on hand.  An <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
+                                show acceptable proof of funds for 100% of the total project costs less any
+                                materials on hand.  An affidavit of funds may no longer be used for any portion of the total
                                 project costs.</li>
-                            <li>Homestead (owner occupied) rehabilitation projects may demonstrate 100% of funds through an
-                                <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) for properties that cost less than $10,000.</li>
+                            <li>Homestead (owner occupied) rehabilitation projects may demonstrate up to 100% of funds through an
+                                <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) for properties that cost less than $10,000,
+                                although we encourage other forms of funding as well. 
+                                </li>
 
-                            <li>All proposed new construction projects require proof of funds for 75% of the
-                                total project costs.  An <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) may be used for up to 25% of the total
+                            <li>All proposed new construction projects require proof of funds for 100% of the
+                                total project costs.   An affidavit of funds may no longer be used for any portion of the total
                                 project costs.</li>
                             </ol></div></div>"""
                      ),
