@@ -245,11 +245,11 @@ GOOGLE_STREETVIEW_API_KEY_SIGNING_SECRET = ''
 #
 COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
-    'APPLICATION_CONTACT_EMAIL': 'nhunot@renewindy.org',
-    'APPLICATION_CONTACT_PHONE': '317-932-3775',
+    'APPLICATION_CONTACT_EMAIL': 'landbank@renewindy.org',
+    'APPLICATION_CONTACT_PHONE': '317-932-3770',
     'COMMERCIAL_CONTACT_NAME':'Nicholas Hunot',
-    'COMMERCIAL_CONTACT_EMAIL': 'nhunot@renewindy.org',
-    'COMMERCIAL_CONTACT_PHONE': '317-932-3775',
+    'COMMERCIAL_CONTACT_EMAIL': 'landbank@renewindy.org',
+    'COMMERCIAL_CONTACT_PHONE': '317-932-3770',
     'SIDELOT_PROCESSING_FEE': 100,
     'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 200,
@@ -264,15 +264,15 @@ COMPANY_SETTINGS = {
         ),
     'NCST_CONTACTS': ['realestateteam@renewindy.org',],
     'RENEW_REHAB_CONTACT': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org'],
-    'RENEW_OPERATIONS_MANAGER': ['glewis@renewindy.org',],
-    'BLC_MANAGER': ['chartley@renewindy.org',],
+    'RENEW_OPERATIONS_MANAGER': ['bburns@renewindy.org',],
+    'BLC_MANAGER': ['chartley@renewindy.org',''],
     'RENEW_ACCOUNTANT': ['sumnersl@comcast.net'],
     'CONTACTS': (
-        {'role': 'RENEW_REHAB_CONTACT', 'email': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org']},
+        {'role': 'RENEW_REHAB_CONTACT', 'email': ['squick@renewindy.org','bburns@renewindy.org', 'bharris@renewindy.org']},
         {'role': 'NCST_CONTACTS', 'email': ['realestateteam@renewindy.org',],},
         {'role': 'RENEW_PA_RELEASE', 'email': ['nhunot@renewindy.org',],},
         {'role': 'CITY_PA_RELEASE', 'email': ['Matthew.Hostetler@indy.gov',],},
-        {'role': 'RENEW_OPERATIONS_MANAGER', 'name': 'Ginai Lewis-Manning', 'email': ['glewis@renewindy.org',],},
+        {'role': 'RENEW_OPERATIONS_MANAGER', 'name': 'Brandi Burns', 'email': ['bburns@renewindy.org',],},
 
 
     ),
@@ -285,7 +285,7 @@ SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
 CITY_URBAN_GARDENING_MANAGER_EMAIL = 'matt.mosier@indy.gov' # notified in closings app if city owned urban garden license property sells
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
-BLC_MANAGER_EMAIL = 'chris.hartley@renewindianapolis.org'
+BLC_MANAGER_EMAIL = 'chartley@renewindy.org'
 SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL = True
 DEFAULT_FROM_EMAIL = 'info@renewindianapolis.org'
 SMTP_PROVIDER = 'mailgun' # or gmail
