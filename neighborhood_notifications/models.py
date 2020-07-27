@@ -12,6 +12,7 @@ class registered_organization(gis_models.Model):
     last_name = models.CharField(blank=True, max_length=555)
     email = models.EmailField(blank=True, null=True)
     geometry = gis_models.PolygonField(srid=4326)
+    persist_after_refresh = models.BooleanField(default=False, help_text='Retain this record unchanged when updating neighborhood organizations from remote server')
 
     def __str__(self):
         return '{0} - {1}'.format(self.name, self.email)

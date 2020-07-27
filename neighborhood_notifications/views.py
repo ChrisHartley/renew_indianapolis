@@ -19,7 +19,8 @@ def update_registered_organizations(request):
     LAYER = 0
 
     # clear out the db of previous registered organizations
-    number_deleted = registered_organization.objects.all().delete()
+    number_deleted = registered_organization.objects.exclude(persist_after_refresh=True).delete()
+    number_retained = registered_organization.objects.filter(persist_after_refresh=True).count()
 
     service = ArcGIS(URL)
     geojson = service.get(LAYER, fields='*')
@@ -51,7 +52,7 @@ def update_registered_organizations(request):
         except IntegrityError:
             number_errors = number_errors + 1
             #print "IntegrityError on ", record['properties']['ORG_NAME']
-    return HttpResponse('<html><body><ul><li>Number deleted: {0}</li><li>Number created: {1}</li><li>Number errors: {2}</li></ul></body></html>'.format(number_deleted[0], number_created, number_errors))
+    return HttpResponse('<html><body><ul><li>Number deleted: {0}</li><li>Number retained: {1}</li><li>Number created: {2}</li><li>Number errors: {3}</li></ul></body></html>'.format(number_deleted[0], number_retained, number_created, number_errors))
 
 
 class RelevantOrganizationsView(TemplateView):
