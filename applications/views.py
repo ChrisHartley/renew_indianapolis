@@ -600,22 +600,24 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
 
     def render_to_response(self, context, **response_kwargs):
         applications = []
+        meeting_name = context['meeting'].get_meeting_type_display()
+        meeting_date = context['meeting'].meeting_date
         for index,meeting_link in enumerate(context['meeting'].meeting_link.all().order_by('application__application_type'), 1):
             application = meeting_link.application
-            applications.append(application)
+            if '{0} - {1}:'.format(meeting_name, meeting_date) not in application.neighborhood_notification_details:
+                applications.append(application)
 
         orgs = []
         for org in registered_organization.objects.all():
-
             if blacklisted_emails.objects.filter(email=org.email).count() != 0: # check if email exists in blacklist (bounces, opt-out, etc)
-                break
+                continue
 
             apps_in_area = []
             for app in applications:
                 if registered_organization.objects.filter(geometry__contains=app.Property.geometry).filter(id=org.id):
                     apps_in_area.append(app)
             if len(apps_in_area) == 0:
-                break
+                continue
             orgs.append( (org, apps_in_area) )
             subject = 'Neighborhood Notifications - Renew Indianapolis'
             from_email = 'info@renewindianapolis.org'
@@ -629,20 +631,26 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
                 reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
             )
 
-            files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
-            for f in files:
-                if settings.DEBUG: # application media files don't exist in testing environment, so attach dummy file.
-                    email.attach_file('/tmp/blank.txt')
-                else:
-                    email.attach_file(f.supporting_document.path)
-            #print "Send?", self.request.GET.get('send')
+            # files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
+            # for f in files:
+            #     if settings.DEBUG: # application media files don't exist in testing environment, so attach dummy file.
+            #         email.attach_file('/tmp/blank.txt')
+            #     else:
+            #         email.attach_file(f.supporting_document.path)
+
             if self.request.GET.get('send') == 'True':
                 email.send()
-            #    print 'Sent email'
+                #print('Would send email here')
                 for app in apps_in_area:
+                    if '{0} - {1}:'.format(meeting_name, meeting_date) not in app.neighborhood_notification_details:
+                        app.neighborhood_notification_details = '{0}. {1} - {2}:'.format(app.neighborhood_notification_details, meeting_name, meeting_date)
                     app.neighborhood_notification_details = '{} {}'.format(app.neighborhood_notification_details,o.name)
                     app.save()
 
-        #context['applications'] = applications
         context['organizations'] = orgs
         return render(self.request, 'neighborhood_notification_preview_single_org.html', context)
+#
+#
+# class TransferApplicationSellerUpdateView(UpdateView):
+#     model = TransferApplication
+#     fields = ['Property', 'proposed_sale_price', 'proposed_buyer_email']

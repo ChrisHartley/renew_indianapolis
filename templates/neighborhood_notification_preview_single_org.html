@@ -1,0 +1,26 @@
+{% extends 'base-simple-container.html' %}
+{% block center %}
+<h1>Hello!</h1>
+
+<p>Did you remenber to <a href="{%url 'update_registered_organizations' %}">Update</a> the list of registered neighborhood organizations?</p>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% for org, apps in organizations %}
+  {{org}}</br>
+  <pre>
+  {% include 'email/neighborhood_notification_email_single_org.txt' with applications=apps %}
+{%comment%}  {% for app in apps%}
+    {% for file in app.file.all %}{% if file.send_with_neighborhood_notification %}. {{file}}
+  {% endif %}{% endfor %} {%endfor%}
+  {%endcomment%}
+  </pre>
+{% endfor %}
+
+<a class="btn btn-danger" href="{% url 'generate_neighborhood_notifications' meeting.id %}?send=True" role="button">Send these notifications</a>
+{% endblock center %}

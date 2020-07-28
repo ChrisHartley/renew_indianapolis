@@ -172,13 +172,13 @@ urlpatterns = [
              staff_member_required(MeetingOutcomeNotificationSpreadsheet.as_view()),
              name='meeting_outcome_notification_spreadsheet'),
 
-        url(r'meeting/generate_neighborhood_notifications/(?P<pk>[0-9]+)/$',
-            staff_member_required(GenerateNeighborhoodNotifications.as_view()),
-            name='generate_neighborhood_notifications'),
+        # url(r'meeting/generate_neighborhood_notifications/(?P<pk>[0-9]+)/$',
+        #     staff_member_required(GenerateNeighborhoodNotifications.as_view()),
+        #     name='generate_neighborhood_notifications'),
 
-        url(r'meeting/generate_neighborhood_notifications2/(?P<pk>[0-9]+)/$',
+        url(r'meeting/generate_neighborhood_notifications/(?P<pk>[0-9]+)/$',
             staff_member_required(GenerateNeighborhoodNotificationsVersion2.as_view()),
-            name='generate_neighborhood_notifications2'),
+            name='generate_neighborhood_notifications'),
 
         url(r'meeting/price_change/view_packet/(?P<pk>[0-9]+)/$',
             staff_member_required(PriceChangeSummaryAll.as_view()),
