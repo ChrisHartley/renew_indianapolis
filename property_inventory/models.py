@@ -53,6 +53,7 @@ class MVAClassifcation(Overlay):
 
 class census_tract(Overlay):
     opportunity_zone = models.BooleanField(default=False, help_text="Federally designated opportunity zone.")
+    low_income_designation = models.BooleanField(default=False, help_text='Designated low income by LIHTC standards')
 
 class flood_zone(Overlay):
     flood_code = models.CharField(max_length=254)

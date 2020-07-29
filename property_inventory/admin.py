@@ -10,7 +10,7 @@ from django.forms import Textarea
 from django.urls import NoReverseMatch
 from .models import Property, CDC, Neighborhood, ContextArea, price_change
 from .models import note, featured_property, blc_listing, yard_sign, take_back
-from .models import lockbox, flood_zone, opportunity_zone, census_block_group
+from .models import lockbox, flood_zone, opportunity_zone, census_block_group, census_tract
 from closings.models import purchase_option
 from applications.models import Application
 from photos.models import photo
@@ -189,6 +189,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
 class ContextAreaAdmin(admin.OSMGeoAdmin):
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
     modifiable = True
+    search_fields = ('name',)
 
 
 class price_changeAdmin(regular_admin.ModelAdmin):
@@ -283,6 +284,7 @@ admin.site.register(Neighborhood, ContextAreaAdmin)
 admin.site.register(flood_zone)
 admin.site.register(opportunity_zone)
 admin.site.register(census_block_group)
+admin.site.register(census_tract, ContextAreaAdmin)
 admin.site.register(take_back, take_backAdmin)
 admin.site.register(ContextArea, ContextAreaAdmin)
 admin.site.register(featured_property)
