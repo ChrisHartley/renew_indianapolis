@@ -1,10 +1,14 @@
 from django import forms
 from property_inventory.models import Property
+from surplus.models import Parcel as SurplusProperty
+from ncst.models import Property as NCSTProperty
 from .models import photo
 
 class DumpPhotosForm(forms.Form):
     #prop = forms.ModelChoiceField(queryset=Property.objects.filter(status__exact='Available').filter(structureType__contains='Residential Dwelling').order_by('streetAddress'))
     prop = forms.ModelChoiceField(queryset=Property.objects.all())
+    prop_surplus = forms.ModelChoiceField(queryset=SurplusProperty.objects.all())
+    prop_ncst = forms.ModelChoiceField(queryset=NCSTProperty.objects.all())
     image1 = forms.ImageField(label="image 1", required=False)
     image2 = forms.ImageField(label="image 2", required=False)
     image3 = forms.ImageField(label="image 3", required=False)

@@ -9,9 +9,10 @@ import os
 from wsgiref.util import FileWrapper
 import mimetypes
 from django.http import HttpResponse, HttpResponseNotFound
-
+from django.db.models import Q
 from property_inquiry.models import propertyInquiry
 from property_inventory.models import Property
+from surplus.models import Parcel as SurplusProperty
 from property_condition.models import ConditionReport, ConditionReportProxy
 from property_condition.forms import ConditionReportForm
 from property_condition.filters import ConditionReportFilters
@@ -40,15 +41,31 @@ def submitConditionReport(request):
 
 
 def view_or_create_condition_report(request, parcel):
-    if parcel and Property.objects.filter(parcel=parcel).exists():
+    if parcel and (Property.objects.filter(parcel=parcel).exists() or SurplusProperty.objects.filter(parcel_number=parcel).exists()):
         threshold = timezone.now() - timedelta(days=180)
-        if ConditionReport.objects.filter(Property__parcel=parcel).exclude(timestamp__lte=threshold).exists():
-            return redirect('{0}?_popup=1'.format(
-                reverse('admin:property_condition_conditionreport_change', args=[ConditionReport.objects.filter(Property__parcel=parcel).order_by('timestamp').first().pk])
-                ),
-            )
+        if ConditionReport.objects.filter(Q(Property__parcel=parcel) | Q(Property_surplus__parcel_number=parcel)).exclude(timestamp__lte=threshold).exists():
+            if ConditionReport.objects.filter(Property__parcel=parcel).exclude(timestamp__lte=threshold).count()==1:
+                return redirect('{0}?_popup=1'.format(
+                    reverse('admin:property_condition_conditionreportproxy_change', args=[ConditionReport.objects.filter(Property__parcel=parcel).exclude(timestamp__lte=threshold).first().pk])
+                    ),
+                )
+            elif ConditionReport.objects.filter(Property_surplus__parcel=parcel).exclude(timestamp__lte=threshold).count()==1:
+                    return redirect('{0}?_popup=1'.format(
+                        reverse('admin:property_condition_conditionreportproxy_change', args=[ConditionReport.objects.filter(Property_surplus__parcel_number=parcel).exclude(timestamp__lte=threshold).first().pk])
+                        ),
+                    )
+            else:
+                return redirect('{0}/?_popup=1&q={1}'.format(
+                    reverse('admin:property_condition_conditionreportproxy_list'),
+                    parcel,
+                    ),
+                )
+
         else:
-            cr = ConditionReport(Property=Property.objects.get(parcel=parcel))
+            if Property.objects.filter(parcel=parcel).exists():
+                cr = ConditionReport(Property=Property.objects.get(parcel=parcel))
+            elif SurplusProperty.objects.filter(parcel_number=parcel).exists():
+                cr = ConditionReport(Property_surplus=SurplusProperty.objects.get(parcel_number=parcel))
             cr.save()
-            return redirect('{0}?_popup=1'.format(reverse('admin:property_condition_conditionreport_change', args=[cr.pk])),)
+            return redirect('{0}?_popup=1'.format(reverse('admin:property_condition_conditionreportproxy_change', args=[cr.pk])),)
     return HttpResponseNotFound('<h1>Parcel not found. BEP Property?</h1>')

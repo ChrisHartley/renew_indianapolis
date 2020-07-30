@@ -177,16 +177,26 @@ class ConditionReportAdmin(admin.ModelAdmin):
 
 class ConditionReportProxyAdmin(admin.ModelAdmin):
     readonly_fields = ('upload_photo_page', 'pic_download', 'timestamp')
+    list_display = ('Property','Property_surplus', 'Property_ncst', 'timestamp')
     def upload_photo_page(self, obj):
-        upload_photo_page_link = '<a target="_blank" href="{}?Property={}">{}</a>'.format(
-            reverse("admin_add_photos"), obj.Property.pk, "Add photos page")
+        if obj.Property is not None:
+            property_type = 'Property'
+            prop = obj.Property
+        elif obj.Property_surplus is not None:
+            property_type = 'Property_surplus'
+            prop = obj.Property_surplus
+        elif obj.Property_ncst is not None:
+            property_type = 'Property_ncst'
+            prop = obj.Property_ncst
+        upload_photo_page_link = '<a target="_blank" href="{}?{}={}">{}</a>'.format(
+            reverse("admin_add_photos"), property_type, obj.Property.pk, "Add photos page")
         return mark_safe(upload_photo_page_link)
 
     def pic_download(self, obj):
-        if obj.id is None:
+        if obj.id is None or obj.picture == '':
             return '<none>'
         return mark_safe('<a href="{}">{}</a>'.format(
-            reverse("condition_report_file", kwargs={'id':obj.id, 'file_type':'photo'}),
+            reverse("send_class_file", kwargs={'app_name': 'property_condition', 'class_name': 'ConditionReport', 'pk':obj.id, 'field_name':'picture'}),
                 "Download"
             ))
 
@@ -201,7 +211,7 @@ class ConditionReportProxyAdmin(admin.ModelAdmin):
         ('Property', {
             'fields':
                 (
-                    ('Property',),
+                    ('Property','Property_surplus', 'Property_ncst'),
                     'general_property_notes',
                     ('picture','pic_download'),
                     ('upload_photo_page', 'timestamp'),

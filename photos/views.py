@@ -21,6 +21,10 @@ class DumpPhotosView(SuccessMessageMixin, FormView):
         initial_data = super(DumpPhotosView, self).get_initial()
         if self.request.GET.get('Property'):
             initial_data['prop'] = self.request.GET.get('Property')
+        if self.request.GET.get('Property_surplus'):
+            initial_data['prop_surplus'] = self.request.GET.get('Property')
+        if self.request.GET.get('Property_ncst'):
+            initial_data['prop_ncst'] = self.request.GET.get('Property')
         return initial_data
 
     def form_valid(self, form):
