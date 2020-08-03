@@ -308,9 +308,25 @@ class buyer_demographic(models.Model):
         (WHITE, WHITE),
     )
 
+    YES_ACTIVE = 'Yes, Active'
+    YES_RETIRED = 'Yes, Retired'
+    NO = 'No'
+    MILITARY_CHOICES = (
+        (YES_ACTIVE,YES_ACTIVE),
+        (YES_RETIRED,YES_RETIRED),
+        (NO,NO),
+
+    )
+
     race = models.CharField(max_length=128, choices=RACE_CHOICES)
     hispanic_or_latino = models.NullBooleanField()
     closing = models.ForeignKey(closing, null=True, blank=True, on_delete=models.CASCADE)
+    #survey_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    #id = models.AutoField(primary_key=True)
+    disabled = models.NullBooleanField()
+    military_service = models.CharField(max_length=128, choices=MILITARY_CHOICES, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True)
+
     class Meta:
         verbose_name = 'Buyer Demographic'
         verbose_name_plural = 'Buyer Demographics'
