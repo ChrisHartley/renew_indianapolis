@@ -265,7 +265,7 @@ COMPANY_SETTINGS = {
     'NCST_CONTACTS': ['realestateteam@renewindy.org',],
     'RENEW_REHAB_CONTACT': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org'],
     'RENEW_OPERATIONS_MANAGER': ['bburns@renewindy.org',],
-    'BLC_MANAGER': ['chartley@renewindy.org',''],
+    'BLC_MANAGER': ['chartley@renewindy.org','acernich@renewindy.org'],
     'RENEW_ACCOUNTANT': ['sumnersl@comcast.net'],
     'CONTACTS': (
         {'role': 'RENEW_REHAB_CONTACT', 'email': ['squick@renewindy.org','bburns@renewindy.org', 'bharris@renewindy.org']},
