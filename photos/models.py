@@ -56,4 +56,4 @@ class photo(models.Model):
             elif orientation == 6: im = im.transpose(Image.ROTATE_270)
             elif orientation == 8: im = im.transpose(Image.ROTATE_90)
         #im.thumbnail((1024,1024)) # don't resize images any more.
-        im.save(self.image.path)
+        im.save(self.image.path, im.format)
