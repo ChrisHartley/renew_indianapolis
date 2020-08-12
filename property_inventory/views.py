@@ -402,21 +402,73 @@ class PropertyInventoryList(ListView):
                 sheet[0].set_column(12,12,None,boolean_format) # Renew Owned boolean is 8th field, format as Y/N boolean
                 sheet[0].set_row(0, None, regular_format)
 
-                props = Property.objects.filter(propertyType__exact='lb').filter(status__istartswith=sheet[1]).filter(is_active=True).values_list(
-                    'parcel',
-                    "streetAddress",
-                    "zipcode__name",
-                    "structureType",
-                    "neighborhood__name",
-                    "price",
-                    "zone__name",
-                    "area",
-                    "applicant",
-                    "future_development_program_eligible",
-                    "homestead_only",
-                    "status",
-                    "renew_owned"
-                ).order_by("zipcode__name", "streetAddress", "structureType")
+                if sheet[1] == 'Sold':
+                    props = []
+                    sp = Property.objects.filter(status__istartswith='Sold').filter(propertyType='lb')
+                    for s in sp:
+                        neighborhood = s.neighborhood.name if s.neighborhood is not None else 'Unknown'
+                        zone = s.zone.name if s.zone is not None else 'Unknown'
+                        zipcode = s.zipcode.name if s.zipcode is not None else 'Unknown'
+
+                        props.append(
+                            (
+                                s.parcel,
+                                s.streetAddress,
+                                zipcode,
+                                s.structureType,
+                                neighborhood,
+                                s.price,
+                                zone,
+                                s.area,
+                                s.applicant,
+                                s.future_development_program_eligible,
+                                s.homestead_only,
+                                s.status,
+                                s.renew_owned
+                            )
+                        )
+
+                    tb = take_back.objects.all()
+                    for t in tb:
+                        s = t.Property
+                        neighborhood = s.neighborhood.name if s.neighborhood is not None else 'Unknown'
+                        zone = s.zone.name if s.zone is not None else 'Unknown'
+                        zipcode = s.zipcode.name if s.zipcode is not None else 'Unknown'
+                        props.append(
+                            (
+                                s.parcel,
+                                s.streetAddress,
+                                zipcode,
+                                s.structureType,
+                                neighborhood,
+                                t.original_sale_price,
+                                zone,
+                                s.area,
+                                t.owner,
+                                s.future_development_program_eligible,
+                                s.homestead_only,
+                                'Sold {}'.format(t.original_sale_date.strftime('%m/%d/%Y'),),
+                                s.renew_owned
+                            )
+                        )
+
+                else:
+                    props = Property.objects.filter(propertyType__exact='lb').filter(status__istartswith=sheet[1]).filter(is_active=True).values_list(
+                        'parcel',
+                        "streetAddress",
+                        "zipcode__name",
+                        "structureType",
+                        "neighborhood__name",
+                        "price",
+                        "zone__name",
+                        "area",
+                        "applicant",
+                        "future_development_program_eligible",
+                        "homestead_only",
+                        "status",
+                        "renew_owned"
+                    ).order_by("zipcode__name", "streetAddress", "structureType")
+
 
                 for counter,prop in enumerate(props, start=1):
                     sheet[0].write_row(counter, 0, prop)
