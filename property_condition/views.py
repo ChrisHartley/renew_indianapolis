@@ -49,7 +49,7 @@ def view_or_create_condition_report(request, parcel):
                     reverse('admin:property_condition_conditionreportproxy_change', args=[ConditionReport.objects.filter(Property__parcel=parcel).exclude(timestamp__lte=threshold).first().pk])
                     ),
                 )
-            elif ConditionReport.objects.filter(Property_surplus__parcel=parcel).exclude(timestamp__lte=threshold).count()==1:
+            elif ConditionReport.objects.filter(Property_surplus__parcel_number=parcel).exclude(timestamp__lte=threshold).count()==1:
                     return redirect('{0}?_popup=1'.format(
                         reverse('admin:property_condition_conditionreportproxy_change', args=[ConditionReport.objects.filter(Property_surplus__parcel_number=parcel).exclude(timestamp__lte=threshold).first().pk])
                         ),
