@@ -8,6 +8,9 @@ Property information:
 ** Acquisition Date: {{property.acquisition_date}}
 ** Renew Owned: {{property.renew_owned}}
 ** Photo link: https://build.renewindianapolis.org{% url 'property_photos' parcel=property.parcel %}
+
+To confirm this showing date/time please call Matt Hostetler at (317) 327-5810.
+
 {% endfor %}
 Requestors:
 {% for user in users %}
