@@ -493,7 +493,7 @@ class MeetingLink(models.Model):
                 # If a property is listed in BLC, notify BLC manager if necessary to mark sale pending.
                 if prop.blc_listing.count() > 0 and self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
                         send_mail('BLC listed property pending - {}'.format(prop,), 'Property {} is BLC listed and was approved at the Review Committee. Update BLC as necessary.'.format(prop,), 'info@renewindianapolis.org',
-                    [settings.BLC_MANAGER_EMAIL], fail_silently=False)
+                    settings.COMPANY_SETTINGS['BLC_MANAGER'], fail_silently=False)
 
             # If application is rejected at the Board or MDC level then change the status to Available.
             # If we were to use this logic at the Review Committee level where there could be competing applications
