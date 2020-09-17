@@ -39,21 +39,24 @@ class photo(models.Model):
         return '{}'.format(self.prop or self.prop_ncst or self.prop_surplus or 'no_property')
 
     def save(self, *args, **kwargs):
-        super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
-        im = Image.open(self.image.path)
-        # image rotation code from http://stackoverflow.com/a/11543365/2731298
-        e = None
-        if hasattr(im, '_getexif'): # only present in JPEGs
-            for orientation in list(ExifTags.TAGS.keys()):
-                if ExifTags.TAGS[orientation]=='Orientation':
-                    break
-            e = im._getexif()       # returns None if no EXIF data
-        if e is not None:
-            exif=dict(list(e.items()))
-            orientation = exif.get(orientation, None)
+        if self.id is None:
+            super(photo, self).save(*args, **kwargs) # have to save object first to get the file in the right place
+            im = Image.open(self.image.path)
+            # image rotation code from http://stackoverflow.com/a/11543365/2731298
+            e = None
+            if hasattr(im, '_getexif'): # only present in JPEGs
+                for orientation in list(ExifTags.TAGS.keys()):
+                    if ExifTags.TAGS[orientation]=='Orientation':
+                        break
+                e = im._getexif()       # returns None if no EXIF data
+            if e is not None:
+                exif=dict(list(e.items()))
+                orientation = exif.get(orientation, None)
 
-            if orientation == 3:   im = im.transpose(Image.ROTATE_180)
-            elif orientation == 6: im = im.transpose(Image.ROTATE_270)
-            elif orientation == 8: im = im.transpose(Image.ROTATE_90)
-        #im.thumbnail((1024,1024)) # don't resize images any more.
-        im.save(self.image.path, im.format)
+                if orientation == 3:   im = im.transpose(Image.ROTATE_180)
+                elif orientation == 6: im = im.transpose(Image.ROTATE_270)
+                elif orientation == 8: im = im.transpose(Image.ROTATE_90)
+            #im.thumbnail((1024,1024)) # don't resize images any more.
+            im.save(self.image.path, im.format)
+        else:
+            super(photo, self).save(*args, **kwargs)
