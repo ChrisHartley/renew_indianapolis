@@ -72,7 +72,7 @@ def save_calendar_events(showing):
         e = {
             'summary': '{} - Property Showing'.format(showing.Property.streetAddress,).title(),
             'location': '{0}, Indianapolis, IN'.format(showing.Property.streetAddress,),
-            'description': 'If no one RSVPs to this showing it may be cancelled - <a href="{}">RSVP here</a> if you plan on attending.'.format(url,),
+            'description': 'If no one RSVPs to this showing it may be cancelled - <a href="{}">RSVP here</a> if you plan on attending. To confirm this showing date/time please call Matt Hostetler at (317) 327-5810.'.format(url,),
             'start': {
                 'dateTime': showing.datetime.isoformat(),
                 'timeZone': '',
