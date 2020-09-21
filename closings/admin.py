@@ -7,6 +7,8 @@ from django.utils.text import slugify
 from datetime import date
 from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy, closing_proxy2, buyer_demographic
 from .forms import ClosingAdminForm, ClosingScheduleAdminForm
+from utils.admin import ExportCsvMixin
+
 from applications.models import Application, Meeting, MeetingLink
 from property_inventory.models import Property, blc_listing
 
@@ -89,7 +91,7 @@ def custom_batch_editing__admin_action(self, request, queryset):
 custom_batch_editing__admin_action.short_description = "Batch Update"
 
 
-class ClosingAdmin(admin.ModelAdmin):
+class ClosingAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     form = ClosingAdminForm
     list_display = ['__str__','title_company','renew_owned', 'date_time', 'processing_fee_paid', 'assigned_city_staff']
@@ -105,7 +107,7 @@ class ClosingAdmin(admin.ModelAdmin):
      'signed_purchase_agreement_download',
      'renew_sales_disclosure_form_download',
      'city_sales_disclosure_form_download',)
-    actions = [custom_batch_editing__admin_action]
+    actions = [custom_batch_editing__admin_action,'export_as_csv']
     inlines = [PurchaseOptionInline,BuyerDemographicInline]
     raw_id_fields = ('application',)
 
