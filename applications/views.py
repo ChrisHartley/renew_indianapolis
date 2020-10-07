@@ -17,7 +17,7 @@ from django.forms import inlineformset_factory
 
 from .forms import ApplicationForm
 #from user_files.forms import UploadedFileForm
-from .models import Application, Meeting, MeetingLink
+from .models import Application, Meeting, MeetingLink, TransferApplication
 from property_inventory.models import Property
 from applicants.models import ApplicantProfile
 from user_files.models import UploadedFile
@@ -621,14 +621,22 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
             orgs.append( (org, apps_in_area) )
             subject = 'Neighborhood Notifications - Renew Indianapolis'
             from_email = 'info@renewindianapolis.org'
-            message = render_to_string('email/neighborhood_notification_email_single_org.txt', {'applications': apps_in_area})
+            if context['meeting'].meeting_type == Meeting.REVIEW_COMMITTEE:
+                message_template = 'email/neighborhood_notification_email_single_org.txt.txt'
+            elif context['meeting'].meeting_type == Meeting.MDC:
+                message_template = 'email/neighborhood_notification_email_single_org_mdc.txt'
+            else:
+                message_template = 'email/neighborhood_notification_email_single_org.txt.txt'
+            message = render_to_string(message_template, {'applications': apps_in_area})
 
             email = EmailMessage(
                 subject,
                 message,
                 from_email,
                 [org.email,],
-                reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
+                reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']],
+                cc=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL'],]
+
             )
 
             # files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
@@ -648,6 +656,7 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
                     app.save()
 
         context['organizations'] = orgs
+        context['message_template'] = message_template
         return render(self.request, 'neighborhood_notification_preview_single_org.html', context)
 #
 #

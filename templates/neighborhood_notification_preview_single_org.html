@@ -14,7 +14,7 @@
 {% for org, apps in organizations %}
   {{org}}</br>
   <pre>
-  {% include 'email/neighborhood_notification_email_single_org.txt' with applications=apps %}
+  {% include message_template with applications=apps %}
 {%comment%}  {% for app in apps%}
     {% for file in app.file.all %}{% if file.send_with_neighborhood_notification %}. {{file}}
   {% endif %}{% endfor %} {%endfor%}
