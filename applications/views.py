@@ -622,11 +622,11 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
             subject = 'Neighborhood Notifications - Renew Indianapolis'
             from_email = 'info@renewindianapolis.org'
             if context['meeting'].meeting_type == Meeting.REVIEW_COMMITTEE:
-                message_template = 'email/neighborhood_notification_email_single_org.txt.txt'
+                message_template = 'email/neighborhood_notification_email_single_org.txt'
             elif context['meeting'].meeting_type == Meeting.MDC:
                 message_template = 'email/neighborhood_notification_email_single_org_mdc.txt'
             else:
-                message_template = 'email/neighborhood_notification_email_single_org.txt.txt'
+                message_template = 'email/neighborhood_notification_email_single_org.txt'
             message = render_to_string(message_template, {'applications': apps_in_area})
 
             email = EmailMessage(
