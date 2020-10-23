@@ -370,7 +370,7 @@ class PropertyInventoryList(ListView):
             worksheet = workbook.add_worksheet('Available Landbank Inventory')
             sold_worksheet = workbook.add_worksheet('Sold Properties - Not Available')
             pending_worksheet = workbook.add_worksheet('Sale Pending Properties')
-            bep_worksheet = workbook.add_worksheet('Demolition Pending Properties')
+            bep_worksheet = workbook.add_worksheet('Demolition Pending Not For Sale')
             currency_format = workbook.add_format()
             boolean_format =  workbook.add_format()
             regular_format = workbook.add_format()
