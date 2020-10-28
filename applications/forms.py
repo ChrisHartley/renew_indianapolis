@@ -29,7 +29,8 @@ class ApplicationForm(forms.ModelForm):
             forms.Select(),
             Organization,
         ),
-        help_text='If you are applying on behalf of an organization or another individual please add or select. <b>The property can only be titled under either your name or the name of an organization/individual included here..</b>',
+        label='Organization or other applicant',
+        help_text='If you are applying on behalf of an organization or another individual please add or select. <b>The property can only be titled under either your name or the name of an organization/individual included here.</b>',
         required=False
     )
     status = forms.IntegerField(
@@ -168,7 +169,7 @@ class ApplicationForm(forms.ModelForm):
                                 project costs.</li>
                             <li>Homestead (owner occupied) rehabilitation projects may demonstrate up to 100% of funds through an
                                 <a href="https://build.renewindianapolis.org/static/Affidavit-self.pdf" target="_blank">affidavit of funds</a> (PDF) for properties that cost less than $10,000,
-                                although we encourage other forms of funding as well. 
+                                although we encourage other forms of funding as well.
                                 </li>
 
                             <li>All proposed new construction projects require proof of funds for 100% of the
