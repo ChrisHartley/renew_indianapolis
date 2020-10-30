@@ -108,7 +108,7 @@ custom_batch_editing__admin_action.short_description = "Batch Update"
 
 
 class propertyInquiryAdmin(admin.ModelAdmin, ExportCsvMixin):
-    list_display = ('Property', 'renew_owned', 'user_name', 'user_phone', 'status', 'showing_scheduled', 'timestamp')
+    list_display = ('Property', 'renew_owned', 'user_name', 'user_phone', 'status', 'property_status','showing_scheduled', 'timestamp')
     fields = (
         'Property', 'user_name', 'user_phone','applicant_ip_address',
         'showing_scheduled', 'timestamp', 'status', 'notes',
@@ -123,6 +123,9 @@ class propertyInquiryAdmin(admin.ModelAdmin, ExportCsvMixin):
 
     def renew_owned(self, obj):
         return obj.Property.renew_owned
+
+    def property_status(self, obj):
+        return obj.Property.status
 
     def number_of_pictures(self, obj):
         url = reverse('property_photos', kwargs={'parcel':obj.Property.parcel,})
