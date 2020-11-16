@@ -99,7 +99,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     readonly_fields = ('purchase_option_in_place', 'blc_id', 'generate_epp_export',
         'applications_search','view_photos','context_area_strategy',
         'context_area_name', 'number_of_inquiries', 'main_photo',
-        'application_summary', 'condition_report_link', 'flood_zone',
+        'application_summary', 'condition_report_link', 'flood_zone', 'yard_sign'
     )
     actions = ["export_as_csv"]
 
@@ -185,6 +185,17 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
         return po.count() > 0
     purchase_option_in_place.boolean = True
 
+    def yard_sign(self, obj):
+        if obj.id:
+            if obj.yard_sign.last() is not None:
+                print(obj.yard_sign.last())
+                if obj.yard_sign.last().removed_date_time is not None:
+                    print(obj.yard_sign.last().removed_date_time)
+                    removed = 'Removed: {}'.format(obj.yard_sign.last().removed_date_time.strftime('%x'),)
+                else:
+                    removed = ''
+                return 'Placed: {} {}'.format(obj.yard_sign.last().date_time.strftime('%x'), removed)
+        return 'None'
 
 class ContextAreaAdmin(admin.OSMGeoAdmin):
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
