@@ -101,7 +101,7 @@ class InspectionRequestStageFilter(admin.SimpleListFilter):
 class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]
     raw_id_fields = ('user','Application')
-    readonly_fields = ('inspection_status','get_contact_info_on_file')
+    readonly_fields = ('inspection_status','get_contact_info_on_file', 'get_application_and_property_type', 'get_property_owner')
     list_display = ('Property', 'get_application_or_applicant', 'created', 'inspection_status',)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__Property__parcel', 'Application__Property__streetAddress', 'Application__user__last_name', 'Application__user__first_name', 'Application__organization__name')
     list_filter = (InspectionRequestStageFilter,)
@@ -128,6 +128,22 @@ class InspectionRequestAdmin(admin.ModelAdmin):
             result,
         )
         return mark_safe(il)
+
+    def get_application_and_property_type(self, obj):
+        application_type = ''
+        property_type = ''
+        if obj.Application is not None:
+            application_type = obj.Application.get_application_type_display()
+        if obj.Property is not None:
+            property_type = obj.Property.structureType
+        return 'Application Type: {} Property Type: {}'.format(application_type, property_type)
+
+    def get_property_owner(self, obj):
+        if obj.Property is not None:
+            if obj.Property.renew_owned == True:
+                return 'Renew owned'
+            else:
+                return 'DMD owned'
 
     def get_application_or_applicant(self, obj):
         if obj.Application is not None:
