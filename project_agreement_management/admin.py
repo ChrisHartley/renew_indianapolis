@@ -98,13 +98,28 @@ class InspectionRequestStageFilter(admin.SimpleListFilter):
 
 
 
+class PropertyOwnerFilter(admin.SimpleListFilter):
+    title = 'property owner'
+    parameter_name = 'owner'
+    def lookups(self, request, model_admin):
+        return (
+            ('true','Renew'),
+            ('false', 'DMD'),
+            )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'true':
+            return queryset.filter(Property__renew_owned__exact=True)
+        if self.value() == 'false':
+            return queryset.filter(Property__renew_owned__exact=True)
+
 class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]
     raw_id_fields = ('user','Application')
     readonly_fields = ('inspection_status','get_contact_info_on_file', 'get_application_and_property_type', 'get_property_owner')
     list_display = ('Property', 'get_application_or_applicant', 'created', 'inspection_status',)
     search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__Property__parcel', 'Application__Property__streetAddress', 'Application__user__last_name', 'Application__user__first_name', 'Application__organization__name')
-    list_filter = (InspectionRequestStageFilter,)
+    list_filter = (InspectionRequestStageFilter,PropertyOwnerFilter)
 
 
     ## release exists field
