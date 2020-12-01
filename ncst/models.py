@@ -216,7 +216,7 @@ class Property(models.Model):
                         'NCST property purchased: {} - {}'.format(self.street_address, self.parcel),
                         'The NCST property at {} - parcel {} was purchased.'.format(self.street_address, self.parcel),
                         'info@renewindianapolis.org',
-                        ['chartley@renewindy.org',],
+                        ['chartley@renewindy.org','bburns@renewindy.org'],
                         reply_to=[settings.COMPANY_SETTINGS['APPLICATION_CONTACT_EMAIL']]
                     )
                     email.send()
