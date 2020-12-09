@@ -78,7 +78,7 @@ class ApplicationForm(forms.ModelForm):
                 Field('organization'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Third Party Authorization Form</div><div id="3rd-party-authorization-file-uploader" class="form-control-static col-lg-6">Drop your third party authorization form file here to upload</div>'),
                 HTML("""<div class="help-block col-lg-6 col-lg-offset-4">
-                            If someone is completing this application on your behalf, such as a Realtor&trade;, a translator, a family member, or a friend then you and they will need to complete
+                            If someone is completing this application on your behalf or representing you, such as a Realtor&trade;, a translator, a family member, or a friend then you and they will need to complete
                             a <a href="https://build.renewindianapolis.org/static/Third-Party-Authorization.pdf" target="_blank">Third Party Authorization Form (pdf)</a> and upload the completed, signed form here.
                             </div>
                         """),
