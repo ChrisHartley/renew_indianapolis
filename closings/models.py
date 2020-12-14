@@ -160,7 +160,9 @@ class closing(models.Model):
     ri_deed = models.FileField(upload_to=save_location, blank=True, null=True)
     recorded_ri_deed = models.FileField(upload_to=save_location, blank=True, null=True)
     recorded_ri_deed_instrument_number = models.CharField(max_length=255, blank=True, default='')
-
+    settlement_statement = models.FileField(upload_to=save_location, blank=True, null=True)
+    title_company_docs = models.FileField(upload_to=save_location, blank=True, null=True)
+    other_closing_docs = models.FileField(upload_to=save_location, blank=True, null=True)
     nsp_convenants = models.FileField(upload_to=save_location, blank=True, null=True)
     project_agreement = models.FileField(upload_to=save_location, blank=True, null=True)
     assignment_and_assumption_agreement = models.FileField(upload_to=save_location, blank=True, null=True)

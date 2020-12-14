@@ -98,15 +98,29 @@ class ClosingAdmin(admin.ModelAdmin, ExportCsvMixin):
     search_fields = ['prop__streetAddress', 'application__Property__streetAddress', 'prop__parcel', 'application__Property__parcel', 'application__organization__name', 'application__user__first_name', 'application__user__last_name', 'application__user__email']
     list_filter = ('title_company', 'closed', PurchaseOptionFilter, ProccessingFeePaidFilter, 'application__Property__renew_owned', 'archived', PropertyTypeFilter)
     readonly_fields = (
-        'recorded_ri_deed_download', 'purchase_agreement', 'nsp', 'processing_fee_url',
-        'processing_fee_paid', 'print_deposit_slip','blc_listed',
-        'blc_expiration', 'title_commitment_download', 'closing_statement_download',
-    'deed_download', 'recorded_city_deed_download', 'ri_deed_download',
-    'nsp_convenants_download',
-    'project_agreement_download', 'assignment_and_assumption_agreement_download',
-     'signed_purchase_agreement_download',
-     'renew_sales_disclosure_form_download',
-     'city_sales_disclosure_form_download',)
+        'recorded_ri_deed_download',
+        'purchase_agreement',
+        'nsp',
+        'processing_fee_url',
+        'processing_fee_paid',
+        'print_deposit_slip',
+        'blc_listed',
+        'blc_expiration',
+        'title_commitment_download',
+        'closing_statement_download',
+        'deed_download',
+        'recorded_city_deed_download',
+        'ri_deed_download',
+        'nsp_convenants_download',
+        'project_agreement_download',
+        'assignment_and_assumption_agreement_download',
+        'signed_purchase_agreement_download',
+        'renew_sales_disclosure_form_download',
+        'city_sales_disclosure_form_download',
+        'title_company_docs_download',
+        'settlement_statement_download',
+        'other_closing_docs_download',
+     )
     actions = [custom_batch_editing__admin_action,'export_as_csv']
     inlines = [PurchaseOptionInline,BuyerDemographicInline]
     raw_id_fields = ('application',)
@@ -293,6 +307,27 @@ class ClosingAdmin(admin.ModelAdmin, ExportCsvMixin):
                     "Download"
                 ))
 
+    def other_closing_docs_download(self, obj):
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'other_closing_docs'}),
+                    "Download"
+                ))
+
+    def settlement_statement_download(self, obj):
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'settlement_statement'}),
+                    "Download"
+                ))
+
+    def title_company_docs_download(self, obj):
+        if obj.id is not None:
+            return mark_safe('<a href="{}">{}</a>'.format(
+                reverse("send_class_file", kwargs={'app_name': 'closings', 'class_name': 'closing', 'pk': obj.id, 'field_name': 'title_company_docs'}),
+                    "Download"
+                ))
+
     def print_deposit_slip(self, obj):
         if obj.id is None:
             return '-'
@@ -352,16 +387,19 @@ class ClosingAdmin(admin.ModelAdmin, ExportCsvMixin):
             'fields': (
             ('recorded_city_deed', 'recorded_city_deed_download','recorded_city_deed_instrument_number',),
             ('recorded_ri_deed', 'recorded_ri_deed_download', 'recorded_ri_deed_instrument_number',),
-            ('title_commitment','title_commitment_download'),
-            ('closing_statement','closing_statement_download'),
-            ('deed', 'deed_download',),
-            ('ri_deed', 'ri_deed_download'),
-            ('nsp_convenants','nsp_convenants_download'),
-            ('project_agreement','project_agreement_download'),
-            ('assignment_and_assumption_agreement','assignment_and_assumption_agreement_download'),
+        #    ('title_commitment','title_commitment_download'),
+            ('settlement_statement','settlement_statement_download'),
             ('signed_purchase_agreement','signed_purchase_agreement_download'),
+
+            ('title_company_docs', 'title_company_docs_download'),
+    #        ('deed', 'deed_download',),
+    #        ('ri_deed', 'ri_deed_download'),
+    #        ('nsp_convenants','nsp_convenants_download'),
+#            ('project_agreement','project_agreement_download'),
+#            ('assignment_and_assumption_agreement','assignment_and_assumption_agreement_download'),
             ('renew_sales_disclosure_form','renew_sales_disclosure_form_download'),
             ('city_sales_disclosure_form','city_sales_disclosure_form_download'),
+            ('other_closing_docs', 'other_closing_docs_download'),
             ),
         }),
     )
