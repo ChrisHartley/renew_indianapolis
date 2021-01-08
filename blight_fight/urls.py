@@ -15,7 +15,7 @@ from applicants.views import edit_organization, profile_home, showApplicantProfi
 from surplus.views import ParcelDetailView, ParcelDetailView, ParcelListView, SurplusMapTemplateView, ParcelUpdateView, surplusUpdateFieldsFromMap, searchSurplusProperties, get_surplus_inventory_csv
 from annual_report_form.views import showAnnualReportForm
 from user_files.views import delete_uploaded_file, import_uploader
-from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, ClosingDepositSlipDetailView
+from closings.views import ProcessingFeePaymentPage, ProcessingFeePaidPage, ClosingDepositSlipDetailView #, buyer_demographicCreateView
 from property_condition.views import submitConditionReport, view_or_create_condition_report
 from univiewer.views import UniPropertySearchView, UniParcelDetailJSONView, UniMapTemplateView, UniParcelUpdateView, bepUpdateFieldsFromMap, get_uniinventory_csv
 from epp_connector.views import fetch_epp_inventory, propertyImportCreator
@@ -241,15 +241,17 @@ urlpatterns = [
 
         # commind - Commercial Industrial URLS
         url(r'^media/documents/(?P<filename>.*)', view_document, name='view_commind_document'),
-        url(r'^commercial_industrial/application/$', CommIndApplicationFormView.as_view(), name='commind_application'),
-        url(r'^commercial_industrial/app/detail/(?P<pk>[0-9]+)/', staff_member_required(CommIndApplicationDetailView.as_view()), name='commind_application_detail'),
-        url(r'^commercial_industrial/application/(?P<parcel>[0-9]+)/', CommIndApplicationFormView.as_view(), name='commind_application_parcel'),
-        url(r'^commercial_industrial/success/$', CommIndApplicationSuccessView.as_view(), name='commind_application_success'),
-        url(r'^commercial_industrial/list/$', PropertyListView.as_view()),
+        # url(r'^commercial_industrial/application/$', CommIndApplicationFormView.as_view(), name='commind_application'),
+        # url(r'^commercial_industrial/app/detail/(?P<pk>[0-9]+)/', staff_member_required(CommIndApplicationDetailView.as_view()), name='commind_application_detail'),
+        # url(r'^commercial_industrial/application/(?P<parcel>[0-9]+)/', CommIndApplicationFormView.as_view(), name='commind_application_parcel'),
+        # url(r'^commercial_industrial/success/$', CommIndApplicationSuccessView.as_view(), name='commind_application_success'),
+        # url(r'^commercial_industrial/list/$', PropertyListView.as_view()),
 
         url(r'^inspection_request/$', InspectionRequestFormView.as_view(), name='pa_release_inspection_request'),
         url(r'^inspection_request/(?P<parcel>[0-9]+)/', InspectionRequestFormView.as_view(), name='pa_release_inspection_request_parcel'),
         url(r'^renew_featured_list/$', RenewPropertyListView.as_view()),
+
+    #    url(r'^survey/demographics/(?P<survey_id>[0-9a-f-]+)/', buyer_demographicCreateView.as_view(), name='survey_buyer_demographic'),
 
     ]
 
