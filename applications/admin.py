@@ -83,7 +83,9 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
         'scheduled_meeting','application_summary_page','application_detail_page',
         'n_notification', 'submitted_timestamp', 'price_at_time_of_submission',
         'property_inquiry_count')
-    raw_id_fields = ('user','Property',)
+
+
+    raw_id_fields = ('user','Property', 'organization')
     fieldsets = (
         (None, {
             'fields': (
