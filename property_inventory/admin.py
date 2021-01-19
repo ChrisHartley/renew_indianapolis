@@ -36,6 +36,8 @@ class PropertyStatusYearListFilter(SimpleListFilter):
             ('2018','2018'),
             ('2019','2019'),
             ('2020','2020'),
+            ('2021','2021'),
+
         )
     def queryset(self, request, queryset):
         if self.value():
@@ -105,7 +107,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
 
     def flood_zone(self,obj):
         if obj.geometry is not None:
-            fz = flood_zone.objects.filter(geometry__overlaps=obj.geometry).values_list('name', flat=True)
+            fz = flood_zone.objects.filter(geometry__intersects=obj.geometry).values_list('name', flat=True)
             return ', '.join(fz)
         else:
             return '-'
@@ -190,7 +192,6 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
             if obj.yard_sign.last() is not None:
                 print(obj.yard_sign.last())
                 if obj.yard_sign.last().removed_date_time is not None:
-                    print(obj.yard_sign.last().removed_date_time)
                     removed = 'Removed: {}'.format(obj.yard_sign.last().removed_date_time.strftime('%x'),)
                 else:
                     removed = ''

@@ -81,7 +81,7 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
 
     def get_flood_zone(self,obj):
         if obj.geometry is not None:
-            fz = flood_zone.objects.filter(geometry__overlaps=obj.geometry).values_list('name', flat=True)
+            fz = flood_zone.objects.filter(geometry__intersects=obj.geometry).values_list('name', flat=True)
             return ', '.join(fz)
         else:
             return '-'
