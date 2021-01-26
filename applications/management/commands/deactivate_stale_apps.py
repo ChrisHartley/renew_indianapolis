@@ -16,7 +16,7 @@ class Command(BaseCommand):
         days = timedelta(days=options['days'][0])
         now = timezone.now()
         cutoff_date = now - days
-        old_applications = Application.objects.filter(status__in=[Application.ACTIVE_STATUS, Application.INITIAL_STATUS]).filter(modified__lte=cutoff_date)
+        old_applications = Application.objects.filter(status__in=[Application.ACTIVE_STATUS, Application.INITIAL_STATUS]).filter(created__lte=cutoff_date)
         #self.stdout.write('Duplicating {}'.format(org_app,))
         for app in old_applications:
             self.stdout.write('.', ending='')
