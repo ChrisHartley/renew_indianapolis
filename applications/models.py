@@ -60,6 +60,7 @@ class Application(models.Model):
     ACTIVE_STATUS = 3
     COMPLETE_STATUS = 4
     INITIAL_STATUS = 5
+    INACTIVE_STATUS = 6
 
     STATUS_TYPES = (
         (WITHDRAWN_STATUS, 'Withdrawn'),
@@ -67,6 +68,8 @@ class Application(models.Model):
         (ACTIVE_STATUS, 'Active / In Progress'),
         (COMPLETE_STATUS, 'Complete / Submitted'),
         (INITIAL_STATUS, 'Initial state'),
+        (INACTIVE_STATUS, 'Inactive - expired'),
+
     )
 
     YES_CHOICE = True
