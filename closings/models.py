@@ -223,8 +223,10 @@ class closing(models.Model):
         if self.application:
             # create a new processing fee object with the correct price if necessary
             if not processing_fee.objects.filter(closing=self).exists():
-                if self.application.application_type == Application.SIDELOT or self.application.application_type == Application.VACANT_LOT or self.application.application_type == Application.FDL:
+                if self.application.application_type == Application.SIDELOT or self.application.application_type == Application.VACANT_LOT:
                     amount = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']
+                elif self.application.application_type == Application.FDL:
+                    amount = settings.COMPANY_SETTINGS['FDL_PROCESSING_FEE']
                 else:
                     amount = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']
                 fee = processing_fee(amount_due=amount, closing=self, slug=slugify(self.application.Property), due_date=now()+timedelta(days=9))
@@ -270,7 +272,7 @@ class closing(models.Model):
                 if self.application.Property.blc_listing.count() > 0 and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
                     subject = 'BLC listed property closing cancelled - {0}'.format(self.application.Property,)
                     message = 'This is a courtesy notification that the closing on BLC property at {0} was cancelled. Please update your files as necessary.'.format(self.application.Property,)
-                    recipient = [settings.BLC_MANAGER_EMAIL,]
+                    recipient = settings.COMPANY_SETTINGS['BLC_MANAGER']
                     from_email = 'info@renewindianapolis.org'
                     send_mail(subject, message, from_email, recipient,)
 
