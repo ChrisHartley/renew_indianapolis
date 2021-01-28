@@ -21,6 +21,7 @@
 </div>
 {% endif %}
 <!-- <p class="text-center">Our next deadline is {{next_deadline}} for the {{next_meeting}} Review Committee meeting.</p> -->
+<p class="text-center">Please note we recently revised our Policies and Proceedures, you can read them here: <a href="https://renewindy.org/wp-content/uploads/Land-Bank-Policies-and-Procedures-2021.pdf" target="_blank">Land-Bank-Policies-and-Proceedures-2021.pdf</a></p>
 {% crispy form %}
 
 {% endblock content%}
@@ -101,7 +102,9 @@ function showAppropriateSections(value){
 		$('.homestead-app').hide(400);
 		$('.vacantlot-app').hide(400);
 		$('.fdl-app').hide(400);
+		$('.aha-app').hide(400);
 		$('.sidelot-app').show(400);
+
 	}
 	if (value === '2') { // 2 = standard app
 		$('.homestead-app').hide(400);
@@ -109,12 +112,18 @@ function showAppropriateSections(value){
 		$('.vacantlot-app').hide(400);
 		$('.fdl-app').hide(400);
 		$('.standard-app').show(400);
+		if ($('#id_aha_application').val() === '2'){
+			$('.aha-app').show(400);
+			$('.grant-file-uploader-section').show(400);
+		}
+
 	}
 	if (value === '1') { // 1 = homestead app
 		$('.standard-app').hide(400);
 		$('.sidelot-app').hide(400);
 		$('.vacantlot-app').hide(400);
 		$('.fdl-app').hide(400);
+		$('.aha-app').hide(400);
 		$('.homestead-app').show(400);
 	}
 	if (value === '4') { // 4 = vacant lot app
@@ -122,6 +131,7 @@ function showAppropriateSections(value){
 		$('.homestead-app').hide(400);
 		$('.sidelot-app').hide(400);
 		$('.fdl-app').hide(400);
+		$('.aha-app').hide(400);
 		$('.vacantlot-app').show(400);
 	}
 	if (value === '5') { // 5 = Future Development Lot (FDL) app
@@ -129,6 +139,7 @@ function showAppropriateSections(value){
 		$('.homestead-app').hide(400);
 		$('.sidelot-app').hide(400);
 		$('.vacantlot-app').hide(400);
+		$('.aha-app').hide(400);
 		$('.fdl-app').show(400);
 
 	}
@@ -138,6 +149,7 @@ function showAppropriateSections(value){
 		$('.sidelot-app').hide();
 		$('.vacantlot-app').hide();
 		$('.fdl-app').hide();
+		$('.aha-app').hide();
 		}
 
 
@@ -164,6 +176,7 @@ $(function() {
 $(function(){
 	showAppropriateSections($('#id_application_type').val());
 	get_property_attributions();
+
 });
 
 
@@ -175,6 +188,18 @@ $('#id_application_type').change(function() {
 
 $('#id_Property').change(function(){
 	get_property_attributions();
+
+});
+
+$('#id_aha_application').change(function(){
+	if ($(this).val() === '2') {
+		$('.aha-app').show(400);
+		$('.grant-file-uploader-section').show(400);
+	}
+	else{
+		$('.aha-app').hide();
+		$('.grant-file-uploader-section').hide();
+	}
 
 });
 
@@ -276,6 +301,9 @@ $(function(){
 	});
 });
 
+
+
+
 $(function(){
 	var thirdpartyauthorizationuploader = new qq.FileUploader({
 		action: "{% url 'my_ajax_upload' %}",
@@ -365,6 +393,37 @@ $(function(){
 		},
 	});
 });
+
+$(function(){
+	var floorplanuploader = new qq.FileUploader({
+		action: "{% url 'my_ajax_upload' %}",
+		element: $('#grant-file-uploader')[0],
+		multiple: true,
+		onComplete: function(id, fileName, responseJSON) {
+			if(responseJSON.success) {
+				//alert("success!");
+			} else {
+				alert("Upload Failed!");
+				console.log(fileName);
+				console.log(responseJSON);
+			}
+		},
+		onAllComplete: function(uploads) {
+			// uploads is an array of maps
+			// the maps look like this: {file: FileObject, response: JSONServerResponse}
+			alert("Grant documentation uploads complete!");
+		},
+		params: {
+			'csrf_token': '{{ csrf_token }}',
+			'csrf_name': 'csrfmiddlewaretoken',
+			'csrf_xname': 'X-CSRFToken',
+			'file_purpose': '15',
+			'application': '{{ app_id }}',
+
+		},
+	});
+});
+
 
 
 document.querySelector('#submit-id-save_for_later').addEventListener("click", function(){

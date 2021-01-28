@@ -56,6 +56,9 @@ class ApplicationForm(forms.ModelForm):
         self.fields['application_type'].choices = valid_application_types
         self.fields['vacant_lot_end_use'].widget = forms.Textarea(attrs={'rows': 4, 'cols': 25})
         self.fields['timeline'].widget = forms.TextInput()
+        #self.fields['aha_narative'].widget = forms.TextInput()
+        self.fields['aha_narative'].widget = forms.Textarea(attrs={'rows': 10, 'cols': 25})
+
         self.helper = FormHelper()
         self.helper.form_id = 'ApplicationForm'
         self.helper.form_class = 'form-horizontal'
@@ -109,6 +112,7 @@ class ApplicationForm(forms.ModelForm):
                 'Ownership and Use',
                 Field('long_term_ownership'),
                 Field('is_rental'),
+                Field('aha_application'),
                 css_class='standard-app well'
             ),
             Fieldset(
@@ -143,9 +147,37 @@ class ApplicationForm(forms.ModelForm):
                 css_class='fdl-app well'
             ),
 
+
+            Fieldset(
+                'Affordable Housing Addendum',
+                Field('aha_non_profit'),
+                Field('aha_non_profit_type'),
+                Field('aha_program_type'),
+                HTML('<legend>Unit Breakdown</legend>'),
+                Field('aha_unit_breakdown_30'),
+                Field('aha_unit_breakdown_40'),
+                Field('aha_unit_breakdown_50'),
+                Field('aha_unit_breakdown_60'),
+                Field('aha_unit_breakdown_80'),
+                HTML('<legend>Narrative</legend>'),
+                Field('aha_narative'),
+                HTML('<legend>Funding Sources</legend><p>Which Affordable Housing Program will the above requested land bank properties be used in (all programs checked must be described in the narrative above including the award date or appliable grant due date)</p>'),
+
+                Field('aha_funding_lihtc'),
+                Field('aha_funding_home'),
+                Field('aha_funding_cdbg'),
+                Field('aha_funding_tenant_based'),
+                Field('aha_funding_nhtf'),
+                Field('aha_funding_oz'),
+                Field('aha_funding_other'),
+                css_class='aha-app well'
+            ),
+
             Fieldset(
                 'Uploaded Files',
                 HTML('<p>Before your application can be submitted for review you must attach both a scope of work and proof of funds, as referenced earlier. You can upload those files here.</p>'),
+
+                HTML('<div class="form-group grant-file-uploader-section"><div class="control-label col-lg-4">Grant Documentation</div><div id="grant-file-uploader" class="form-control-static col-lg-6">Drop your grant award or notice file here to upload</div></div>'),
 
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Scope of Work</div><div id="sow-file-uploader" class="form-control-static col-lg-6">Drop your scope of work file here to upload</div>'),
                 HTML('<div class="help-block col-lg-6 col-lg-offset-4">We highly recommend using our <a href="http://build.renewindianapolis.org/static/Scope-of-Work-Template-(2019).xls" target="_blank">spreadsheet</a> or <a href="https://build.renewindianapolis.org/static/Scope-of-Work-Template-(Single-Unit)-2019.pdf" target="_blank">single family</a> or <a href="https://build.renewindianapolis.org/static/Scope-of-Work-Template-(Multi-Unit)-2019.pdf" target="_blank">multi-unit</a> printable template as a starting point.</div></div>'),
@@ -230,6 +262,24 @@ class ApplicationForm(forms.ModelForm):
         vacant_lot_end_use = cleaned_data.get('vacant_lot_end_use', None)
         single_or_multi_family = cleaned_data.get('single_or_multi_family', None)
         why_this_house = cleaned_data.get('why_this_house', None)
+
+        aha_application = cleaned_data.get('aha_application', None)
+        aha_non_profit = cleaned_data.get('aha_non_profit', None)
+        aha_non_profit_type = cleaned_data.get('aha_non_profit_type', None)
+        aha_program_type = cleaned_data.get('aha_program_type', None)
+        aha_unit_breakdown_30 = cleaned_data.get('aha_unit_breakdown_30', None)
+        aha_unit_breakdown_40 = cleaned_data.get('aha_unit_breakdown_40', None)
+        aha_unit_breakdown_50 = cleaned_data.get('aha_unit_breakdown_50', None)
+        aha_unit_breakdown_60 = cleaned_data.get('aha_unit_breakdown_60', None)
+        aha_unit_breakdown_80 = cleaned_data.get('aha_unit_breakdown_80', None)
+        aha_narative = cleaned_data.get('aha_narative', None)
+        aha_funding_lihtc = cleaned_data.get('aha_funding_lihtc', None)
+        aha_funding_home = cleaned_data.get('aha_funding_home', None)
+        aha_funding_cdbg = cleaned_data.get('aha_funding_cdbg', None)
+        aha_funding_tenant_based = cleaned_data.get('aha_funding_tenant_based', None)
+        aha_funding_nhtf = cleaned_data.get('aha_funding_nhtf', None)
+        aha_funding_oz = cleaned_data.get('aha_funding_oz', None)
+        aha_funding_other = cleaned_data.get('aha_funding_other', None)
 
 
         if conflict_board_rc is None:
@@ -396,5 +446,27 @@ class ApplicationForm(forms.ModelForm):
                 if property_selected is not None and property_selected.homestead_only:
                    self.add_error('application_type', ValidationError(
                        'The property you have selected is marked "homestead only" but you indicated a Standard application. This property can only be sold to an owner occupant.'))
+                if aha_application is not None and aha_application == True:
+                    if aha_non_profit is not None and aha_non_profit == True and (aha_non_profit_type is None or aha_non_profit_type == ''):
+                        self.add_error('aha_non_profit_type', ValidationError('Since you indicated your organization is a non-profit you must answer this question.'))
+                    if aha_program_type is None:
+                        self.add_error('aha_program_type', ValidationError(msg))
+                    if aha_unit_breakdown_30 + aha_unit_breakdown_40 + aha_unit_breakdown_50 + aha_unit_breakdown_60 + aha_unit_breakdown_80 < 1:
+                        self.add_error(None, ValidationError('You must indicate how many units of each income restriction type will be created.'))
+                    if aha_narative is None or len(aha_narative)<10:
+                        self.add_error('aha_narative', ValidationError(msg))
+                    if (
+                        (aha_funding_lihtc is None or aha_funding_lihtc == False) and
+                        (aha_funding_home is None or aha_funding_home == False) and
+                        (aha_funding_cdbg is None or aha_funding_cdbg == False) and
+                        (aha_funding_tenant_based is None or aha_funding_tenant_based == False) and
+                        (aha_funding_nhtf is None or aha_funding_nhtf == False) and
+                        (aha_funding_oz is None or aha_funding_oz == False) and
+                        (aha_funding_other is None or aha_funding_other == '')
+                        ):
+                        self.add_error('aha_funding_other', ValidationError('You must chose at least one funding source.'))
+                    if UploadedFile.objects.filter(file_purpose__exact=UploadedFile.PURPOSE_GRANT_DOCUMENT).filter(application__exact=app_id).count() == 0:
+                        self.add_error(None, ValidationError('You must upload supporting documentation for any grants used to support this project.'))
+
 
         return len(self.errors) == 0

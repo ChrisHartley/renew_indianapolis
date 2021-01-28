@@ -104,6 +104,14 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
             'fields': ('application_type','planned_improvements','who_will_perform_work','finished_square_footage', 'single_or_multi_family', 'estimated_cost','source_of_financing', 'why_this_house', 'is_rental','nsp_income_qualifier','long_term_ownership','timeline','sidelot_eligible', 'vacant_lot_end_use')
 
         }),
+        ('Affordable Housing Addendum', {
+            'fields': (
+                ('aha_application', 'aha_non_profit', 'aha_non_profit_type'),
+                ('aha_program_type','aha_unit_breakdown_30','aha_unit_breakdown_40','aha_unit_breakdown_50','aha_unit_breakdown_60','aha_unit_breakdown_80'),
+                ('aha_narative'),
+                ('aha_funding_lihtc','aha_funding_home','aha_funding_cdbg','aha_funding_tenant_based','aha_funding_nhtf','aha_funding_oz','aha_funding_other'),
+                )
+        }),
         ('Staff fields', {
             #'classes': ('collapse',),
             'fields': ('staff_summary','staff_notes','staff_intent_neighborhood_notification','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','frozen', 'staff_sidelot_waiver_required','n_notification', 'price_at_time_of_submission'))

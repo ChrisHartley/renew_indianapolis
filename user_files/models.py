@@ -52,6 +52,7 @@ class UploadedFile(models.Model):
     PURPOSE_3RD_PARTY_AUTHORIZATION_FORM = 12
     PURPOSE_SITE_PLAN = 13
     PURPOSE_FLOOR_PLAN = 14
+    PURPOSE_GRANT_DOCUMENT = 15
 
     FILE_PURPOSE_CHOICES = (
         (PURPOSE_SOW, 'Scope of Work'),
@@ -68,6 +69,7 @@ class UploadedFile(models.Model):
          (PURPOSE_3RD_PARTY_AUTHORIZATION_FORM, 'Third Party Authorization Form'),
          (PURPOSE_SITE_PLAN, 'Site plan'),
          (PURPOSE_FLOOR_PLAN, 'Floor plan'),
+         (PURPOSE_GRANT_DOCUMENT, 'Grant documentation'),
 
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)

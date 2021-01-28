@@ -345,6 +345,119 @@ class Application(models.Model):
         blank=True
     )
 
+    aha_application = models.NullBooleanField(
+        verbose_name='Government sponsored affordable housing?',
+        help_text="Are you requesting property for use in a government-sponsored affordable housing program?"
+    )
+
+    aha_non_profit = models.NullBooleanField(
+        verbose_name = 'Is your organization a non-profit?',
+        blank=True,
+        null=True,
+    )
+    aha_non_profit_type = models.CharField(
+        max_length=512,
+        verbose_name='If your organization is a non-profit, please describe the type',
+        help_text='If you organization is not a non-profit, leave this blank.',
+        blank=True,
+    )
+
+
+    AHA_HOME_OWNERSHIP_NEW = 1
+    AHA_HOME_OWNERSHIP_REHAB = 2
+    AHA_RENTAL_SFR_REHAB = 3
+    AHA_RENTAL_MFR_NEW = 4
+    AHA_RENTAL_MFR_REHAB = 5
+    AHA_SUPPORTIVE_HOUSING = 6
+
+    AHA_PROGRAM_TYPE_CHOICES = (
+        (AHA_HOME_OWNERSHIP_NEW, 'Affordable Home Ownership - New Construction'),
+        (AHA_HOME_OWNERSHIP_REHAB,'Affordable Home Ownership - Rehab'),
+        (AHA_RENTAL_SFR_REHAB,'Affordable Rental Single Family - Rehab'),
+        (AHA_RENTAL_MFR_NEW,'Affordable Rental Multi-Family - New Construction'),
+        (AHA_RENTAL_MFR_REHAB,'Affordable Rental Multi-Family - Rental'),
+        (AHA_SUPPORTIVE_HOUSING,'Supportive Housing/Housing for Individual\'s Experiencing Homelessness'),
+    )
+
+    aha_program_type = models.IntegerField(
+        choices=AHA_PROGRAM_TYPE_CHOICES,
+        verbose_name='Program Type',
+        help_text="What is the end use for this property?",
+        null=True,
+        blank=True,
+
+        )
+
+    aha_unit_breakdown_30 = models.IntegerField(
+        default=0,
+        verbose_name='Total number of units reserved for 30% AMI and below',
+    )
+    aha_unit_breakdown_40 = models.IntegerField(
+            default=0,
+            verbose_name='Total number of units reserved for 30.1-40% AMI',
+    )
+    aha_unit_breakdown_50 = models.IntegerField(
+            default=0,
+            verbose_name='Total number of units reserved for 40.1-50% AMI',
+    )
+    aha_unit_breakdown_60 = models.IntegerField(
+            default=0,
+            verbose_name='Total number of units reserved for 50.1-60% AMI',
+    )
+    aha_unit_breakdown_80 = models.IntegerField(
+            default=0,
+            verbose_name='Total number of units reserved for 60.1-80% AMI',
+    )
+
+    aha_narative = models.CharField(
+        blank=True,
+        max_length=5000,
+        verbose_name='Narrative',
+        help_text="""
+            Provide a brief narrative of the project to be considered specifying
+            how the requested property(ies) will be used. Include any key
+            agencies or partnerships involved, important dates associated with
+            its implementation, timelines for the project including any
+            application dates, grant award date, project start and completion
+            dates including the construction start and sale and/or lease updates
+             of any properties being requested as part of this application.
+             Upload with this supplement a copy of all applicable grant awards
+             and/or grant notices showing application due dates and award dates.
+             (500 words or less)"""
+    )
+
+    aha_funding_lihtc = models.NullBooleanField(
+        verbose_name = 'Low Income Housing Tax Credits',
+        blank=True,
+    )
+    aha_funding_home = models.NullBooleanField(
+        verbose_name='HOME Investment Partnership Program (HOME)',
+        blank=True,
+    )
+    aha_funding_cdbg = models.NullBooleanField(
+        verbose_name='Community Development Block Grant (CDBG)',
+        blank=True,
+    )
+    aha_funding_tenant_based = models.NullBooleanField(
+        verbose_name='Tenant-based Rental Assistance Program',
+        blank=True,
+    )
+    aha_funding_nhtf = models.NullBooleanField(
+        verbose_name='National Housing Trust Fund',
+        blank=True,
+    )
+    aha_funding_oz = models.NullBooleanField(
+        verbose_name='Opportunity Zone',
+        blank=True,
+    )
+    aha_funding_other = models.CharField(
+    max_length=256,
+    verbose_name='Other Affordable Housing Program (name)',
+    blank=True,
+    null=True
+    )
+
+
 
     frozen = models.BooleanField(
         default=False,
