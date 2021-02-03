@@ -712,7 +712,7 @@ class PriceChangeMeetingLink(models.Model):
         super(PriceChangeMeetingLink, self).save(*args, **kwargs)
 
         chng = self.price_change
-        if chng.approved != True and self.meeting_outcome == self.APPROVED_STATUS:
+        if chng.approved != True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS and self.meeting_outcome == self.APPROVED_STATUS:
             chng.approved = True
             chng.save()
 
@@ -721,6 +721,24 @@ class PriceChangeMeetingLink(models.Model):
             if chng.make_fdl_eligible == True:
                 prop.future_development_program_eligible = True
             prop.save()
+
+        if chng.approved != True and self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE and self.meeting_outcome == self.APPROVED_STATUS:
+            notes = '{0} - Promoted from {1}'.format(self.notes, self.meeting.meeting_date,)
+            meeting_type = Meeting.BOARD_OF_DIRECTORS
+
+
+            next_meeting = Meeting.objects.filter(meeting_type__exact=meeting_type).filter(meeting_date__gt=self.meeting.meeting_date).order_by('meeting_date').first()
+            if next_meeting is None:
+                if meeting_type == Meeting.BOARD_OF_DIRECTORS:
+                    meeting_date = rrule(MONTHLY, count=1, byweekday=TH(1), dtstart=self.meeting.meeting_date)[0].date()
+                next_meeting = Meeting(meeting_type=meeting_type, meeting_date=meeting_date)
+                next_meeting.save()
+            next_meeting_link = PriceChangeMeetingLink(
+                price_change=self.price_change,
+                meeting=next_meeting,
+                notes=notes,
+            )
+            next_meeting_link.save()
 
     class Meta:
         get_latest_by = 'meeting_date'
