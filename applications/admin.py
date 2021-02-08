@@ -3,7 +3,7 @@ from .models import Application, Meeting, MeetingLink, PriceChangeMeetingLink, A
 from user_files.models import UploadedFile
 from property_inquiry.models import propertyInquiry
 from .forms import ScheduleInlineForm
-
+from property_inventory.models import Property
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from functools import partial
@@ -82,14 +82,14 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
         'property_status','property_fdl',
         'scheduled_meeting','application_summary_page','application_detail_page',
         'n_notification', 'submitted_timestamp', 'price_at_time_of_submission',
-        'property_inquiry_count')
+        'property_inquiry_count', 'other_applications')
 
 
     raw_id_fields = ('user','Property', 'organization')
     fieldsets = (
         (None, {
             'fields': (
-                ('user','user_readable','organization'),
+                ('user','user_readable','organization', 'other_applications'),
                 ('created', 'modified', 'submitted_timestamp'),
                 ('Property', 'property_type','property_status','property_fdl',),
                 ('status', 'property_inquiry_count'),
@@ -178,6 +178,13 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
                 u'{0} {1} {2}'.format(obj.user.first_name, obj.user.last_name, obj.user.email).encode('utf-8')
             ))
     user_link.short_description = 'user'
+
+    def other_applications(self, obj):
+        count = Application.objects.filter(user__exact=obj.user).exclude(status__exact=Application.INITIAL_STATUS).count()
+        props_purchased = Property.objects.filter(buyer_application__user=obj.user).count()
+        props_released = Property.objects.filter(buyer_application__user=obj.user).filter(project_agreement_released=True).count()
+        return 'Applications by this user: {0} - Properties Purchased by this user: {1} - Properties purchased and released: {2}'.format(count, props_purchased, props_released)
+    other_applications.short_description = 'Application Activity'
 
     def n_notification(self, obj):
         if obj.id is not None:

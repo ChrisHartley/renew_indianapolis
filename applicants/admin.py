@@ -6,6 +6,8 @@ from django.utils.safestring import mark_safe
 
 from .models import ApplicantProfile, Organization
 from applications.models import Application
+from property_inventory.models import Property
+
 
 class ApplicantProfileInline(admin.StackedInline):
     model = ApplicantProfile
@@ -44,10 +46,14 @@ class ApplicantProfileAdmin(admin.ModelAdmin):
 
     def count_applications(self, obj):
         count = Application.objects.filter(user__exact=obj.user).exclude(status__exact=Application.INITIAL_STATUS).count()
-        summary_link = '<a href="{}">{}</a>'.format(
-            reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.user.email,), count)
+        props_purchased = Property.objects.filter(buyer_application__user=obj.user).count()
+        props_released = Property.objects.filter(buyer_application__user=obj.user).filter(project_agreement_released=True).count()
+
+        summary_link = '<a href="{}">{} - purchased: {} - released: {}</a>'.format(
+            reverse("admin:app_list", args=('applications',))+'application/?q={}'.format(obj.user.email,), count, props_purchased, props_released )
         return mark_safe(summary_link)
     count_applications.short_description = 'Application count'
+
 
 class OrganiationAdmin(admin.ModelAdmin):
     model = Organization
