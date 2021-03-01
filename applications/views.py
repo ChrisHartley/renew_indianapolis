@@ -608,7 +608,8 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
                 applications.append(application)
 
         orgs = []
-        for org in registered_organization.objects.all():
+        message_template = ''
+        for org in registered_organization.objects.all().annotate(area=Area('geometry', unit='sq_ft')).order_by('area'):
             if blacklisted_emails.objects.filter(email=org.email).count() != 0: # check if email exists in blacklist (bounces, opt-out, etc)
                 continue
 
@@ -651,8 +652,8 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
                 #print('Would send email here')
                 for app in apps_in_area:
                     if '{0} - {1}:'.format(meeting_name, meeting_date) not in app.neighborhood_notification_details:
-                        app.neighborhood_notification_details = '{0}. {1} - {2}:'.format(app.neighborhood_notification_details, meeting_name, meeting_date)
-                    app.neighborhood_notification_details = '{} {}'.format(app.neighborhood_notification_details,org.name)
+                        app.neighborhood_notification_details = '{0} {1} - {2}:'.format(app.neighborhood_notification_details, meeting_name, meeting_date)
+                    app.neighborhood_notification_details = '{} {},'.format(app.neighborhood_notification_details,org.name)
                     app.save()
 
         context['organizations'] = orgs
