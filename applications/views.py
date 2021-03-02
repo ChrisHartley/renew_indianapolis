@@ -25,6 +25,7 @@ from closings.models import processing_fee
 
 from django.contrib.auth.models import User
 
+from django.contrib.gis.db.models.functions import Area
 # used to send confirmation email
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
