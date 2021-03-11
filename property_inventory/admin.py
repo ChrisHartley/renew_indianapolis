@@ -92,7 +92,7 @@ class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
 
 class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name', 'buyer_application__user__email', 'buyer_application__user__last_name', 'buyer_application__user__first_name', 'buyer_application__organization__name')
-    list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status', 'future_development_program_eligible', 'is_active')
+    list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status', 'future_development_program_eligible', 'is_active','get_landbank_active_available')
     list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition', PropertyTypeFilter)
     inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin, lockboxInlineAdmin]
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
@@ -101,7 +101,8 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     readonly_fields = ('purchase_option_in_place', 'blc_id', 'generate_epp_export',
         'applications_search','view_photos','context_area_strategy',
         'context_area_name', 'number_of_inquiries', 'main_photo',
-        'application_summary', 'condition_report_link', 'flood_zone', 'yard_sign'
+        'application_summary', 'condition_report_link', 'flood_zone', 'yard_sign',
+        'get_landbank_active_available',
     )
     actions = ["export_as_csv"]
 
@@ -197,6 +198,14 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
                     removed = ''
                 return 'Placed: {} {}'.format(obj.yard_sign.last().date_time.strftime('%x'), removed)
         return 'None'
+
+    def get_landbank_active_available(self, obj):
+        if obj.propertyType == 'lb' and obj.status == 'Available' and obj.is_active == True:
+            return True
+        else:
+            return False
+    get_landbank_active_available.boolean = True
+    get_landbank_active_available.short_description = 'Active and Available in Landbank Inventory'
 
 class ContextAreaAdmin(admin.OSMGeoAdmin):
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
