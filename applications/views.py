@@ -658,15 +658,16 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
             #         email.attach_file(f.supporting_document.path)
 
             if self.request.GET.get('send') == 'True':
-                #email.send()
+            #    email.send()
 
                 #print('Would send email here')
                 for app in apps_in_area:
                     if '{0} - {1}:'.format(meeting_name, meeting_date) not in app.neighborhood_notification_details:
                         app.neighborhood_notification_details = '{0} {1} - {2}:'.format(app.neighborhood_notification_details, meeting_name, meeting_date)
                     app.neighborhood_notification_details = '{} {},'.format(app.neighborhood_notification_details,org.name)
-                    app.save()
+            #        app.save() # we're not saving right now b/c everything is in flux.
         if self.request.GET.get('send') == 'True':
+
             return response # return CSV file response.
 
 
