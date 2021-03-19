@@ -586,6 +586,7 @@ class GenerateNeighborhoodNotifications(DetailView):
         context['applications'] = applications
         return render(self.request, 'neighborhood_notification_preview.html', context)
 
+#This is the version currently used.
 class GenerateNeighborhoodNotificationsVersion2(DetailView):
     model = Meeting
     context_object_name = 'meeting'
@@ -610,6 +611,11 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
 
         orgs = []
         message_template = ''
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename="neighborhood-notification.csv"'
+
+        writer = csv.writer(response, dialect='excel')
+
         for org in registered_organization.objects.all().annotate(area=Area('geometry', unit='sq_ft')).order_by('area'):
             if blacklisted_emails.objects.filter(email=org.email).count() != 0: # check if email exists in blacklist (bounces, opt-out, etc)
                 continue
@@ -641,6 +647,9 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
 
             )
 
+            writer.writerow([subject, message.encode('utf8'), org.email])
+
+
             # files = UploadedFile.objects.filter(application=application).filter(send_with_neighborhood_notification=True)
             # for f in files:
             #     if settings.DEBUG: # application media files don't exist in testing environment, so attach dummy file.
@@ -649,13 +658,19 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
             #         email.attach_file(f.supporting_document.path)
 
             if self.request.GET.get('send') == 'True':
-                email.send()
+                #email.send()
+
                 #print('Would send email here')
                 for app in apps_in_area:
                     if '{0} - {1}:'.format(meeting_name, meeting_date) not in app.neighborhood_notification_details:
                         app.neighborhood_notification_details = '{0} {1} - {2}:'.format(app.neighborhood_notification_details, meeting_name, meeting_date)
                     app.neighborhood_notification_details = '{} {},'.format(app.neighborhood_notification_details,org.name)
                     app.save()
+        if self.request.GET.get('send') == 'True':
+            return response # return CSV file response.
+
+
+
 
         context['organizations'] = orgs
         context['message_template'] = message_template
