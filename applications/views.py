@@ -665,7 +665,7 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
                     app.save() # we're not saving right now b/c everything is in flux.
         if self.request.GET.get('get_csv') == 'True':
             return response # return CSV file response.
-        if self.request.GET('send_email') == 'True':
+        if self.request.GET.get('send_email') == 'True':
             #email.send()
             pass
 
