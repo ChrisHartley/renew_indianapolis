@@ -81,6 +81,7 @@ def showApplications(request):
         soldProps.append(
             {
                 'address': s.streetAddress,
+                'structureType': s.structureType,
                 'parcel': s.parcel,
                 'sale_date': datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date(),
                 'buyer': s.applicant,
@@ -94,6 +95,7 @@ def showApplications(request):
         soldInvestmentProps.append(
             {
                 'address': s.streetAddress,
+                'structureType': s.structureType,
                 'parcel': s.parcel,
                 'sale_date': datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date(),
                 'buyer': s.applicant,
@@ -105,6 +107,7 @@ def showApplications(request):
         soldProps.append(
             {
                 'address': t.Property.streetAddress,
+                'structureType': t.Property.structureType,
                 'parcel': t.Property.parcel,
                 'sale_date': t.original_sale_date,
                 'buyer': t.owner,
@@ -118,7 +121,8 @@ def showApplications(request):
 
 
     approvedProperties = Property.objects.all().filter(
-        status__istartswith='Sale').order_by('status', 'applicant')
+            Q(status__istartswith='Sale')&Q(propertyType='lb')
+        ).order_by('status', 'applicant')
 
     next_rc_meeting = Meeting.objects.filter(Q(meeting_type=Meeting.REVIEW_COMMITTEE)&Q(meeting_date__gte=datetime.date.today())).order_by('meeting_date').first()
     if next_rc_meeting is not None:
