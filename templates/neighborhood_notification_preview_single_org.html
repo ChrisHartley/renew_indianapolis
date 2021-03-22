@@ -22,5 +22,8 @@
   </pre>
 {% endfor %}
 
-<a class="btn btn-danger" href="{% url 'generate_neighborhood_notifications' meeting.id %}?send=True" role="button">Download CSV and mark these notifications as sent.</a>
+<a class="btn btn-danger" href="{% url 'generate_neighborhood_notifications' meeting.id %}?mark_sent=True" role="button">Mark these notifications as sent.</a>
+<a class="btn btn-primary" href="{% url 'generate_neighborhood_notifications' meeting.id %}?get_csv=True" role="button">Download CSV for mail merge.</a>
+<a class="btn btn-warning disabled" href="{% url 'generate_neighborhood_notifications' meeting.id %}?send_email=True" role="button">Send emails from BF.</a>
+
 {% endblock center %}
