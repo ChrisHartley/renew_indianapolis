@@ -41,8 +41,13 @@ class ProcessingFeePaymentPage(DetailView):
             context['expired'] = False
         if self.object.amount_due == settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_FEE']:
             context['creditCardFees'] = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_STRIPE_FEE']
+        elif self.object.amount_due == settings.COMPANY_SETTINGS['FDL_PROCESSING_FEE']:
+            context['creditCardFees'] = settings.COMPANY_SETTINGS['FDL_PROCESSING_STRIPE_FEE']
         elif self.object.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
             context['creditCardFees'] = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_STRIPE_FEE']
+        elif self.object.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
+            context['creditCardFees'] = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_STRIPE_FEE']
+
         context['amountForStripe'] = int(int(self.object.amount_due*100)+context['creditCardFees']) # $100 costs $3.30, $200 costs 6.28
         context['display_credit_card_fee'] = '{:20,.2f}'.format(context['creditCardFees']/100.0)
         context['STRIPE_API_KEY'] = settings.STRIPE_PUBLIC_API_KEY
@@ -67,6 +72,8 @@ class ProcessingFeePaidPage(View):
             credit_card_fee = settings.COMPANY_SETTINGS['SIDELOT_PROCESSING_STRIPE_FEE']
         elif obj.amount_due == settings.COMPANY_SETTINGS['STANDARD_PROCESSING_FEE']:
             credit_card_fee = settings.COMPANY_SETTINGS['STANDARD_PROCESSING_STRIPE_FEE']
+        elif obj.amount_due == settings.COMPANY_SETTINGS['FDL_PROCESSING_FEE']:
+            credit_card_fee = settings.COMPANY_SETTINGS['FDL_PROCESSING_STRIPE_FEE']
         try:
         # Use Stripe's library to make requests...
             charge = stripe.Charge.create(
