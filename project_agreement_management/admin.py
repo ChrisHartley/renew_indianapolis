@@ -304,6 +304,7 @@ class EnforcementAdmin(admin.ModelAdmin):
     list_filter = ('level_of_concern','open_breech_count')
     list_display = ('Property', 'person', 'last_sale_date', 'created', 'modified', 'level_of_concern', 'open_breech_count', 'open_breech_types')
     search_fields = ('Property__parcel', 'Property__streetAddress', 'Application__user__first_name','Application__user__last_name', 'Application__organization__name')
+    actions = ['export_as_csv_custom_action',]
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(EnforcementAdmin, self).formfield_for_dbfield(db_field, **kwargs)
@@ -393,6 +394,89 @@ class EnforcementAdmin(admin.ModelAdmin):
         for b in obj.breech_types.filter(breechstatus__status=BreechStatus.OPEN):
             values = '{}{}/'.format(values, b)
         return values
+
+
+    def export_as_csv_custom_action(self, request, queryset):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format('Breech-enforcement')
+        writer = csv.writer(response)
+
+        field_names = [
+            'Street Address',
+            'Parcel',
+            'Structure Type',
+            'Application Type',
+            'Sale Date',
+            'Buyer Name',
+            'Organization Name',
+            'Buyer email',
+            'Buyer phone',
+            'Buyer mailing street address',
+            'Buyer mailing city',
+            'Buyer mailing state',
+            'Buyer mailing postal code',
+            'Open Breaches',
+            ]
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            breaches = ''
+
+            for b in BreechStatus.objects.filter(enforcement=obj, status=False):
+                    breaches = '{}\n{}'.format(breaches, b)
+            if obj.Application is not None:
+                from annual_report_form.models import annual_report
+                annual_report = annual_report.objects.filter(Property=obj.Application.Property).last()
+                if annual_report is not None:
+                    annual_report_date = annual_report.created
+                else:
+                    annual_report_date = '-'
+                data = [
+                    obj.Property.streetAddress,
+                    obj.Property.parcel,
+                    obj.Property.structureType,
+                    obj.Application.get_application_type_display(),
+                    obj.Property.status[5:], # sale date
+                    '{} {}'.format(obj.Application.user.first_name, obj.Application.user.last_name),
+                    obj.Application.organization,
+                    obj.Application.user.email,
+                    obj.Application.user.profile.phone_number,
+                    '{} {} {}'.format(obj.Application.user.profile.mailing_address_line1, obj.Application.user.profile.mailing_address_line2, obj.Application.user.profile.mailing_address_line3),
+                    obj.Application.user.profile.mailing_address_city,
+                    obj.Application.user.profile.mailing_address_state,
+                    obj.Application.user.profile.mailing_address_zip,
+                    breaches,
+                ]
+            else:
+                from annual_report_form.models import annual_report
+                annual_report = annual_report.objects.filter(Property=obj.enforcement.Property).last()
+                if annual_report is not None:
+                    annual_report_date = annual_report.created
+                else:
+                    annual_report_date = '-'
+                data = [
+                    obj.enforcement.Property.streetAddress,
+                    obj.enforcement.Property.parcel,
+                    obj.enforcement.Property.structureType,
+                    'Legacy application not in system',
+                    obj.enforcement.Property.status[5:],
+                    obj.enforcement.Property.applicant,
+                    '', # org
+                    '', # email
+                    '', # phone
+                    '', # mailing address
+                    '', # mailing city
+                    '', # mailing state
+                    '', # mailing zip
+                    breaches,
+                ]
+
+            row = writer.writerow(data)
+
+        return response
+    export_as_csv_custom_action.short_description = 'Export as CSV'
+
+
 
 class WorkoutMeetingAdmin(admin.ModelAdmin):
     inlines = [EnforcementInlineAdmin,]
