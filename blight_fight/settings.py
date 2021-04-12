@@ -255,7 +255,7 @@ COMPANY_SETTINGS = {
     'FDL_PROCESSING_FEE': 150,
     'FDL_PROCESSING_STRIPE_FEE': 360, # new based on non-profit 2.2% + $0.30 rate
     'STANDARD_PROCESSING_FEE': 250,
-    'STANDARD_PROCESSING_STRIPE_FEE': 580, # new based on non-profit 2.2% + $0.30 rate
+    'STANDARD_PROCESSING_STRIPE_FEE': 624, # new based on non-profit 2.2% + $0.30 rate
     'SIDELOT_PRICE': 750.00, # Regular sidelot price
     'RENEW_PA_RELEASE': 'nhunot@renewindy.org',
     'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
