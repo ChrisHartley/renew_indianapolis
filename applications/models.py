@@ -477,14 +477,38 @@ class Application(models.Model):
     price_at_time_of_submission = models.DecimalField(
         max_digits=8, decimal_places=2, help_text="The price of the property at time of submission", null=True, blank=True)
 
+
     #meeting is MeetingLink accessor
 
     def save(self, *args, **kwargs):
-        if self.status == self.COMPLETE_STATUS and self.Property is not None and self.price_at_time_of_submission is None:
-            if self.application_type == self.SIDELOT:
-                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['SIDELOT_PRICE']
-            else:
+        # This change locks the "price_at_time_of_submission" to actually be when the user selects a property, instead of the much
+        # more sensible lock at time of submission, but I lost that battle so here we go. We also no longer deal with sidelot pricing, etc.
+        obj = None
+        if self.pk is not None:
+            obj = Application.objects.get(pk=self.pk)
+        if obj is None or (obj is not None and obj.Property != self.Property): #if this is the first save of a new application or select a new property.
                 self.price_at_time_of_submission = self.Property.price
+
+#        if self.status == self.COMPLETE_STATUS and self.Property is not None and self.price_at_time_of_submission is None:
+#            if self.application_type == self.SIDELOT:
+#                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['SIDELOT_PRICE']
+#            else:
+#                self.price_at_time_of_submission = self.Property.price
+
+        # If an application is marked as withdrawn, de-link property from it and mark available again.
+        if self.status == self.WITHDRAWN_STATUS:
+            if self.Property is not None and self.Property.buyer_application == self.pk:
+                self.Property.buyer_application = None
+                self.Property.status = 'Available'
+                self.Property.save()
+                if self.Property.blc_listing.filter(active=True).count() > 0 and settings.SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL:
+                    subject = 'BLC listed property application withdrawn - {0}'.format(self.Property,)
+                    message = 'This is a courtesy notification that the approved application on BLC property at {0} was withdrawn. Please update your files as necessary.'.format(self.Property,)
+                    recipient = settings.COMPANY_SETTINGS['BLC_MANAGER']
+                    from_email = 'info@renewindianapolis.org'
+                    send_mail(subject, message, from_email, recipient,)
+
+
         if self.status == self.COMPLETE_STATUS and self.submitted_timestamp is None:
             self.submitted_timestamp = timezone.now()
         super(Application, self).save(*args, **kwargs)
@@ -713,32 +737,36 @@ class PriceChangeMeetingLink(models.Model):
 
         chng = self.price_change
         if chng.approved != True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS and self.meeting_outcome == self.APPROVED_STATUS:
-            chng.approved = True
-            chng.save()
 
-            prop = self.price_change.Property
-            prop.price = self.price_change.proposed_price
-            if chng.make_fdl_eligible == True:
-                prop.future_development_program_eligible = True
-            prop.save()
+            if self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS:
+                chng.approved = True
+                chng.save()
 
-        if chng.approved != True and self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE and self.meeting_outcome == self.APPROVED_STATUS:
-            notes = '{0} - Promoted from {1}'.format(self.notes, self.meeting.meeting_date,)
-            meeting_type = Meeting.BOARD_OF_DIRECTORS
+                prop = self.price_change.Property
+                prop.price = self.price_change.proposed_price
+                if chng.make_fdl_eligible == True:
+                    prop.future_development_program_eligible = True
+                prop.save()
+
+            if self.meeting.meeting_type == Meeting.REVIEW_COMMITTEE:
+                notes = '{0} - Promoted from {1}'.format(self.notes, self.meeting.meeting_date,)
+                meeting_type = Meeting.BOARD_OF_DIRECTORS
 
 
-            next_meeting = Meeting.objects.filter(meeting_type__exact=meeting_type).filter(meeting_date__gt=self.meeting.meeting_date).order_by('meeting_date').first()
-            if next_meeting is None:
-                if meeting_type == Meeting.BOARD_OF_DIRECTORS:
-                    meeting_date = rrule(MONTHLY, count=1, byweekday=TH(1), dtstart=self.meeting.meeting_date)[0].date()
-                next_meeting = Meeting(meeting_type=meeting_type, meeting_date=meeting_date)
-                next_meeting.save()
-            next_meeting_link = PriceChangeMeetingLink(
-                price_change=self.price_change,
-                meeting=next_meeting,
-                notes=notes,
-            )
-            next_meeting_link.save()
+                next_meeting = Meeting.objects.filter(meeting_type__exact=meeting_type).filter(meeting_date__gt=self.meeting.meeting_date).order_by('meeting_date').first()
+                if next_meeting is None:
+                    if meeting_type == Meeting.BOARD_OF_DIRECTORS:
+                        meeting_date = rrule(MONTHLY, count=1, byweekday=TH(1), dtstart=self.meeting.meeting_date)[0].date()
+                    next_meeting = Meeting(meeting_type=meeting_type, meeting_date=meeting_date)
+                    next_meeting.save()
+                next_meeting_link = PriceChangeMeetingLink(
+                    price_change=self.price_change,
+                    meeting=next_meeting,
+                    notes=notes,
+                )
+                next_meeting_link.save()
+
+
 
     class Meta:
         get_latest_by = 'meeting_date'
