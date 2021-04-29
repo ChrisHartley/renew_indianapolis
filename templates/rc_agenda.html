@@ -8,7 +8,7 @@
 {% for meeting_link in meeting_links %}
 <li><h3>{{ meeting_link.grouper }} ({{meeting_link.list|length}})</h3>
   <dl>
-    {% for ml in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"application.staff_sidelot_waiver_required"|dictsort:"schedule_weight" %}
+    {% for ml in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"schedule_weight" %}
       <dt> <b>{{ ml.application.user.first_name }} {{ ml.application.user.last_name }}</br>
         {% if ml.application.organization %} {{ ml.application.organization }} </br> {% endif %}
         {{ ml.application.Property }}</b> ${{ml.application.price_at_time_of_submission|intcomma}}

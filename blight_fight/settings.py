@@ -257,6 +257,8 @@ COMPANY_SETTINGS = {
     'STANDARD_PROCESSING_FEE': 250,
     'STANDARD_PROCESSING_STRIPE_FEE': 624, # new based on non-profit 2.2% + $0.30 rate
     'SIDELOT_PRICE': 750.00, # Regular sidelot price
+    'AFFORDABLE_HOUSING_PROGRAM_LOT_FEE': 750,
+    'AFFORDABLE_HOUSING_PROGRAM_HOUSE_FEE': 1500,
     'RENEW_PA_RELEASE': 'nhunot@renewindy.org',
     'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
     'city_staff': (

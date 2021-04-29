@@ -119,6 +119,8 @@ class ApplicationForm(forms.ModelForm):
                 'Planned Improvements',
                 Field('planned_improvements'),
                 Field('who_will_perform_work'),
+                Field('previous_experience'),
+                Field('previous_experience_explanation'),
                 Field('finished_square_footage'),
                 Field('single_or_multi_family'),
                 Field('timeline'),
@@ -249,6 +251,8 @@ class ApplicationForm(forms.ModelForm):
 
         planned_improvements = cleaned_data.get('planned_improvements')
         who_will_perform_work = cleaned_data.get('who_will_perform_work')
+        previous_experience = cleaned_data.get('previous_experience')
+        previous_experience_explanation = cleaned_data.get('previous_experience_explanation')
         timeline = cleaned_data.get('timeline')
         estimated_cost = cleaned_data.get('estimated_cost')
         source_of_financing = cleaned_data.get('source_of_financing')
@@ -405,6 +409,10 @@ class ApplicationForm(forms.ModelForm):
                 self.add_error('timeline', ValidationError(msg))
             if not who_will_perform_work:
                 self.add_error('who_will_perform_work', ValidationError(msg))
+            if not previous_experience:
+                self.add_error('previous_experience', ValidationError(msg))
+            if not previous_experience_explanation:
+                self.add_error('previous_experience_explanation', ValidationError(msg))
             if property_selected is not None and property_selected.structureType == "Vacant Lot" and (not square_footage or square_footage == ""):
                 self.add_error('finished_square_footage', ValidationError(msg))
             if not estimated_cost or estimated_cost == 0:

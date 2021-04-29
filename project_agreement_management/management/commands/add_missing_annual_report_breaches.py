@@ -85,7 +85,7 @@ class Command(BaseCommand):
                 if duplicate_breech == False:
                     bs = BreechStatus(breech=annual_report_breech, enforcement=enf, date_created=date.today())
                     bs.save()
-                    print("Breech created: {}".format(bs,))
+                    print("Breech created: {} {} {}".format(bs,p,app))
                 else:
                 #    print("Breech already open")
                     pass

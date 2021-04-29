@@ -6,9 +6,7 @@
 
 {% regroup meeting.meeting_link.all|dictsort:"application.application_type" by application.get_application_type_display as meeting_links  %}
 {% for meeting_link in meeting_links %}
-{% for application in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"application.staff_sidelot_waiver_required"|dictsort:"schedule_weight" %}
-
-
+{% for application in meeting_link.list|dictsort:"application.Property.streetAddress"|dictsort:"schedule_weight" %}
 <div class="row">
   <div class=".col-md-10 .col-xs-10 .col-sm-10 .col-lg-10">
     <p class="text-right">
@@ -45,6 +43,7 @@
     <dt>Property Showings</td><dd>{% for pi in application.application.user.propertyinquiry_set.all %}
       {%if pi.Property == application.application.Property %} Showing request submitted {{pi.timestamp|date:"m/d"}} {{pi.get_status_display}}<br/>{%endif%}{%endfor%}
     </dd>
+    <dt>Why this property?</dt><dd>{{application.application.why_this_house}}</dd>
     <dt>Staff Summary</dt>
     <dd>
        {{application.application.staff_summary}}

@@ -155,6 +155,31 @@ class Application(models.Model):
         default='',
     )
 
+    NO_EXPERIENCE = 'Never done rehab or new construction'
+    SOME_EXPERIENCE = 'I have done one or two similar projects'
+    LOTS_EXPERIENCE = 'I am experienced at rehab or new construction'
+
+    EXPERIENCE_CHOICES = (
+        (NO_EXPERIENCE,NO_EXPERIENCE),
+        (SOME_EXPERIENCE,SOME_EXPERIENCE),
+        (LOTS_EXPERIENCE,LOTS_EXPERIENCE),
+    )
+
+    previous_experience = models.CharField(
+        max_length=254,
+        help_text="What level of experience do you have with rehab or new construction?",
+        blank=True,
+        choices=EXPERIENCE_CHOICES,
+        default='',
+    )
+
+    previous_experience_explanation = models.TextField(
+        max_length=5120,
+        help_text="Tell us about your prevoius experience or projects you have completed. No experience is required, but the more detail you provide the better we will be able to understand your application.",
+        blank=True
+    )
+
+
     long_term_ownership = models.CharField(
         max_length=255,
         help_text="Who will own the property long-term? (e.g. self, LLC, end-buyer, etc.)",
@@ -470,6 +495,11 @@ class Application(models.Model):
         default=None,
         verbose_name='Staff field, if a waiver is required with the sidelot application',
     )
+    staff_qualifies_for_affordable_housing_price = models.BooleanField(
+        default=False,
+        verbose_name='Enable affordable housing program pricing',
+        help_text="Staff determined application qualifies for affordable housing program pricing"
+    )
     staff_intent_neighborhood_notification = models.CharField(blank=True, max_length=10240)
     neighborhood_notification_details = models.CharField(blank=True, max_length=10240)
     neighborhood_notification_feedback = models.CharField(blank=True, max_length=10240)
@@ -512,6 +542,13 @@ class Application(models.Model):
 
         if self.status == self.COMPLETE_STATUS and self.submitted_timestamp is None:
             self.submitted_timestamp = timezone.now()
+
+        if self.staff_qualifies_for_affordable_housing_price == True:
+            if self.Property is not None and self.Property.structureType == 'Residential Dwelling':
+                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['AFFORDABLE_HOUSING_PROGRAM_HOUSE_FEE']
+            if self.Property is not None and self.Property.structureType != 'Residential Dwelling':
+                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['AFFORDABLE_HOUSING_PROGRAM_LOT_FEE']
+
         super(Application, self).save(*args, **kwargs)
 
     def __str__(self):

@@ -184,7 +184,6 @@ class InspectionRequest(models.Model):
 
     def save(self, *args, **kwargs):
         new = (self.id is None)
-        super(InspectionRequest, self).save(*args, **kwargs)
         contact = None
         prop = None
         if self.Property is not None:
@@ -203,6 +202,10 @@ class InspectionRequest(models.Model):
                 [contact,],
                 fail_silently=False
             )
+        if self.Property is not None and self.Application is None and self.Property.buyer_application is not None:
+            self.Application = self.Property.buyer_application
+
+        super(InspectionRequest, self).save(*args, **kwargs)
 
 
 # class InspectionRequestPhotoSet(models.Model):
