@@ -28,10 +28,21 @@ class UploadedFileInline(admin.TabularInline):
 
 class MeetingLinkInline(admin.TabularInline):
     model = MeetingLink
-    fields = ('meeting', 'meeting_outcome', 'application_link', 'conditional_approval', 'notes', 'schedule_weight' )
-    readonly_fields=('application','application_link')
+    fields = ('meeting', 'meeting_outcome', 'application_link', 'get_structure_type', 'conditional_approval', 'notes', 'schedule_weight' )
+    readonly_fields=('application','application_link', 'get_structure_type')
     ordering = ('application__application_type', 'schedule_weight')
     extra = 1
+
+    def get_structure_type(self, obj):
+        if obj.Property is not None:
+            return obj.Property.structureType
+        else:
+            return '-'
+
+    def get_application_type(self, obj):
+        return get_a
+
+
 
     def application_link(self, obj):
        return mark_safe('<a href="{}" target="_blank">{}</a>'.format(

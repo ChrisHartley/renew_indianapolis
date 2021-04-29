@@ -19,7 +19,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'blight_fight.settings'
 try:
     # Add the site-packages of the chosen virtualenv to work with
     site.addsitedir(
-        '/home/django/.virtualenvs/blight_fight/local/lib/python2.7/site-packages')
+        '/home/django/.virtualenvs/bfpy3/lib/python3.6/site-packages')
 
     # Add the app's directory to the PYTHONPATH
     sys.path.append('/home/django/blight_fight')
@@ -29,7 +29,7 @@ try:
 
     # Activate your virtual env
     activate_env = os.path.expanduser(
-        "/home/django/.virtualenvs/blight_fight/bin/activate_this.py")
+        "/home/django/.virtualenvs/bfpy3/bin/activate_this.py")
     exec(compile(open(activate_env).read(), activate_env, 'exec'), dict(__file__=activate_env))
 
 except ImportError:
