@@ -19,6 +19,11 @@ class ClosingDepositSlipDetailView(DetailView):
     model = closing
     context_object_name = 'closing'
     template_name = 'closing_deposit_slip.html'
+    def get_context_data(self, **kwargs):
+        context = super(ClosingDepositSlipDetailView, self).get_context_data(**kwargs)
+        obj = self.get_object()
+        context['deposit_total'] = obj.ri_proceeds + obj.city_loan_proceeds
+        return context
 
 class ApplicationPurchaseAgreement(DetailView):
     model = Application

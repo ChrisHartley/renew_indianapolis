@@ -20,7 +20,8 @@
           <tr><td>City POC</td><td>${{closing.city_loan_proceeds|default:0|intcomma}}</td></tr>
           <tr><td>City</td><td>${{closing.city_proceeds|default:0|intcomma}}</td></tr>
           <tr><td>Other</td><td>${{closing.other_closing_amount|default:0|intcomma}}</td></tr>
-          <tr><td>Total Sale Price</td><td>${{closing.application.Property.price|default:0|intcomma}}</td></tr>
+          <tr><td>Transaction Total/Price at Lock</td><td>${{closing.application.price_at_time_of_submission|default:0|intcomma}}</td></tr>
+          <tr><td>Deposit Total</td><td>${{deposit_total|default:0|intcomma}}</td></tr>
           <tr><td>Renew Closing Fee</td><td>${{closing.ri_closing_fee|default:0|intcomma}}</td></tr>
         </table>
       </dd>
