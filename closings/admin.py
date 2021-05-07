@@ -4,6 +4,8 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django import forms
 from django.utils.text import slugify
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from datetime import date
 from .models import location, company_contact, mailing_address, title_company, closing, processing_fee, purchase_option, closing_proxy, closing_proxy2, buyer_demographic
 from .forms import ClosingAdminForm, ClosingScheduleAdminForm
@@ -90,6 +92,37 @@ def custom_batch_editing__admin_action(self, request, queryset):
     )
 custom_batch_editing__admin_action.short_description = "Batch Update"
 
+def batch_create_option__admin_action(modeladmin, request, queryset):
+    selected_action = queryset.values_list('id', flat=True)
+
+    print('TRIGGER')
+    if request.method == 'POST':
+        print("HERE")
+        print(request.POST)
+        if 'form-post' in request.POST:
+            print("THERE")
+            print(request.POST)
+            for c in queryset:
+                print('Here on {}'.format(c,))
+                purchase_option.objects.create(
+                    date_purchased=request.POST.get('date_purchased'),
+                    date_expiring=request.POST.get('date_expiring'),
+                    amount_paid=request.POST.get('amount_paid'),
+                    closing=c,
+                )
+                #return HttpResponseRedirect(request.get_full_path())
+            return HttpResponseRedirect(request.get_full_path())
+
+
+        return render(
+            request,
+            'admin/batch_add_option_object.html',
+            context={
+                'queryset': queryset,
+                'selected_action': selected_action,
+            },
+        )
+batch_create_option__admin_action.short_description = 'Batch create purchase option'
 
 class ClosingAdmin(admin.ModelAdmin, ExportCsvMixin):
 
@@ -121,7 +154,7 @@ class ClosingAdmin(admin.ModelAdmin, ExportCsvMixin):
         'settlement_statement_download',
         'other_closing_docs_download',
      )
-    actions = [custom_batch_editing__admin_action,'export_as_csv']
+    actions = [custom_batch_editing__admin_action,batch_create_option__admin_action,'export_as_csv']
     inlines = [PurchaseOptionInline,BuyerDemographicInline]
     raw_id_fields = ('application',)
 
