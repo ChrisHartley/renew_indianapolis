@@ -21,11 +21,11 @@
     {% endif %}
 
     </ul>
-  </ul>
   <p>
     {{price_change.notes}}
   </p>
 
+{%comment%}
 <p>
   <table class="table table-condensed">
     <caption>12 Month Sales Summary</caption>
@@ -73,7 +73,10 @@
       {% endfor %}
     </tbody>
   </table>
-</p><p>
+</p>
+{%endcomment%}
+
+<p>
 
   <ul>
   <li>Lot Size: {{price_change.Property.area}} sqft</li>
