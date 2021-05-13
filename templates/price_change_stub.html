@@ -81,8 +81,12 @@
   <ul>
   <li>Lot Size: {{price_change.Property.area}} sqft</li>
   <li>Proposed Lot Price per SqFt: ${{price_change.proposed_price|divide_by:price_change.Property.area|floatformat:"3"|intcomma}}
+    {%comment%}
+
   <li>Assessed Land Value: ${{price_change.assessed_land_value|intcomma}}</li>
   <li>Assessed Improvement Value: ${{price_change.assessed_improvement_value|intcomma}}</li>
+  {%endcomment%}
+
 </ul>
 </p>
 {% if price_change.Property.conditionreport_set.count > 0 %}
