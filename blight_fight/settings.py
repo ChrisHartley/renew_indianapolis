@@ -283,7 +283,7 @@ COMPANY_SETTINGS = {
 }
 
 # This setting determins if property inquiries are allowed to be submitted
-PROPERTY_INQUIRIES_ENABLED = False
+PROPERTY_INQUIRIES_ENABLED = True
 # This setting sets if closing assignment notification emails are sent to city employees
 SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
