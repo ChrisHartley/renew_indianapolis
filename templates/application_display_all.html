@@ -44,12 +44,17 @@
       {%if pi.Property == application.application.Property %} Showing request submitted {{pi.timestamp|date:"m/d"}} {{pi.get_status_display}}<br/>{%endif%}{%endfor%}
     </dd>
     <dt>Why this property?</dt><dd>{{application.application.why_this_house}}</dd>
+    <dt>What level of experience do you have with rehab or new construction?</dt><dd>{{application.application.previous_experience}}</dd>
+    <dt>Who will perform the work?</dt><dd>{{application.application.who_will_perform_work}}</dd>
+
+    <dt>SoW / Finished Sq Ft</dt><dd>{{application.application.finished_square_footage}}</dd>
+    <dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.application.staff_sow_total|default:"-"|intcomma}}</dd>
+
     <dt>Staff Summary</dt>
     <dd>
        {{application.application.staff_summary}}
     </dd>
 
-    <dt>Value in Scope of Work/Schedule of Values</dt><dd>${{application.application.staff_sow_total|default:"-"|intcomma}}</dd>
     <dt>Proof of Funds</dt><dd>${{application.application.staff_pof_total|default:"-"|intcomma}}</dd>
     <dt>Proof of Funds notes</dt><dd>{{application.application.staff_pof_description}}</dd>
     <!-- <dt>Previous Purchases from Renew Indianapolis</dt><dd>(not implemented)</dd> -->
