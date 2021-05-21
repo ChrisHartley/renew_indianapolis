@@ -520,6 +520,14 @@ class Application(models.Model):
                 if self is not None and self.Property is not None:
                     self.price_at_time_of_submission = self.Property.price
 
+
+        # If this is being toggled on, reset the price. No way to undo since we don't save the original price.
+        if obj.staff_qualifies_for_affordable_housing_price == False and self.staff_qualifies_for_affordable_housing_price == True:
+            if self.Property is not None and self.Property.structureType == 'Residential Dwelling':
+                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['AFFORDABLE_HOUSING_PROGRAM_HOUSE_FEE']
+            if self.Property is not None and self.Property.structureType != 'Residential Dwelling':
+                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['AFFORDABLE_HOUSING_PROGRAM_LOT_FEE']
+
 #        if self.status == self.COMPLETE_STATUS and self.Property is not None and self.price_at_time_of_submission is None:
 #            if self.application_type == self.SIDELOT:
 #                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['SIDELOT_PRICE']
@@ -543,11 +551,7 @@ class Application(models.Model):
         if self.status == self.COMPLETE_STATUS and self.submitted_timestamp is None:
             self.submitted_timestamp = timezone.now()
 
-        if self.staff_qualifies_for_affordable_housing_price == True:
-            if self.Property is not None and self.Property.structureType == 'Residential Dwelling':
-                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['AFFORDABLE_HOUSING_PROGRAM_HOUSE_FEE']
-            if self.Property is not None and self.Property.structureType != 'Residential Dwelling':
-                self.price_at_time_of_submission = settings.COMPANY_SETTINGS['AFFORDABLE_HOUSING_PROGRAM_LOT_FEE']
+
 
         super(Application, self).save(*args, **kwargs)
 
