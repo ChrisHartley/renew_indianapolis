@@ -522,7 +522,7 @@ class Application(models.Model):
 
 
         # If this is being toggled on, reset the price. No way to undo since we don't save the original price.
-        if obj.staff_qualifies_for_affordable_housing_price == False and self.staff_qualifies_for_affordable_housing_price == True:
+        if obj is not None and obj.staff_qualifies_for_affordable_housing_price == False and self.staff_qualifies_for_affordable_housing_price == True:
             if self.Property is not None and self.Property.structureType == 'Residential Dwelling':
                 self.price_at_time_of_submission = settings.COMPANY_SETTINGS['AFFORDABLE_HOUSING_PROGRAM_HOUSE_FEE']
             if self.Property is not None and self.Property.structureType != 'Residential Dwelling':
