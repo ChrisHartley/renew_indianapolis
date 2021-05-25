@@ -28,17 +28,11 @@ class PropertyStatusYearListFilter(SimpleListFilter):
     parameter_name = 'status-year'
 
     def lookups(self, request, model_admin):
-        return (
-            ('2014','2014'),
-            ('2015','2015'),
-            ('2016','2016'),
-            ('2017','2017'),
-            ('2018','2018'),
-            ('2019','2019'),
-            ('2020','2020'),
-            ('2021','2021'),
+        year_range = []
+        for year in range(2014,int(timezone.now().year)+1):
+            year_range.append((str(year), str(year)),)
+        return tuple(year_range)
 
-        )
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(status__contains=self.value()).distinct()

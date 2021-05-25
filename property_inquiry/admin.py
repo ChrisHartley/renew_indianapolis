@@ -6,6 +6,7 @@ from .forms import propertyShowingAdminForm
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.contrib.admin import SimpleListFilter
+from django.utils import timezone
 
 from property_condition.models import ConditionReport
 from applications.models import Application
@@ -14,23 +15,18 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Q
 from utils.admin import ExportCsvMixin
 
+
 # add additional filter, year, and allow null status filter
 class PropertyInquiryYearListFilter(SimpleListFilter):
     title = 'Property Inquiry Year'
     parameter_name = 'inquiry-year'
 
     def lookups(self, request, model_admin):
-        return (
-            ('2014','2014'),
-            ('2015','2015'),
-            ('2016','2016'),
-            ('2017','2017'),
-            ('2018','2018'),
-            ('2019','2019'),
-            ('2020', '2020'),
-            ('2021', '2021'),
+        year_range = []
+        for year in range(2014,int(timezone.now().year)+1):
+            year_range.append((str(year), str(year)),)
+        return tuple(year_range)
 
-        )
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(timestamp__year=self.value())
