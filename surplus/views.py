@@ -136,7 +136,7 @@ def searchSurplusProperties(request):
 #    else:
 #        qs = Parcel.objects.filter(Q(requested_from_commissioners_date__exact='2018-08-16') & Q(requested_from_commissioners__exact=True) &Q(commissioners_response__exact=True)).exclude(intended_end_use='BEP')
     classification_requested = request.GET.get('classification', 1)
-    qs = Parcel.objects.filter(classification=classification_requested)
+    qs = Parcel.objects.filter(classification=classification_requested).filter(requested_from_commissioners_date__exact='2021-03-16')
     f = SurplusParcelFilter(request.GET, queryset=qs)
 
     if request.GET.get("geometry_type", None) == "centroid":

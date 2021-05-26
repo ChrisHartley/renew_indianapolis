@@ -25,7 +25,7 @@ class SurplusSearchForm(forms.ModelForm):
         #    'demolition_order_count',
         #    'repair_order_count',
         #    'vbo_count',
-        #    'requested_from_commissioners',
+            'requested_from_commissioners_date',
         #    'previously_held_gateway_area',
             'vetted',
         #    'vetting_notes'
@@ -53,6 +53,8 @@ class SurplusSearchForm(forms.ModelForm):
             Field('has_building', css_class='input-sm'),
     #        Field('big_ask', css_class='input-sm'),
             Field('township', css_class='input-sm'),
+            Field('requested_from_commissioners_date'),
+
             #Field('land_value', css_class='input-sm'),
             #Field('improved_value', css_class='input-sm'),
         #    Field('classification', css_class='input-sm'),
@@ -66,7 +68,6 @@ class SurplusSearchForm(forms.ModelForm):
             Field('general_search'),
             Field('geometry_type'),
 
-        #    Field('requested_from_commissioners', css_class='input-sm'),
         #    Field('previously_held_gateway_area', css_class='input-sm'),
             Field('notes', css_class='input-sm'),
         )
