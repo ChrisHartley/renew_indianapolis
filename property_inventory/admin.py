@@ -29,7 +29,7 @@ class PropertyStatusYearListFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         year_range = []
-        for year in range(2014,int(timezone.now().year)+1):
+        for year in range(2014,int(now().year)+1):
             year_range.append((str(year), str(year)),)
         return tuple(year_range)
 
