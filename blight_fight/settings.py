@@ -262,9 +262,8 @@ COMPANY_SETTINGS = {
     'RENEW_PA_RELEASE': 'nhunot@renewindy.org',
     'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
     'city_staff': (
-        {'name': 'Mickey Rogers', 'email': 'Michael.Rogers2@indy.gov'},
+        {'name': 'Ike Rogers', 'email': 'Michael.Rogers2@indy.gov'},
         {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
-        {'name': 'Gib Crabill', 'email': 'gib.crabill@indy.gov'},
         ),
     'NCST_CONTACTS': ['realestateteam@renewindy.org',],
     'RENEW_REHAB_CONTACT': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org'],
