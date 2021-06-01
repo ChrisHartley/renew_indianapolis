@@ -330,8 +330,12 @@ class buyer_demographic(models.Model):
     #id = models.AutoField(primary_key=True)
     disabled = models.NullBooleanField()
     military_service = models.CharField(max_length=128, choices=MILITARY_CHOICES, blank=True)
+    age = models.PositiveIntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=128, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
+    def __str__(self):
+        return '{} - {}'.format(self.closing,self.timestamp)
     class Meta:
         verbose_name = 'Buyer Demographic'
         verbose_name_plural = 'Buyer Demographics'
