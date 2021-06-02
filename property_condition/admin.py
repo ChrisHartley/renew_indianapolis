@@ -21,8 +21,16 @@ class ConditionReportAdmin(admin.ModelAdmin):
 
 
     def upload_photo_page(self, obj):
-        upload_photo_page_link = '<a target="_blank" href="{}?Property={}">{}</a>'.format(
-            reverse("admin_add_photos"), obj.Property.pk, "Add photos page")
+        if obj.Property_ncst is not None:
+            upload_photo_page_link = '<a target="_blank" href="{}?Property_ncst={}">{}</a>'.format(
+                reverse("admin_add_photos"), obj.Property_ncst.pk, "Add photos page")
+        elif obj.Property_surplus is not None:
+            upload_photo_page_link = '<a target="_blank" href="{}?Property_surplus={}">{}</a>'.format(
+                reverse("admin_add_photos"), obj.Property_surplus.pk, "Add photos page")
+        else:
+            upload_photo_page_link = '<a target="_blank" href="{}?Property={}">{}</a>'.format(
+                reverse("admin_add_photos"), obj.Property.pk, "Add photos page")
+
         return mark_safe(upload_photo_page_link)
 
     def scope_download(self, obj):
