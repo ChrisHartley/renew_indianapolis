@@ -61,10 +61,9 @@ class DumpPhotosForm(forms.Form):
                 prop_surplus = self.cleaned_data.get('prop_surplus')
                 prop_ncst = self.cleaned_data.get('prop_ncst')
                 if prop is not None:
-                    s = prop
+                    p = photo(image=image, prop=prop, main_photo=prime)
                 if prop_surplus is not None:
-                    s = prop_surplus
+                    p = photo(image=image, prop_surplus=prop_surplus, main_photo=prime)
                 if prop_ncst is not None:
-                    s = prop_ncst
-                p = photo(image=image, prop=s, main_photo=prime)
+                    p = photo(image=image, prop_ncst=prop_ncst, main_photo=prime)
                 p.save()
