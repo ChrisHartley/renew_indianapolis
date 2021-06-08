@@ -30,7 +30,7 @@ class MeetingLinkInline(admin.TabularInline):
     model = MeetingLink
     fields = ('meeting', 'meeting_outcome', 'application_link', 'get_structure_type', 'conditional_approval', 'notes', 'schedule_weight' )
     readonly_fields=('application','application_link', 'get_structure_type')
-    ordering = ('application__application_type', 'schedule_weight')
+    ordering = ('application__application_type', 'application__Property__streetAddress', 'schedule_weight')
     extra = 1
 
     def get_structure_type(self, obj):
