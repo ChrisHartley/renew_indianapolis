@@ -778,7 +778,7 @@ class PriceChangeMeetingLink(models.Model):
         super(PriceChangeMeetingLink, self).save(*args, **kwargs)
 
         chng = self.price_change
-        if chng.approved != True and self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS and self.meeting_outcome == self.APPROVED_STATUS:
+        if chng.approved != True and self.meeting_outcome == self.APPROVED_STATUS:
 
             if self.meeting.meeting_type == Meeting.BOARD_OF_DIRECTORS:
                 chng.approved = True
