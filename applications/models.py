@@ -507,6 +507,12 @@ class Application(models.Model):
     price_at_time_of_submission = models.DecimalField(
         max_digits=8, decimal_places=2, help_text="The price of the property at time of submission", null=True, blank=True)
 
+    represented_by_agent = models.NullBooleanField(
+        default=None,
+        verbose_name='Is the buyer represented by a real estate broker licensed in the state of Indiana?',
+        help_text="Your answer to this question won't change the price you pay, but lets our staff know they need to process certain paperwork."
+    )
+
 
     #meeting is MeetingLink accessor
 

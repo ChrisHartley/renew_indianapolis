@@ -125,7 +125,7 @@ class ApplicationAdmin(admin.ModelAdmin, ExportCsvMixin):
         }),
         ('Staff fields', {
             #'classes': ('collapse',),
-            'fields': ('staff_summary','staff_notes','staff_intent_neighborhood_notification','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','staff_qualifies_for_affordable_housing_price','frozen', 'staff_sidelot_waiver_required','n_notification', 'price_at_time_of_submission'))
+            'fields': ('staff_summary','staff_notes', 'represented_by_agent', 'staff_intent_neighborhood_notification','neighborhood_notification_details','neighborhood_notification_feedback','staff_sow_total',('staff_pof_total', 'staff_pof_description'),('staff_recommendation','staff_recommendation_notes','staff_points_to_consider','staff_qualifies_for_affordable_housing_price','frozen', 'staff_sidelot_waiver_required','n_notification', 'price_at_time_of_submission'))
 
         })
 

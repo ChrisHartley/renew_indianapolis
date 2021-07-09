@@ -79,6 +79,7 @@ class ApplicationForm(forms.ModelForm):
                 Field('landlord_in_marion_county'),
                 Field('landlord_registry'),
                 Field('organization'),
+                Field('represented_by_agent'),
                 HTML('<div class="form-group"><div class="control-label col-lg-4">Third Party Authorization Form</div><div id="3rd-party-authorization-file-uploader" class="form-control-static col-lg-6">Drop your third party authorization form file here to upload</div>'),
                 HTML("""<div class="help-block col-lg-6 col-lg-offset-4">
                             If someone is completing this application on your behalf or representing you, such as a Realtor&trade;, a translator, a family member, or a friend then you and they will need to complete
@@ -248,6 +249,8 @@ class ApplicationForm(forms.ModelForm):
         active_citations = cleaned_data.get('active_citations', None)
         landlord_in_marion_county = cleaned_data.get('landlord_in_marion_county', None)
         landlord_registry = cleaned_data.get('landlord_registry', None)
+        represented_by_agent = cleaned_data.get('represented_by_agent', None)
+
 
         planned_improvements = cleaned_data.get('planned_improvements')
         who_will_perform_work = cleaned_data.get('who_will_perform_work')
@@ -339,6 +342,9 @@ class ApplicationForm(forms.ModelForm):
             self.add_error('landlord_registry', ValidationError(
                 "Rental properties in Marion County must be properly registered in the Landlord Registry before you can submit an application to Renew Indianapolis."))
 
+        if represented_by_agent is None:
+            self.add_error('represented_by_agent', ValidationError(
+                "This is a required question."))
 
         if property_selected is None or property_selected == "":
             self.add_error('Property', ValidationError(
