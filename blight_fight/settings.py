@@ -262,11 +262,11 @@ COMPANY_SETTINGS = {
     'RENEW_PA_RELEASE': 'nhunot@renewindy.org',
     'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
     'city_staff': (
-        {'name': 'Ike Rogers', 'email': 'Michael.Rogers2@indy.gov'},
+        {'name': 'Ike McCoy', 'email': 'ike.mccoy@indy.gov'},
         {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
         ),
     'NCST_CONTACTS': ['realestateteam@renewindy.org',],
-    'RENEW_REHAB_CONTACT': ['squick@renewindy.org','glewis@renewindy.org', 'bharris@renewindy.org'],
+    'RENEW_REHAB_CONTACT': ['squick@renewindy.org','bburns@renewindy.org', 'bharris@renewindy.org'],
     'RENEW_OPERATIONS_MANAGER': ['bburns@renewindy.org',],
     'BLC_MANAGER': ['chartley@renewindy.org','acernich@renewindy.org'],
     'RENEW_ACCOUNTANT': ['sumnersl@comcast.net'],
@@ -285,7 +285,7 @@ COMPANY_SETTINGS = {
 PROPERTY_INQUIRIES_ENABLED = True
 # This setting sets if closing assignment notification emails are sent to city employees
 SEND_CLOSING_ASSIGNMENT_EMAILS = True
-CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, Mickey.Rogers@indy.gov'
+CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, ike.mccoy@indy.gov'
 CITY_URBAN_GARDENING_MANAGER_EMAIL = 'matt.mosier@indy.gov' # notified in closings app if city owned urban garden license property sells
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
 BLC_MANAGER_EMAIL = 'chartley@renewindy.org'
