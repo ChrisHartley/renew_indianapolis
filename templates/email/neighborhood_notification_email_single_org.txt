@@ -3,7 +3,7 @@ Hello,
 
 Renew Indianapolis has received the following applications for a property
 within the bounds of your organization. We are asking for your feedback
-as we consider this application.
+as we consider this application or these applications. There may be multiple applications for the same property; these applications are competing.
 
 {% for application in applications %}
 Applicant: {{application.user.first_name}} {{application.user.last_name}}{% if application.organization %}
