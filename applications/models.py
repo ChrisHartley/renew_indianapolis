@@ -522,7 +522,7 @@ class Application(models.Model):
         obj = None
         if self.pk is not None:
             obj = Application.objects.get(pk=self.pk)
-        if obj is None or self.Property is not None or (obj is not None and obj.Property != self.Property): #if this is the first save of a new application or select a new property.
+        if (obj is not None and obj.Property != self.Property): #if this is the first save of a new application or select a new property.
                 if self is not None and self.Property is not None:
                     self.price_at_time_of_submission = self.Property.price
 
