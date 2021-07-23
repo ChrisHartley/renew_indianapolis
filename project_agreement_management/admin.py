@@ -111,7 +111,7 @@ class PropertyOwnerFilter(admin.SimpleListFilter):
         if self.value() == 'true':
             return queryset.filter(Property__renew_owned__exact=True)
         if self.value() == 'false':
-            return queryset.filter(Property__renew_owned__exact=True)
+            return queryset.filter(Property__renew_owned__exact=False)
 
 class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]
