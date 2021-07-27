@@ -7,7 +7,8 @@ from django import forms
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.safestring import mark_safe
-
+from django.utils import timezone
+from datetime import timedelta
 from .models import Document, Note, Release, InspectionRequest, Inspection
 from .models import BreechType, Enforcement, WorkoutMeeting, BreechStatus
 from applications.models import Application
@@ -85,6 +86,7 @@ class InspectionRequestStageFilter(admin.SimpleListFilter):
             ('new', 'No inspection'),
             ('inspection_passed', 'Inspection passed, no release'),
             ('released', 'Completed and released'),
+            ('inspected_unreleased','Inspected, not released'),
         )
 
     def queryset(self, request, queryset):
@@ -94,6 +96,8 @@ class InspectionRequestStageFilter(admin.SimpleListFilter):
             return queryset.filter(inspection__pass_outcome__exact=True).filter(inspection__release__isnull=True).distinct()
         if self.value() == 'released':
             return queryset.filter(inspection__release__isnull=False).distinct()
+        if self.value() == 'inspected_unreleased':
+            return queryset.filter(inspection__isnull=False).filter(inspection__release__isnull=True).distinct()
         return queryset
 
 
@@ -112,6 +116,7 @@ class PropertyOwnerFilter(admin.SimpleListFilter):
             return queryset.filter(Property__renew_owned__exact=True)
         if self.value() == 'false':
             return queryset.filter(Property__renew_owned__exact=False)
+
 
 class InspectionRequestAdmin(admin.ModelAdmin):
     inlines = [NoteInline, DocumentInline]
@@ -189,11 +194,77 @@ class BreechTypesInlineAdmin(admin.TabularInline):
     can_delete = False
 
 
+class ApplicationTypeFilter(admin.SimpleListFilter):
+    title = 'Application Type'
+    parameter_name = 'application_type'
+    def lookups(self, request, model_admin):
+        return (
+            ('1','Homestead'),
+            ('2', 'Standard'),
+            ('3', 'Sidelot'),
+            ('4', 'Vacant Lot'),
+            ('5', 'Future Development Lot'),
+            ('no-development-commitment', 'No development commitment'),
+            )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'no-development-commitment':
+            return queryset.filter(enforcement__Application__application_type__in=[3,4,5])
+        elif self.value() is not None:
+            return queryset.filter(enforcement__Application__application_type__exact=int(self.value()))
+        else:
+             return queryset
+
+class StructureTypeFilter(admin.SimpleListFilter):
+    title = 'Structure Type'
+    parameter_name = 'structure_type'
+    def lookups(self, request, model_admin):
+        return (
+            ('structure','Structure'),
+            ('lot', 'Lot'),
+            )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'structure':
+            return queryset.filter(enforcement__Application__Property__structureType__in=['Residential Dwelling', 'Mixed Use Commercial'])
+        elif self.value() == 'lot':
+            return queryset.filter(enforcement__Application__Property__structureType__in=['Vacant Lot', 'Detached Garage/Boat House'])
+        else:
+             return queryset
+
+class AgeFilter(admin.SimpleListFilter):
+    title = 'Years since Sale'
+    parameter_name = 'age'
+    def lookups(self, request, model_admin):
+        return (
+            ('0-1','0-1'),
+            ('1-2', '1-2'),
+            ('2-4', '2-4'),
+            ('4-5', '4-5'),
+            ('5', '5+'),
+            )
+
+    def queryset(self, request, queryset):
+        interval = timezone.now()
+        if self.value() == '5':
+            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*5))
+        elif self.value() == '4-5':
+            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*4))
+        elif self.value() == '2-4':
+            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*3))
+        elif self.value() == '1-2':
+            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*2))
+        elif self.value() == '0-1':
+            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*1))
+        else:
+             return queryset
+
+
 class BreechStatusAdmin(admin.ModelAdmin):
     raw_id_fields = ('enforcement',)
     inlines = [NoteInline,DocumentInline]
     list_display = ('enforcement','breech', 'status')
-    list_filter = ('status', 'breech')
+    list_filter = ('status', 'breech', ApplicationTypeFilter, StructureTypeFilter,AgeFilter)
     search_fields = (
         'enforcement__Property__parcel',
         'enforcement__Property__streetAddress',
