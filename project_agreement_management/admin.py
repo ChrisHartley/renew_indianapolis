@@ -242,18 +242,29 @@ class AgeFilter(admin.SimpleListFilter):
             ('2-4', '2-4'),
             ('4-5', '4-5'),
             ('5', '5+'),
+            ('invalid', 'Missing Data'),
             )
 
     def queryset(self, request, queryset):
-        interval = timezone.now()
+        if self.value() == 'invalid':
+            return queryset.filter(enforcement__Application__closing_set__isnull=True)
         if self.value() == '5':
-            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*5))
+            return queryset.filter(enforcement__Application__closing_set__date_time__lte=timezone.now()-timezone.timedelta(days=365*5))
         elif self.value() == '4-5':
-            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*4))
+            return queryset.filter(
+                enforcement__Application__closing_set__date_time__lte=timezone.now()-timezone.timedelta(days=365*4)).filter(
+                enforcement__Application__closing_set__date_time__gt=timezone.now()-timezone.timedelta(days=365*5)
+            )
         elif self.value() == '2-4':
-            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*3))
+            return queryset.filter(
+                enforcement__Application__closing_set__date_time__lte=timezone.now()-timezone.timedelta(days=365*2)).filter(
+                enforcement__Application__closing_set__date_time__gt=timezone.now()-timezone.timedelta(days=365*4)
+            )
         elif self.value() == '1-2':
-            return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*2))
+            return queryset.filter(
+                enforcement__Application__closing_set__date_time__lte=timezone.now()-timezone.timedelta(days=365*2)).filter(
+                enforcement__Application__closing_set__date_time__gt=timezone.now()-timezone.timedelta(days=365*1)
+            )
         elif self.value() == '0-1':
             return queryset.filter(enforcement__Application__closing_set__date_time__gte=timezone.now()-timezone.timedelta(days=365*1))
         else:
@@ -263,7 +274,7 @@ class AgeFilter(admin.SimpleListFilter):
 class BreechStatusAdmin(admin.ModelAdmin):
     raw_id_fields = ('enforcement',)
     inlines = [NoteInline,DocumentInline]
-    list_display = ('enforcement','breech', 'status')
+    list_display = ('enforcement','breech', 'status', 'sale_date')
     list_filter = ('status', 'breech', ApplicationTypeFilter, StructureTypeFilter,AgeFilter)
     search_fields = (
         'enforcement__Property__parcel',
@@ -276,6 +287,12 @@ class BreechStatusAdmin(admin.ModelAdmin):
     actions = ['export_as_csv_custom_action',]
 
 
+    def sale_date(self,obj):
+        if obj.enforcement is not None:
+            if obj.enforcement.Application is not None:
+                if obj.enforcement.Application.closing_set.count() > 0:
+                    return obj.enforcement.Application.closing_set.first().date_time
+        return ''
 
     def export_as_csv_custom_action(self, request, queryset):
         response = HttpResponse(content_type='text/csv')
