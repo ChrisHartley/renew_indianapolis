@@ -134,7 +134,7 @@ class purchase_option(models.Model):
         elif self.closing.Property is not None:
             cp = self.closing.Property
 
-        status_text = 'Sale approved - purchase option {}'.format(datetime.strptime(self.date_purchased, '%Y-%m-%d').strftime('%m/%d/%Y'),)
+        status_text = 'Sale approved - purchase option {}'.format(self.date_purchased.strftime('%m/%d/%Y'),)
         if self.date_purchased is not None and cp is not None and cp.status != status_text:
             cp.status = status_text
             cp.save()
