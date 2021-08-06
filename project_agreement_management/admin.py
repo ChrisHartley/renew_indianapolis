@@ -284,7 +284,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
         'enforcement__Application__organization__name',
         'enforcement__Application__user__email',
         )
-    actions = ['export_as_csv_custom_action',]
+    actions = ['export_as_csv_custom_action','add_delinquent_taxes']
 
 
     def sale_date(self,obj):
@@ -293,6 +293,29 @@ class BreechStatusAdmin(admin.ModelAdmin):
                 if obj.enforcement.Application.closing_set.count() > 0:
                     return obj.enforcement.Application.closing_set.first().date_time
         return ''
+
+    def add_delinquent_taxes(self, request, queryset):
+        command_output = ''
+        command_output2 = ''
+        returned_result = ''
+        if 'apply' in request.POST:
+            print(request.POST)
+            parcels = request.POST.get('parcels').replace('\n', ' ').replace('\r', ' ').strip()
+            if request.POST.get('comprehensive') == 'on':
+                management.call_command('add_delinquent_taxes', '--comprehensive', parcels, stdout=command_output)
+            else:
+                management.call_command('add_delinquent_taxes', parcels, stdout=command_output)
+
+            self.message_user(request,
+                  "Add Delinquent Taxes completed. {} {} {}.".format(command_output,command_output2,returned_result))
+            #print('{} {} {}'.format(command_output,command_output2,returned_result))
+            return HttpResponseRedirect(request.get_full_path())
+
+        return render(request,
+              'admin/project_agreement_management/add_delinquent_taxes.html',
+              context={'objects':queryset,}
+              )
+
 
     def export_as_csv_custom_action(self, request, queryset):
         response = HttpResponse(content_type='text/csv')
