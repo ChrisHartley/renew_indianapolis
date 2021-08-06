@@ -14,9 +14,46 @@ from .models import BreechType, Enforcement, WorkoutMeeting, BreechStatus
 from applications.models import Application
 from property_inventory.models import take_back
 from closings.models import closing
-
 import csv
 from django.http import HttpResponse
+from django.core import management
+from django.core.management.commands import loaddata
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+
+from utils.utils import batch_update_view
+def custom_batch_editing__admin_action(self, request, queryset):
+    return batch_update_view(
+        model_admin=self,
+        request=request,
+        queryset=queryset,
+        field_names=['showing_scheduled','status','notes'],
+    )
+custom_batch_editing__admin_action.short_description = "Batch Update"
+
+
+
+def add_note(modeladmin, request, queryset):
+    if request.method == 'POST':
+        print("HERE")
+        print(request.POST)
+        if 'form-post' in request.POST:
+            print("THERE")
+            for p in queryset:
+                print('Here on {}'.format(p,))
+                p.notes.create(text=request.POST.get('note_text'))
+                #return HttpResponseRedirect(request.get_full_path())
+                return HttpResponseRedirect(request.get_full_path())
+
+        return render(
+            request,
+            'admin/batch_add_note_object.html',
+        )
+#        p.notes.create(text='Sample text')
+
+
+
+
 
 class NoteInline(GenericStackedInline):
     model = Note
@@ -180,6 +217,51 @@ class InspectionRequestAdmin(admin.ModelAdmin):
             phone = obj.Application.user.profile.phone_number
             return '{} {} {}'.format(name, email, phone)
         return 'nothing on file'
+
+
+
+    def export_as_csv_custom_action(self, request, queryset):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format('Inspect-Request')
+        writer = csv.writer(response)
+
+        field_names = [
+            'Street Address',
+            'Parcel',
+            'Legal Description',
+            'Transaction Date',
+            'Instrument Number',
+            ]
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            prop = None
+            app = None
+            if obj.Application is not None:
+                prop = obj.Application.Property
+                app = obj.Application
+            elif obj.Property is not None:
+                prop = obj.Property
+                app = obj.Property.buyer_application
+
+            try:
+                clo = closing.objects.get(application=app).filter().last()
+                closing_date = clo.date_time.strftime('%x')
+                instrument_number = clo.recorded_city_deed_instrument_number
+            except closing.DoesNotExist:
+                closing_date = '-'
+                instrument_number = '-'
+            data = [
+                prop.streetAddress,
+                prop.parcel,
+                prop.short_legal_description,
+                closing_date,
+                instrument_number,
+                ]
+            row = writer.writerow(data)
+
+        return response
+    export_as_csv_custom_action.short_description = 'Export as CSV for Release Creation'
 
 class EnforcementInlineAdmin(admin.TabularInline):
     model = Enforcement.meeting.through
