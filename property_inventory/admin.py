@@ -38,6 +38,22 @@ class PropertyStatusYearListFilter(SimpleListFilter):
             return queryset.filter(status__contains=self.value()).distinct()
         return queryset
 
+class PropertyBLCListingFilter(SimpleListFilter):
+    title = 'BLC Listing'
+    parameter_name = 'blc'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('true','Has BLC Listing'),
+            ('false', 'No BLC Listing'),
+            )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'true':
+            return queryset.filter(blc_listing__isnull=False)
+        if self.value() == 'false':
+            return queryset.filter(blc_listing__isnull=True)
+
 class PropertyStatusListFilter(SimpleListFilter):
     title = 'Property Status'
     parameter_name = 'status'
@@ -87,7 +103,7 @@ class FeaturedPropertyInlineAdmin(regular_admin.TabularInline):
 class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
     search_fields = ('parcel', 'streetAddress', 'zipcode__name', 'buyer_application__user__email', 'buyer_application__user__last_name', 'buyer_application__user__first_name', 'buyer_application__organization__name')
     list_display = ('parcel', 'streetAddress', 'structureType', 'price', 'status', 'future_development_program_eligible', 'is_active','get_landbank_active_available')
-    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition', PropertyTypeFilter)
+    list_filter = (PropertyStatusListFilter,'structureType', PropertyStatusYearListFilter, 'renew_owned', 'is_active', 'hhf_demolition', PropertyTypeFilter, PropertyBLCListingFilter)
     inlines = [ NoteInlineAdmin, FeaturedPropertyInlineAdmin, lockboxInlineAdmin]
     raw_id_fields = ('buyer_application',) # we need to be able to set to null if the app withdraws but don't want to incur overhead of select field.
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js'
