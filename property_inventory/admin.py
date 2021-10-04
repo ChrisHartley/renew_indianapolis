@@ -22,6 +22,13 @@ from django.utils.timezone import now
 #import pytz
 
 from utils.admin import ExportCsvMixin, PropertyTypeFilter
+from epp_connector.views import write_xlsx
+from django.http import HttpResponse
+from wsgiref.util import FileWrapper
+import mimetypes
+import os
+
+
 
 class PropertyStatusYearListFilter(SimpleListFilter):
     title = 'Property Status Year'
@@ -114,7 +121,23 @@ class PropertyAdmin(admin.OSMGeoAdmin, ExportCsvMixin):
         'application_summary', 'condition_report_link', 'flood_zone', 'yard_sign',
         'get_landbank_active_available',
     )
-    actions = ["export_as_csv"]
+    actions = ["export_as_csv", "bulk_epp_export"]
+
+    def bulk_epp_export(modeladmin, request, queryset):
+        parcels = []
+        for p in queryset:
+            parcels.append(p.parcel)
+        write_xlsx(parcels)
+        FILENAME = '/tmp/property-import-bulk.xlsx'
+        #response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        wrapper = FileWrapper(open(FILENAME,'rb'))
+        content_type = mimetypes.MimeTypes().guess_type(FILENAME)[0]
+        response = HttpResponse(wrapper, content_type=content_type)
+        response['Content-Length'] = os.path.getsize(FILENAME)
+        response['Content-Disposition'] = 'attachment; filename="property-import-bulk.xlsx"'
+        return response
+    bulk_epp_export.short_description = "Create EPP Import File"
+
 
     def flood_zone(self,obj):
         if obj.geometry is not None:
