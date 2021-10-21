@@ -314,6 +314,24 @@ class StructureTypeFilter(admin.SimpleListFilter):
         else:
              return queryset
 
+class OwnerFilter(admin.SimpleListFilter):
+    title = 'Owner'
+    parameter_name = 'owner'
+    def lookups(self, request, model_admin):
+        return (
+            ('dmd','DMD'),
+            ('renew', 'Renew'),
+            )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'dmd':
+            return queryset.filter(enforcement__Application__Property__renew_owned=False)
+        elif self.value() == 'renew':
+            return queryset.filter(enforcement__Application__Property__renew_owned=True)
+        else:
+             return queryset
+
+
 class AgeFilter(admin.SimpleListFilter):
     title = 'Years since Sale'
     parameter_name = 'age'
@@ -357,7 +375,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
     raw_id_fields = ('enforcement',)
     inlines = [NoteInline,DocumentInline]
     list_display = ('enforcement','breech', 'status', 'sale_date')
-    list_filter = ('status', 'breech', ApplicationTypeFilter, StructureTypeFilter,AgeFilter)
+    list_filter = ('status', 'breech', ApplicationTypeFilter, StructureTypeFilter,AgeFilter,OwnerFilter)
     search_fields = (
         'enforcement__Property__parcel',
         'enforcement__Property__streetAddress',
@@ -407,6 +425,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
         field_names = [
             'Street Address',
             'Parcel',
+            'Renew Owned',
             'Structure Type',
             'Application Type',
             'Sale Date',
@@ -438,6 +457,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
                 data = [
                     obj.enforcement.Property.streetAddress,
                     obj.enforcement.Property.parcel,
+                    obj.enforcement.Property.renew_owned,
                     obj.enforcement.Property.structureType,
                     obj.enforcement.Application.get_application_type_display(),
                     obj.enforcement.Property.status[5:], # sale date
@@ -466,6 +486,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
                 data = [
                     obj.enforcement.Property.streetAddress,
                     obj.enforcement.Property.parcel,
+                    obj.enforcement.Property.renew_owned,
                     obj.enforcement.Property.structureType,
                     'Legacy application not in system',
                     obj.enforcement.Property.status[5:],
