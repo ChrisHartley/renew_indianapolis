@@ -274,6 +274,7 @@ def write_xlsx(parcels):
     props = Property.objects.filter(parcel__in=parcels) #get_object_or_404(Property, parcel=parcel)
     line = 1
     for prop in props:
+        #print(prop)
         sales_program = 'Homestead'
         if not prop.homestead_only:
             sales_program += '|Standard'
@@ -285,6 +286,12 @@ def write_xlsx(parcels):
             property_class = 'Residential Building'
         if prop.structureType == 'Mixed Use Commercial':
             property_class = 'Commercial Building'
+
+        inventory_type = ''
+        if prop.propertyType == 'lb':
+            inventory_type = 'Land Bank'
+        if prop.propertyType == 'in':
+            inventory_type = 'Renew Investment'
 
         blc_id = ''
         blc = blc_listing.objects.filter(Property=prop).first()
@@ -315,7 +322,7 @@ def write_xlsx(parcels):
         d['Update'] = '',
         d['Available'] = 'Y' if prop.status == 'Available' else 'N',
         d['Foreclosure Year'] = '',
-        d['Inventory Type'] = 'Land Bank', ###
+        d['Inventory Type'] = inventory_type, #'Land Bank', ###
         d['Legal Description'] = prop.short_legal_description,
         d['Listing Comments'] = '',
         d['Maintenance Manager Party External System Id'] = 'INDY1010' if prop.renew_owned else 'INDY1007',
@@ -369,6 +376,7 @@ def write_xlsx(parcels):
         d['Custom.Mowing Type'] = 'Mow',
         d['Custom.Sales Program'] = sales_program,
 
+        #print(d)
         if line == 1:
             idx = 0
             for k, v in list(d.items()):
