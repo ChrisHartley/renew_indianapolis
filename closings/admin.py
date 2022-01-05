@@ -53,15 +53,21 @@ class PurchaseOptionFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('no', 'No option purchased or is expired'),
-            ('yes', 'Yes, option purchased and current'),
+            ('current', 'Current Purchase Option'),
+            ('expired', 'Expired Purchase Option'),
+            ('none', 'No Purchase Option'),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'no':
-            return queryset.filter(Q(purchase_option__isnull=True) | Q(purchase_option__date_expiring__lte=date.today()) ).exclude(purchase_option__date_expiring__gte=date.today())
-        if self.value() == 'yes':
+        if self.value() == 'current':
             return queryset.filter(purchase_option__date_expiring__gte=date.today())
+        if self.value() == 'expired':
+            return queryset.filter(purchase_option__date_expiring__lte=date.today()).exclude(purchase_option__date_expiring__gte=date.today())
+        if self.value() == 'none':
+            return queryset.filter(purchase_option__isnull=True)
+
+        return queryset
+
 
 class ProccessingFeePaidFilter(admin.SimpleListFilter):
     title = 'processing fee paid'
