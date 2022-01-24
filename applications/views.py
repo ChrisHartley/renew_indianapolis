@@ -666,8 +666,8 @@ class GenerateNeighborhoodNotificationsVersion2(DetailView):
         if self.request.GET.get('get_csv') == 'True':
             return response # return CSV file response.
         if self.request.GET.get('send_email') == 'True':
-            #email.send()
-            pass
+            email.send()
+            #pass
 
 
 
