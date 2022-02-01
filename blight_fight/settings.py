@@ -244,10 +244,10 @@ GOOGLE_STREETVIEW_API_KEY_SIGNING_SECRET = ''
 
 #
 COMPANY_SETTINGS = {
-    'APPLICATION_CONTACT_NAME': 'Nicholas Hunot',
+    'APPLICATION_CONTACT_NAME': 'Jeb Reece',
     'APPLICATION_CONTACT_EMAIL': 'landbank@renewindy.org',
     'APPLICATION_CONTACT_PHONE': '317-932-3770',
-    'COMMERCIAL_CONTACT_NAME':'Nicholas Hunot',
+    'COMMERCIAL_CONTACT_NAME':'Jeb Reece',
     'COMMERCIAL_CONTACT_EMAIL': 'landbank@renewindy.org',
     'COMMERCIAL_CONTACT_PHONE': '317-932-3770',
     'SIDELOT_PROCESSING_FEE': 100,
@@ -259,7 +259,7 @@ COMPANY_SETTINGS = {
     'SIDELOT_PRICE': 750.00, # Regular sidelot price
     'AFFORDABLE_HOUSING_PROGRAM_LOT_FEE': 1500,
     'AFFORDABLE_HOUSING_PROGRAM_HOUSE_FEE': 3500,
-    'RENEW_PA_RELEASE': 'nhunot@renewindy.org',
+    'RENEW_PA_RELEASE': 'landbank@renewindy.org',
     'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
     'city_staff': (
         {'name': 'Ike McCoy', 'email': 'ike.mccoy@indy.gov'},
@@ -268,12 +268,12 @@ COMPANY_SETTINGS = {
     'NCST_CONTACTS': ['realestateteam@renewindy.org',],
     'RENEW_REHAB_CONTACT': ['squick@renewindy.org','bburns@renewindy.org', 'bharris@renewindy.org'],
     'RENEW_OPERATIONS_MANAGER': ['bburns@renewindy.org',],
-    'BLC_MANAGER': ['chartley@renewindy.org','acernich@renewindy.org'],
+    'BLC_MANAGER': ['acernich@renewindy.org'],
     'RENEW_ACCOUNTANT': ['sumnersl@comcast.net'],
     'CONTACTS': (
         {'role': 'RENEW_REHAB_CONTACT', 'email': ['squick@renewindy.org','bburns@renewindy.org', 'bharris@renewindy.org']},
         {'role': 'NCST_CONTACTS', 'email': ['realestateteam@renewindy.org',],},
-        {'role': 'RENEW_PA_RELEASE', 'email': ['nhunot@renewindy.org',],},
+        {'role': 'RENEW_PA_RELEASE', 'email': ['jreece@@renewindy.org',],},
         {'role': 'CITY_PA_RELEASE', 'email': ['Matthew.Hostetler@indy.gov',],},
         {'role': 'RENEW_OPERATIONS_MANAGER', 'name': 'Brandi Burns', 'email': ['bburns@renewindy.org',],},
 
