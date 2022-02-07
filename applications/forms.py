@@ -11,6 +11,7 @@ from django.forms.models import inlineformset_factory
 from applicants.widgets import AddAnotherWidgetWrapper
 from django.core.exceptions import ValidationError
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
+from django.db.models import Q
 
 class ScheduleInlineForm(forms.Form):
     meeting = forms.ModelChoiceField(Meeting.objects.all().order_by('-meeting_date') )
@@ -18,8 +19,13 @@ class ScheduleInlineForm(forms.Form):
 
 class ApplicationForm(forms.ModelForm):
     Property = forms.ModelChoiceField(
-        queryset=Property.objects.filter(propertyType__exact='lb').exclude(status__contains='Sale approved by MDC').exclude(is_active__exact=False).exclude(
-            status__contains='Sold').exclude(status__contains='Sale approved - purchase option').exclude(status__contains='BEP').exclude(status__contains='Sale approved by Board of Directors', renew_owned=True).order_by('streetAddress'),
+        queryset=Property.objects.filter(
+        Q(propertyType__exact='lb', is_active__exact=True) &
+            (   Q(status__exact='Available') |
+                Q(status__icontains='Sale approved by Review') |
+                Q(status__icontains='Sale approved by Board of Directors', renew_owned=False)
+            )
+        ).order_by('streetAddress'),
         help_text='Select the property you are applying for. One property per application.',
         required=False
     )
