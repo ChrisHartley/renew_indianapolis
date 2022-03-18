@@ -92,12 +92,17 @@ def showApplications(request):
     soldInvestmentProps = []
     sip = Property.objects.filter(status__istartswith='Sold').filter(propertyType='in')
     for s in sip:
+        try:
+            sale_date = datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date()
+        except ValueError:
+            sale_date = None
+
         soldInvestmentProps.append(
             {
                 'address': s.streetAddress,
                 'structureType': s.structureType,
                 'parcel': s.parcel,
-                'sale_date': datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date(),
+                'sale_date': sale_date,
                 'buyer': s.applicant,
                 'amount': s.price,
             }
