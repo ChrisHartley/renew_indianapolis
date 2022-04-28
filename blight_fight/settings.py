@@ -286,7 +286,7 @@ PROPERTY_INQUIRIES_ENABLED = True
 # This setting sets if closing assignment notification emails are sent to city employees
 SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, ike.mccoy@indy.gov'
-CITY_URBAN_GARDENING_MANAGER_EMAIL = 'matt.mosier@indy.gov' # notified in closings app if city owned urban garden license property sells
+CITY_URBAN_GARDENING_MANAGER_EMAIL = '' # notified in closings app if city owned urban garden license property sells
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
 BLC_MANAGER_EMAIL = 'chartley@renewindy.org'
 SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL = True
