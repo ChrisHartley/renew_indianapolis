@@ -78,12 +78,16 @@ def showApplications(request):
     soldProps = []
     sp = Property.objects.filter(status__istartswith='Sold').filter(propertyType='lb')
     for s in sp:
+        try:
+            sale_date = datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date()
+        except ValueError as e:
+            sale_date = None
         soldProps.append(
             {
                 'address': s.streetAddress,
                 'structureType': s.structureType,
                 'parcel': s.parcel,
-                'sale_date': datetime.datetime.strptime(s.status[5:], '%m/%d/%Y').date(),
+                'sale_date': sale_date,
                 'buyer': s.applicant,
                 'amount': s.price,
             }
