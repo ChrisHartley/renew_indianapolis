@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+{# Modified from https://blog.typodrive.com/2018/02/09/simple-django-admin-bulk-editing/ #}
+{% load crispy_forms_tags custom_tags static %}
+{% block extrahead %}
+
+{{ block.super }}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
+
+<!-- Bootstrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block content %}
+
+      <form action="" method="post" enctype="multipart/form-data">
+        <div class='form-group'>
+          {% csrf_token %}
+          <label for='breach_type'>Type of breach</label>
+          <select name="breach_type">
+            {% for breach_type in breach_types %}
+            <option>{{breach_type}}</option>
+            {% endfor%}
+          </select>
+          </div><div class='form-group'>
+
+          <label for='parcels'>List of parcels</label>
+              <textarea name="parcels" id="parcels" cols='7' rows='10'></textarea>
+              </div>
+              {% for object in objects %}
+              <input type="hidden" name="_selected_action" value="{{ object.pk }}">
+            {% endfor %}
+            <div class='form-group'>
+            <label for="comprehensive">Is this a comprehensive list of parcels with this breach type?
+
+            </label>
+            <input type="checkbox" name="comprehensive"/>
+            <span id="helpBlock" class="help-block">Checking this box will cause any other open breaches of this type to be marked closed. </span>
+            </div>
+            <input type="hidden" name="action" value="{{ request.POST.action }}"/>
+            <input type="hidden" name="form-post" value="True"/>
+            <input type="submit" name="apply" value="Save"/>
+        </form>
+
+{% endblock %}
