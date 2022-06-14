@@ -18,7 +18,7 @@ ALLOWED_HOSTS = []
 
 INTERNAL_IPS = ['127.0.0.1',]
 
-ADMINS = (('Chris Hartley', 'chris.hartley@renewindianapolis.org'),)
+ADMINS = (('Chris Hartley', 'chris.hartley@anymouse.org'),)
 
 # Application definition
 
@@ -245,10 +245,10 @@ GOOGLE_STREETVIEW_API_KEY_SIGNING_SECRET = ''
 #
 COMPANY_SETTINGS = {
     'APPLICATION_CONTACT_NAME': 'Jeb Reece',
-    'APPLICATION_CONTACT_EMAIL': 'landbank@renewindy.org',
+    'APPLICATION_CONTACT_EMAIL': 'landbank@intendindiana.org',
     'APPLICATION_CONTACT_PHONE': '317-932-3770',
     'COMMERCIAL_CONTACT_NAME':'Jeb Reece',
-    'COMMERCIAL_CONTACT_EMAIL': 'landbank@renewindy.org',
+    'COMMERCIAL_CONTACT_EMAIL': 'landbank@intendindiana.org',
     'COMMERCIAL_CONTACT_PHONE': '317-932-3770',
     'SIDELOT_PROCESSING_FEE': 100,
     'SIDELOT_PROCESSING_STRIPE_FEE': 256, # new based on non-profit 2.2% + $0.30 rate
@@ -259,23 +259,24 @@ COMPANY_SETTINGS = {
     'SIDELOT_PRICE': 750.00, # Regular sidelot price
     'AFFORDABLE_HOUSING_PROGRAM_LOT_FEE': 1500,
     'AFFORDABLE_HOUSING_PROGRAM_HOUSE_FEE': 3500,
-    'RENEW_PA_RELEASE': 'landbank@renewindy.org',
+    'RENEW_PA_RELEASE': 'landbank@intendindiana.org',
     'CITY_PA_RELEASE': 'Matthew.Hostetler@indy.gov',
     'city_staff': (
         {'name': 'Ike McCoy', 'email': 'ike.mccoy@indy.gov'},
         {'name': 'Michelle Inabnit', 'email': 'Michelle.Inabnit@indy.gov'},
+        {'name': 'Matt Hostetler', 'email': 'matthew.hostetler@indy.gov'}
         ),
-    'NCST_CONTACTS': ['realestateteam@renewindy.org',],
-    'RENEW_REHAB_CONTACT': ['squick@renewindy.org','bburns@renewindy.org', 'bharris@renewindy.org'],
-    'RENEW_OPERATIONS_MANAGER': ['bburns@renewindy.org',],
-    'BLC_MANAGER': ['acernich@renewindy.org'],
+    'NCST_CONTACTS': ['realestateteam@intendindiana.org',],
+    'RENEW_REHAB_CONTACT': ['squick@intendindiana.org','bburns@intendindiana.org', 'bharris@intendindiana.org'],
+    'RENEW_OPERATIONS_MANAGER': ['bburns@intendindiana.org',],
+    'BLC_MANAGER': ['acernich@intendindiana.org'],
     'RENEW_ACCOUNTANT': ['sumnersl@comcast.net'],
     'CONTACTS': (
-        {'role': 'RENEW_REHAB_CONTACT', 'email': ['squick@renewindy.org','bburns@renewindy.org', 'bharris@renewindy.org']},
-        {'role': 'NCST_CONTACTS', 'email': ['realestateteam@renewindy.org',],},
-        {'role': 'RENEW_PA_RELEASE', 'email': ['jreece@@renewindy.org',],},
+        {'role': 'RENEW_REHAB_CONTACT', 'email': ['squick@intendindiana.org','bburns@intendindiana.org', 'bharris@intendindiana.org']},
+        {'role': 'NCST_CONTACTS', 'email': ['realestateteam@intendindiana.org',],},
+        {'role': 'RENEW_PA_RELEASE', 'email': ['jreece@@intendindiana.org',],},
         {'role': 'CITY_PA_RELEASE', 'email': ['Matthew.Hostetler@indy.gov',],},
-        {'role': 'RENEW_OPERATIONS_MANAGER', 'name': 'Brandi Burns', 'email': ['bburns@renewindy.org',],},
+        {'role': 'RENEW_OPERATIONS_MANAGER', 'name': 'Brandi Burns', 'email': ['bburns@intendindiana.org',],},
 
 
     ),
@@ -288,9 +289,9 @@ SEND_CLOSING_ASSIGNMENT_EMAILS = True
 CITY_PROPERTY_MANAGER_EMAIL = 'Michelle.Inabnit@indy.gov, ike.mccoy@indy.gov'
 CITY_URBAN_GARDENING_MANAGER_EMAIL = '' # notified in closings app if city owned urban garden license property sells
 SEND_CITY_CLOSED_NOTIFICATION_EMAIL = True
-BLC_MANAGER_EMAIL = 'chartley@renewindy.org'
+BLC_MANAGER_EMAIL = 'landbank@intendindiana.org'
 SEND_BLC_ACTIVITY_NOTIFICATION_EMAIL = True
-DEFAULT_FROM_EMAIL = 'info@renewindianapolis.org'
+DEFAULT_FROM_EMAIL = 'info@renewlandbank.org'
 SMTP_PROVIDER = 'mailgun' # or gmail
 
 
