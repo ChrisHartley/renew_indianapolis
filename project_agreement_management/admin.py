@@ -384,7 +384,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
         'enforcement__Application__organization__name',
         'enforcement__Application__user__email',
         )
-    actions = ['export_as_csv_custom_action',]
+    actions = ['export_as_csv_custom_action', 'add_bulk_breach']
     change_list_template = 'admin/project_agreement_management/breech_status_change_list.html' # definitely not 'admin/change_list.html'
 
     def sale_date(self,obj):
