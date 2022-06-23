@@ -384,7 +384,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
         'enforcement__Application__organization__name',
         'enforcement__Application__user__email',
         )
-    actions = ['export_as_csv_custom_action', 'add_bulk_breach']
+    actions = ['export_as_csv_custom_action', 'add_bulk_breach', 'run_management_command']
     change_list_template = 'admin/project_agreement_management/breech_status_change_list.html' # definitely not 'admin/change_list.html'
 
     def sale_date(self,obj):
@@ -419,7 +419,31 @@ class BreechStatusAdmin(admin.ModelAdmin):
                 'breach_types': BreechType.objects.all(),
             }
             )
+    def run_management_command(self, request, queryset):
+        # Run either add_missing_annual_report, add_two_year_breaches or close_released_breaches
+        command_output = ''
+        command = ''
+        if 'apply' in request.POST:
+            if request.POST.get('command') == 'Create missing annual report breaches':
+                command = 'add_missing_annual_report'
+            if request.POST.get('command') == 'Create two years past sale breaches':
+                command = 'add_two_year_breaches'
+            if request.POST.get('command') == 'Close breaches on released properties':
+                command = 'close_released_breaches'
+            if command != '':
+                management.call_command(command, stdout=command_output)
+                self.message_user(request,
+                    "Command Completed. {} {} {}.".format(command_output,))
+            else:
+                self.message_user(request, 'Command not run.')
+          return HttpResponseRedirect(request.get_full_path())
 
+        return render(request,
+            'admin/project_agreement_management/run_management_command.html',
+            context={
+                'objects':queryset,
+            }
+            )
 
     def export_as_csv_custom_action(self, request, queryset):
         response = HttpResponse(content_type='text/csv')
