@@ -436,7 +436,7 @@ class BreechStatusAdmin(admin.ModelAdmin):
                     "Command Completed. {} {} {}.".format(command_output,))
             else:
                 self.message_user(request, 'Command not run.')
-          return HttpResponseRedirect(request.get_full_path())
+        return HttpResponseRedirect(request.get_full_path())
 
         return render(request,
             'admin/project_agreement_management/run_management_command.html',
