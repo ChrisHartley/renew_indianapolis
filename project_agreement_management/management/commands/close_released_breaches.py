@@ -29,10 +29,10 @@ class Command(BaseCommand):
         for e in all_enf:
             for b in e.breechstatus_set.all():
                 if b.status == BreechStatus.OPEN:
-                    print('{} - Breach is open property was released, should be closed'.format(e,))
+                    self.stdout.write('{} - Breach is open property was released, should be closed'.format(e,))
                     b.date_resolved = timezone.now()
                     b.status = BreechStatus.CLOSED
                     if options['fake'] == False:
                         b.save()
                     else:
-                        print('Not saving due to --fake')
+                        self.stdout.write('Not saving due to --fake')

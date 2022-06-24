@@ -21,17 +21,21 @@
 
 {% block content %}
 
-      <form action="" method="post" enctype="multipart/form-data">
+      <form action="" method="post">
         <div class='form-group'>
           {% csrf_token %}
-          <label for='breach_type'>Command to run</label>
+          <label for='command'>Command to run</label>
           <select name="command">
             <option>Create missing annual report breaches</option>
             <option>Create two years past sale breaches</option>
             <option>Close breaches on released properties</option>
           </select>
           </div>
+
           <div class='form-group'>
+            {% for object in objects %}
+              <input type="hidden" name="_selected_action" value="{{ object.pk }}">
+            {% endfor %}
             <input type="hidden" name="action" value="{{ request.POST.action }}"/>
             <input type="hidden" name="form-post" value="True"/>
             <input type="submit" name="apply" value="Save"/>

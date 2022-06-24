@@ -42,7 +42,7 @@ class Command(BaseCommand):
             #    print(dir(e))
                 for b in e.breechstatus_set.all():
                     if b.breech == breach_type and b.date_resolved is None:
-                        print('{} - Breach is open, should be closed'.format(e,))
+                        self.stdout.write('{} - Breach is open, should be closed'.format(e,))
                         b.date_resolved = timezone.now()
                         b.status = BreechStatus.CLOSED
                         b.save()
@@ -68,4 +68,4 @@ class Command(BaseCommand):
                     enf.save()
                 bs = BreechStatus(breech=breach_type, enforcement=enf, date_created=date.today())
                 bs.save()
-                print(enf)
+                self.stdout.write(enf)

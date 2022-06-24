@@ -66,7 +66,7 @@ class Command(BaseCommand):
                             breachstatus.status = True # closed
                             breachstatus.date_resolved = timezone.now()
                             breachstatus.save()
-                            print("Breach open, should be closed, {} {} {} closed.".format(breachstatus, p, app))
+                            self.stdout.write("Breach open, should be closed, {} {} {} closed.".format(breachstatus, p, app))
 
             if breech_required:
                 enforcements = Enforcement.objects.filter(Property=p).filter(Application=app).order_by('created')
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                 if duplicate_breech == False:
                     bs = BreechStatus(breech=annual_report_breech, enforcement=enf, date_created=date.today())
                     bs.save()
-                    print("Breech created: {} {} {}".format(bs,p,app))
+                    self.stdout.write("Breech created: {} {} {}".format(bs,p,app))
                 else:
                 #    print("Breech already open")
                     pass

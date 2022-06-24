@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 app = p.buyer_application
                 if app is not None:
                     if app.application_type not in[Application.HOMESTEAD, Application.STANDARD]:
-                        print('No timeline in PA. Property: {}, Application: {}, Application Type: {}'.format(p, app, app.application_type))
+                        self.stdout.write('No timeline in PA. Property: {}, Application: {}, Application Type: {}'.format(p, app, app.application_type))
                         continue
                     enforcements = Enforcement.objects.filter(Property=p).filter(Application=app).order_by('created')
                 else:
@@ -36,7 +36,7 @@ class Command(BaseCommand):
                             if b == overdue_breech:
                                 has_overdue = True
                 if has_overdue == False:
-                    print('Overdue breech created for {}'.format(p,))
+                    self.stdout.write('Overdue breech created for {}'.format(p,))
                     enf = enforcements.last()
                     if enf is None:
                         if app is not None:
